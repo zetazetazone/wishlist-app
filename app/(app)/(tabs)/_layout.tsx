@@ -14,7 +14,7 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: 'Home',
-          headerTitle: 'Upcoming Events',
+          headerShown: false, // Home has its own custom header
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" size={size} color={color} />
           ),
@@ -34,7 +34,7 @@ export default function TabsLayout() {
         name="groups"
         options={{
           title: 'Groups',
-          headerTitle: 'My Groups',
+          headerShown: false, // Groups has its own custom header
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="account-group" size={size} color={color} />
           ),

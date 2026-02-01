@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import { MotiView } from 'moti';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { fetchUserGroups } from '../../../utils/groups';
 import GroupCard from '../../../components/groups/GroupCard';
 import CreateGroupModal from '../../../components/groups/CreateGroupModal';
 import JoinGroupModal from '../../../components/groups/JoinGroupModal';
 import { Group } from '../../../types';
+import { colors, spacing, borderRadius, shadows } from '../../../constants/theme';
 
 export default function GroupsScreen() {
   const router = useRouter();
@@ -39,67 +43,210 @@ export default function GroupsScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-white items-center justify-center">
-        <ActivityIndicator size="large" color="#0ea5e9" />
+      <View style={{ flex: 1, backgroundColor: colors.cream[50], alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color={colors.burgundy[600]} />
       </View>
     );
   }
 
   return (
     <>
-      <ScrollView
-        className="flex-1 bg-gray-50"
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
-      >
-        <View className="p-6">
-          <View className="flex-row gap-3 mb-6">
+      <StatusBar barStyle="light-content" />
+      <View style={{ flex: 1, backgroundColor: colors.cream[50] }}>
+        {/* Gradient Header */}
+        <LinearGradient
+          colors={[colors.burgundy[800], colors.burgundy[600]]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{
+            paddingTop: 60,
+            paddingBottom: spacing.xl,
+            paddingHorizontal: spacing.lg,
+          }}
+        >
+          <MotiView
+            from={{ opacity: 0, translateY: -20 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ type: 'timing', duration: 600 }}
+          >
+            <View>
+              <Text
+                style={{
+                  fontSize: 36,
+                  fontWeight: '700',
+                  color: colors.white,
+                  marginBottom: spacing.xs,
+                }}
+              >
+                My Groups
+              </Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: colors.gold[200],
+                  fontWeight: '400',
+                }}
+              >
+                {groups.length} {groups.length === 1 ? 'group' : 'groups'}
+              </Text>
+            </View>
+          </MotiView>
+        </LinearGradient>
+
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{
+            padding: spacing.lg,
+            paddingTop: spacing.md,
+          }}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={colors.burgundy[600]}
+              colors={[colors.burgundy[600]]}
+            />
+          }
+        >
+          {/* Action Buttons */}
+          <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing.lg }}>
             <TouchableOpacity
-              className="flex-1 bg-primary-500 rounded-lg p-4"
+              style={{
+                flex: 1,
+                backgroundColor: colors.burgundy[700],
+                borderRadius: borderRadius.lg,
+                padding: spacing.md + spacing.xs,
+                alignItems: 'center',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                ...shadows.md,
+              }}
               onPress={() => setCreateModalVisible(true)}
+              activeOpacity={0.8}
             >
-              <Text className="text-white text-center font-semibold text-base">
-                + Create Group
+              <MaterialCommunityIcons
+                name="plus-circle"
+                size={20}
+                color={colors.white}
+                style={{ marginRight: spacing.xs }}
+              />
+              <Text
+                style={{
+                  color: colors.white,
+                  fontSize: 15,
+                  fontWeight: '700',
+                }}
+              >
+                Create Group
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              className="flex-1 bg-white border-2 border-primary-500 rounded-lg p-4"
+              style={{
+                flex: 1,
+                backgroundColor: colors.white,
+                borderRadius: borderRadius.lg,
+                padding: spacing.md + spacing.xs,
+                alignItems: 'center',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                borderWidth: 2,
+                borderColor: colors.burgundy[700],
+              }}
               onPress={() => setJoinModalVisible(true)}
+              activeOpacity={0.8}
             >
-              <Text className="text-primary-500 text-center font-semibold text-base">
+              <MaterialCommunityIcons
+                name="account-multiple-plus"
+                size={20}
+                color={colors.burgundy[700]}
+                style={{ marginRight: spacing.xs }}
+              />
+              <Text
+                style={{
+                  color: colors.burgundy[700],
+                  fontSize: 15,
+                  fontWeight: '700',
+                }}
+              >
                 Join Group
               </Text>
             </TouchableOpacity>
           </View>
 
           {groups.length === 0 ? (
-            <View className="bg-white rounded-lg p-8 items-center">
-              <Text className="text-6xl mb-4">👥</Text>
-              <Text className="text-gray-600 text-center text-lg font-medium mb-2">
-                No groups yet
-              </Text>
-              <Text className="text-gray-500 text-center text-sm">
-                Create a group or ask a friend for an invite code to get started
-              </Text>
-            </View>
+            <MotiView
+              from={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: 'spring', delay: 200 }}
+            >
+              <View
+                style={{
+                  backgroundColor: colors.white,
+                  borderRadius: borderRadius.xl,
+                  padding: spacing.xxl,
+                  alignItems: 'center',
+                  marginTop: spacing.xl,
+                  borderWidth: 2,
+                  borderColor: colors.gold[100],
+                  borderStyle: 'dashed',
+                }}
+              >
+                <View
+                  style={{
+                    width: 100,
+                    height: 100,
+                    borderRadius: 50,
+                    backgroundColor: colors.burgundy[50],
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: spacing.lg,
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="account-group"
+                    size={60}
+                    color={colors.burgundy[400]}
+                  />
+                </View>
+
+                <Text
+                  style={{
+                    fontSize: 24,
+                    fontWeight: '700',
+                    color: colors.burgundy[800],
+                    marginBottom: spacing.sm,
+                    textAlign: 'center',
+                  }}
+                >
+                  No Groups Yet
+                </Text>
+
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: colors.burgundy[400],
+                    textAlign: 'center',
+                    lineHeight: 24,
+                  }}
+                >
+                  Create a new group or join one{'\n'}with an invite code
+                </Text>
+              </View>
+            </MotiView>
           ) : (
-            <View>
-              <Text className="text-gray-500 text-sm font-medium mb-3">
-                MY GROUPS ({groups.length})
-              </Text>
-              {groups.map((group) => (
-                <GroupCard
-                  key={group.id}
-                  group={group}
-                  onPress={() => handleGroupPress(group.id)}
-                />
-              ))}
-            </View>
+            groups.map((group, index) => (
+              <GroupCard
+                key={group.id}
+                group={group}
+                onPress={() => handleGroupPress(group.id)}
+                index={index}
+              />
+            ))
           )}
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
 
       <CreateGroupModal
         visible={createModalVisible}
