@@ -79,31 +79,31 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PROF-01 | TBD | Pending |
-| PROF-02 | TBD | Pending |
-| PROF-03 | TBD | Pending |
-| NOTF-01 | TBD | Pending |
-| NOTF-02 | TBD | Pending |
-| NOTF-03 | TBD | Pending |
-| NOTF-04 | TBD | Pending |
-| NOTF-05 | TBD | Pending |
-| CHAT-01 | TBD | Pending |
-| CHAT-02 | TBD | Pending |
-| CHAT-03 | TBD | Pending |
-| CALR-01 | TBD | Pending |
-| CALR-02 | TBD | Pending |
-| CALR-03 | TBD | Pending |
-| CALR-04 | TBD | Pending |
-| LEAD-01 | TBD | Pending |
-| LEAD-02 | TBD | Pending |
-| LEAD-03 | TBD | Pending |
-| LEAD-04 | TBD | Pending |
+| PROF-01 | Phase 1: Foundation | Pending |
+| PROF-02 | Phase 1: Foundation | Pending |
+| PROF-03 | Phase 1: Foundation | Pending |
+| NOTF-01 | Phase 1: Foundation | Pending |
+| NOTF-02 | Phase 4: Smart Reminders | Pending |
+| NOTF-03 | Phase 4: Smart Reminders | Pending |
+| NOTF-04 | Phase 1: Foundation | Pending |
+| NOTF-05 | Phase 4: Smart Reminders | Pending |
+| CHAT-01 | Phase 2: Celebrations & Coordination | Pending |
+| CHAT-02 | Phase 2: Celebrations & Coordination | Pending |
+| CHAT-03 | Phase 2: Celebrations & Coordination | Pending |
+| CALR-01 | Phase 3: Calendar | Pending |
+| CALR-02 | Phase 3: Calendar | Pending |
+| CALR-03 | Phase 3: Calendar | Pending |
+| CALR-04 | Phase 3: Calendar | Pending |
+| LEAD-01 | Phase 2: Celebrations & Coordination | Pending |
+| LEAD-02 | Phase 2: Celebrations & Coordination | Pending |
+| LEAD-03 | Phase 2: Celebrations & Coordination | Pending |
+| LEAD-04 | Phase 2: Celebrations & Coordination | Pending |
 
 **Coverage:**
 - v1 requirements: 19 total
-- Mapped to phases: 0
-- Unmapped: 19 (roadmap pending)
+- Mapped to phases: 19
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-02*
-*Last updated: 2026-02-02 after initial definition*
+*Last updated: 2026-02-02 after roadmap creation*
