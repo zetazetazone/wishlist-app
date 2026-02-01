@@ -1,7 +1,9 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
-# dependencies
+# Dependencies
 node_modules/
+.pnp
+.pnp.js
 
 # Expo
 .expo/
@@ -20,8 +22,11 @@ expo-env.d.ts
 
 # Metro
 .metro-health-check*
+/tmp/metro-*
+/tmp/react-*
+/tmp/haste-map-*
 
-# debug
+# Debug
 npm-debug.*
 yarn-debug.*
 yarn-error.*
@@ -30,12 +35,60 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
+# Local env files
+.env
 .env*.local
 
-# typescript
+# TypeScript
 *.tsbuildinfo
+*.tsbuildinfo.json
 
-# generated native folders
+# Generated native folders
 /ios
 /android
+
+# Testing
+coverage/
+*.coverage
+.nyc_output
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# IDE - IntelliJ / WebStorm
+.idea/
+*.iml
+*.iws
+
+# OS Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs
+logs
+*.log
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Temporary files
+*.tmp
+*.temp
+
+# Supabase (local CLI only - keep migrations/)
+supabase/.branches/
+supabase/.temp/
+supabase/temp/
+supabase/config.toml
+# Keep: supabase/migrations/ (committed to version control)
+
+# Claude Code - Keep project rules
+# .claude/ directory is committed to share rules with team
