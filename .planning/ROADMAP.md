@@ -14,6 +14,7 @@ This roadmap delivers coordinated birthday gifting through four phases: first es
 - [x] **Phase 2: Celebrations & Coordination** - Gift Leader system + secret chat rooms
 - [x] **Phase 3: Calendar** - In-app calendar view + device calendar sync
 - [x] **Phase 4: Smart Reminders** - Birthday reminder sequences + Gift Leader notifications
+- [ ] **Phase 5: Integration Fixes** - Schema migration + webhook documentation (gap closure)
 
 ## Phase Details
 
@@ -85,11 +86,24 @@ Plans:
 - [x] 04-02-PLAN.md — Gift Leader assignment notifications (trigger, rich push content)
 - [x] 04-03-PLAN.md — Gap closure: same-day batching and new member catch-up
 
+### Phase 5: Integration Fixes
+**Goal**: Fix schema mismatch and document webhook configuration to enable full E2E notification flows
+**Depends on**: Phase 1 (fixes issues in notification infrastructure)
+**Gap Closure**: Closes gaps from v1 milestone audit
+**Success Criteria** (what must be TRUE):
+  1. Notification inbox mark-as-read works without errors
+  2. Webhook configuration documented with step-by-step guide
+  3. All E2E notification flows verified working after manual webhook setup
+**Plans**: 1 plan
+
+Plans:
+- [ ] 05-01-PLAN.md — Schema migration (is_read → read_at) + webhook documentation
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4
-Note: Phase 3 (Calendar) could run in parallel with Phase 2 if needed.
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
+Note: Phase 5 is gap closure from milestone audit.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -97,7 +111,9 @@ Note: Phase 3 (Calendar) could run in parallel with Phase 2 if needed.
 | 2. Celebrations & Coordination | 2/2 | Complete | 2026-02-02 |
 | 3. Calendar | 2/2 | Complete | 2026-02-02 |
 | 4. Smart Reminders | 3/3 | Complete | 2026-02-02 |
+| 5. Integration Fixes | 0/1 | Pending | — |
 
 ---
 *Roadmap created: 2026-02-02*
 *Coverage: 19/19 v1 requirements mapped*
+*Gap closure phase added: 2026-02-02*
