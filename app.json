@@ -8,6 +8,11 @@
     "userInterfaceStyle": "light",
     "scheme": "wishlist-app",
     "newArchEnabled": true,
+    "extra": {
+      "eas": {
+        "projectId": "3a64eccc-d4fc-4e6c-9c1e-04c9f2f60c8d"
+      }
+    },
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -30,7 +35,15 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#ffffff",
+          "sounds": []
+        }
+      ]
     ]
   }
 }
