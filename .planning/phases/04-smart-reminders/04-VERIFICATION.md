@@ -1,14 +1,13 @@
 ---
 phase: 04-smart-reminders
-verified: 2026-02-02T17:46:25Z
+verified: 2026-02-02T18:55:17Z
 status: passed
-score: 21/21 must-haves verified
+score: 24/24 must-haves verified
 re_verification:
-  previous_status: gaps_found
-  previous_score: 18/21
+  previous_status: passed
+  previous_score: 21/21
   gaps_closed:
-    - "Same-day birthdays within a group are grouped into single notification"
-    - "New group members receive catch-up reminders for missed reminder types"
+    - "Timezone is automatically detected and saved to users.timezone column"
   gaps_remaining: []
   regressions: []
 ---
@@ -17,9 +16,9 @@ re_verification:
 
 **Phase Goal:** Users receive timely birthday reminders and Gift Leaders are notified when assigned
 
-**Verified:** 2026-02-02T17:46:25Z
+**Verified:** 2026-02-02T18:55:17Z
 **Status:** passed
-**Re-verification:** Yes - after gap closure via migration 20260202000009
+**Re-verification:** Yes - after gap closure plan 04-04 (timezone hook integration)
 
 ## Goal Achievement
 
@@ -40,43 +39,62 @@ re_verification:
 | 11 | Old Gift Leader receives notification when reassigned away | ✅ VERIFIED | Lines 81-97 (migration 08): UPDATE logic notifies OLD.gift_leader_id |
 | 12 | New Gift Leader receives notification when reassigned to | ✅ VERIFIED | Lines 59-76 (migration 08): NEW.gift_leader_id receives assignment notification |
 | 13 | Push notifications can display celebrant avatar image | ✅ VERIFIED | Lines 119-123 (push/index.ts): richContent.image field conditionally added from data.avatar_url |
+| 14 | Timezone is automatically detected and saved to users.timezone column | ✅ VERIFIED | Lines 18, 21-24 (usePushNotifications.ts): Intl API detection + Supabase update; Line 2, 7 (_layout.tsx): Hook called on mount |
 
-**Score:** 21/21 truths verified (13 full ✅)
+**Score:** 24/24 truths verified (14 full ✅)
 
-### Re-Verification Gap Closure Analysis
+### Re-Verification Gap Closure Analysis (Plan 04-04)
 
-**Gap 1: Same-day batching - CLOSED ✅**
-- **Previous Issue:** Lines 338-351 (migration 07) documented batching as not implemented
-- **Gap Closure:** Lines 294-439 (migration 09) implements PHASE 4 with full batching logic
-  - Uses `array_agg(c.id)` and `array_agg(celebrant.full_name)` to collect same-day celebrations (lines 307-308)
-  - Groups by (group_id, event_date) with HAVING COUNT(*) > 0 (line 340)
-  - Conditional formatting based on array_length:
-    - 1 person: Standard format (lines 355-379)
-    - 2 people: "Alice and Bob's birthdays..." (lines 381-390)
-    - 3+ people: "3 birthdays in Family..." (lines 392-402)
-  - Records all celebrations in reminder_sent to prevent duplicates (lines 433-437)
-  - Tracks batch_count for monitoring (lines 428-430)
+**Gap: Timezone Hook Integration - CLOSED ✅**
 
-**Gap 2: Catch-up reminders - CLOSED ✅**
-- **Previous Issue:** Lines 218-234 (migration 07) only sent current reminder, not explicit catch-up
-- **Gap Closure:** Lines 195-287 (migration 09) implements PHASE 3 with full catch-up logic
-  - Adds 'catch_up' reminder_type to constraint (lines 14-24)
-  - Detects which reminder types were missed: 4-week, 2-week, 1-week (lines 240-256)
-  - Sends consolidated catch-up notification with missed types listed (lines 260-278)
-  - Differentiates catch-up from normal reminders:
-    - Title: "Heads up: {name}'s birthday in {days} days!" (line 263)
-    - Body: "You missed earlier reminders (4-week, 2-week). {name}'s birthday is {date}." (lines 264-267)
-    - Data includes reminder_type='catch_up' and missed_types array (lines 275-276)
-  - Only sends within 15-minute join window to prevent duplicate catch-ups (line 236)
+**Previous Issue:** 
+The `usePushNotifications` hook existed with working timezone detection (`saveUserTimezone` function), but was never called in the application. This meant authenticated users' timezone remained at default UTC instead of being detected and saved.
 
-**Gap 3: Auto-celebration integration - VERIFIED ✅**
-- **Previous Caveat:** Needed verification that auto-celebration sets gift_leader_id
-- **Status:** Trigger architecture confirmed working
-  - Trigger fires on INSERT OR UPDATE OF gift_leader_id (line 111, migration 08)
-  - Will activate whenever gift_leader_id is set, regardless of source (manual or auto-celebration)
-  - No dependency issues - trigger is passive and responds to any INSERT/UPDATE
+**Gap Closure Verification:**
 
-**Regressions:** None detected. All previous passing truths remain verified.
+**Truth #14: "Timezone is automatically detected and saved to users.timezone column"**
+- ✅ **Hook Implementation Verified** (hooks/usePushNotifications.ts):
+  - Line 18: `const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;`
+  - Lines 21-24: `supabase.from('users').update({ timezone }).eq('id', userId)`
+  - Line 59: `saveUserTimezone(session.user.id)` called on mount
+
+- ✅ **Hook Integration Verified** (app/(app)/_layout.tsx):
+  - Line 2: `import { usePushNotifications } from '../../hooks/usePushNotifications';`
+  - Line 7: `usePushNotifications();` called in AppLayout component
+  - Lines 5-6: Comment documents purpose: "Runs on mount for authenticated users - saves timezone to users.timezone"
+
+- ✅ **Database Schema Verified** (migration 07):
+  - Line 18: `ADD COLUMN IF NOT EXISTS timezone TEXT DEFAULT 'UTC';`
+  - Line 20: Column comment documents purpose for 9:00 AM delivery
+  - Line 409: Index created on users.timezone for query performance
+
+**Key Link Verification:**
+| From | To | Via | Status | Evidence |
+|------|----|----|--------|----------|
+| app/(app)/_layout.tsx | usePushNotifications hook | import and call | ✅ WIRED | Line 2: import, Line 7: hook call |
+| usePushNotifications | saveUserTimezone | function call on mount | ✅ WIRED | Line 59: called with session.user.id |
+| saveUserTimezone | Intl API | timezone detection | ✅ WIRED | Line 18: Intl.DateTimeFormat().resolvedOptions().timeZone |
+| saveUserTimezone | users.timezone | Supabase update | ✅ WIRED | Lines 21-24: supabase update query |
+
+**Artifact Status:**
+- `app/(app)/_layout.tsx`: ✅ VERIFIED (substantive, wired)
+  - Level 1 (exists): ✅ File exists with 33 lines
+  - Level 2 (substantive): ✅ 33 lines, contains import and hook call, no stubs
+  - Level 3 (wired): ✅ Hook imported and called, renders Stack for authenticated routes
+
+- `hooks/usePushNotifications.ts`: ✅ VERIFIED (substantive, wired)
+  - Level 1 (exists): ✅ File exists with 96 lines
+  - Level 2 (substantive): ✅ 96 lines, full implementation with Intl API and Supabase, no stubs
+  - Level 3 (wired): ✅ Imported and used by app layout, calls saveUserTimezone on mount
+
+**Integration Verification:**
+- ✅ TypeScript compiles (pre-existing errors in unrelated files are documented in STATE.md as non-blocking)
+- ✅ Hook runs on app mount for authenticated users (layout only renders post-auth)
+- ✅ Timezone detection uses standard Intl API (no external dependencies)
+- ✅ Timezone save is non-blocking (error handling in place, doesn't prevent push registration)
+- ✅ Migration 07 reminder logic uses `u.timezone` for 9:00 AM delivery (line 130)
+
+**Regressions:** None detected. All previous 21 passing truths remain verified. The timezone hook integration is additive and doesn't modify existing reminder logic.
 
 ### Required Artifacts
 
@@ -84,7 +102,8 @@ re_verification:
 |----------|----------|--------|---------|
 | `supabase/migrations/20260202000009_reminder_gaps.sql` | Gap closure migration | ✅ VERIFIED | 604 lines: Replaces process_birthday_reminders with batching + catch-up logic |
 | `supabase/migrations/20260202000007_reminder_scheduling.sql` | Contains original process_birthday_reminders | ✅ VERIFIED | Superseded by migration 09, but structure remains valid |
-| `hooks/usePushNotifications.ts` | Contains Intl.DateTimeFormat | ✅ VERIFIED | Line 18: `Intl.DateTimeFormat().resolvedOptions().timeZone` |
+| `hooks/usePushNotifications.ts` | Contains Intl.DateTimeFormat and saveUserTimezone | ✅ VERIFIED | Lines 15-34: saveUserTimezone function; Line 18: Intl API; Line 59: called on mount |
+| `app/(app)/_layout.tsx` | Contains usePushNotifications hook call | ✅ VERIFIED | Line 2: import; Line 7: hook call in AppLayout component |
 | `supabase/migrations/20260202000008_gift_leader_notifications.sql` | Contains notify_gift_leader_assigned | ✅ VERIFIED | Lines 14-101: Function with INSERT/UPDATE trigger |
 | `supabase/functions/push/index.ts` | Contains richContent | ✅ VERIFIED | Lines 35-37, 119-123: richContent interface and conditional addition |
 
@@ -95,6 +114,9 @@ re_verification:
 | pg_cron job | process_birthday_reminders function | cron.schedule every 15 minutes | ✅ WIRED | Lines 398-402 (migration 07): Still valid, calls new function from migration 09 |
 | process_birthday_reminders | user_notifications | INSERT statements across 5 phases | ✅ WIRED | Lines 100, 163, 260, 405, 515 (migration 09): All phases insert notifications |
 | usePushNotifications | users.timezone | Supabase update | ✅ WIRED | Lines 21-24: `.from('users').update({ timezone }).eq('id', userId)` |
+| app/(app)/_layout.tsx | usePushNotifications | import and hook call | ✅ WIRED | Line 2: import statement; Line 7: `usePushNotifications()` call |
+| usePushNotifications | saveUserTimezone | function call on mount | ✅ WIRED | Line 59: `saveUserTimezone(session.user.id)` in useEffect |
+| saveUserTimezone | Intl API | timezone detection | ✅ WIRED | Line 18: `Intl.DateTimeFormat().resolvedOptions().timeZone` |
 | celebrations INSERT/UPDATE trigger | notify_gift_leader_assigned | AFTER INSERT OR UPDATE OF gift_leader_id | ✅ WIRED | Line 111 (migration 08): Trigger fires on both operations |
 | notify_gift_leader_assigned | user_notifications | INSERT statements | ✅ WIRED | Lines 59, 82 (migration 08): Notifies new and old Gift Leaders |
 | push Edge Function | Expo Push API | richContent.image field | ✅ WIRED | Lines 119-123: Conditionally spreads richContent with avatar_url |
@@ -106,13 +128,14 @@ re_verification:
 All Phase 04 requirements from ROADMAP.md are fully satisfied:
 - ✅ Birthday reminder scheduling system
 - ✅ Timezone-aware delivery at 9:00 AM local time
-- ✅ Same-day batching (GAP CLOSED)
+- ✅ Timezone automatic detection and saving (GAP CLOSED - plan 04-04)
+- ✅ Same-day batching (GAP CLOSED - plan 04-03)
 - ✅ Celebrant exclusion from countdown reminders
 - ✅ Group muting preferences
 - ✅ Gift Leader assignment notifications
 - ✅ Gift Leader 1-week nudge
 - ✅ Rich push content with avatar images
-- ✅ New member catch-up reminders (GAP CLOSED)
+- ✅ New member catch-up reminders (GAP CLOSED - plan 04-03)
 
 ### Anti-Patterns Found
 
@@ -120,115 +143,161 @@ All Phase 04 requirements from ROADMAP.md are fully satisfied:
 |------|------|---------|----------|--------|
 | supabase/migrations/20260202000007_reminder_scheduling.sql | 115-123 | Unused batch variables | ℹ️ Info | No impact - superseded by migration 09 |
 
-**Note:** Previous anti-patterns (batching TODO, incomplete catch-up) are now resolved in migration 09.
+**Note:** Previous anti-patterns (batching TODO, incomplete catch-up) were resolved in migration 09. Plan 04-04 added clean hook integration with no anti-patterns detected.
 
 ### Human Verification Required
 
-#### 1. Same-Day Batching Format
+#### 1. Timezone Detection on App Launch
+
+**Test:** 
+1. Clear app data or use fresh install
+2. Sign in as authenticated user
+3. Check Supabase users table for your user_id
+
+**Expected:** 
+- `timezone` column contains your device timezone (e.g., "America/New_York", "Europe/London")
+- Value matches device timezone settings
+- Updates if you change device timezone and relaunch app
+
+**Why human:** Requires physical device testing and database inspection
+
+#### 2. Same-Day Batching Format
 
 **Test:** Create 3 celebrations in same group on same date (7 days out), wait for 9:00 AM as group member
+
 **Expected:** 
 - Receive ONE notification (not 3 separate)
 - Title: "3 birthdays in {GroupName} in 1 week!"
 - Body: "{Name1}, {Name2}, {Name3}: Tap to see all celebrations."
 - Data includes celebration_ids array with all 3 IDs
+
 **Why human:** Requires waiting for cron job and creating test data
 
-#### 2. Catch-Up Reminder Content
+#### 3. Catch-Up Reminder Content
 
 **Test:** 
 1. Create celebration 28 days out with yourself NOT as member
 2. Wait 15 days (now 13 days out)
 3. Join the group
 4. Wait for 9:00 AM
+
 **Expected:**
 - Receive ONE catch-up notification
 - Title: "Heads up: {Name}'s birthday in 13 days!"
 - Body: "You missed earlier reminders (4-week, 2-week). {Name}'s birthday is {Month DD}."
 - Data includes reminder_type='catch_up' and missed_types=['4-week', '2-week']
+
 **Why human:** Requires time-based testing and database state manipulation
 
-#### 3. Catch-Up vs Normal Reminder Sequence
+#### 4. Catch-Up vs Normal Reminder Sequence
 
 **Test:**
 1. Join group mid-window, receive catch-up notification
 2. Wait until next reminder window (e.g., from 13 days to 7 days)
 3. Wait for 9:00 AM
+
 **Expected:**
 - Receive NORMAL 1-week reminder (not another catch-up)
 - Content should be standard "1 week until {Name}'s birthday!"
+
 **Why human:** Tests PHASE 5 logic (lines 442-549) for post-catch-up normal reminders
 
-#### 4. Timezone Detection and Delivery
+#### 5. Timezone-Aware Delivery
 
-**Test:** Create celebration 7 days out, set device timezone to known value, wait for 9:00 AM local time
-**Expected:** Receive push notification at 9:00 AM sharp (within 15-min window)
-**Why human:** Requires waiting for cron job execution and testing across timezones
+**Test:** Create celebration 7 days out, wait for 9:00 AM local time (as detected by app)
 
-#### 5. Celebrant Exclusion
+**Expected:** Receive push notification at 9:00 AM sharp in your timezone (within 15-min window)
+
+**Why human:** Requires waiting for cron job execution and testing timing accuracy
+
+#### 6. Celebrant Exclusion
 
 **Test:** As celebrant, create celebration for yourself in 4 weeks
+
 **Expected:** Do NOT receive 4w/2w/1w reminders; DO receive "Happy Birthday" on day-of
+
 **Why human:** Requires testing user experience as celebrant over time
 
-#### 6. Gift Leader Immediate Notification
+#### 7. Gift Leader Immediate Notification
 
 **Test:** Create new celebration with gift_leader_id set, or update existing celebration's gift_leader_id
+
 **Expected:** 
 - New leader receives "You're the Gift Leader" notification immediately
 - Old leader (on reassignment) receives "role reassigned" notification
+
 **Why human:** Requires testing trigger timing and notification delivery
 
-#### 7. Gift Leader 1-Week Nudge
+#### 8. Gift Leader 1-Week Nudge
 
 **Test:** Create celebration 7 days out with yourself as Gift Leader, add some contributions, wait for 9:00 AM
+
 **Expected:** Receive special nudge notification with contribution progress ($X of $Y collected)
+
 **Why human:** Requires testing contribution calculation and formatting
 
-#### 8. Rich Push Content with Avatar
+#### 9. Rich Push Content with Avatar
 
 **Test:** Create notification with avatar_url in data payload, check push notification on physical device
+
 **Expected:** Avatar image displays in push notification (Android immediately, iOS may vary)
+
 **Why human:** Rich content rendering varies by platform and requires physical device testing
 
-#### 9. Group Muting
+#### 10. Group Muting
 
 **Test:** Insert mute_reminders=true in user_group_preferences, verify no reminders for that group
+
 **Expected:** No birthday reminder notifications for muted group
+
 **Why human:** Requires testing database state and notification filtering
 
-#### 10. Duplicate Prevention on Retry
+#### 11. Duplicate Prevention on Retry
 
 **Test:** Manually run process_birthday_reminders() multiple times in sequence
+
 **Expected:** Same reminder sent only once (not duplicated)
+
 **Why human:** Requires manual function execution and database inspection
 
 ### Gaps Summary
 
 **All gaps closed.** Phase 04 goal fully achieved.
 
-**Gap Closure Details:**
+**Previous Gap Closure (Plans 04-01 through 04-03):**
+- Gap 1: Same-day batching - Migration 09 PHASE 4 with array_agg
+- Gap 2: Catch-up reminders - Migration 09 PHASE 3 with missed type detection
+- Gap 3: Auto-celebration integration - Trigger architecture verified
 
-**Gap 1 Resolution - Same-Day Batching:**
-The migration 20260202000009 implements array_agg-based batching in PHASE 4 (lines 290-439). Key features:
-- Collects all same-day celebrations per group using array_agg
-- Conditional formatting: single name, "A and B", or "3 birthdays in Family"
-- Deep linking: single celebration → celebration screen, multiple → group screen
-- Prevents duplicates by recording all celebration_ids in reminder_sent
+**Current Gap Closure (Plan 04-04):**
+- Gap 4: Timezone hook integration - Hook called in app layout, timezone saved on mount
 
-**Gap 2 Resolution - Catch-Up Reminders:**
-The migration 20260202000009 implements explicit catch-up in PHASE 3 (lines 195-287). Key features:
-- Adds 'catch_up' reminder_type to constraint
-- Detects which reminder types (4-week, 2-week, 1-week) were actually missed
-- Sends consolidated notification listing all missed types
-- Differentiates from normal reminders in title, body, and data.reminder_type
-- Only fires within 15-minute join window to prevent duplicate catch-ups on subsequent runs
+**Gap 4 Resolution - Timezone Hook Integration:**
 
-**Integration Verification:**
-PHASE 5 (lines 442-549) ensures new members who received catch-up then get subsequent NORMAL reminders, not additional catch-ups. This provides seamless integration into the normal reminder flow.
+The `usePushNotifications` hook existed with working timezone detection but was never integrated. Plan 04-04 resolved this by:
+
+1. **Hook Import:** Added import statement in `app/(app)/_layout.tsx` (line 2)
+2. **Hook Call:** Called `usePushNotifications()` in AppLayout component (line 7)
+3. **Timing:** Hook runs on component mount for authenticated users
+4. **Effect:** `saveUserTimezone()` function detects and saves timezone (lines 18, 21-24 in hook)
+5. **Database:** Timezone stored in `users.timezone` column for 9:00 AM local delivery
+
+**Integration Benefits:**
+- Timezone detection runs automatically on every app launch
+- Catches timezone changes from travel or DST
+- Non-blocking implementation doesn't affect push notification registration
+- Uses standard Intl API (no external dependencies)
+- Enables accurate 9:00 AM local time delivery for birthday reminders
+
+**Evidence of Completion:**
+- Artifact exists: `app/(app)/_layout.tsx` contains import and hook call
+- Substantive: Hook implementation is complete with Intl API and Supabase update
+- Wired: Hook called on mount, timezone saved to database, used by reminder logic
+- No regressions: All previous 21 truths remain verified
+- Clean implementation: No TODOs, no stubs, follows React patterns
 
 ---
 
-_Verified: 2026-02-02T17:46:25Z_
+_Verified: 2026-02-02T18:55:17Z_
 _Verifier: Claude (gsd-verifier)_
-_Re-verification: Gap closure successful - 21/21 must-haves verified_
+_Re-verification: Gap closure successful - 24/24 must-haves verified (3 additional from plan 04-04)_
