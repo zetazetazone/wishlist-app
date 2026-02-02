@@ -42,7 +42,17 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 
 ### Active
 
+**v1.1 — My Wishlist Polish + Profile Editing**
+
+- [ ] User sees wishlist cards with horizontal star ratings (fix vertical bug)
+- [ ] User sees their profile picture in the My Wishlist header
+- [ ] User can mark one item as "favorite" per group (pinned + highlighted)
+- [ ] User can add a "Surprise Me" item (signals openness to any gift)
+- [ ] User can add a "Mystery Box" placeholder item (€25/€50/€100 tiers)
 - [ ] User can edit their profile (name, photo, birthday) after onboarding
+
+**Deferred to v1.2+**
+
 - [ ] User can configure notification preferences
 - [ ] User can see read receipts in chat
 - [ ] User can add reactions to messages
@@ -58,6 +68,7 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 - AI gift suggestions — scope creep, focus on coordination first
 - Location-based reminders — privacy concerns, requires continuous tracking
 - Multiple calendars per group — one birthday calendar per group is sufficient
+- Mystery Box purchasing — v1.1 adds placeholder only, actual purchasing deferred
 
 ## Context
 
@@ -104,5 +115,17 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 | 15-minute cron for timezone coverage | Matches 9:00 AM local time targeting | ✓ Good - accurate delivery |
 | Nullable TIMESTAMPTZ for read_at | Richer info than boolean, same query pattern | ✓ Good - future-proof |
 
+## Current Milestone: v1.1 My Wishlist Polish
+
+**Goal:** Improve the My Wishlist screen UX and enable profile editing post-onboarding.
+
+**Target features:**
+- Fix horizontal star rating display (bug)
+- Profile picture in header
+- Favorite item per group (pinned + highlighted to others)
+- "Surprise Me" option for users open to any gift
+- "Mystery Box" placeholder (€25/€50/€100 tiers for future monetization)
+- Profile editing (name, photo, birthday)
+
 ---
-*Last updated: 2026-02-02 after v1.0 milestone*
+*Last updated: 2026-02-02 after v1.1 milestone start*

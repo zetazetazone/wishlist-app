@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.0 SHIPPED + Gap Closure Complete
+**Current focus:** v1.1 My Wishlist Polish + Profile Editing
 
 ## Current Position
 
-Phase: v1.0 Complete + Gap Closure
-Plan: 04-04 (gap closure)
-Status: v1.0 milestone shipped + timezone integration gap closed
-Last activity: 2026-02-02 — Completed 04-04-PLAN.md (timezone hook integration)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements for v1.1
+Last activity: 2026-02-02 — Milestone v1.1 started
 
-Progress: [###########] 100% (v1.0 + gap closure)
+Progress: [░░░░░░░░░░] 0%
 
 ## Milestone History
 
@@ -65,6 +65,6 @@ All outcomes marked ✓ Good after milestone completion.
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed 04-04-PLAN.md (timezone hook integration gap closure)
+Stopped at: Starting v1.1 milestone
 Resume file: None
-Next: `/gsd:new-milestone` to start v1.1 (profile editing, preferences, chat enhancements)
+Next: Define requirements → create roadmap → `/gsd:plan-phase 6`
