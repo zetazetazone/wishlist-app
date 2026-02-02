@@ -28,11 +28,11 @@ This roadmap delivers coordinated birthday gifting through four phases: first es
   4. User can view other group members' profiles (name, photo, birthday)
   5. User receives push notifications when app sends them
   6. User can view notification inbox with past notifications
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: Notification infrastructure setup
-- [ ] 01-02: Onboarding flow and profile screens
+- [ ] 01-01-PLAN.md — Notification infrastructure (database, push token registration, Edge Function)
+- [ ] 01-02-PLAN.md — Onboarding flow, profile screens, notification inbox
 
 ### Phase 2: Celebrations & Coordination
 **Goal**: Users can coordinate gifts through secret chat rooms with an assigned Gift Leader per celebration
