@@ -16,34 +16,64 @@ export default function RootLayout() {
   useEffect(() => {
     // Check initial session only once
     if (!initialCheckDone) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
+      supabase.auth.getSession().then(async ({ data: { session } }) => {
         const inAuthGroup = segments[0] === 'auth';
+        const inOnboardingGroup = segments[0] === '(onboarding)';
 
         if (!session && !inAuthGroup) {
           // No session and not on auth pages, go to login
           router.replace('/auth/login');
-        } else if (session && !inAuthGroup) {
-          // Has session but not on app pages, go to wishlist
-          router.replace('/(app)/(tabs)/wishlist');
+        } else if (session) {
+          // Has session, check onboarding status
+          const { data: profile } = await supabase
+            .from('user_profiles')
+            .select('onboarding_completed')
+            .eq('id', session.user.id)
+            .single();
+
+          const isOnboarded = profile?.onboarding_completed ?? false;
+
+          if (!isOnboarded && !inOnboardingGroup) {
+            // Not onboarded, send to onboarding
+            router.replace('/(onboarding)');
+          } else if (isOnboarded && (inAuthGroup || inOnboardingGroup)) {
+            // Onboarded but still on auth/onboarding, go to app
+            router.replace('/(app)/(tabs)/wishlist');
+          }
         }
-        // Otherwise stay on current page (signup, login, or app)
+        // Otherwise stay on current page
 
         setInitialCheckDone(true);
       });
     }
 
     // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!initialCheckDone) return; // Wait for initial check
 
       const inAuthGroup = segments[0] === 'auth';
+      const inOnboardingGroup = segments[0] === '(onboarding)';
 
       if (!session && !inAuthGroup) {
         // User logged out and not in auth, redirect to login
         router.replace('/auth/login');
-      } else if (session && inAuthGroup) {
-        // User logged in but still on auth pages, redirect to wishlist
-        router.replace('/(app)/(tabs)/wishlist');
+      } else if (session) {
+        // Check onboarding status
+        const { data: profile } = await supabase
+          .from('user_profiles')
+          .select('onboarding_completed')
+          .eq('id', session.user.id)
+          .single();
+
+        const isOnboarded = profile?.onboarding_completed ?? false;
+
+        if (!isOnboarded && !inOnboardingGroup) {
+          // Not onboarded, send to onboarding
+          router.replace('/(onboarding)');
+        } else if (isOnboarded && (inAuthGroup || inOnboardingGroup)) {
+          // Onboarded but on auth/onboarding, go to app
+          router.replace('/(app)/(tabs)/wishlist');
+        }
       }
     });
 
