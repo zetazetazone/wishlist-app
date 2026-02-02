@@ -38,7 +38,7 @@ Plans:
 **Goal**: Users can coordinate gifts through secret chat rooms with an assigned Gift Leader per celebration
 **Depends on**: Phase 1 (requires birthday data for rotation, notifications for alerts)
 **Requirements**: LEAD-01, LEAD-02, LEAD-03, LEAD-04, CHAT-01, CHAT-02, CHAT-03
-**Research Required**: Yes - RLS policies for secret chat require validation (see research/SUMMARY.md Phase 4)
+**Research Required**: Yes - RLS policies for secret chat require validation (see 02-RESEARCH.md)
 **Success Criteria** (what must be TRUE):
   1. Gift Leader is automatically assigned based on birthday order (person after celebrant)
   2. Gift Leader sees clear UI indicating their responsibilities for each celebration
@@ -47,11 +47,11 @@ Plans:
   5. Users can send text messages in celebration chat rooms
   6. Users can link chat messages to specific wishlist items
   7. Contribution tracking shows who spent what on each gift
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: Celebrations and Gift Leader system
-- [ ] 02-02: Secret chat rooms with RLS
+- [ ] 02-01-PLAN.md — Celebrations database schema, Gift Leader assignment, celebration screens
+- [ ] 02-02-PLAN.md — Real-time secret chat, contribution tracking, integration
 
 ### Phase 3: Calendar
 **Goal**: Users can view birthdays in an in-app calendar and sync events to their device calendar
@@ -90,8 +90,8 @@ Note: Phase 3 (Calendar) could run in parallel with Phase 2 if needed.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/2 | Not started | - |
-| 2. Celebrations & Coordination | 0/2 | Not started | - |
+| 1. Foundation | 2/2 | Complete (awaiting verification) | - |
+| 2. Celebrations & Coordination | 0/2 | Planned | - |
 | 3. Calendar | 0/2 | Not started | - |
 | 4. Smart Reminders | 0/2 | Not started | - |
 
