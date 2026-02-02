@@ -10,15 +10,15 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 6 of 10 (Schema Foundation)
-Plan: Ready to plan
-Status: Roadmap created, ready for phase planning
-Last activity: 2026-02-02 — v1.1 roadmap created with 5 phases (6-10)
+Plan: 1 of 1 COMPLETE
+Status: Phase 6 complete
+Last activity: 2026-02-02 - Completed 06-01-PLAN.md (schema foundation)
 
-Progress: [████░░░░░░] 45% (10/22 total plans completed from v1.0)
+Progress: [█████░░░░░] 50% (11/22 total plans completed)
 
 ## Milestone History
 
-- **v1.0 MVP** — Shipped 2026-02-02 (5 phases, 10 plans + 1 gap closure)
+- **v1.0 MVP** - Shipped 2026-02-02 (5 phases, 10 plans + 1 gap closure)
   - Full birthday gift coordination with push notifications, secret chat, calendar, and smart reminders
   - Gap closure: Timezone hook integration (04-04)
 
@@ -38,6 +38,7 @@ Progress: [████░░░░░░] 45% (10/22 total plans completed from
 | 3 - Calendar | 2 | 14.5 min | 7.25 min |
 | 4 - Smart Reminders | 3 + 1 gap | 7 min | 1.75 min |
 | 5 - Integration Fixes | 1 | 2 min | 2 min |
+| 6 - Schema Foundation | 1 | ~5 min | 5 min |
 
 ## Accumulated Context
 
@@ -45,18 +46,32 @@ Progress: [████░░░░░░] 45% (10/22 total plans completed from
 
 Key decisions from v1.0 are now archived in PROJECT.md Key Decisions table.
 
-All outcomes marked ✓ Good after milestone completion.
+**v1.1 Decisions:**
+
+| ID | Phase | Decision | Outcome |
+|----|-------|----------|---------|
+| D-0601-1 | 6 | CHECK constraint over ENUM for item_type | Pending |
 
 ### v1.1 Roadmap Structure
 
 **5 phases (6-10):**
-- Phase 6: Schema Foundation (group_favorites table, item_type enum) — enables favorites and special items
-- Phase 7: Profile Editing (PROF-01, PROF-02, PROF-03, ONBD-01, ONBD-02) — isolated, low risk
-- Phase 8: Special Item Types (SPEC-01 through SPEC-05) — introduces item_type pattern
-- Phase 9: Favorite Marking (FAV-01, FAV-02, FAV-03) — depends on schema
-- Phase 10: Wishlist Display Polish (WISH-01, WISH-02) — UI fixes, final polish
+- Phase 6: Schema Foundation (group_favorites table, item_type) - COMPLETE
+- Phase 7: Profile Editing (PROF-01, PROF-02, PROF-03, ONBD-01, ONBD-02) - isolated, low risk
+- Phase 8: Special Item Types (SPEC-01 through SPEC-05) - introduces item_type pattern
+- Phase 9: Favorite Marking (FAV-01, FAV-02, FAV-03) - depends on schema
+- Phase 10: Wishlist Display Polish (WISH-01, WISH-02) - UI fixes, final polish
 
 **Coverage:** 15/15 requirements mapped (100%)
+
+### Phase 6 Deliverables
+
+Schema changes applied to remote Supabase:
+- `group_favorites` table with RLS policies
+- `wishlist_items.item_type` column (standard, surprise_me, mystery_box)
+- `wishlist_items.mystery_box_tier` column (25, 50, 100)
+- `wishlist_items.surprise_me_budget` column
+- Cross-column constraint: mystery_box_tier requires item_type='mystery_box'
+- TypeScript types updated in types/database.types.ts
 
 ### Pending Todos (Manual Setup)
 
@@ -65,17 +80,17 @@ All outcomes marked ✓ Good after milestone completion.
 2. Configure webhook following `docs/WEBHOOK-SETUP.md`
 3. Create `avatars` storage bucket (public)
 4. Enable pg_cron extension in Supabase Dashboard
-5. Apply all migrations: `npx supabase db push`
+5. ~~Apply all migrations: `npx supabase db push`~~ (Done - 06-01)
 6. Build development client: `npx eas build --profile development`
 
 ### Blockers/Concerns
 
-- Pre-existing TypeScript errors (type exports for Group, WishlistItem) — non-blocking
-- npm peer dependency workaround (--legacy-peer-deps) for React 19 — acceptable
+- Pre-existing TypeScript errors (type exports for Group, WishlistItem) - non-blocking
+- npm peer dependency workaround (--legacy-peer-deps) for React 19 - acceptable
 
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: v1.1 roadmap created
+Stopped at: Completed 06-01-PLAN.md
 Resume file: None
-Next: `/gsd:plan-phase 6` to start Schema Foundation
+Next: Plan Phase 7 (Profile Editing) or Phase 8 (Special Item Types)
