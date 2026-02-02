@@ -9,6 +9,7 @@ export interface User {
   full_name: string;
   avatar_url?: string;
   birthday?: string;
+  onboarding_completed?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -61,5 +62,24 @@ export interface Event {
   event_type: 'birthday' | 'custom';
   event_date: string;
   title: string;
+  created_at: string;
+}
+
+export interface DeviceToken {
+  id: string;
+  user_id: string;
+  expo_push_token: string;
+  device_type?: 'ios' | 'android' | 'web';
+  last_active?: string;
+  created_at: string;
+}
+
+export interface UserNotification {
+  id: string;
+  user_id: string;
+  title: string;
+  body: string;
+  data?: Record<string, any>;
+  is_read: boolean;
   created_at: string;
 }
