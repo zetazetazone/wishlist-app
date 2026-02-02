@@ -249,6 +249,139 @@ export interface Database {
           created_at?: string
         }
       }
+      celebrations: {
+        Row: {
+          id: string
+          group_id: string
+          celebrant_id: string
+          event_date: string
+          year: number
+          gift_leader_id: string | null
+          target_amount: number | null
+          status: 'upcoming' | 'active' | 'completed'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          group_id: string
+          celebrant_id: string
+          event_date: string
+          year: number
+          gift_leader_id?: string | null
+          target_amount?: number | null
+          status?: 'upcoming' | 'active' | 'completed'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          group_id?: string
+          celebrant_id?: string
+          event_date?: string
+          year?: number
+          gift_leader_id?: string | null
+          target_amount?: number | null
+          status?: 'upcoming' | 'active' | 'completed'
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      chat_rooms: {
+        Row: {
+          id: string
+          celebration_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          celebration_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          celebration_id?: string
+          created_at?: string
+        }
+      }
+      chat_messages: {
+        Row: {
+          id: string
+          chat_room_id: string
+          sender_id: string
+          content: string
+          linked_item_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          chat_room_id: string
+          sender_id: string
+          content: string
+          linked_item_id?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          chat_room_id?: string
+          sender_id?: string
+          content?: string
+          linked_item_id?: string | null
+          created_at?: string
+        }
+      }
+      celebration_contributions: {
+        Row: {
+          id: string
+          celebration_id: string
+          user_id: string
+          amount: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          celebration_id: string
+          user_id: string
+          amount: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          celebration_id?: string
+          user_id?: string
+          amount?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      gift_leader_history: {
+        Row: {
+          id: string
+          celebration_id: string
+          assigned_to: string | null
+          assigned_by: string | null
+          reason: 'auto_rotation' | 'manual_reassign' | 'member_left'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          celebration_id: string
+          assigned_to?: string | null
+          assigned_by?: string | null
+          reason: 'auto_rotation' | 'manual_reassign' | 'member_left'
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          celebration_id?: string
+          assigned_to?: string | null
+          assigned_by?: string | null
+          reason?: 'auto_rotation' | 'manual_reassign' | 'member_left'
+          created_at?: string
+        }
+      }
     }
   }
 }
