@@ -90,10 +90,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CHAT-01 | Phase 2: Celebrations & Coordination | Pending |
 | CHAT-02 | Phase 2: Celebrations & Coordination | Pending |
 | CHAT-03 | Phase 2: Celebrations & Coordination | Pending |
-| CALR-01 | Phase 3: Calendar | Pending |
-| CALR-02 | Phase 3: Calendar | Pending |
-| CALR-03 | Phase 3: Calendar | Pending |
-| CALR-04 | Phase 3: Calendar | Pending |
+| CALR-01 | Phase 3: Calendar | Complete |
+| CALR-02 | Phase 3: Calendar | Complete |
+| CALR-03 | Phase 3: Calendar | Complete |
+| CALR-04 | Phase 3: Calendar | Complete |
 | LEAD-01 | Phase 2: Celebrations & Coordination | Pending |
 | LEAD-02 | Phase 2: Celebrations & Coordination | Pending |
 | LEAD-03 | Phase 2: Celebrations & Coordination | Pending |
