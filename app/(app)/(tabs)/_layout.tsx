@@ -40,6 +40,16 @@ export default function TabsLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="notifications"
+        options={{
+          title: 'Notifications',
+          headerShown: false, // Notifications screen handles its own header
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="bell" size={size} color={color} />
+          ),
+        }}
+      />
       {/* Hide backup/alternate versions */}
       <Tabs.Screen
         name="wishlist-simple"
