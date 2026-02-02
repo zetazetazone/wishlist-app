@@ -76,11 +76,14 @@ Plans:
   1. User receives push notification on the day of each group member's birthday
   2. User receives smart reminder sequence (4 weeks, 2 weeks, 1 week before birthday)
   3. Gift Leader receives notification immediately when assigned to a celebration
-**Plans**: 2 plans
+  4. Same-day birthdays within a group are grouped into single notification
+  5. New group members receive catch-up reminders for missed reminder types
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Birthday reminder scheduling (pg_cron job, timezone support, muting)
-- [ ] 04-02-PLAN.md — Gift Leader assignment notifications (trigger, rich push content)
+- [x] 04-01-PLAN.md — Birthday reminder scheduling (pg_cron job, timezone support, muting)
+- [x] 04-02-PLAN.md — Gift Leader assignment notifications (trigger, rich push content)
+- [ ] 04-03-PLAN.md — Gap closure: same-day batching and new member catch-up
 
 ## Progress
 
@@ -90,10 +93,10 @@ Note: Phase 3 (Calendar) could run in parallel with Phase 2 if needed.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 2/2 | ✅ Complete | 2026-02-02 |
-| 2. Celebrations & Coordination | 2/2 | ✅ Complete | 2026-02-02 |
-| 3. Calendar | 2/2 | ✅ Complete | 2026-02-02 |
-| 4. Smart Reminders | 0/2 | Not started | - |
+| 1. Foundation | 2/2 | Complete | 2026-02-02 |
+| 2. Celebrations & Coordination | 2/2 | Complete | 2026-02-02 |
+| 3. Calendar | 2/2 | Complete | 2026-02-02 |
+| 4. Smart Reminders | 2/3 | Gap closure pending | - |
 
 ---
 *Roadmap created: 2026-02-02*
