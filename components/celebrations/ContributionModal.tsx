@@ -17,7 +17,11 @@ import {
   ScrollView,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
+import {
+  BottomSheetModal,
+  BottomSheetBackdrop,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet';
 import {
   getContributions,
   addContribution,
@@ -52,7 +56,7 @@ export function ContributionModal({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
   const snapPoints = ['70%'];
 
   // Load contributions when modal opens
@@ -71,9 +75,9 @@ export function ContributionModal({
   // Handle sheet open/close
   useEffect(() => {
     if (isOpen) {
-      bottomSheetRef.current?.expand();
+      bottomSheetRef.current?.present();
     } else {
-      bottomSheetRef.current?.close();
+      bottomSheetRef.current?.dismiss();
     }
   }, [isOpen]);
 
@@ -151,9 +155,8 @@ export function ContributionModal({
   const othersTotal = otherContributions.reduce((sum, c) => sum + c.amount, 0);
 
   return (
-    <BottomSheet
+    <BottomSheetModal
       ref={bottomSheetRef}
-      index={isOpen ? 0 : -1}
       snapPoints={snapPoints}
       onChange={handleSheetChanges}
       backdropComponent={renderBackdrop}
@@ -277,7 +280,7 @@ export function ContributionModal({
           </Pressable>
         </KeyboardAvoidingView>
       </BottomSheetView>
-    </BottomSheet>
+    </BottomSheetModal>
   );
 }
 
