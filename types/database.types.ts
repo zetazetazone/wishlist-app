@@ -103,6 +103,9 @@ export interface Database {
           price: number | null
           priority: number
           status: 'active' | 'claimed' | 'purchased' | 'received' | 'archived'
+          item_type: 'standard' | 'surprise_me' | 'mystery_box'
+          mystery_box_tier: 25 | 50 | 100 | null
+          surprise_me_budget: number | null
           created_at: string
           updated_at: string
         }
@@ -116,6 +119,9 @@ export interface Database {
           price?: number | null
           priority?: number
           status?: 'active' | 'claimed' | 'purchased' | 'received' | 'archived'
+          item_type?: 'standard' | 'surprise_me' | 'mystery_box'
+          mystery_box_tier?: 25 | 50 | 100 | null
+          surprise_me_budget?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -129,6 +135,9 @@ export interface Database {
           price?: number | null
           priority?: number
           status?: 'active' | 'claimed' | 'purchased' | 'received' | 'archived'
+          item_type?: 'standard' | 'surprise_me' | 'mystery_box'
+          mystery_box_tier?: 25 | 50 | 100 | null
+          surprise_me_budget?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -380,6 +389,32 @@ export interface Database {
           assigned_by?: string | null
           reason?: 'auto_rotation' | 'manual_reassign' | 'member_left'
           created_at?: string
+        }
+      }
+      group_favorites: {
+        Row: {
+          id: string
+          user_id: string
+          group_id: string
+          item_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          group_id: string
+          item_id: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          group_id?: string
+          item_id?: string
+          created_at?: string
+          updated_at?: string
         }
       }
     }
