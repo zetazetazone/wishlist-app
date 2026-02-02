@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 4 of 4 (Smart Reminders)
-Plan: 2 of 2 in current phase
-Status: Phase 4 complete - All phases complete!
-Last activity: 2026-02-02 - Completed 04-02-PLAN.md (Gift Leader Notifications)
+Plan: 3 of 3 in current phase (gap closure)
+Status: Phase 4 complete - All phases and gaps closed!
+Last activity: 2026-02-02 - Completed 04-03-PLAN.md (Gap Closure: Batching + Catch-up)
 
 Progress: [##########] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: 5.6 minutes
-- Total execution time: 0.75 hours
+- Total plans completed: 9
+- Average duration: 5.1 minutes
+- Total execution time: 0.78 hours
 
 **By Phase:**
 
@@ -30,10 +30,10 @@ Progress: [##########] 100%
 | 1 - Foundation | 2 | 13 min | 6.5 min |
 | 2 - Celebrations | 2 | 13 min | 6.5 min |
 | 3 - Calendar | 2 | 14.5 min | 7.25 min |
-| 4 - Smart Reminders | 2 | 4 min | 2 min |
+| 4 - Smart Reminders | 3 | 6 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (7 min), 03-01 (8 min), 03-02 (6.5 min), 04-01 (3 min), 04-02 (1 min)
+- Last 5 plans: 03-01 (8 min), 03-02 (6.5 min), 04-01 (3 min), 04-02 (1 min), 04-03 (2 min)
 - Trend: Consistent delivery, fast execution
 
 *Updated after each plan completion*
@@ -67,6 +67,9 @@ Recent decisions affecting current work:
 | reminder-004 | 04-01 | Timezone save is non-blocking | Failure shouldn't prevent push registration |
 | reminders-003 | 04-02 | Use IS NOT DISTINCT FROM for null-safe gift_leader_id comparison | Handles initial NULL correctly in trigger |
 | reminders-004 | 04-02 | Include avatar_url in notification payload for rich push content | Celebrant avatar visible in push notifications |
+| batching-001 | 04-03 | Batch format: 1=standard, 2="X and Y", 3+="N birthdays in Group" | Clear user-friendly batched notifications |
+| catchup-001 | 04-03 | Catch-up only within 15-min join window | Prevents duplicate catch-ups on cron reruns |
+| catchup-002 | 04-03 | New members still get normal reminders after catch-up | Complete reminder sequence maintained |
 
 ### Pending Todos
 
@@ -98,6 +101,11 @@ Recent decisions affecting current work:
 3. Verify trigger: `SELECT tgname FROM pg_trigger WHERE tgname = 'on_gift_leader_changed';`
 4. Redeploy Edge Function: `npx supabase functions deploy push`
 
+**From 04-03 (Gap Closure: Batching + Catch-up):**
+1. Apply migration: `npx supabase db push` or run SQL manually
+2. Verify constraint: `SELECT conname, pg_get_constraintdef(oid) FROM pg_constraint WHERE conname = 'reminder_sent_reminder_type_check';`
+3. Test function: `SELECT * FROM public.process_birthday_reminders();`
+
 ### Blockers/Concerns
 
 - Pre-existing TypeScript errors (unrelated to calendar) - type exports missing for Group, WishlistItem
@@ -107,6 +115,6 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed Phase 4 (Smart Reminders) - All phases complete!
+Stopped at: Completed 04-03-PLAN.md (Gap Closure) - All phases and verification gaps closed!
 Resume file: None
-Next: All 4 phases complete. Project ready for deployment and testing.
+Next: All 4 phases complete, all verification gaps closed. Project ready for deployment and testing.
