@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** Phase 4 - Smart Reminders (COMPLETE)
+**Current focus:** Phase 5 - Integration Fixes (IN PROGRESS)
 
 ## Current Position
 
-Phase: 4 of 4 (Smart Reminders)
-Plan: 3 of 3 in current phase (gap closure)
-Status: Phase 4 complete - All phases and gaps closed!
-Last activity: 2026-02-02 - Completed 04-03-PLAN.md (Gap Closure: Batching + Catch-up)
+Phase: 5 of 5 (Integration Fixes)
+Plan: 1 of 1 in current phase
+Status: Phase 5 complete - Schema fix and webhook documentation done
+Last activity: 2026-02-02 - Completed 05-01-PLAN.md (Schema Fix + Webhook Docs)
 
-Progress: [##########] 100%
+Progress: [###########] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 9
-- Average duration: 5.1 minutes
-- Total execution time: 0.78 hours
+- Total plans completed: 10
+- Average duration: 4.7 minutes
+- Total execution time: 0.82 hours
 
 **By Phase:**
 
@@ -31,9 +31,10 @@ Progress: [##########] 100%
 | 2 - Celebrations | 2 | 13 min | 6.5 min |
 | 3 - Calendar | 2 | 14.5 min | 7.25 min |
 | 4 - Smart Reminders | 3 | 6 min | 2 min |
+| 5 - Integration Fixes | 1 | 2 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (8 min), 03-02 (6.5 min), 04-01 (3 min), 04-02 (1 min), 04-03 (2 min)
+- Last 5 plans: 03-02 (6.5 min), 04-01 (3 min), 04-02 (1 min), 04-03 (2 min), 05-01 (2 min)
 - Trend: Consistent delivery, fast execution
 
 *Updated after each plan completion*
@@ -70,12 +71,13 @@ Recent decisions affecting current work:
 | batching-001 | 04-03 | Batch format: 1=standard, 2="X and Y", 3+="N birthdays in Group" | Clear user-friendly batched notifications |
 | catchup-001 | 04-03 | Catch-up only within 15-min join window | Prevents duplicate catch-ups on cron reruns |
 | catchup-002 | 04-03 | New members still get normal reminders after catch-up | Complete reminder sequence maintained |
+| schema-001 | 05-01 | Use nullable TIMESTAMPTZ for read_at instead of is_read BOOLEAN | Richer read state info, same query pattern |
 
 ### Pending Todos
 
 **From 01-01 (Notification Infrastructure):**
 1. Deploy Edge Function: `npx supabase functions deploy push`
-2. Create database webhook in Supabase Dashboard for user_notifications INSERT
+2. Create database webhook in Supabase Dashboard - **see docs/WEBHOOK-SETUP.md**
 3. Build development client for testing push notifications: `npx eas build --profile development`
 4. (Optional) Replace placeholder EAS project ID in app.json with actual ID
 
@@ -106,6 +108,11 @@ Recent decisions affecting current work:
 2. Verify constraint: `SELECT conname, pg_get_constraintdef(oid) FROM pg_constraint WHERE conname = 'reminder_sent_reminder_type_check';`
 3. Test function: `SELECT * FROM public.process_birthday_reminders();`
 
+**From 05-01 (Integration Fixes):**
+1. Apply migration: `npx supabase db push` or run SQL manually
+2. Verify column: `SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'user_notifications' AND column_name = 'read_at';`
+3. Configure webhook following docs/WEBHOOK-SETUP.md
+
 ### Blockers/Concerns
 
 - Pre-existing TypeScript errors (unrelated to calendar) - type exports missing for Group, WishlistItem
@@ -115,6 +122,6 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed 04-03-PLAN.md (Gap Closure) - All phases and verification gaps closed!
+Stopped at: Completed 05-01-PLAN.md (Integration Fixes) - All phases complete!
 Resume file: None
-Next: All 4 phases complete, all verification gaps closed. Project ready for deployment and testing.
+Next: All 5 phases complete. Project ready for deployment and testing.
