@@ -13,7 +13,7 @@ This roadmap delivers coordinated birthday gifting through four phases: first es
 - [x] **Phase 1: Foundation** - Notification infrastructure + onboarding with birthday/profile collection
 - [x] **Phase 2: Celebrations & Coordination** - Gift Leader system + secret chat rooms
 - [x] **Phase 3: Calendar** - In-app calendar view + device calendar sync
-- [ ] **Phase 4: Smart Reminders** - Birthday reminder sequences + Gift Leader notifications
+- [x] **Phase 4: Smart Reminders** - Birthday reminder sequences + Gift Leader notifications
 
 ## Phase Details
 
@@ -83,7 +83,7 @@ Plans:
 Plans:
 - [x] 04-01-PLAN.md — Birthday reminder scheduling (pg_cron job, timezone support, muting)
 - [x] 04-02-PLAN.md — Gift Leader assignment notifications (trigger, rich push content)
-- [ ] 04-03-PLAN.md — Gap closure: same-day batching and new member catch-up
+- [x] 04-03-PLAN.md — Gap closure: same-day batching and new member catch-up
 
 ## Progress
 
@@ -96,7 +96,7 @@ Note: Phase 3 (Calendar) could run in parallel with Phase 2 if needed.
 | 1. Foundation | 2/2 | Complete | 2026-02-02 |
 | 2. Celebrations & Coordination | 2/2 | Complete | 2026-02-02 |
 | 3. Calendar | 2/2 | Complete | 2026-02-02 |
-| 4. Smart Reminders | 2/3 | Gap closure pending | - |
+| 4. Smart Reminders | 3/3 | Complete | 2026-02-02 |
 
 ---
 *Roadmap created: 2026-02-02*
