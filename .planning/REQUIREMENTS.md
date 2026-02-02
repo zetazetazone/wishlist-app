@@ -28,14 +28,14 @@ Requirements for My Wishlist Polish + Profile Editing milestone. Each maps to ro
 
 ### Profile Editing
 
-- [ ] **PROF-01**: User can edit their display name after onboarding
-- [ ] **PROF-02**: User can change their profile photo after onboarding
-- [ ] **PROF-03**: User cannot edit birthday after onboarding (locked field)
+- [x] **PROF-01**: User can edit their display name after onboarding
+- [x] **PROF-02**: User can change their profile photo after onboarding
+- [x] **PROF-03**: User cannot edit birthday after onboarding (locked field)
 
 ### Onboarding Enhancement
 
-- [ ] **ONBD-01**: User sees birthday confirmation step during onboarding
-- [ ] **ONBD-02**: Confirmation explains birthday cannot be changed later
+- [x] **ONBD-01**: User sees birthday confirmation step during onboarding
+- [x] **ONBD-02**: Confirmation explains birthday cannot be changed later
 
 ## Future Requirements
 
@@ -88,11 +88,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SPEC-03 | Phase 8 | Pending |
 | SPEC-04 | Phase 8 | Pending |
 | SPEC-05 | Phase 8 | Pending |
-| PROF-01 | Phase 7 | Pending |
-| PROF-02 | Phase 7 | Pending |
-| PROF-03 | Phase 7 | Pending |
-| ONBD-01 | Phase 7 | Pending |
-| ONBD-02 | Phase 7 | Pending |
+| PROF-01 | Phase 7 | Complete |
+| PROF-02 | Phase 7 | Complete |
+| PROF-03 | Phase 7 | Complete |
+| ONBD-01 | Phase 7 | Complete |
+| ONBD-02 | Phase 7 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 15 total
@@ -101,4 +101,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-02*
-*Last updated: 2026-02-02 after roadmap creation*
+*Last updated: 2026-02-03 after Phase 7 completion*

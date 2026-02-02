@@ -71,7 +71,7 @@ Plans:
 Plans:
 - [x] 06-01-PLAN.md — Schema migration for group_favorites table and item_type column
 
-#### Phase 7: Profile Editing
+#### Phase 7: Profile Editing ✓
 **Goal**: Users can edit their profile information post-onboarding
 **Depends on**: Phase 6
 **Requirements**: PROF-01, PROF-02, PROF-03, ONBD-01, ONBD-02
@@ -81,10 +81,11 @@ Plans:
   3. User sees birthday field as locked/read-only in profile settings
   4. User sees birthday confirmation step during onboarding
   5. Onboarding confirmation clearly explains birthday cannot be changed later
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 07-01: TBD
+- [x] 07-01: Profile settings screen with name/photo editing and locked birthday
+- [x] 07-02: Birthday confirmation step during onboarding
 
 #### Phase 8: Special Item Types
 **Goal**: Users can add special wishlist items (Surprise Me, Mystery Box)
@@ -142,7 +143,7 @@ Phases execute in numeric order: 6 → 7 → 8 → 9 → 10
 | 4. Smart Reminders | v1.0 | 4/4 | Complete | 2026-02-02 |
 | 5. Integration Fixes | v1.0 | 1/1 | Complete | 2026-02-02 |
 | 6. Schema Foundation | v1.1 | 1/1 | Complete | 2026-02-02 |
-| 7. Profile Editing | v1.1 | 0/? | Not started | - |
+| 7. Profile Editing | v1.1 | 2/2 | Complete | 2026-02-03 |
 | 8. Special Item Types | v1.1 | 0/? | Not started | - |
 | 9. Favorite Marking | v1.1 | 0/? | Not started | - |
 | 10. Wishlist Display Polish | v1.1 | 0/? | Not started | - |
