@@ -1,6 +1,11 @@
 import { Stack } from 'expo-router';
+import { usePushNotifications } from '../../hooks/usePushNotifications';
 
 export default function AppLayout() {
+  // Initialize push notifications and timezone detection
+  // Runs on mount for authenticated users - saves timezone to users.timezone
+  usePushNotifications();
+
   return (
     <Stack
       screenOptions={{
