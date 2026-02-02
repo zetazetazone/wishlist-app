@@ -14,7 +14,7 @@ import {
   Spinner,
 } from '@gluestack-ui/themed';
 import { supabase } from '@/lib/supabase';
-import { Database } from '@/database.types';
+import { Database } from '@/types/database.types';
 
 type UserNotification = Database['public']['Tables']['user_notifications']['Row'];
 
@@ -125,7 +125,7 @@ export default function NotificationsScreen() {
     // For now, just mark as read
   };
 
-  const renderNotification = ({ item }: { item: NotificationWithDetails }) => {
+  const renderNotification = ({ item }: any) => {
     const isUnread = !item.read_at;
 
     return (
@@ -204,7 +204,6 @@ export default function NotificationsScreen() {
             data={notifications}
             renderItem={renderNotification}
             estimatedItemSize={100}
-            keyExtractor={(item) => item.id}
           />
         )}
       </View>

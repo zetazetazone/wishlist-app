@@ -17,7 +17,7 @@ import {
 } from '@gluestack-ui/themed';
 import { supabase } from '@/lib/supabase';
 import { getAvatarUrl } from '@/lib/storage';
-import { Database } from '@/database.types';
+import { Database } from '@/types/database.types';
 
 type UserProfile = Database['public']['Tables']['user_profiles']['Row'];
 
