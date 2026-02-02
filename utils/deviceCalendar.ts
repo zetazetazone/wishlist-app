@@ -6,20 +6,15 @@
 import * as Calendar from 'expo-calendar';
 import { Platform } from 'react-native';
 
+// Re-export the GroupBirthday type from lib/birthdays for consistency
+export type { GroupBirthday } from '../lib/birthdays';
+import type { GroupBirthday } from '../lib/birthdays';
+
 // Result type for sync operations
 export interface SyncResult {
   success: boolean;
   eventId?: string;
   error?: string;
-}
-
-// Birthday data format from the app
-export interface GroupBirthday {
-  userId: string;
-  userName: string;
-  birthday: Date;
-  groupId: string;
-  groupName: string;
 }
 
 // Calendar configuration
@@ -135,13 +130,16 @@ export async function getOrCreateWishlistCalendar(): Promise<string> {
 /**
  * Calculate the next occurrence of a birthday from today
  */
-function getNextBirthdayOccurrence(birthday: Date): Date {
+function getNextBirthdayOccurrence(birthday: Date | string): Date {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  // Parse string dates
+  const birthdayDate = typeof birthday === 'string' ? new Date(birthday) : birthday;
+
   const currentYear = today.getFullYear();
-  const birthdayMonth = birthday.getMonth();
-  const birthdayDay = birthday.getDate();
+  const birthdayMonth = birthdayDate.getMonth();
+  const birthdayDay = birthdayDate.getDate();
 
   // Handle Feb 29 (leap year birthday)
   let nextBirthday: Date;
@@ -183,7 +181,7 @@ function getNextBirthdayOccurrence(birthday: Date): Date {
  */
 export async function syncBirthdayEvent(
   userName: string,
-  birthday: Date,
+  birthday: Date | string,
   groupName: string
 ): Promise<SyncResult> {
   try {

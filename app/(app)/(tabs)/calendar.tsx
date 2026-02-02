@@ -15,6 +15,7 @@ import { getGroupBirthdays, filterBirthdaysForDate, type GroupBirthday } from '.
 import { getDaysUntilBirthday, filterUpcoming, sortByUpcoming } from '../../../utils/countdown';
 import BirthdayCalendar from '../../../components/calendar/BirthdayCalendar';
 import CountdownCard from '../../../components/calendar/CountdownCard';
+import { CalendarSyncIconButton } from '../../../components/calendar/CalendarSyncButton';
 
 // Planning window in days
 const PLANNING_WINDOW_DAYS = 30;
@@ -149,14 +150,24 @@ export default function CalendarScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Birthday Calendar</Text>
-        {upcomingBirthdays.length > 0 && (
-          <View style={styles.headerBadge}>
-            <MaterialCommunityIcons name="cake-variant" size={16} color="#8B1538" />
-            <Text style={styles.headerBadgeText}>
-              {upcomingBirthdays.length} upcoming
-            </Text>
-          </View>
-        )}
+        <View style={styles.headerRight}>
+          {upcomingBirthdays.length > 0 && (
+            <View style={styles.headerBadge}>
+              <MaterialCommunityIcons name="cake-variant" size={16} color="#8B1538" />
+              <Text style={styles.headerBadgeText}>
+                {upcomingBirthdays.length} upcoming
+              </Text>
+            </View>
+          )}
+          {birthdays.length > 0 && (
+            <CalendarSyncIconButton
+              birthdays={birthdays}
+              onSyncComplete={(results) => {
+                console.log('Calendar sync complete:', results);
+              }}
+            />
+          )}
+        </View>
       </View>
 
       <ScrollView
@@ -267,6 +278,11 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '700',
     color: '#1f2937',
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   headerBadge: {
     flexDirection: 'row',
