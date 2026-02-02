@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.1 My Wishlist Polish + Profile Editing
+**Current focus:** v1.1 My Wishlist Polish + Profile Editing - Phase 6 Schema Foundation
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements for v1.1
-Last activity: 2026-02-02 — Milestone v1.1 started
+Phase: 6 of 10 (Schema Foundation)
+Plan: Ready to plan
+Status: Roadmap created, ready for phase planning
+Last activity: 2026-02-02 — v1.1 roadmap created with 5 phases (6-10)
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [████░░░░░░] 45% (10/22 total plans completed from v1.0)
 
 ## Milestone History
 
@@ -47,6 +47,17 @@ Key decisions from v1.0 are now archived in PROJECT.md Key Decisions table.
 
 All outcomes marked ✓ Good after milestone completion.
 
+### v1.1 Roadmap Structure
+
+**5 phases (6-10):**
+- Phase 6: Schema Foundation (group_favorites table, item_type enum) — enables favorites and special items
+- Phase 7: Profile Editing (PROF-01, PROF-02, PROF-03, ONBD-01, ONBD-02) — isolated, low risk
+- Phase 8: Special Item Types (SPEC-01 through SPEC-05) — introduces item_type pattern
+- Phase 9: Favorite Marking (FAV-01, FAV-02, FAV-03) — depends on schema
+- Phase 10: Wishlist Display Polish (WISH-01, WISH-02) — UI fixes, final polish
+
+**Coverage:** 15/15 requirements mapped (100%)
+
 ### Pending Todos (Manual Setup)
 
 **Before full E2E testing:**
@@ -65,6 +76,6 @@ All outcomes marked ✓ Good after milestone completion.
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Starting v1.1 milestone
+Stopped at: v1.1 roadmap created
 Resume file: None
-Next: Define requirements → create roadmap → `/gsd:plan-phase 6`
+Next: `/gsd:plan-phase 6` to start Schema Foundation
