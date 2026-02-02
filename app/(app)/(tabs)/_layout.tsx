@@ -41,6 +41,16 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="celebrations"
+        options={{
+          title: 'Celebrations',
+          headerShown: false, // Celebrations has its own custom header
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="party-popper" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="notifications"
         options={{
           title: 'Notifications',
