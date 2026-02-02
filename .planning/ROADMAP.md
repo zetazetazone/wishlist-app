@@ -63,13 +63,13 @@ Plans:
 **Requirements**: None (foundation for FAV-*, SPEC-*)
 **Success Criteria** (what must be TRUE):
   1. Database supports group_favorites table with proper RLS policies
-  2. Database supports item_type enum (standard, surprise_me, mystery_box)
+  2. Database supports item_type (standard, surprise_me, mystery_box) via CHECK constraint
   3. Schema migrations apply cleanly without breaking existing data
   4. All RLS policies enforce correct access control for new features
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 06-01: TBD
+- [ ] 06-01-PLAN.md — Schema migration for group_favorites table and item_type column
 
 #### Phase 7: Profile Editing
 **Goal**: Users can edit their profile information post-onboarding
@@ -141,7 +141,7 @@ Phases execute in numeric order: 6 → 7 → 8 → 9 → 10
 | 3. Calendar | v1.0 | 2/2 | Complete | 2026-02-02 |
 | 4. Smart Reminders | v1.0 | 4/4 | Complete | 2026-02-02 |
 | 5. Integration Fixes | v1.0 | 1/1 | Complete | 2026-02-02 |
-| 6. Schema Foundation | v1.1 | 0/? | Not started | - |
+| 6. Schema Foundation | v1.1 | 0/1 | Planned | - |
 | 7. Profile Editing | v1.1 | 0/? | Not started | - |
 | 8. Special Item Types | v1.1 | 0/? | Not started | - |
 | 9. Favorite Marking | v1.1 | 0/? | Not started | - |
