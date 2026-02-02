@@ -34,7 +34,8 @@ export function ChatList({ chatRoomId, onLinkedItemPress }: ChatListProps) {
 
   // Track message IDs to prevent duplicates from race conditions
   const messageIdsRef = useRef<Set<string>>(new Set());
-  const listRef = useRef<FlashList<ChatMessage> | null>(null);
+  // Use any for FlashList ref to avoid FlashList v2 TypeScript type issues
+  const listRef = useRef<any>(null);
 
   // Get current user ID
   useEffect(() => {
