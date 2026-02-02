@@ -23,6 +23,20 @@ export default function HomeScreen() {
             paddingHorizontal: spacing.lg,
           }}
         >
+          {/* Settings Gear Icon */}
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              right: spacing.lg,
+              top: 60,
+              padding: spacing.sm,
+              zIndex: 10,
+            }}
+            onPress={() => router.push('/settings/profile' as any)}
+          >
+            <MaterialCommunityIcons name="cog" size={24} color={colors.white} />
+          </TouchableOpacity>
+
           <MotiView
             from={{ opacity: 0, translateY: -20 }}
             animate={{ opacity: 1, translateY: 0 }}
