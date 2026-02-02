@@ -14,7 +14,7 @@ This roadmap delivers coordinated birthday gifting through four phases: first es
 - [x] **Phase 2: Celebrations & Coordination** - Gift Leader system + secret chat rooms
 - [x] **Phase 3: Calendar** - In-app calendar view + device calendar sync
 - [x] **Phase 4: Smart Reminders** - Birthday reminder sequences + Gift Leader notifications
-- [ ] **Phase 5: Integration Fixes** - Schema migration + webhook documentation (gap closure)
+- [x] **Phase 5: Integration Fixes** - Schema migration + webhook documentation (gap closure)
 
 ## Phase Details
 
@@ -97,7 +97,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 05-01-PLAN.md — Schema migration (is_read → read_at) + webhook documentation
+- [x] 05-01-PLAN.md — Schema migration (is_read → read_at) + webhook documentation
 
 ## Progress
 
@@ -111,7 +111,7 @@ Note: Phase 5 is gap closure from milestone audit.
 | 2. Celebrations & Coordination | 2/2 | Complete | 2026-02-02 |
 | 3. Calendar | 2/2 | Complete | 2026-02-02 |
 | 4. Smart Reminders | 3/3 | Complete | 2026-02-02 |
-| 5. Integration Fixes | 0/1 | Pending | — |
+| 5. Integration Fixes | 1/1 | Complete | 2026-02-02 |
 
 ---
 *Roadmap created: 2026-02-02*
