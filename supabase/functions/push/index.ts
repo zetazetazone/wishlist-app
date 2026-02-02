@@ -31,6 +31,10 @@ interface ExpoPushMessage {
   body: string;
   data?: Record<string, any>;
   channelId?: string;
+  // Rich content support for images (e.g., celebrant avatar)
+  richContent?: {
+    image?: string;
+  };
 }
 
 interface ExpoPushResponse {
@@ -97,6 +101,11 @@ serve(async (req) => {
       );
     }
 
+    // Log warning if avatar_url is HTTP (should be HTTPS for Expo Push)
+    if (data?.avatar_url && !data.avatar_url.startsWith('https://')) {
+      console.warn('avatar_url is not HTTPS, image may not display:', data.avatar_url);
+    }
+
     // Prepare push messages for all user devices
     const messages: ExpoPushMessage[] = tokens.map((token: DeviceToken) => ({
       to: token.expo_push_token,
@@ -106,6 +115,12 @@ serve(async (req) => {
       data: data || {},
       // Use the Android notification channel we created
       channelId: 'default',
+      // Conditionally add rich content for avatar image
+      ...(data?.avatar_url && {
+        richContent: {
+          image: data.avatar_url
+        }
+      })
     }));
 
     console.log('Sending push notifications to:', messages.length, 'devices');
