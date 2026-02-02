@@ -76,11 +76,11 @@ Plans:
   1. User receives push notification on the day of each group member's birthday
   2. User receives smart reminder sequence (4 weeks, 2 weeks, 1 week before birthday)
   3. Gift Leader receives notification immediately when assigned to a celebration
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: Birthday reminder cron jobs
-- [ ] 04-02: Gift Leader assignment notifications
+- [ ] 04-01-PLAN.md — Birthday reminder scheduling (pg_cron job, timezone support, muting)
+- [ ] 04-02-PLAN.md — Gift Leader assignment notifications (trigger, rich push content)
 
 ## Progress
 
