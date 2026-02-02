@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.1 My Wishlist Polish + Profile Editing - Phase 6 Schema Foundation
+**Current focus:** v1.1 My Wishlist Polish + Profile Editing - Phase 7 Complete
 
 ## Current Position
 
 Phase: 7 of 10 (Profile Editing)
 Plan: 2 of 2 COMPLETE
-Status: Phase 7 in progress
-Last activity: 2026-02-02 - Completed 07-02-PLAN.md (birthday confirmation step)
+Status: Phase 7 complete
+Last activity: 2026-02-02 - Completed 07-01-PLAN.md (profile settings screen)
 
-Progress: [██████░░░░] 55% (12/22 total plans completed)
+Progress: [██████░░░░] 60% (13/22 total plans completed)
 
 ## Milestone History
 
@@ -51,12 +51,14 @@ Key decisions from v1.0 are now archived in PROJECT.md Key Decisions table.
 | ID | Phase | Decision | Outcome |
 |----|-------|----------|---------|
 | D-0601-1 | 6 | CHECK constraint over ENUM for item_type | Pending |
+| D-0701-1 | 7 | Folder-based routing for settings (allows expansion) | Applied |
+| D-0701-2 | 7 | Locked field pattern: gray Box + lock icon + helper | Established |
 
 ### v1.1 Roadmap Structure
 
 **5 phases (6-10):**
 - Phase 6: Schema Foundation (group_favorites table, item_type) - COMPLETE
-- Phase 7: Profile Editing (PROF-01, PROF-02, PROF-03, ONBD-01, ONBD-02) - isolated, low risk
+- Phase 7: Profile Editing (PROF-01, PROF-02, PROF-03, ONBD-01, ONBD-02) - COMPLETE
 - Phase 8: Special Item Types (SPEC-01 through SPEC-05) - introduces item_type pattern
 - Phase 9: Favorite Marking (FAV-01, FAV-02, FAV-03) - depends on schema
 - Phase 10: Wishlist Display Polish (WISH-01, WISH-02) - UI fixes, final polish
@@ -88,9 +90,18 @@ Schema changes applied to remote Supabase:
 - Pre-existing TypeScript errors (type exports for Group, WishlistItem) - non-blocking
 - npm peer dependency workaround (--legacy-peer-deps) for React 19 - acceptable
 
+### Phase 7 Deliverables
+
+Profile editing features complete:
+- Settings stack navigator at app/(app)/settings/
+- Profile editing screen with name/avatar editing
+- Locked birthday field with visual distinction pattern
+- Gear icon entry point on Home screen
+- Birthday confirmation step during onboarding (07-02)
+
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed 07-02-PLAN.md
+Stopped at: Completed 07-01-PLAN.md, Phase 7 complete
 Resume file: None
-Next: Execute 07-01-PLAN.md (Profile Editing UI) or Phase 8 (Special Item Types)
+Next: Phase 8 (Special Item Types) - SPEC-01 through SPEC-05
