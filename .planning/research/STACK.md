@@ -1,454 +1,173 @@
-# Stack Research
-
-**Research Date:** 2026-02-02
-**Focus:** Adding notifications, chat, and calendar to Expo + Supabase app
-**Overall Confidence:** HIGH
-
-## Executive Summary
-
-This research identifies the specific libraries needed to add push notifications, in-app notifications, real-time chat, and calendar integration to the existing Expo 54 + Supabase wishlist app. The existing stack (React 19.1, React Native 0.81.5, Expo 54 with New Architecture enabled) is modern and well-positioned for these features. Most requirements can be met using Expo SDK packages and Supabase's built-in realtime capabilities.
-
----
-
-## Notifications
-
-### Push Notifications
-
-| Aspect | Details |
-|--------|---------|
-| **Library** | expo-notifications ~0.32.16 |
-| **Confidence** | HIGH |
-
-**Why expo-notifications:**
-- Official Expo SDK package with first-class support
-- Unified API for Android (FCM) and iOS (APNs)
-- Free Expo Push Service handles token management and delivery
-- Deep integration with expo-router for notification-triggered navigation
-- Already bundled with Expo 54 SDK, no additional native dependencies
-
-**Integration with Existing Stack:**
-- Works seamlessly with Supabase: store Expo push tokens in user profiles
-- Trigger notifications from Supabase Edge Functions or database triggers
-- expo-router's built-in deep linking handles notification taps
-
-**Requirements (SDK 54 specific):**
-- Development build required (push notifications removed from Expo Go in SDK 53+)
-- Physical device required for testing (emulators/simulators not supported)
-- Android: google-services.json + FCM Service Account Key in EAS
-- iOS: Apple Push Notification certificate configured in EAS
-
-**Additional Required Packages:**
-- expo-device ~7.1.1 - Detect if running on physical device
-- expo-constants ~18.0.13 - Already installed, provides projectId
-
-**Installation:**
-```bash
-npx expo install expo-notifications expo-device
-```
-
-**app.json Configuration:**
-```json
-{
-  "expo": {
-    "plugins": [
-      "expo-router",
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/notification-icon.png",
-          "color": "#ffffff"
-        }
-      ]
-    ],
-    "android": {
-      "googleServicesFile": "./google-services.json",
-      "useNextNotificationsApi": true
-    }
-  }
-}
-```
-
-**Sources:**
-- [Expo Notifications SDK Reference](https://docs.expo.dev/versions/latest/sdk/notifications/)
-- [Push Notifications Setup Guide](https://docs.expo.dev/push-notifications/push-notifications-setup/)
-
----
-
-### In-App Notification Inbox
-
-| Aspect | Details |
-|--------|---------|
-| **Approach** | Custom implementation with Supabase table + FlashList |
-| **Confidence** | HIGH |
-
-**Why custom implementation (not a third-party service):**
-- Supabase already provides database + realtime subscriptions
-- Third-party services (Novu, MagicBell, Courier) add unnecessary complexity and cost
-- Full control over notification types, UI, and business logic
-- Consistent with existing Supabase-first architecture
-
-**Architecture:**
-```
-notifications table (Supabase)
-  - id: uuid
-  - user_id: uuid (FK to auth.users)
-  - type: text (birthday_reminder, gift_leader_assigned, chat_message, etc.)
-  - title: text
-  - body: text
-  - data: jsonb (payload for navigation)
-  - read: boolean
-  - created_at: timestamp
-```
-
-**UI Components Needed:**
-- @shopify/flash-list 2.0.2 - For performant notification list rendering
-- Already have: Gluestack UI for styling, Moti for animations
-
-**Realtime Updates:**
-- Use Supabase postgres_changes subscription for new notifications
-- When notification inserted, update inbox UI in real-time
-- Mark as read via simple update query
-
-**Installation:**
-```bash
-npx expo install @shopify/flash-list
-```
-
-**Why FlashList 2.0:**
-- Required for New Architecture (app already has newArchEnabled: true)
-- 5x faster than FlatList with cell recycling
-- Perfect for notification lists with varying content heights
-- No estimatedItemSize needed in v2
-
-**Sources:**
-- [FlashList v2 Documentation](https://shopify.github.io/flash-list/)
-- [Expo FlashList SDK Reference](https://docs.expo.dev/versions/latest/sdk/flash-list/)
-
----
-
-## Real-Time Chat
-
-| Aspect | Details |
-|--------|---------|
-| **Library** | Supabase Realtime Broadcast (built into @supabase/supabase-js) |
-| **UI Component** | @shopify/flash-list 2.0.2 |
-| **Confidence** | HIGH |
-
-**Why Supabase Broadcast (not postgres_changes):**
-- Lower latency for client-to-client messaging
-- Better scalability for high-traffic chat rooms
-- More control over payload content
-- Better handling of connection drops
-- Less database overhead (no replication slots needed)
-- Supabase officially recommends Broadcast for chat applications
-
-**Architecture:**
-```
-Chat Flow:
-1. Create channel: supabase.channel(`celebration-${celebrationId}`)
-2. Subscribe to broadcast events for incoming messages
-3. Send messages via channel.send() (WebSocket after subscription)
-4. Store messages in Supabase table for history/persistence
-
-chat_messages table (Supabase)
-  - id: uuid
-  - celebration_id: uuid (FK to celebrations)
-  - sender_id: uuid (FK to auth.users)
-  - content: text
-  - created_at: timestamp
-```
-
-**Implementation Pattern:**
-```typescript
-// Join chat room
-const channel = supabase.channel(`celebration-${celebrationId}`, {
-  config: { broadcast: { self: true, ack: true } }
-})
-
-channel
-  .on('broadcast', { event: 'message' }, ({ payload }) => {
-    // Handle incoming message
-  })
-  .subscribe()
-
-// Send message
-channel.send({
-  type: 'broadcast',
-  event: 'message',
-  payload: { content, senderId, timestamp }
-})
-```
-
-**Chat UI Components:**
-- FlashList with inverted prop for chat-style scrolling
-- maintainVisibleContentPosition for real-time message insertion
-- Already have: react-native-reanimated for smooth animations
-
-**RLS Policy for Chat (celebrant exclusion):**
-```sql
-CREATE POLICY "celebration_members_except_celebrant" ON chat_messages
-  FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM celebrations c
-      JOIN group_members gm ON gm.group_id = c.group_id
-      WHERE c.id = chat_messages.celebration_id
-      AND gm.user_id = auth.uid()
-      AND c.celebrant_id != auth.uid()
-    )
-  );
-```
-
-**Sources:**
-- [Supabase Broadcast Documentation](https://supabase.com/docs/guides/realtime/broadcast)
-- [Realtime Architecture](https://supabase.com/docs/guides/realtime/architecture)
-
----
-
-## Calendar
-
-### In-App Calendar View
-
-| Aspect | Details |
-|--------|---------|
-| **Library** | react-native-calendars 1.1313.0 |
-| **Confidence** | MEDIUM |
-
-**Why react-native-calendars:**
-- Most popular React Native calendar library (10.2k GitHub stars)
-- Pure JavaScript - no native code required
-- Compatible with Expo managed workflow
-- Multiple view types: Calendar, CalendarList, Agenda
-- Extensive customization for marking dates
-- MIT licensed
-
-**Confidence Note (MEDIUM):**
-React-native-calendars doesn't explicitly declare React 19 peer dependency support. However, it's a pure JS library and community reports indicate it works. May require `--legacy-peer-deps` during installation.
-
-**Features Needed:**
-- Mark all group birthdays on calendar
-- Show upcoming celebrations
-- Navigate to celebration detail on date tap
-
-**Installation:**
-```bash
-npm install react-native-calendars --legacy-peer-deps
-```
-
-**Implementation:**
-```typescript
-import { Calendar } from 'react-native-calendars';
-
-// Mark birthdays with dots
-const markedDates = {
-  '2026-03-15': { marked: true, dotColor: 'blue' },
-  '2026-04-22': { marked: true, dotColor: 'green' }
-};
-
-<Calendar
-  markedDates={markedDates}
-  onDayPress={(day) => navigateToCelebration(day.dateString)}
-/>
-```
-
-**Sources:**
-- [react-native-calendars GitHub](https://github.com/wix/react-native-calendars)
-- [react-native-calendars Docs](https://wix.github.io/react-native-calendars/docs/Intro)
-
----
-
-### Device Calendar Sync
-
-| Aspect | Details |
-|--------|---------|
-| **Library** | expo-calendar ~15.0.8 |
-| **Confidence** | HIGH |
-
-**Why expo-calendar:**
-- Official Expo SDK package
-- Unified API for iOS and Android device calendars
-- Can create events in Google Calendar (via Android calendar sync) and Apple Calendar
-- System UI integration for event creation/editing
-- Already compatible with Expo 54
-
-**Capabilities:**
-- Create a new calendar on device for "Wishlist Birthdays"
-- Add birthday events to device calendar
-- Update/delete events when members join/leave
-- Launch system calendar UI for editing
-
-**Permissions Required:**
-
-| Platform | Permission | Purpose |
-|----------|------------|---------|
-| Android | READ_CALENDAR | Read existing calendars |
-| Android | WRITE_CALENDAR | Create birthday events |
-| iOS | NSCalendarsUsageDescription | Calendar access |
-| iOS | NSRemindersUsageDescription | (optional, if using reminders) |
-
-**Known iOS Limitation:**
-When using `createEventInCalendarAsync`, iOS may override calendarId and use user's default calendar. Workaround: create events in a dedicated app calendar created via `createCalendarAsync`.
-
-**Installation:**
-```bash
-npx expo install expo-calendar
-```
-
-**app.json Configuration:**
-```json
-{
-  "expo": {
-    "plugins": [
-      [
-        "expo-calendar",
-        {
-          "calendarPermission": "Allow Wishlist to add birthday reminders to your calendar"
-        }
-      ]
-    ]
-  }
-}
-```
-
-**Implementation Pattern:**
-```typescript
-import * as Calendar from 'expo-calendar';
-
-// Request permissions
-const { status } = await Calendar.requestCalendarPermissionsAsync();
-
-// Create app-specific calendar
-const calendarId = await Calendar.createCalendarAsync({
-  title: 'Wishlist Birthdays',
-  color: '#6366F1',
-  source: defaultSource,
-  name: 'wishlist-birthdays',
-  ownerAccount: 'wishlist',
-  accessLevel: Calendar.CalendarAccessLevel.OWNER,
-});
-
-// Create birthday event
-await Calendar.createEventAsync(calendarId, {
-  title: `${memberName}'s Birthday`,
-  startDate: birthdayDate,
-  endDate: birthdayDate,
-  allDay: true,
-  alarms: [
-    { relativeOffset: -7 * 24 * 60 }, // 1 week before
-    { relativeOffset: -24 * 60 }      // 1 day before
-  ]
-});
-```
-
-**Sources:**
-- [Expo Calendar SDK Reference](https://docs.expo.dev/versions/latest/sdk/calendar/)
-
----
-
-## Additional Supporting Libraries
-
-### Date Handling
-
-| Library | Version | Purpose | Confidence |
-|---------|---------|---------|------------|
-| date-fns | 3.x | Date manipulation, formatting, comparison | HIGH |
-
-**Why date-fns (not Moment.js, not Day.js):**
-- Tree-shakeable - only import functions you use
-- Modern ES modules
-- Immutable operations
-- No global pollution
-- Well-maintained with TypeScript support
-
-**Installation:**
-```bash
-npm install date-fns
-```
-
----
-
-### Date Picker (for birthday selection)
-
-| Library | Version | Purpose | Confidence |
-|---------|---------|---------|------------|
-| @react-native-community/datetimepicker | 8.4.4 | Native date picker for birthday input | HIGH |
-
-**Why this library:**
-- Recommended by Expo for SDK 54
-- Native system pickers (Material on Android, native wheel on iOS)
-- New Architecture compatible
-- Already bundled with Expo SDK
-
-**Installation:**
-```bash
-npx expo install @react-native-community/datetimepicker
-```
-
-**Sources:**
-- [Expo DateTimePicker Reference](https://docs.expo.dev/versions/latest/sdk/date-time-picker/)
-
----
-
-## NOT Recommended
-
-| Library/Approach | Why to Avoid |
-|------------------|--------------|
-| **Novu, MagicBell, Courier** (notification services) | Adds external dependency, cost, and complexity when Supabase already provides database + realtime. Overkill for a simple in-app inbox. |
-| **Stream Chat, Sendbird** (chat SDKs) | Expensive, adds vendor lock-in. Supabase Realtime is free and already integrated. Chat requirements are simple (text only, per-celebration rooms). |
-| **Moment.js** | Deprecated, not tree-shakeable, bundle size bloat. Use date-fns instead. |
-| **react-native-push-notification** | Requires ejecting from Expo managed workflow. expo-notifications works without ejecting. |
-| **Firebase Cloud Messaging (direct)** | expo-notifications abstracts FCM/APNs, providing a simpler unified API. Only use FCM directly if you need features expo-notifications doesn't support. |
-| **Supabase postgres_changes for chat** | Higher latency, uses replication slots, scales poorly. Supabase recommends Broadcast for real-time messaging. |
-| **react-big-calendar** | Web-only library, not for React Native. |
-| **@legendapp/list** | Newer alternative to FlashList but less battle-tested. FlashList v2 is mature and recommended by Expo. |
-| **FlatList** | FlashList v2 is 5x faster and required for New Architecture performance. Project already has newArchEnabled: true. |
-
----
+# Stack Research: v1.1 Wishlist Polish
 
 ## Summary
 
-**Recommended Stack Addition:**
+The existing React Native + Expo stack is sufficient for all v1.1 UI polish features. The current StarRating component uses emoji (⭐/☆) which already displays horizontally in flex-row layout—the "vertical bug" is likely a styling issue, not a stack limitation. Profile pictures use existing expo-image-picker (already in stack). New item types (favorite, Surprise Me, Mystery Box) require only database schema changes, not new libraries. No additional dependencies needed.
 
-| Feature | Library | Version |
-|---------|---------|---------|
-| Push Notifications | expo-notifications | ~0.32.16 |
-| Push Token Detection | expo-device | ~7.1.1 |
-| In-App Notification List | @shopify/flash-list | 2.0.2 |
-| Real-Time Chat | Supabase Realtime Broadcast | Built into @supabase/supabase-js |
-| In-App Calendar View | react-native-calendars | 1.1313.0 |
-| Device Calendar Sync | expo-calendar | ~15.0.8 |
-| Birthday Date Picker | @react-native-community/datetimepicker | 8.4.4 |
-| Date Utilities | date-fns | 3.x |
+## Recommended Additions
 
-**Installation Command:**
-```bash
-# Expo SDK packages (managed versions)
-npx expo install expo-notifications expo-device expo-calendar @react-native-community/datetimepicker @shopify/flash-list
+**None.** All v1.1 features can be implemented with the existing stack.
 
-# npm packages
-npm install date-fns react-native-calendars --legacy-peer-deps
+### Why No Star Rating Library?
+
+**Current implementation:**
+- `components/ui/StarRating.tsx` uses native emoji (⭐/☆) in `flex-row` layout
+- Already displays horizontally—likely CSS/styling issue, not component limitation
+- No external dependencies, zero bundle size impact
+- Fully functional for both interactive and readonly modes
+
+**Alternatives considered:**
+- `react-native-star-rating-widget` (TypeScript, animated, 2026-maintained)
+- `react-native-rating` (flexible symbols: stars/hearts/emojis)
+
+**Why not needed:**
+- Adding library for horizontal display is overkill—fix existing CSS instead
+- Current emoji approach is simpler, lighter, and already works
+- Library adds 10-50KB bundle size for functionality we already have
+
+**Decision:** Fix the styling in existing StarRating component rather than add dependency.
+
+### Why No Avatar Library?
+
+**Current implementation:**
+- Profile pictures already use `expo-image-picker` (v17.0.10, already in dependencies)
+- Supabase Storage for avatar URLs (already integrated)
+- Custom circular image views in React Native (trivial with borderRadius)
+
+**Alternatives considered:**
+- `@rneui/themed` Avatar component (React Native Elements)
+- `@kolking/react-native-avatar` (Gravatar, badges, initials fallback)
+
+**Why not needed:**
+- expo-image-picker already handles photo selection/upload
+- Supabase Storage already handles avatar URLs
+- Simple circular image is 5 lines of styling, not worth library dependency
+- Initials fallback can be implemented in 10 lines if needed
+
+**Decision:** Use native Image component with borderRadius styling.
+
+## No Changes Needed
+
+### React Native Core
+- **Current:** React Native 0.81.5, Expo SDK 54
+- **Sufficient for:** All UI polish, profile editing, new item types
+- **No upgrade needed**
+
+### UI Framework
+- **Current:** NativeWind 4.2.1 + @gluestack-ui/themed 1.1.73
+- **Sufficient for:** Star layout fixes, profile picture styling, favorite highlighting
+- **Libraries provide:** Utility classes, theme system, responsive design
+- **No additional UI libraries needed**
+
+### Image Handling
+- **Current:** expo-image-picker 17.0.10
+- **Sufficient for:** Profile picture selection from gallery/camera
+- **No additional libraries needed**
+
+### Storage & Backend
+- **Current:** Supabase (@supabase/supabase-js 2.93.3) + Storage
+- **Sufficient for:** Avatar uploads, new item type fields (is_favorite, item_type)
+- **No backend changes needed**
+
+### Icons & Visuals
+- **Current:** @expo/vector-icons 15.0.3, MaterialCommunityIcons
+- **Sufficient for:** Favorite star icon, mystery box icon, surprise me icon
+- **No additional icon libraries needed**
+
+### Animation
+- **Current:** Moti 0.30.0 (Reanimated wrapper)
+- **Sufficient for:** Favorite item highlight animations, card transitions
+- **No additional animation libraries needed**
+
+## Integration Points
+
+### 1. StarRating Component Fix
+**File:** `components/ui/StarRating.tsx`
+**Change:** CSS styling only (flex-direction, alignment)
+**Stack involvement:** NativeWind/Gluestack classes
+**No new dependencies**
+
+### 2. Profile Picture in Header
+**File:** `app/(app)/(tabs)/wishlist.tsx`
+**Components needed:**
+- Fetch avatar_url from user_profiles table (existing Supabase query)
+- Render Image with borderRadius: 50% (React Native core)
+- Fallback to MaterialCommunityIcons "account-circle" if no avatar
+**Stack involvement:** Existing Supabase client, native Image component
+**No new dependencies**
+
+### 3. Favorite Item Feature
+**Database change:** Add `is_favorite` boolean to wishlist_items table
+**UI changes:**
+- Add star/bookmark icon to card (MaterialCommunityIcons)
+- Toggle button (TouchableOpacity + Supabase update)
+- Conditional styling for highlighted card (NativeWind/Gluestack)
+**Stack involvement:** Existing React Native + Supabase
+**No new dependencies**
+
+### 4. Surprise Me & Mystery Box Items
+**Database change:** Add `item_type` enum to wishlist_items table
+- Values: 'standard' | 'surprise_me' | 'mystery_box'
+- Add `mystery_box_tier` field for €25/€50/€100
+**UI changes:**
+- Special card styling for each type (existing theme system)
+- Type selector in AddItemModal (existing modal component)
+- Icons for special types (MaterialCommunityIcons: gift-outline, help-circle-outline)
+**Stack involvement:** Existing React Native + Supabase + icons
+**No new dependencies**
+
+### 5. Profile Editing Screen
+**File:** New screen `app/(app)/profile/edit.tsx`
+**Components needed:**
+- TextInput for display_name (React Native core)
+- DatePicker for birthday (existing @react-native-community/datetimepicker)
+- Image picker for avatar (existing expo-image-picker)
+- Save button with Supabase update (existing client)
+**Stack involvement:** All existing dependencies
+**No new dependencies**
+
+## Database Schema Changes Required
+
+**Not stack-related, but documented for completeness:**
+
+```sql
+-- Add to wishlist_items table
+ALTER TABLE wishlist_items
+  ADD COLUMN is_favorite BOOLEAN DEFAULT FALSE,
+  ADD COLUMN item_type TEXT DEFAULT 'standard' CHECK (item_type IN ('standard', 'surprise_me', 'mystery_box')),
+  ADD COLUMN mystery_box_tier INTEGER CHECK (mystery_box_tier IN (25, 50, 100));
+
+-- Add constraint: only one favorite per user per group
+CREATE UNIQUE INDEX unique_favorite_per_user_group
+  ON wishlist_items (user_id, group_id)
+  WHERE is_favorite = TRUE AND group_id IS NOT NULL;
 ```
 
-**Key Integration Points:**
-1. **Supabase is central**: Push tokens stored in profiles, notifications in dedicated table, chat via Realtime Broadcast
-2. **FlashList for lists**: Both notification inbox and chat messages benefit from FlashList v2 performance
-3. **Development builds required**: Push notifications need EAS development builds, not Expo Go
-4. **New Architecture ready**: All recommended libraries support React Native 0.81's New Architecture
+## Confidence
 
----
+**HIGH** — All features implementable with existing stack.
 
-## Confidence Assessment
+### Evidence
+1. ✅ **StarRating component already exists** — Line 188 in `LuxuryWishlistCard.tsx` renders stars horizontally with flex-row
+2. ✅ **expo-image-picker already in package.json** — Line 20, version 17.0.10
+3. ✅ **Supabase Storage already integrated** — avatar_url field exists in user_profiles (database.types.ts line 22)
+4. ✅ **MaterialCommunityIcons already provides** — gift, star, bookmark, help-circle icons for new item types
+5. ✅ **NativeWind + Gluestack** — Sufficient for all styling needs (conditional classes, highlights, badges)
 
-| Area | Confidence | Reason |
-|------|------------|--------|
-| Push Notifications | HIGH | Official Expo SDK, verified with docs |
-| In-App Inbox | HIGH | Custom implementation with proven stack |
-| Real-Time Chat | HIGH | Supabase Broadcast is documented, recommended pattern |
-| In-App Calendar | MEDIUM | react-native-calendars works but React 19 peer deps unverified |
-| Device Calendar | HIGH | Official Expo SDK, verified with docs |
-| Date Utilities | HIGH | Standard, well-maintained library |
+### Risk Assessment
+- **Zero risk** — No new dependencies = no version conflicts, no bundle bloat
+- **Minimal effort** — Styling fixes + schema changes + UI composition with existing components
+- **Proven stack** — All components used successfully in v1.0 (shipped 2026-02-02)
 
----
+### What Could Go Wrong
+- **Nothing stack-related** — All risks are implementation/design, not technology choice
+- Star emoji rendering inconsistent across iOS/Android → Verify in testing (not a blocker, fallback to text works)
+- Profile picture upload size limits → Supabase Storage handles compression (already solved in onboarding)
 
-*Research completed: 2026-02-02*
-*Sources: Expo Documentation, Supabase Documentation, GitHub repositories, npm registry*
+## Sources
+
+- [react-native-star-rating-widget - npm](https://www.npmjs.com/package/react-native-star-rating-widget) — Alternative considered but not needed
+- [GitHub - kolking/react-native-rating](https://github.com/kolking/react-native-rating) — Alternative considered but not needed
+- [Avatar | React Native Elements](https://reactnativeelements.com/docs/1.2.0/avatar) — Alternative considered but not needed
+- [Build a User Management App with Expo React Native | Supabase Docs](https://supabase.com/docs/guides/getting-started/tutorials/with-expo-react-native) — Confirms avatar pattern already in use
+- [@kolking/react-native-avatar - npm](https://www.npmjs.com/package/@kolking/react-native-avatar) — Alternative considered but not needed

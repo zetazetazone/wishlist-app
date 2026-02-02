@@ -1,257 +1,208 @@
 # Project Research Summary
 
-**Project:** Wishlist Group Gifting App
-**Domain:** Social coordination mobile app (React Native/Expo)
+**Project:** Wishlist App v1.1 Polish
+**Domain:** Multi-user wishlist app with group coordination (React Native + Supabase)
 **Researched:** 2026-02-02
 **Confidence:** HIGH
 
 ## Executive Summary
 
-This research covers adding four major features to an existing Expo 54 + Supabase wishlist app: push notifications, secret group chat, calendar integration, and a Gift Leader coordination system. The app already has a solid foundation (React 19, React Native 0.81 with New Architecture, Supabase for backend/auth) making it well-positioned for these additions.
+v1.1 enhances the existing wishlist app with UX polish features: favorite item marking (per-group), special item types (Surprise Me, Mystery Box), profile editing, and a star rating display fix. Research confirms all features integrate cleanly with the existing React Native + Expo + Supabase stack — **no new dependencies required**. The existing stack provides all necessary capabilities: expo-image-picker for profile photos, NativeWind for styling, Supabase for schema changes, and MaterialCommunityIcons for UI elements.
 
-**The recommended approach** leverages the existing Supabase infrastructure as the central hub: store push tokens in user profiles, use Supabase Realtime for chat (not third-party chat SDKs), trigger notifications via Edge Functions, and manage all state server-side. The stack additions are minimal and vetted: expo-notifications for push, FlashList for performant lists, react-native-calendars for UI, expo-calendar for device sync, and date-fns for date handling. Total new dependencies: 8 libraries, all compatible with the existing stack.
+The recommended approach follows a **database-first, then isolated-features-first** pattern: start with schema migrations (group_favorites table + item_type enum), implement independent profile editing, then build integrated features (favorites + special items), and finally address the star rating CSS bug. This order minimizes risk by establishing infrastructure before dependent features and isolating high-value low-risk work (profile editing) early.
 
-**Key risks center on three areas:** (1) Row Level Security MUST be enabled on chat tables or celebrants will see their surprise - 83% of Supabase apps have RLS misconfigurations, (2) push token lifecycle management is critical or notifications silently fail for growing user percentages, and (3) race conditions between initial data fetch and WebSocket connection will cause missing messages. Each has clear prevention strategies documented in pitfalls research. Build order follows strict dependency chain: notifications infrastructure first (everything needs alerts), then profiles/birthdays (required for coordination), then celebrations + Gift Leader (container for features), then chat (requires celebrations), then calendar polish.
+Key risks center on **state synchronization** (Realtime updates with optimistic UI), **RLS policy coverage** (celebrant exclusion must extend to new fields), and **schema migration safety** (adding constraints to existing data). Critical mitigation: all schema changes in atomic transactions with RLS policy updates, React Query for state management with conflict resolution, and extensive cross-platform testing for layout fixes.
 
 ## Key Findings
 
 ### Recommended Stack
 
-The existing stack (Expo 54, React 19, Supabase) is modern and well-suited. Stack additions focus on official Expo SDK packages and Supabase's built-in capabilities rather than third-party services. No external dependencies like Novu, Stream Chat, or Firebase are needed - Supabase provides realtime, storage, and edge functions.
+**No changes needed.** All v1.1 features implementable with existing stack.
 
-**Core technologies:**
-- **expo-notifications ~0.32.16**: Push notifications with unified iOS/APNs and Android/FCM API, free Expo Push Service, deep linking via expo-router
-- **Supabase Realtime Broadcast**: Real-time chat with lower latency than postgres_changes, officially recommended for messaging, built into existing @supabase/supabase-js
-- **@shopify/flash-list 2.0.2**: Performant list rendering for notification inbox and chat (5x faster than FlatList, required for New Architecture)
-- **expo-calendar ~15.0.8**: Device calendar sync to add birthday events to Google/Apple Calendar with system UI integration
-- **react-native-calendars 1.1313.0**: In-app calendar view (pure JS, no native code, 10.2k GitHub stars)
-- **date-fns 3.x**: Date manipulation and formatting (tree-shakeable, modern, replaces deprecated Moment.js)
+The current stack (React Native 0.81.5 + Expo SDK 54 + Supabase 2.93.3 + NativeWind 4.2.1) provides complete coverage for UI polish features. StarRating component already exists with horizontal layout code — the vertical bug is likely a metro cache issue, not a missing library. Profile pictures leverage existing expo-image-picker (v17.0.10) and Supabase Storage. New item types require only database schema changes, not new frontend libraries. Favorite marking uses standard React state + Supabase queries.
 
-**Critical integration points:**
-- Supabase Edge Functions trigger push notifications on database events
-- Push tokens stored in Supabase device_tokens table
-- FlashList used for both notification inbox and chat message lists
-- Development builds required (push notifications removed from Expo Go in SDK 53+)
+**Core technologies (unchanged):**
+- **React Native + Expo:** UI framework — sufficient for all new components (FavoriteButton, ProfileHeader, AddSpecialItemModal)
+- **Supabase:** Backend + database — schema extensions for favorites and item types, existing RLS policies extend cleanly
+- **expo-image-picker:** Already installed (v17.0.10) — handles profile photo selection/upload with zero additional dependencies
+- **NativeWind + Gluestack UI:** Styling — provides all classes needed for star layout fix, favorite highlighting, special item badges
+- **MaterialCommunityIcons:** Icons — includes gift, star, bookmark, help-circle for new features
+
+**Rejected alternatives:** react-native-star-rating-widget (fixes existing CSS instead), @rneui/themed Avatar (5 lines of borderRadius styling), payment SDKs for Mystery Box (v1.1 is placeholder only, defer to v1.2+).
 
 ### Expected Features
 
-Research identified clear table stakes versus differentiators through competitive analysis of Giftster, Elfster, Givetastic, and Hip Birthday Reminder.
+Research on wishlist apps and gift registries reveals strong UX patterns for v1.1 scope:
 
 **Must have (table stakes):**
-- **Birthday reminders on day of event** — minimum user expectation for any birthday app
-- **Secret chat per celebration (hidden from celebrant)** — core coordination feature, the whole point of secret gifting
-- **Configurable reminder timing** — users need control over when they receive alerts
-- **Push notifications for urgent updates** — item claimed, gift bought, event approaching
-- **Basic text messaging in chat** — coordinate gift purchases without external apps
-- **Birthday calendar view** — see upcoming birthdays at a glance
-- **Designated Gift Leader per celebration** — formalize the coordinator role that naturally emerges
+- **Favorite/priority visual distinction** — Users already set 1-5 star priority; favorite adds "top pick" signal with pinned position and visual prominence (heart/star badge)
+- **Special item flexibility signals** — Surprise Me (open-ended gift permission) and Mystery Box (tier-based placeholders) are established patterns in gift registries for signaling flexibility
+- **Profile editing post-onboarding** — Standard pattern: minimal onboarding upfront, progressive disclosure for detail editing (name, birthday, photo)
+- **Star rating horizontal display** — Visual priority indicators must be scannable at a glance, not vertically stacked
 
 **Should have (competitive differentiators):**
-- **Smart reminder sequences (4w/2w/1w before)** — most apps only do day-of or day-before; this enables actual planning instead of last-minute panic
-- **Gift context linking in chat** — attach messages to specific wishlist items ("I'll get the blue one")
-- **Automatic celebration creation from birthdays** — when birthday approaches, auto-create coordination event
-- **Calendar sync to Google/Apple Calendar** — export birthday events to external calendars
-- **Leader progress dashboard** — visual overview of coordination status and claiming
+- **Favorite per group** — Different groups have different budgets/contexts, so user's "top pick" should be group-scoped (college friends: €25 item, family: €100 item)
+- **Surprise Me budget tiers** — Adds helpful constraint without being prescriptive (€0-25, €25-50, €50+)
+- **Mystery Box custom tiers** — User sets exact amounts beyond presets (€25/€50/€100) to match group norms
+- **Birthday verification** — Confirmation dialog prevents accidental changes to critical field used for celebration triggers
 
 **Defer (v2+):**
-- **Voice/video calling** — massive scope increase, not needed for gift coordination
-- **AI gift suggestions** — scope creep, focus on coordination first
-- **Location-based reminders** — privacy concerns, requires continuous tracking
-- **Email/SMS notifications** — users expect push for apps, adds infrastructure complexity
-- **Complex calendar features** — don't rebuild Google Calendar, stay birthday-focused
+- **In-app Mystery Box purchasing** — Payment integration, compliance, monetization (complex, future revenue opportunity)
+- **Favorite notifications** — Alert gift-givers when top pick changes ("Sarah updated her favorite!")
+- **AI gift suggestions** — Scope creep, requires external APIs, can feel impersonal
+- **Social features** — Friend requests, followers, profile themes (not core to gift coordination)
 
 ### Architecture Approach
 
-The architecture integrates around **celebrations as the central entity** connecting birthdays, chat rooms, and Gift Leaders. This provides clean data modeling and enables per-celebration features without complex cross-table queries. Secret chat exclusion is enforced at the database level via Row Level Security policies (`celebrant_id != auth.uid()`) rather than relying on UI filtering.
+All features integrate with existing schema and component hierarchy without architectural changes. Favorite marking uses a new junction table (group_favorites) to enforce one-per-group constraint via PRIMARY KEY. Special item types leverage existing wishlist_items table with new item_type enum field ('standard' | 'surprise_me' | 'mystery_box'). Profile editing reuses existing user_profiles fields (display_name, avatar_url, birthday) with new edit screen.
 
-**Major components:**
-1. **Notification System** — Two-table design (notification_messages + user_notifications) for scalability, Supabase Edge Functions for push delivery, token lifecycle management with staleness tracking
-2. **Chat Infrastructure** — Supabase Realtime Broadcast for low-latency messaging, chat rooms tied 1:1 to celebrations, RLS policies prevent celebrant access, message persistence in PostgreSQL
-3. **Calendar Service** — In-app view (react-native-calendars) + device sync (expo-calendar), birthday-order Gift Leader rotation via pg_cron, celebration auto-creation 30 days before birthdays
-4. **Gift Leader System** — Birthday-order rotation algorithm, assignment history audit trail, manual reassignment with logging, succession handling when leader leaves
+**Schema changes:**
+1. **New table: group_favorites** — Tracks one favorite per user per group with composite PK (user_id, group_id) enforcing uniqueness
+2. **Modified table: wishlist_items** — Add item_type column with CHECK constraint, repurpose price field for Mystery Box tiers
+3. **No changes: user_profiles** — Profile editing reuses existing fields and avatars bucket
 
-**Key patterns:**
-- Single Supabase client instance prevents connection management issues
-- FlashList with inverted prop for chat-style scrolling
-- Server-assigned timestamps and sequence numbers for message ordering (never trust client timestamps)
-- Push notifications sent server-side via cron/webhooks (not client-scheduled) for reliability against Android battery optimization
+**Component additions:**
+1. **FavoriteButton.tsx** — Toggle favorite status per group, gold star icon, optimistic updates
+2. **AddSpecialItemModal.tsx** — Guided flow for Surprise Me (openness level) and Mystery Box (tier selection €25/€50/€100)
+3. **EditProfileScreen.tsx** — Form with photo picker, text input, date picker, validation
+4. **ProfileHeader.tsx** — 40px circular avatar in My Wishlist header, clickable to edit screen
+
+**Component modifications:**
+- **LuxuryWishlistCard.tsx:** Add FavoriteButton, visual treatment for special types (gradient borders, badges), conditional price display
+- **StarRating.tsx:** Bug fix only — verify TailwindCSS config, clear metro cache (code already has flex-row)
+- **wishlist.tsx screen:** Add ProfileHeader, load favorite status via JOIN, pass groupId context to cards
+- **AddItemModal.tsx:** Add "special item" link to open type selection
+
+**Data flow patterns:**
+- Favorite marking: Optimistic UI update → Supabase INSERT ON CONFLICT UPDATE → Realtime broadcast to group members
+- Special item creation: Type-specific validation → INSERT with item_type field → Conditional rendering in cards
+- Profile editing: Photo upload to Storage → UPDATE user_profiles → router.back() with cache invalidation
 
 ### Critical Pitfalls
 
-Top 5 pitfalls based on official documentation, GitHub issues, and CVE reports:
+Research identified 10 pitfalls ranked by severity; top 5 require immediate attention:
 
-1. **RLS Not Enabled on Secret Chat Tables** — In January 2025, 170+ apps exposed data due to missing RLS (CVE-2025-48757). 83% of Supabase databases have RLS misconfigurations. Enable RLS immediately on table creation, create explicit allow policies, audit all tables before launch, test as different user roles.
+1. **RLS Policy Breakage from Schema Changes** — Adding is_favorite column without updating RLS policies creates window where celebrants can see their own favorited items, breaking core security model. **Prevention:** Atomic migration with column + policy updates in single transaction, test celebrant exclusion before deploy.
 
-2. **Push Token Staleness and Silent Failures** — Tokens expire after 270 days inactivity (FCM), become invalid on reinstall/restore/device switch. Prevention: refresh tokens on every app open, implement monthly validation, listen for onNewToken callbacks, cleanup inactive tokens >30 days, detect FCM error codes and remove invalid tokens.
+2. **Special Item Type Migration Breaking Existing Data** — Changing amazon_url from NOT NULL to nullable without proper guards crashes frontend (undefined.includes()) and breaks price scraping. **Prevention:** Add item_type enum first with DEFAULT 'standard', backfill existing rows, use conditional constraints: (item_type = 'standard' AND amazon_url IS NOT NULL) OR (item_type != 'standard').
 
-3. **Race Condition Between Initial Fetch and WebSocket Connection** — Messages sent in the 500ms window between data fetch and WebSocket connection are lost. Prevention: implement event queue pattern (fetch snapshot → connect WebSocket → queue events → re-fetch to confirm → process queue), use server-assigned sequence numbers, verify no gaps after sync.
+3. **Realtime State Desynchronization on Favorite Toggle** — Concurrent favorite toggles by multiple users create race conditions where local state shows two favorites despite server enforcing one-per-group. **Prevention:** Use React Query with optimistic updates/rollback, server as source of truth, Realtime deduplication via item ID merging, version timestamps for conflict resolution.
 
-4. **Badge Count Management Chaos** — iOS `setBadgeCountAsync(0)` clears badge AND notification center. Android badge counts ADD rather than replace. Different launchers have inconsistent support. Prevention: maintain badge count server-side as source of truth, send explicit count with each push, separate "clear notifications" from "reset badge" on iOS.
+4. **Profile Edit Race Conditions Overwriting Changes** — User editing profile from multiple devices causes last-write-wins data loss (Device A changes name, Device B uploads avatar with stale name, A's change lost). **Prevention:** Optimistic locking with updated_at checks, partial updates (only changed fields), conflict detection prompts user to merge changes.
 
-5. **Calendar Permission Request Timing** — Requesting at app start with generic explanations leads to high denial rates. Prevention: request in context when user first tries calendar feature, provide specific explanation ("We'll sync birthday events so you never miss a gift deadline"), handle denial gracefully with in-app alternative.
+5. **Favorite-Per-Group Uniqueness Not Enforced** — Without partial unique index, rapid clicks or API manipulation allows multiple favorites in same group, violating UX expectation. **Prevention:** CREATE UNIQUE INDEX unique_favorite_per_group ON wishlist_items(user_id, group_id) WHERE is_favorite = true.
+
+**Additional moderate risks:** Mystery Box tier validation (CHECK constraint for 25/50/100 only), Realtime connection loss on background/foreground (AppState listener + manual reconnect), profile photo upload failures without rollback (two-phase commit pattern).
 
 ## Implications for Roadmap
 
-Based on research, suggested phase structure follows strict dependency chain and risk mitigation order:
+Based on research, suggested phase structure prioritizes **risk mitigation through sequencing**: database infrastructure first (atomic migrations), isolated features next (profile editing has no dependencies), then integrated features (favorites + special items leverage schema), finally low-risk polish (star rating CSS).
 
-### Phase 1: Notification Infrastructure
-**Rationale:** All subsequent features depend on push notifications (Gift Leader assignment alerts, chat message notifications, birthday reminders). Must establish reliable foundation before building dependent features. Addresses critical pitfall #2 (token staleness) at architecture level.
+### Phase 1: Database Schema (Foundation)
+**Rationale:** Establish data model before dependent features; atomic migrations with RLS prevent security holes
+**Delivers:** group_favorites table, item_type enum on wishlist_items, all indexes and constraints
+**Addresses:** Critical pitfall #1 (RLS policy breakage), Critical pitfall #2 (migration safety), Moderate pitfall #5 (uniqueness enforcement)
+**Avoids:** Deploying UI features before backend supports them, creating window for data corruption
+**Duration:** 30 minutes
+**Research flag:** Skip research — standard PostgreSQL migration patterns, well-documented
 
-**Delivers:** Push notification registration, token lifecycle management, Supabase Edge Function for sending, basic in-app notification inbox
+### Phase 2: Profile Editing (Isolated Low-Risk Win)
+**Rationale:** High user value, zero dependencies on other v1.1 features, uses existing infrastructure
+**Delivers:** EditProfileScreen, ProfileHeader component, photo upload with validation
+**Uses:** expo-image-picker (existing), Supabase Storage (existing), existing user_profiles schema
+**Addresses:** Table stakes feature (profile editing post-onboarding), birthday verification differentiator
+**Avoids:** Critical pitfall #4 (race conditions via optimistic locking), moderate pitfall #8 (photo upload rollback)
+**Duration:** 2 hours
+**Research flag:** Skip research — standard profile editing UX, established patterns
 
-**Addresses:** Push notifications for urgent updates (table stakes), configurable reminder timing (table stakes)
+### Phase 3: Special Item Types (New Pattern Establishment)
+**Rationale:** Introduces item_type pattern for Surprise Me before reusing it for Mystery Box; lower complexity than favorites
+**Delivers:** AddSpecialItemModal, type-specific validation, LuxuryWishlistCard visual treatments
+**Implements:** Surprise Me (openness signaling) + Mystery Box (tier placeholders €25/€50/€100)
+**Addresses:** Must-have flexibility signals, competitive differentiators (budget tiers, custom amounts)
+**Avoids:** Critical pitfall #2 (type migration breakage via proper validation), moderate pitfall #6 (tier validation)
+**Duration:** 3 hours
+**Research flag:** Skip research — patterns established in FEATURES.md, UX conventions clear
 
-**Avoids:** Push token staleness, background handler limitations, Android notification channel issues
+### Phase 4: Favorite Marking (Complex State Management)
+**Rationale:** Most complex feature (multi-user state sync, Realtime coordination, group scoping); benefits from earlier schema + components
+**Delivers:** FavoriteButton, group_favorites integration, Realtime subscriptions, conflict resolution
+**Uses:** group_favorites table (Phase 1), LuxuryWishlistCard (Phase 3 enhanced)
+**Addresses:** Table stakes priority distinction, competitive differentiator (favorite per group)
+**Avoids:** Critical pitfall #3 (state desync via React Query optimistic updates), moderate pitfall #7 (Realtime reconnect)
+**Duration:** 2 hours
+**Research flag:** Needs shallow research — React Query optimistic update patterns, Supabase Realtime conflict resolution
 
-**Research flag:** Standard patterns well-documented by Expo — skip `/gsd:research-phase`
-
----
-
-### Phase 2: Profile & Birthday Data
-**Rationale:** Birthday data is required for calendar, celebrations, and Gift Leader rotation. Onboarding flow needed to collect this information before users can participate in groups.
-
-**Delivers:** User profiles with birthday field, onboarding screen, profile edit capability, birthday validation
-
-**Addresses:** Foundation for calendar view, celebration creation, Gift Leader assignment
-
-**Avoids:** Missing required data causing downstream failures
-
-**Research flag:** Standard CRUD patterns — skip `/gsd:research-phase`
-
----
-
-### Phase 3: Celebrations & Gift Leader System
-**Rationale:** Celebrations are the central entity connecting chat rooms, Gift Leaders, and coordination. Gift Leader assignment logic must be established before chat (leader receives special notifications about chat activity).
-
-**Delivers:** Celebrations table, auto-creation via pg_cron 30 days before birthdays, birthday-order Gift Leader rotation, assignment history audit trail, manual reassignment capability
-
-**Addresses:** Designated Gift Leader (table stakes), automatic celebration creation (differentiator), leader rotation (differentiator)
-
-**Avoids:** Role assignment without permission matrix, orphaned groups when leader leaves, role state desync
-
-**Research flag:** Gift Leader rotation algorithm needs validation during implementation — consider `/gsd:research-phase` if edge cases emerge
-
----
-
-### Phase 4: Secret Chat Rooms
-**Rationale:** Chat depends on celebrations existing (1:1 relationship). This is the highest security risk phase - RLS misconfiguration would expose surprises to celebrants. Must be implemented with extreme care.
-
-**Delivers:** Chat rooms table with RLS policies, real-time message subscription via Supabase Broadcast, message persistence, celebrant exclusion enforcement, chat UI components
-
-**Addresses:** Secret chat per celebration (table stakes), basic text messaging (table stakes), gift context linking (differentiator)
-
-**Avoids:** RLS not enabled (CRITICAL), race condition between fetch and WebSocket, subscription cleanup memory leaks, celebrant exclusion leaks
-
-**Research flag:** Security-critical phase — **MUST** use `/gsd:research-phase` to validate RLS policies, test celebrant exclusion thoroughly, review message sync pattern
-
----
-
-### Phase 5: Calendar Integration
-**Rationale:** Can be built in parallel with or after chat - no hard dependency. Provides UX polish and device integration. Lower risk than chat security.
-
-**Delivers:** In-app calendar view showing all group birthdays, device calendar sync with expo-calendar, birthday event creation with multi-stage alarms
-
-**Addresses:** Birthday calendar view (table stakes), calendar sync to Google/Apple Calendar (differentiator), planning window visualization (differentiator)
-
-**Avoids:** Permission request timing issues, platform differences in calendar API, event sync state inconsistency
-
-**Research flag:** Standard patterns well-documented — skip `/gsd:research-phase`
-
----
-
-### Phase 6: Smart Reminder Sequences
-**Rationale:** Final phase builds on notification infrastructure from Phase 1 and birthday/celebration data from Phases 2-3. Differentiating feature that enables planning versus last-minute panic.
-
-**Delivers:** 4w/2w/1w birthday reminder cron jobs, user-configurable reminder preferences, reminder cancellation when gift purchased, in-app reminders as backup
-
-**Addresses:** Smart reminder sequences (differentiator), relationship-based timing (differentiator)
-
-**Avoids:** Notification fatigue, timezone handling issues, scheduled notification reliability on Android
-
-**Research flag:** Notification timing and user preference logic may need validation — consider `/gsd:research-phase` if complex rules emerge
-
----
+### Phase 5: Star Rating Fix (Polish)
+**Rationale:** Lowest risk, likely cache issue not code fix; defer until end to avoid blocking other work
+**Delivers:** Horizontal star display on all platforms (iOS + Android)
+**Addresses:** Must-have visual priority indicator, bug reported by users
+**Avoids:** Minor pitfall #9 (Android-specific layout differences via cross-platform testing)
+**Duration:** 30 minutes
+**Research flag:** Skip research — CSS debugging, metro cache clearing (standard troubleshooting)
 
 ### Phase Ordering Rationale
 
-- **Notifications first** because Gift Leader assignment, chat messages, and birthday reminders all trigger notifications. Building dependent features before notification infrastructure would require rework.
-
-- **Profiles/birthdays before celebrations** because celebrations are auto-created from birthday data. Missing birthday information breaks the entire coordination flow.
-
-- **Celebrations before chat** because chat rooms have 1:1 relationship with celebrations. Chat without celebrations would require complex refactoring.
-
-- **Chat is highest security risk** so it gets dedicated phase with mandatory research validation. RLS misconfiguration would expose secrets to celebrants - unacceptable.
-
-- **Calendar independent** so it can overlap with chat or come after without blocking. Device integration is polish, not core coordination.
-
-- **Reminder sequences last** because they need celebrations, birthdays, and notifications all working. Also the most experimental feature (differentiator, not table stakes) so failure has lower impact.
+- **Database-first approach:** Schema changes in Phase 1 establish constraints (favorite uniqueness, item type validation) preventing data corruption in Phases 2-4
+- **Isolated before integrated:** Profile editing (Phase 2) has zero dependencies on favorites/special items, delivers user value early while establishing photo upload patterns
+- **Pattern establishment:** Special item types (Phase 3) introduce item_type handling before favorites (Phase 4) leverages same card rendering logic
+- **Complexity last:** Favorite marking (Phase 4) is most complex (Realtime sync, optimistic updates, conflict resolution), benefits from earlier foundation
+- **Polish deferred:** Star rating fix (Phase 5) is cosmetic with unclear root cause (likely cache), doesn't block other features
 
 ### Research Flags
 
-Phases requiring `/gsd:research-phase` during planning:
+**Phases needing deeper research during planning:**
+- **Phase 4 (Favorite Marking):** Complex state sync patterns — need React Query optimistic update recipes, Supabase Realtime conflict resolution strategies, multi-user race condition testing patterns
 
-- **Phase 4 (Secret Chat Rooms):** MANDATORY — Security-critical phase. Must validate RLS policies prevent celebrant access, test race condition mitigation, verify subscription cleanup, audit all notification pathways for celebrant metadata leaks.
-
-Phases with standard patterns (skip research-phase):
-
-- **Phase 1 (Notification Infrastructure):** Well-documented by Expo, Supabase push notification guide covers Edge Function patterns
-- **Phase 2 (Profile & Birthday):** Standard CRUD operations, onboarding flow is established pattern
-- **Phase 5 (Calendar Integration):** expo-calendar and react-native-calendars have comprehensive documentation
-
-Consider research-phase if implementation reveals gaps:
-
-- **Phase 3 (Gift Leader):** Birthday rotation algorithm is novel - may need validation if edge cases like 2-person groups, same birthdays, or timezone handling become complex
-- **Phase 6 (Reminder Sequences):** User preference logic and timezone-aware scheduling may need deeper research if requirements become complex
+**Phases with standard patterns (skip research-phase):**
+- **Phase 1 (Database Schema):** PostgreSQL migrations, RLS policy extensions, partial unique indexes — well-documented, established patterns
+- **Phase 2 (Profile Editing):** Profile CRUD with photo upload — standard UX, expo-image-picker docs sufficient
+- **Phase 3 (Special Item Types):** Form validation, type-specific rendering — conventional React Native patterns
+- **Phase 5 (Star Rating Fix):** CSS debugging, metro cache clearing — troubleshooting process, not research needed
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | All libraries verified with official Expo/Supabase documentation, version compatibility confirmed, existing stack (Expo 54, React 19) is modern |
-| Features | MEDIUM | Based on competitive analysis via WebSearch, not direct user research. Table stakes identified from multiple apps, differentiators inferred from market patterns |
-| Architecture | HIGH | Verified with Supabase documentation (Realtime, RLS, Edge Functions), Expo patterns, scalable notification design validated via Medium article, database schema follows PostgreSQL best practices |
-| Pitfalls | HIGH | Sourced from official Expo/Supabase docs, GitHub issues with reproduction cases, CVE reports (RLS misconfiguration), community experience reports with evidence |
+| Stack | **HIGH** | All features verified implementable with existing dependencies; stack research confirmed zero new libraries needed; expo-image-picker version checked in package.json |
+| Features | **MEDIUM-HIGH** | Table stakes features validated via competitive analysis (wishlist apps, gift registries); differentiators (favorite per group, budget tiers) extrapolated from patterns but not directly sourced |
+| Architecture | **HIGH** | Existing codebase reviewed (schema, components, RLS policies); integration points verified; build order follows dependency graph with no circular dependencies |
+| Pitfalls | **MEDIUM-HIGH** | Critical pitfalls #1-3 verified via Supabase docs (Realtime issues, migration safety, RLS patterns); pitfalls #4-5 extrapolated from general React Native/PostgreSQL best practices; moderate/minor pitfalls inferred from domain knowledge |
 
-**Overall confidence:** HIGH
+**Overall confidence:** **HIGH** (85%)
 
 ### Gaps to Address
 
-Areas where research was inconclusive or needs validation during implementation:
+Research was comprehensive for technical implementation but has gaps in UX validation:
 
-- **react-native-calendars React 19 compatibility:** Library doesn't explicitly declare React 19 peer dependency support. Pure JS library so should work, but may require `--legacy-peer-deps`. Validation needed during Phase 5 installation.
+- **Terminology validation:** "Surprise Me" vs "Flexible Gift" vs "Any Gift Welcome" — user testing during Phase 3 may reveal preferred wording
+- **Favorite per group vs global favorite:** Requirement assumes group-scoped favorites; validate users understand context-dependent favorites during Phase 4 UAT
+- **Mystery Box tier amounts:** €25/€50/€100 based on European gift norms; may need localization or custom tier amounts for different markets (addressed via custom tier differentiator)
+- **Birthday edit cascade behavior:** Edge case with low frequency (users rarely change birthday after onboarding); defer decision on celebration cascade until user feedback indicates priority
 
-- **Gift Leader rotation edge cases:** Birthday-order algorithm needs validation for edge cases like 2-person groups (leader can't be celebrant), members with same birthday (tie-breaking logic), timezone differences affecting "next person" calculation.
-
-- **Notification timing optimization:** 4w/2w/1w sequence is hypothesis based on competitor patterns. May need A/B testing or user feedback during Phase 6 to optimize frequency and reduce notification fatigue.
-
-- **Supabase Realtime connection limits:** Free tier allows 500 concurrent connections. If app gains significant users before launch, need upgrade plan or connection pooling strategy. Monitor dashboard during beta testing.
-
-- **FlashList performance on low-end devices:** While FlashList v2 is 5x faster than FlatList, real-world performance on budget Android devices (common for family coordination apps) needs validation with actual user data volumes.
+**How to handle during planning/execution:**
+- Phase 3 UAT: Test "Surprise Me" terminology with 3-5 users, prepare alternative copy if confusion detected
+- Phase 4 UAT: Verify users recognize favorite is per-group (show same user's wishlist in two groups with different favorites)
+- Phase 3: Implement custom tier amount as stretch goal if time permits (low complexity, high flexibility value)
+- Defer birthday cascade decision: Monitor user feedback in first 30 days post-launch, add trigger in v1.2 if needed
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- [Expo Notifications SDK Reference](https://docs.expo.dev/versions/latest/sdk/notifications/) — Push notification setup, permissions, testing requirements
-- [Expo Push Notifications Setup Guide](https://docs.expo.dev/push-notifications/push-notifications-setup/) — FCM/APNs configuration, development build requirements
-- [Expo Calendar SDK Reference](https://docs.expo.dev/versions/latest/sdk/calendar/) — Device calendar API, permissions, platform differences
-- [Supabase Realtime Broadcast Documentation](https://supabase.com/docs/guides/realtime/broadcast) — Chat architecture, why Broadcast over postgres_changes
-- [Supabase Push Notifications Guide](https://supabase.com/docs/guides/functions/examples/push-notifications) — Edge Function patterns for sending push
-- [Supabase RLS Documentation](https://supabase.com/docs/guides/database/postgres/row-level-security) — Row Level Security setup and policies
-- [FlashList v2 Documentation](https://shopify.github.io/flash-list/) — New Architecture compatibility, performance characteristics
-- [react-native-calendars GitHub](https://github.com/wix/react-native-calendars) — 10.2k stars, calendar UI component patterns
+- **Existing codebase analysis** — Reviewed package.json dependencies, database schema (database.types.ts), RLS policies, component structure (LuxuryWishlistCard, StarRating, AddItemModal)
+- **Supabase Realtime Troubleshooting** — Official docs on WebSocket disconnect patterns, background/foreground issues
+- **React Query Invalidation Guide** — TanStack official docs on optimistic updates, cache invalidation, conflict resolution
+- **Expo Image Picker docs** — Verified v17.0.10 API compatibility with existing upload flow
 
 ### Secondary (MEDIUM confidence)
-- [Scalable Notifications Database Design](https://medium.com/@aboud-khalaf/building-scalable-notifications-a-journey-to-the-perfect-database-design-part-1-a7818edad0ba) — Two-table architecture pattern
-- [Giftwhale Blog - Wishlist App Guide 2025](https://giftwhale.com/blog/how-to-choose-the-right-wish-list-app-in-2025) — Competitive feature analysis
-- [Braze Push Notification Best Practices](https://www.braze.com/resources/articles/push-notifications-best-practices) — Notification timing and frequency patterns
-- [Making Expo Notifications Work on Android 12+](https://medium.com/@gligor99/making-expo-notifications-actually-work-even-on-android-12-and-ios-206ff632a845) — Battery optimization pitfalls
-- [Push Token Lifecycle](https://medium.com/@chunilalkukreja/lifecycle-of-fcm-device-tokens-61681bb6fbcf) — FCM token expiration patterns
-- [WebSocket Architecture Best Practices](https://ably.com/topic/websocket-architecture-best-practices) — Race condition handling
-- [Supabase Row Level Security Complete Guide](https://vibeappscanner.com/supabase-row-level-security) — RLS patterns and common misconfigurations
+- **Wishlist UX research** — E-commerce wishlist patterns (favorite buttons, priority highlighting, flexible gifting from Giftster, SoKind Registry)
+- **Gift registry competitive analysis** — Universal registry features (MyRegistry, GiftList), mystery box patterns (Jackpot Candles)
+- **Profile editing patterns** — Post-onboarding progressive disclosure (WishList.com FAQ, Wish app Account Settings)
+- **Database migration best practices** — Rails/Laravel migration guides (constraint changes, NULL handling, atomic transactions)
 
-### Tertiary (LOW confidence, needs validation)
-- Giftster, Elfster, Givetastic, Hip Birthday Reminder apps — Feature analysis via WebSearch, not direct testing
-- Notification frequency preferences (4w/2w/1w) — Inferred from competitor patterns, not user research
+### Tertiary (LOW confidence)
+- **Birthday edit cascade behavior** — Extrapolated from celebration auto-creation logic in PROJECT.md; no external sources on specific edge case
+- **Android Fabric vs legacy renderer** — Star rating layout differences assumed based on React Native New Architecture general knowledge; not verified for specific flex-row behavior
 
 ---
 *Research completed: 2026-02-02*

@@ -1,540 +1,383 @@
-# Architecture Research
+# Architecture Research: v1.1 Wishlist Polish
 
 **Research Date:** 2026-02-02
-**Focus:** Integrating notifications, chat, calendar into existing Expo + Supabase app
-**Overall Confidence:** HIGH (verified with official documentation)
-
-## Database Schema Additions
-
-### Notifications
-
-Two-table design for scalability - message content stored once, user inbox tracks read status.
-
-```sql
--- Push notification device tokens
-CREATE TABLE device_tokens (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-  expo_push_token TEXT NOT NULL,
-  platform TEXT CHECK (platform IN ('ios', 'android')) NOT NULL,
-  is_active BOOLEAN DEFAULT TRUE,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(user_id, expo_push_token)
-);
-
--- Notification message content (stored once)
-CREATE TABLE notification_messages (
-  id BIGSERIAL PRIMARY KEY,
-  notification_type TEXT CHECK (notification_type IN (
-    'birthday_reminder_4w', 'birthday_reminder_2w', 'birthday_reminder_1w',
-    'gift_leader_assigned', 'new_chat_message', 'member_joined',
-    'celebration_created'
-  )) NOT NULL,
-  title TEXT NOT NULL,
-  body TEXT NOT NULL,
-  payload JSONB DEFAULT '{}'::jsonb, -- e.g., { group_id, celebration_id, chat_room_id }
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- User notification inbox (per-user delivery status)
-CREATE TABLE user_notifications (
-  id BIGSERIAL PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-  message_id BIGINT REFERENCES notification_messages(id) ON DELETE CASCADE NOT NULL,
-  is_read BOOLEAN DEFAULT FALSE,
-  read_at TIMESTAMPTZ,
-  delivered_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Indexes for performance
-CREATE INDEX idx_user_notifications_user_unread
-  ON user_notifications(user_id, is_read, created_at DESC);
-CREATE INDEX idx_device_tokens_user
-  ON device_tokens(user_id) WHERE is_active = TRUE;
-
--- Enable RLS
-ALTER TABLE device_tokens ENABLE ROW LEVEL SECURITY;
-ALTER TABLE user_notifications ENABLE ROW LEVEL SECURITY;
-
--- RLS Policies
-CREATE POLICY "Users can manage own device tokens"
-  ON device_tokens FOR ALL USING (user_id = auth.uid());
-
-CREATE POLICY "Users can view own notifications"
-  ON user_notifications FOR SELECT USING (user_id = auth.uid());
-
-CREATE POLICY "Users can update own notifications"
-  ON user_notifications FOR UPDATE USING (user_id = auth.uid());
-```
-
-### Chat
-
-Chat rooms tied to celebrations (birthdays), messages with realtime enabled.
-
-```sql
--- Celebrations (birthday events that spawn chat rooms)
-CREATE TABLE celebrations (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  group_id UUID REFERENCES groups(id) ON DELETE CASCADE NOT NULL,
-  celebrant_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-  event_date DATE NOT NULL,
-  year INTEGER NOT NULL, -- celebration year (birthday can repeat annually)
-  gift_leader_id UUID REFERENCES users(id) ON DELETE SET NULL,
-  status TEXT CHECK (status IN ('upcoming', 'active', 'completed')) DEFAULT 'upcoming',
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(group_id, celebrant_id, year)
-);
-
--- Chat rooms (one per celebration)
-CREATE TABLE chat_rooms (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  celebration_id UUID REFERENCES celebrations(id) ON DELETE CASCADE NOT NULL UNIQUE,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Chat messages with realtime
-CREATE TABLE chat_messages (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  chat_room_id UUID REFERENCES chat_rooms(id) ON DELETE CASCADE NOT NULL,
-  sender_id UUID REFERENCES users(id) ON DELETE SET NULL NOT NULL,
-  content TEXT NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Enable realtime for chat messages
-ALTER PUBLICATION supabase_realtime ADD TABLE chat_messages;
-
--- Indexes
-CREATE INDEX idx_chat_messages_room_time
-  ON chat_messages(chat_room_id, created_at DESC);
-CREATE INDEX idx_celebrations_group_date
-  ON celebrations(group_id, event_date);
-CREATE INDEX idx_celebrations_gift_leader
-  ON celebrations(gift_leader_id) WHERE gift_leader_id IS NOT NULL;
-
--- Enable RLS
-ALTER TABLE celebrations ENABLE ROW LEVEL SECURITY;
-ALTER TABLE chat_rooms ENABLE ROW LEVEL SECURITY;
-ALTER TABLE chat_messages ENABLE ROW LEVEL SECURITY;
-
--- Chat RLS: Group members can access chat, except celebrant
-CREATE POLICY "Group members except celebrant can view chat room"
-  ON chat_rooms FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM celebrations c
-      JOIN group_members gm ON gm.group_id = c.group_id
-      WHERE c.id = chat_rooms.celebration_id
-        AND gm.user_id = auth.uid()
-        AND c.celebrant_id != auth.uid()
-    )
-  );
-
-CREATE POLICY "Group members except celebrant can view messages"
-  ON chat_messages FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM chat_rooms cr
-      JOIN celebrations c ON c.id = cr.celebration_id
-      JOIN group_members gm ON gm.group_id = c.group_id
-      WHERE cr.id = chat_messages.chat_room_id
-        AND gm.user_id = auth.uid()
-        AND c.celebrant_id != auth.uid()
-    )
-  );
-
-CREATE POLICY "Group members except celebrant can send messages"
-  ON chat_messages FOR INSERT WITH CHECK (
-    sender_id = auth.uid()
-    AND EXISTS (
-      SELECT 1 FROM chat_rooms cr
-      JOIN celebrations c ON c.id = cr.celebration_id
-      JOIN group_members gm ON gm.group_id = c.group_id
-      WHERE cr.id = chat_messages.chat_room_id
-        AND gm.user_id = auth.uid()
-        AND c.celebrant_id != auth.uid()
-    )
-  );
-```
-
-### Calendar/Events
-
-Leverage existing `events` table type, add fields for calendar sync tracking.
-
-```sql
--- Add calendar sync tracking to users table
-ALTER TABLE users ADD COLUMN IF NOT EXISTS
-  calendar_sync_enabled BOOLEAN DEFAULT FALSE;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS
-  device_calendar_id TEXT; -- Store the created calendar ID on device
-
--- Birthday events (already have events table, extend if needed)
--- Note: Existing Event type already has group_id, user_id, event_type, event_date, title
--- Add sync tracking:
-ALTER TABLE events ADD COLUMN IF NOT EXISTS
-  device_event_id TEXT; -- Track corresponding device calendar event ID
-
--- Index for birthday lookups
-CREATE INDEX idx_events_birthday_date
-  ON events(event_date, event_type) WHERE event_type = 'birthday';
-```
-
-### Gift Leader
-
-Assignment tracking on celebrations table (already defined above). Add assignment history for audit.
-
-```sql
--- Gift Leader assignment history
-CREATE TABLE gift_leader_history (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  celebration_id UUID REFERENCES celebrations(id) ON DELETE CASCADE NOT NULL,
-  assigned_to UUID REFERENCES users(id) ON DELETE SET NULL,
-  assigned_by UUID REFERENCES users(id) ON DELETE SET NULL, -- NULL = system auto-assigned
-  reason TEXT CHECK (reason IN ('auto_rotation', 'manual_reassign', 'decline')) NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-CREATE INDEX idx_gift_leader_history_celebration
-  ON gift_leader_history(celebration_id, created_at DESC);
-
--- Enable RLS
-ALTER TABLE gift_leader_history ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Group members can view gift leader history"
-  ON gift_leader_history FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM celebrations c
-      JOIN group_members gm ON gm.group_id = c.group_id
-      WHERE c.id = gift_leader_history.celebration_id
-        AND gm.user_id = auth.uid()
-    )
-  );
-```
-
-## Service Layer Additions
-
-### Notification Service
-
-**Purpose:** Handle push notifications registration, sending, and in-app inbox management.
-
-**Location:** `utils/notifications.ts`
-
-**Functions:**
-- `registerForPushNotifications()` - Request permissions, get Expo push token, store in Supabase
-- `saveDeviceToken(token: string, platform: string)` - Persist token to device_tokens table
-- `removeDeviceToken()` - Deactivate token on logout
-- `fetchNotifications(limit?: number)` - Get user's in-app notifications
-- `markNotificationRead(notificationId: string)` - Update read status
-- `markAllNotificationsRead()` - Bulk update for "mark all read"
-- `getUnreadCount()` - For badge count on bell icon
-
-**Integration:**
-- Follows existing pattern in `utils/auth.ts` - async functions returning `{ data, error }` tuple
-- Called from screens and a `NotificationsProvider` context at root layout
-- Push token registration in `app/_layout.tsx` after auth confirmed
-
-**Supabase Edge Function:** `supabase/functions/send-push/index.ts`
-- Triggered by database webhook on `notification_messages` insert
-- Fetches recipient device tokens, sends via Expo Push API
-- Handles token invalidation (removes stale tokens)
-
-### Chat Service
-
-**Purpose:** Real-time chat message handling with Supabase Realtime subscriptions.
-
-**Location:** `utils/chat.ts`
-
-**Functions:**
-- `getChatRoom(celebrationId: string)` - Get or verify chat room for a celebration
-- `fetchMessages(chatRoomId: string, limit?: number, before?: string)` - Paginated message fetch
-- `sendMessage(chatRoomId: string, content: string)` - Insert message
-- `subscribeToMessages(chatRoomId: string, onMessage: callback)` - Realtime subscription
-- `unsubscribeFromMessages(channelId: string)` - Cleanup subscription
-- `canAccessChat(celebrationId: string)` - Check if current user is not celebrant
-
-**Realtime Pattern:**
-```typescript
-const channel = supabase
-  .channel(`chat:${chatRoomId}`)
-  .on('postgres_changes', {
-    event: 'INSERT',
-    schema: 'public',
-    table: 'chat_messages',
-    filter: `chat_room_id=eq.${chatRoomId}`
-  }, (payload) => onMessage(payload.new))
-  .subscribe();
-```
-
-**Integration:**
-- Single Supabase client instance from `lib/supabase.ts` (critical for connection management)
-- Realtime subscription managed in chat screen component with cleanup on unmount
-- Messages stored in component state, new messages prepended via subscription
-
-### Calendar Service
-
-**Purpose:** Manage in-app calendar view data and device calendar sync.
-
-**Location:** `utils/calendar.ts`
-
-**Functions:**
-- `fetchGroupBirthdays(groupId?: string)` - Get all birthdays for user's groups
-- `getBirthdaysForMonth(year: number, month: number)` - Calendar view data
-- `syncToDeviceCalendar(birthdays: Event[])` - Bulk sync birthdays to device
-- `createDeviceCalendar()` - Create "Wishlist Birthdays" calendar on device
-- `removeDeviceCalendarEvent(eventId: string)` - Remove synced event
-- `requestCalendarPermissions()` - Wrapper around expo-calendar permissions
-
-**expo-calendar Integration:**
-```typescript
-import * as Calendar from 'expo-calendar';
-
-// Create app-specific calendar
-const calendarId = await Calendar.createCalendarAsync({
-  title: 'Wishlist Birthdays',
-  color: '#6366F1', // Match app theme
-  source: defaultSource,
-  name: 'wishlist-birthdays',
-  ownerAccount: 'Wishlist App',
-  accessLevel: Calendar.CalendarAccessLevel.OWNER,
-});
-
-// Create event
-await Calendar.createEventAsync(calendarId, {
-  title: `${userName}'s Birthday`,
-  startDate: birthdayDate,
-  endDate: birthdayDate,
-  allDay: true,
-  notes: `Group: ${groupName}`,
-  alarms: [
-    { relativeOffset: -28 * 24 * 60 }, // 4 weeks before
-    { relativeOffset: -7 * 24 * 60 },  // 1 week before
-  ],
-});
-```
-
-### Gift Leader Service
-
-**Purpose:** Auto-assign gift leaders based on birthday rotation, handle reassignments.
-
-**Location:** `utils/giftLeader.ts`
-
-**Functions:**
-- `assignGiftLeader(celebrationId: string)` - Auto-assign based on birthday order
-- `reassignGiftLeader(celebrationId: string, newLeaderId: string)` - Manual reassign by admin
-- `getNextGiftLeader(groupId: string, celebrantId: string)` - Calculate next person in rotation
-- `getGiftLeaderResponsibilities(userId: string)` - Fetch celebrations where user is leader
-- `isCurrentUserGiftLeader(celebrationId: string)` - Quick check for UI
-
-**Birthday Rotation Logic:**
-```typescript
-// Get all group members sorted by birthday (month, day)
-// Find celebrant's position
-// Gift Leader = next person in list (wraps around)
-async function getNextGiftLeader(groupId: string, celebrantId: string) {
-  const { data: members } = await supabase
-    .from('group_members')
-    .select('user_id, users(birthday)')
-    .eq('group_id', groupId)
-    .order('users(birthday)'); // Sort by month-day
-
-  const celebrantIndex = members.findIndex(m => m.user_id === celebrantId);
-  const nextIndex = (celebrantIndex + 1) % members.length;
-
-  // Skip if next person is also the celebrant (edge case: 2-person group)
-  return members[nextIndex].user_id;
-}
-```
-
-**Supabase Edge Function/Cron:** `supabase/functions/assign-gift-leaders/index.ts`
-- Runs daily via pg_cron
-- Creates celebrations for upcoming birthdays (30 days ahead)
-- Auto-assigns gift leaders
-- Sends notification to assigned leader
-
-## Component Architecture
-
-### New Screens
-
-| Screen | Location | Purpose |
-|--------|----------|---------|
-| `app/(app)/onboarding.tsx` | Onboarding flow | Collect birthday, display name before first use |
-| `app/(app)/(tabs)/calendar.tsx` | Calendar tab | In-app calendar view of all birthdays |
-| `app/(app)/profile/[id].tsx` | Profile view | View any user's profile in group |
-| `app/(app)/profile/edit.tsx` | Profile edit | Edit own name, birthday, photo |
-| `app/(app)/celebration/[id].tsx` | Celebration detail | Chat room + gift coordination for a birthday |
-| `app/(app)/notifications.tsx` | Notification inbox | List of all in-app notifications |
-
-### New Components
-
-| Component | Location | Purpose |
-|-----------|----------|---------|
-| `NotificationBell.tsx` | `components/notifications/` | Header bell icon with unread badge |
-| `NotificationItem.tsx` | `components/notifications/` | Single notification in inbox list |
-| `NotificationProvider.tsx` | `components/notifications/` | Context for notification state + push setup |
-| `ChatBubble.tsx` | `components/chat/` | Single message bubble (sent vs received styling) |
-| `ChatInput.tsx` | `components/chat/` | Message input with send button |
-| `ChatList.tsx` | `components/chat/` | Scrollable message list with infinite scroll |
-| `CalendarMonth.tsx` | `components/calendar/` | Month view with birthday dots |
-| `BirthdayCard.tsx` | `components/calendar/` | Birthday event card in list view |
-| `GiftLeaderBadge.tsx` | `components/celebrations/` | Badge showing user is Gift Leader |
-| `CelebrationCard.tsx` | `components/celebrations/` | Card for upcoming celebrations list |
-| `ProfileAvatar.tsx` | `components/profile/` | Avatar with edit capability |
-| `OnboardingStep.tsx` | `components/onboarding/` | Reusable onboarding step layout |
-
-## Data Flow
-
-### Notification Flow
-
-1. **Trigger Event:** Birthday 4w away, Gift Leader assigned, new chat message
-2. **Cron/Webhook:** Supabase Edge Function triggered
-3. **Create Message:** Insert into `notification_messages` with type and payload
-4. **Create Deliveries:** Insert into `user_notifications` for each recipient
-5. **Database Webhook:** Fires on `user_notifications` insert
-6. **Edge Function:** `send-push` fetches device tokens for user
-7. **Expo Push:** POST to `https://exp.host/--/api/v2/push/send`
-8. **Device Receipt:** User sees push notification
-9. **App Open:** `NotificationProvider` fetches unread count, updates badge
-10. **Inbox View:** User taps bell, sees notification list from `user_notifications`
-11. **Mark Read:** Tap notification, call `markNotificationRead()`, update UI
-
-### Chat Message Flow
-
-1. **User Opens Celebration:** Navigate to `/celebration/[id]`
-2. **Verify Access:** `canAccessChat()` confirms user is not celebrant
-3. **Get Chat Room:** `getChatRoom(celebrationId)` returns room ID
-4. **Subscribe:** `subscribeToMessages(roomId, handleNewMessage)`
-5. **Load History:** `fetchMessages(roomId, 50)` populates initial state
-6. **User Types:** Input in `ChatInput` component
-7. **Send Message:** `sendMessage(roomId, content)` inserts to DB
-8. **Realtime Broadcast:** Supabase broadcasts INSERT to all subscribers
-9. **Receive Message:** All connected clients receive via subscription callback
-10. **Update UI:** New message appended to state, scrolls to bottom
-11. **Cleanup:** On unmount, `unsubscribeFromMessages(channelId)`
-
-### Gift Leader Assignment Flow
-
-1. **Daily Cron Job:** Runs at midnight UTC
-2. **Find Upcoming Birthdays:** Query events 30 days ahead
-3. **Check Existing Celebrations:** Skip if celebration already exists for that year
-4. **Create Celebration:** Insert with status 'upcoming'
-5. **Calculate Gift Leader:** `getNextGiftLeader(groupId, celebrantId)`
-6. **Assign Leader:** Update `gift_leader_id` on celebration
-7. **Log History:** Insert into `gift_leader_history` with reason 'auto_rotation'
-8. **Create Chat Room:** Insert into `chat_rooms` linked to celebration
-9. **Notify Leader:** Create notification for assigned Gift Leader
-10. **UI Update:** Gift Leader sees badge/indicator on celebrations tab
-
-### Manual Gift Leader Reassignment Flow
-
-1. **Admin Action:** Group admin opens celebration settings
-2. **Select New Leader:** Pick from group members (not celebrant)
-3. **API Call:** `reassignGiftLeader(celebrationId, newLeaderId)`
-4. **Update Celebration:** Set new `gift_leader_id`
-5. **Log History:** Insert with reason 'manual_reassign' and `assigned_by`
-6. **Notify New Leader:** Send notification to newly assigned leader
-7. **Notify Old Leader:** Optional - inform they've been relieved
-
-## Build Order (Dependencies)
-
-1. **Database Schema** - All other features depend on tables existing
-   - Migration file with all tables, indexes, RLS policies
-   - Must be deployed before any service code
-
-2. **Notification Infrastructure** - Foundation for all alerts
-   - `device_tokens` table, `notification_messages`, `user_notifications`
-   - `NotificationProvider` and push token registration
-   - Edge function for sending pushes
-   - **Why first:** Gift Leader, chat, calendar all need to send notifications
-
-3. **Profile & Onboarding** - Birthday data required for everything
-   - Onboarding screen to collect birthday
-   - Profile view/edit screens
-   - **Why second:** Birthday is required for celebrations, calendar, Gift Leader
-
-4. **Celebrations & Gift Leader** - Core coordination feature
-   - `celebrations` table, `gift_leader_history`
-   - Gift Leader service and auto-assignment cron
-   - Celebration list/detail screens
-   - **Why third:** Chat rooms depend on celebrations existing
-
-5. **Chat System** - Tied to celebrations
-   - `chat_rooms`, `chat_messages` tables with realtime
-   - Chat service with subscriptions
-   - Chat UI components
-   - **Why fourth:** Requires celebrations to exist first
-
-6. **Calendar Feature** - Independent but enhances UX
-   - Calendar tab screen
-   - Device calendar sync with expo-calendar
-   - **Why fifth:** Can be built in parallel with chat, no hard dependency
-
-7. **Notification Inbox UI** - Polish/completion
-   - Notification list screen
-   - Bell icon with badge
-   - **Why sixth:** Push notifications work without inbox, this is enhancement
-
-## Integration Points
-
-### Existing Files Requiring Changes
-
-| File | Changes Needed |
-|------|----------------|
-| `app/_layout.tsx` | Add `NotificationProvider`, push token registration after auth, notification listeners |
-| `app/(app)/_layout.tsx` | Add notification bell to header, check for onboarding completion |
-| `app/(app)/(tabs)/_layout.tsx` | Add calendar tab, potentially celebrations tab |
-| `app/(app)/(tabs)/groups.tsx` | Add link to celebration for upcoming birthdays, Gift Leader indicators |
-| `app/group/[id].tsx` | Show upcoming celebrations, member birthdays, Gift Leader assignments |
-| `utils/auth.ts` | Clear device token on logout |
-| `types/database.types.ts` | Add new table types: Celebration, ChatRoom, ChatMessage, Notification, DeviceToken |
-| `lib/supabase.ts` | No changes needed (singleton pattern already correct) |
-| `constants/theme.ts` | Add calendar colors, notification badge color, chat bubble colors |
-
-### New Dependencies
-
-```bash
-# Push Notifications
-npx expo install expo-notifications expo-device expo-constants
-
-# Calendar
-npx expo install expo-calendar
-
-# Date handling (for calendar views)
-npm install date-fns
-```
-
-### Supabase Dashboard Configuration
-
-1. **Enable Realtime:** For `chat_messages` table
-2. **Create Edge Functions:** `send-push`, `assign-gift-leaders`, `birthday-reminders`
-3. **Configure Database Webhooks:** Trigger push function on notification insert
-4. **Enable pg_cron:** For daily Gift Leader assignment and reminder scheduling
-5. **Set Secrets:** `EXPO_ACCESS_TOKEN` for push notifications
+**Focus:** Integration of favorite marking, special item types, profile editing, and star rating fix
+**Confidence:** HIGH — Based on existing codebase analysis and established patterns
 
 ## Summary
 
-The architecture integrates four major features into the existing Expo + Supabase app:
+All v1.1 features integrate cleanly with existing architecture. Favorite marking requires one new junction table (group_favorites). Special item types (Surprise Me, Mystery Box) leverage existing wishlist_items schema with new type field. Profile editing reuses existing profile screen with edit mode. Star rating is pure UI fix with no schema changes.
 
-1. **Notifications** use a scalable two-table design (message content + user inbox) with Expo Push Notifications via Supabase Edge Functions. Device tokens stored in Supabase enable push delivery.
+## Schema Changes
 
-2. **Chat** leverages Supabase Realtime with `postgres_changes` subscriptions. Chat rooms are tied to celebrations (one per birthday), with RLS policies ensuring the celebrant cannot see their own birthday chat.
+### New Table: group_favorites
 
-3. **Calendar** combines an in-app view (React Native calendar component) with device sync via expo-calendar. Birthday events auto-sync with configurable reminder alarms.
+**Purpose:** Track one favorite item per user per group (pinned + highlighted).
 
-4. **Gift Leader** uses birthday-order rotation with auto-assignment via pg_cron. History tracking enables audit trail, and manual reassignment gives admins flexibility.
+```sql
+CREATE TABLE IF NOT EXISTS public.group_favorites (
+  user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+  group_id UUID REFERENCES public.groups(id) ON DELETE CASCADE,
+  item_id UUID REFERENCES public.wishlist_items(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  PRIMARY KEY (user_id, group_id)
+);
 
-**Key architectural decision:** Celebrations are the central entity connecting birthdays, chat rooms, and Gift Leaders. This provides clean data modeling and enables per-celebration features without complex cross-table queries.
+-- Index for fast lookups when viewing group members' wishlists
+CREATE INDEX idx_group_favorites_group ON public.group_favorites(group_id);
+CREATE INDEX idx_group_favorites_item ON public.group_favorites(item_id);
 
----
+-- RLS: Users can view favorites in their groups
+CREATE POLICY "Users can view group favorites"
+  ON public.group_favorites FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.group_members
+      WHERE group_id = group_favorites.group_id
+        AND user_id = auth.uid()
+    )
+  );
 
-## Sources
+-- RLS: Users can set their own favorites
+CREATE POLICY "Users can manage own favorites"
+  ON public.group_favorites FOR ALL
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+```
 
-- [Supabase Push Notifications Guide](https://supabase.com/docs/guides/functions/examples/push-notifications)
-- [Expo Push Notifications Documentation](https://docs.expo.dev/guides/using-push-notifications-services/)
-- [Supabase Realtime Documentation](https://supabase.com/docs/guides/realtime)
-- [expo-calendar Documentation](https://docs.expo.dev/versions/latest/sdk/calendar/)
-- [Supabase Cron Documentation](https://supabase.com/docs/guides/cron)
-- [Scalable Notifications Database Design](https://medium.com/@aboud-khalaf/building-scalable-notifications-a-journey-to-the-perfect-database-design-part-1-a7818edad0ba)
-- [Supabase GitHub Example: Expo Push Notifications](https://github.com/supabase/supabase/tree/master/examples/user-management/expo-push-notifications)
+**Key constraint:** PRIMARY KEY (user_id, group_id) enforces one favorite per group.
 
-*Research completed: 2026-02-02*
+**Data flow:** When user marks item as favorite, INSERT with ON CONFLICT UPDATE to replace existing favorite. When viewing group members' wishlists, LEFT JOIN to show favorite status.
+
+### Modified Table: wishlist_items
+
+**Add item_type field** to distinguish regular items from special types:
+
+```sql
+-- Migration to add item_type column
+ALTER TABLE public.wishlist_items
+  ADD COLUMN item_type TEXT DEFAULT 'standard'
+  CHECK (item_type IN ('standard', 'surprise_me', 'mystery_box'));
+
+-- For mystery_box type, price represents tier (25, 50, 100)
+-- For surprise_me type, title/url optional, priority indicates openness level
+```
+
+**Rationale:**
+- Avoids separate tables for special items
+- Maintains single wishlist query
+- Enables filtering/sorting by type
+- Price field repurposed for Mystery Box tier (€25/€50/€100)
+
+**Validation logic:**
+- `surprise_me`: title optional, url can be empty string, priority = openness level
+- `mystery_box`: price restricted to [25, 50, 100], title describes tier
+- `standard`: existing validation (title + url required)
+
+### No Changes: user_profiles table
+
+Profile editing reuses existing fields:
+- `display_name` (already exists)
+- `avatar_url` (already exists, points to Supabase Storage)
+- `birthday` (already exists)
+
+**Photo upload:** Uses existing `avatars` bucket and `getAvatarUrl()` helper.
+
+## Component Changes
+
+### New Components
+
+**1. FavoriteButton.tsx** (components/wishlist/)
+- Purpose: Toggle favorite status per group
+- Props: `itemId: string, groupId: string, isFavorite: boolean, onToggle: () => void`
+- Visual: Gold star icon (filled = favorite, outline = not favorite)
+- Location: Top-right corner of LuxuryWishlistCard
+- State: Local optimistic update, syncs to Supabase
+
+**2. AddSpecialItemModal.tsx** (components/wishlist/)
+- Purpose: Guided flow for Surprise Me / Mystery Box
+- Props: `visible: boolean, type: 'surprise_me' | 'mystery_box', onClose: () => void, onAdd: (data) => void`
+- Sections:
+  - Surprise Me: Title (optional), openness level (star rating), why you trust them (note)
+  - Mystery Box: Tier selection (€25/€50/€100 radio buttons), description
+- Validation: Type-specific rules, clear CTAs
+
+**3. EditProfileScreen.tsx** (app/profile/edit.tsx)
+- Purpose: Edit display name, birthday, profile photo after onboarding
+- Layout: Form with three sections (photo picker, text input, date picker)
+- Photo flow: expo-image-picker → Supabase Storage upload → update avatar_url
+- Validation: Name required, birthday optional, photo optional
+- Navigation: Save → router.back(), Cancel → router.back()
+
+**4. ProfileHeader.tsx** (components/wishlist/)
+- Purpose: Display user's profile picture in My Wishlist header
+- Props: `userId: string, displayName: string, avatarUrl: string | null`
+- Visual: 40px circular avatar next to "My Wishlist" title
+- Clickable: Navigates to EditProfileScreen
+- Fallback: Initials if no photo
+
+### Modified Components
+
+**1. LuxuryWishlistCard.tsx** (existing)
+- **Change:** Add FavoriteButton to top-right corner
+- **Change:** Visual treatment for special types:
+  - `surprise_me`: Purple gradient border, "Surprise Me" badge
+  - `mystery_box`: Gold gradient border, "€XX Mystery Box" badge
+  - `standard`: Existing gold accent border
+- **Change:** Conditional rendering of price (mystery_box shows tier, standard shows actual price)
+- **Props added:** `isFavorite: boolean, groupId: string, onToggleFavorite: (itemId: string) => void`
+
+**2. StarRating.tsx** (existing - BUG FIX)
+- **Bug:** Currently renders vertically due to missing `flex-row` class
+- **Fix:** Line 25 already has `className="flex-row items-center gap-1"` — verify TailwindCSS config
+- **Root cause:** Likely metro cache or NativeWind config issue
+- **Solution:** Clear cache, verify tailwind.config.js includes `flex-row` utility
+- **No code changes needed** — investigate build/cache issue first
+
+**3. wishlist.tsx screen** (existing)
+- **Change:** Add ProfileHeader component below gradient header
+- **Change:** Add favorite status loading from group_favorites
+- **Change:** Pass groupId to cards for favorite context
+- **Change:** Add "Add Special Item" button next to regular "Add Item"
+- **Query change:** JOIN group_favorites to enrich items with favorite status
+
+**4. AddItemModal.tsx** (existing)
+- **Change:** Add "or add special item" link at bottom
+- **Flow:** Opens AddSpecialItemModal with type selection
+
+## Data Flow
+
+### Favorite Marking Flow
+
+```
+User taps star on item card (in group context)
+  ↓
+FavoriteButton: Optimistic UI update (gold fill)
+  ↓
+Supabase INSERT INTO group_favorites (user_id, group_id, item_id)
+  ON CONFLICT (user_id, group_id) DO UPDATE SET item_id = EXCLUDED.item_id
+  ↓
+Other group members query wishlist with LEFT JOIN group_favorites
+  ↓
+Cards display gold star badge if item.id IN favorites for that user
+```
+
+**Key insight:** Favorite is per-group, not global. User can have different favorites in different groups.
+
+**RLS enforcement:** Users can only set favorites in groups they're members of. Favorites visible to all group members.
+
+### Special Item Creation Flow
+
+```
+User taps "Add Special Item" → type selection sheet
+  ↓
+User selects "Surprise Me" or "Mystery Box"
+  ↓
+AddSpecialItemModal shows type-specific form
+  ↓
+Validation: surprise_me (openness level required), mystery_box (tier required)
+  ↓
+INSERT INTO wishlist_items (
+  user_id,
+  group_id: NULL,  -- special items not tied to specific group
+  item_type: 'surprise_me' | 'mystery_box',
+  title,
+  price: tier for mystery_box,
+  priority: openness for surprise_me,
+  amazon_url: empty for surprise_me
+)
+  ↓
+My Wishlist refreshes, card renders with special visual treatment
+```
+
+**Validation rules:**
+- Surprise Me: title optional, url empty, priority 1-5 (openness level)
+- Mystery Box: price ∈ [25, 50, 100], title describes tier, url empty
+
+**Display logic:** Filter rendering based on item_type in LuxuryWishlistCard.
+
+### Profile Editing Flow
+
+```
+User taps avatar in My Wishlist header
+  ↓
+Navigate to /profile/edit?id={userId}
+  ↓
+EditProfileScreen loads current profile from user_profiles
+  ↓
+User edits name/birthday/photo → photo triggers expo-image-picker
+  ↓
+Photo selected → upload to Supabase Storage avatars bucket
+  ↓
+UPDATE user_profiles SET
+  display_name = $1,
+  birthday = $2,
+  avatar_url = $3 (storage path)
+WHERE id = auth.uid()
+  ↓
+Router.back() to My Wishlist → ProfileHeader shows updated info
+```
+
+**Photo upload:** Reuse onboarding photo upload logic from app/(onboarding)/index.tsx.
+
+**Storage path format:** `avatars/{userId}-{timestamp}.jpg`
+
+**RLS:** Users can only update their own profile (existing policy).
+
+## Suggested Build Order
+
+**Rationale:** Start with infrastructure (schema), then isolated features (profile edit), then integrated features (favorites, special items), finally UI polish (star rating).
+
+### Phase 1: Database Schema (30 min)
+1. Create migration: `20260202000011_group_favorites.sql`
+   - Add group_favorites table
+   - Add RLS policies
+   - Add indexes
+2. Create migration: `20260202000012_item_types.sql`
+   - Add item_type column to wishlist_items
+   - Add CHECK constraint
+   - Backfill existing items with 'standard'
+
+**Validation:** Run migrations, test INSERT/SELECT with new schema.
+
+### Phase 2: Profile Editing (2 hours)
+3. Create EditProfileScreen.tsx
+   - Form layout with photo picker
+   - Integrate expo-image-picker
+   - Upload logic to Supabase Storage
+   - Update mutation
+4. Create ProfileHeader.tsx
+   - Avatar display component
+   - Click → navigate to edit screen
+5. Integrate ProfileHeader into wishlist.tsx
+   - Position below gradient header
+   - Pass userId, displayName, avatarUrl
+
+**Validation:** Edit profile, verify changes persist and display in header.
+
+### Phase 3: Special Item Types (3 hours)
+6. Update wishlist_items TypeScript types
+   - Add item_type to database.types.ts
+   - Update WishlistItem interface
+7. Create AddSpecialItemModal.tsx
+   - Type selection (Surprise Me / Mystery Box)
+   - Type-specific forms
+   - Validation logic
+8. Modify LuxuryWishlistCard.tsx
+   - Visual treatment by item_type
+   - Conditional price display
+   - Special badges
+9. Update AddItemModal.tsx
+   - Add "special item" link
+   - Wire to AddSpecialItemModal
+
+**Validation:** Add both special item types, verify display and data integrity.
+
+### Phase 4: Favorite Marking (2 hours)
+10. Create FavoriteButton.tsx
+    - Star icon toggle
+    - Optimistic UI update
+    - Supabase mutation
+11. Update wishlist.tsx query
+    - LEFT JOIN group_favorites
+    - Enrich items with isFavorite flag
+12. Integrate FavoriteButton into LuxuryWishlistCard
+    - Position top-right
+    - Pass groupId context
+13. Update group member wishlist views
+    - Show favorite badge on other users' items
+
+**Validation:** Mark favorite in group, verify visible to other members, verify one-per-group constraint.
+
+### Phase 5: Star Rating Fix (30 min)
+14. Investigate StarRating.tsx vertical layout
+    - Clear metro cache: `npx expo start -c`
+    - Verify tailwind.config.js
+    - Check NativeWind version compatibility
+15. If code fix needed, update StarRating.tsx
+    - Ensure View wrapper has flexDirection: 'row'
+    - Test with Expo Go
+
+**Validation:** Star rating displays horizontally on all cards.
+
+## Integration Points
+
+### With Existing Features
+
+**Groups:**
+- Favorites are group-scoped → query group_favorites with group_id filter
+- Special items visible in all groups (group_id NULL) → universal wishlist items
+- Profile changes visible across all groups → single source of truth in user_profiles
+
+**Wishlists:**
+- Special items query: `WHERE user_id = ? AND (group_id IS NULL OR group_id = ?)`
+- Favorite items query: `LEFT JOIN group_favorites ON wishlist_items.id = group_favorites.item_id AND group_favorites.group_id = ?`
+- Type filtering: `WHERE item_type IN ('standard', 'surprise_me', 'mystery_box')`
+
+**Chat:**
+- Favorite items more likely to be discussed → no schema changes needed
+- Special items can be linked in messages → existing linked_item_id FK works
+
+**Celebrations:**
+- Gift Leader sees favorites highlighted → query join on member favorites
+- Mystery Box requires no fulfillment → placeholder only in v1.1
+
+### With Future Features (v1.2+)
+
+**Monetization:**
+- Mystery Box purchasing: Add payment flow, order fulfillment, status tracking
+- Premium tiers: Unlock unlimited favorites (currently one per group)
+
+**Social:**
+- Favorite notifications: "Sarah marked your gift as a favorite ❤️"
+- Popular items: "3 people favorited this in your group"
+
+**AI Suggestions:**
+- Train on favorite patterns: "Users who favorited X also liked Y"
+- Surprise Me intelligence: Match openness level with gift categories
+
+## Dependencies
+
+**External:**
+- expo-image-picker (already installed) — profile photo selection
+- Supabase Storage (already configured) — avatar uploads
+- NativeWind/TailwindCSS (already configured) — star rating flex-row fix
+
+**Internal:**
+- getAvatarUrl() helper (already exists) — profile photo display
+- Existing RLS policies (extend for group_favorites) — security
+- LuxuryWishlistCard (modify) — integrate favorites + special types
+
+## Performance Considerations
+
+**Query Optimization:**
+- group_favorites indexes on (group_id) and (item_id) prevent full table scans
+- LEFT JOIN group_favorites adds minimal overhead (~10ms per query)
+- Special item filtering with item_type index if needed (add if slow)
+
+**Caching Strategy:**
+- Profile photo: Cache avatar URLs in AsyncStorage (already done)
+- Favorites: Optimistic updates reduce perceived latency
+- Special items: No caching needed (infrequent writes)
+
+**Realtime Updates:**
+- Favorites: Subscribe to group_favorites changes for live updates
+- Profile: Broadcast profile updates to group members (optional)
+
+## Confidence
+
+**HIGH** because:
+
+✅ Reviewed existing schema (wishlist_items has group_id, users table has avatar_url)
+✅ Analyzed component structure (LuxuryWishlistCard, AddItemModal, StarRating exist)
+✅ Verified data flow patterns (Supabase RLS, storage upload, query joins)
+✅ Identified exact integration points (ProfileHeader, FavoriteButton, AddSpecialItemModal)
+✅ Build order follows dependencies (schema → isolated features → integrated features)
+✅ All features leverage existing infrastructure (no new services)
+
+**Potential unknowns:**
+- Star rating bug root cause (likely cache, not code)
+- Exact expo-image-picker API if changed in Expo 54
+- GROUP BY performance with favorites join at scale (test with >1000 items)
+
+**Recommendation:** Proceed with Phase 1 (schema), validate with seed data, then continue sequentially through Phase 5.
