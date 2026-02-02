@@ -69,7 +69,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 06-01-PLAN.md — Schema migration for group_favorites table and item_type column
+- [x] 06-01-PLAN.md — Schema migration for group_favorites table and item_type column
 
 #### Phase 7: Profile Editing
 **Goal**: Users can edit their profile information post-onboarding
@@ -141,7 +141,7 @@ Phases execute in numeric order: 6 → 7 → 8 → 9 → 10
 | 3. Calendar | v1.0 | 2/2 | Complete | 2026-02-02 |
 | 4. Smart Reminders | v1.0 | 4/4 | Complete | 2026-02-02 |
 | 5. Integration Fixes | v1.0 | 1/1 | Complete | 2026-02-02 |
-| 6. Schema Foundation | v1.1 | 0/1 | Planned | - |
+| 6. Schema Foundation | v1.1 | 1/1 | Complete | 2026-02-02 |
 | 7. Profile Editing | v1.1 | 0/? | Not started | - |
 | 8. Special Item Types | v1.1 | 0/? | Not started | - |
 | 9. Favorite Marking | v1.1 | 0/? | Not started | - |
