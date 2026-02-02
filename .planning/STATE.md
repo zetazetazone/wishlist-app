@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** Phase 4 - Smart Reminders
+**Current focus:** Phase 4 - Smart Reminders (COMPLETE)
 
 ## Current Position
 
 Phase: 4 of 4 (Smart Reminders)
-Plan: 0 of 2 in current phase
-Status: Ready to plan
-Last activity: 2026-02-02 - Completed Phase 3 (Calendar)
+Plan: 2 of 2 in current phase
+Status: Phase 4 complete - All phases complete!
+Last activity: 2026-02-02 - Completed 04-02-PLAN.md (Gift Leader Notifications)
 
-Progress: [███████---] 75%
+Progress: [##########] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 6.8 minutes
-- Total execution time: 0.68 hours
+- Total plans completed: 8
+- Average duration: 5.6 minutes
+- Total execution time: 0.75 hours
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: [███████---] 75%
 | 1 - Foundation | 2 | 13 min | 6.5 min |
 | 2 - Celebrations | 2 | 13 min | 6.5 min |
 | 3 - Calendar | 2 | 14.5 min | 7.25 min |
+| 4 - Smart Reminders | 2 | 4 min | 2 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02 (8 min), 02-01 (6 min), 02-02 (7 min), 03-01 (8 min), 03-02 (6.5 min)
-- Trend: Consistent delivery
+- Last 5 plans: 02-02 (7 min), 03-01 (8 min), 03-02 (6.5 min), 04-01 (3 min), 04-02 (1 min)
+- Trend: Consistent delivery, fast execution
 
 *Updated after each plan completion*
 
@@ -60,6 +61,10 @@ Recent decisions affecting current work:
 | calendar-003 | 03-02 | Device calendar sync on tap only (not automatic) | Better UX and privacy |
 | calendar-004 | 03-02 | Create dedicated "Wishlist Birthdays" calendar | Avoids polluting user's existing calendars |
 | calendar-005 | 03-02 | 30-day planning window for auto-celebration creation | Matches countdown display window |
+| reminders-001 | 04-01 | Use pg_cron for reminder scheduling at 10:00 local time daily | Reliable server-side scheduling without app dependency |
+| reminders-002 | 04-01 | Use reminder_sent_log table for idempotent reminders | Prevents duplicate notifications on cron retry |
+| reminders-003 | 04-02 | Use IS NOT DISTINCT FROM for null-safe gift_leader_id comparison | Handles initial NULL correctly in trigger |
+| reminders-004 | 04-02 | Include avatar_url in notification payload for rich push content | Celebrant avatar visible in push notifications |
 
 ### Pending Todos
 
@@ -80,6 +85,16 @@ Recent decisions affecting current work:
 3. Verify cron job: `SELECT * FROM cron.job WHERE jobname = 'create-upcoming-celebrations';`
 4. Rebuild dev client for calendar permissions: `npx eas build --profile development`
 
+**From 04-01 (Birthday Reminders):**
+1. Apply migration: `npx supabase db push` or run SQL manually
+2. Verify cron job: `SELECT * FROM cron.job WHERE jobname = 'send-birthday-reminders';`
+
+**From 04-02 (Gift Leader Notifications):**
+1. Apply migration: `npx supabase db push` or run SQL manually
+2. Verify function: `SELECT proname FROM pg_proc WHERE proname = 'notify_gift_leader_assigned';`
+3. Verify trigger: `SELECT tgname FROM pg_trigger WHERE tgname = 'on_gift_leader_changed';`
+4. Redeploy Edge Function: `npx supabase functions deploy push`
+
 ### Blockers/Concerns
 
 - Pre-existing TypeScript errors (unrelated to calendar) - type exports missing for Group, WishlistItem
@@ -89,6 +104,6 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-02
-Stopped at: Completed Phase 3 (Calendar) - All 4 success criteria verified
+Stopped at: Completed Phase 4 (Smart Reminders) - All phases complete!
 Resume file: None
-Next: Plan Phase 4 (Smart Reminders - Birthday reminder sequences + Gift Leader notifications)
+Next: All 4 phases complete. Project ready for deployment and testing.
