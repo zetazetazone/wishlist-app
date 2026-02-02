@@ -20,7 +20,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.wishlistapp"
+      "bundleIdentifier": "com.wishlistapp",
+      "infoPlist": {
+        "NSCalendarsUsageDescription": "We need calendar access to sync birthday reminders to your calendar",
+        "NSCalendarsFullAccessUsageDescription": "We need full calendar access to create and manage birthday events"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -43,7 +47,8 @@
           "color": "#ffffff",
           "sounds": []
         }
-      ]
+      ],
+      "expo-calendar"
     ]
   }
 }
