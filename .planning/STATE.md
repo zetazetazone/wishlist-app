@@ -61,8 +61,10 @@ Recent decisions affecting current work:
 | calendar-003 | 03-02 | Device calendar sync on tap only (not automatic) | Better UX and privacy |
 | calendar-004 | 03-02 | Create dedicated "Wishlist Birthdays" calendar | Avoids polluting user's existing calendars |
 | calendar-005 | 03-02 | 30-day planning window for auto-celebration creation | Matches countdown display window |
-| reminders-001 | 04-01 | Use pg_cron for reminder scheduling at 10:00 local time daily | Reliable server-side scheduling without app dependency |
-| reminders-002 | 04-01 | Use reminder_sent_log table for idempotent reminders | Prevents duplicate notifications on cron retry |
+| reminder-001 | 04-01 | 15-minute cron interval for timezone coverage | Matches timezone detection window for 9:00 AM targeting |
+| reminder-002 | 04-01 | Celebrant gets 'happy_birthday' only on day-of | They shouldn't see countdown to their own surprise |
+| reminder-003 | 04-01 | Gift Leader 1w nudge includes progress | Actionable reminder: "$X of $Y collected from Z people" |
+| reminder-004 | 04-01 | Timezone save is non-blocking | Failure shouldn't prevent push registration |
 | reminders-003 | 04-02 | Use IS NOT DISTINCT FROM for null-safe gift_leader_id comparison | Handles initial NULL correctly in trigger |
 | reminders-004 | 04-02 | Include avatar_url in notification payload for rich push content | Celebrant avatar visible in push notifications |
 
@@ -87,7 +89,8 @@ Recent decisions affecting current work:
 
 **From 04-01 (Birthday Reminders):**
 1. Apply migration: `npx supabase db push` or run SQL manually
-2. Verify cron job: `SELECT * FROM cron.job WHERE jobname = 'send-birthday-reminders';`
+2. Verify cron job: `SELECT * FROM cron.job WHERE jobname = 'process-birthday-reminders';`
+3. Test function: `SELECT * FROM public.process_birthday_reminders();`
 
 **From 04-02 (Gift Leader Notifications):**
 1. Apply migration: `npx supabase db push` or run SQL manually
