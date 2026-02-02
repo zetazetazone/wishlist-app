@@ -10,8 +10,8 @@ This roadmap delivers coordinated birthday gifting through four phases: first es
 - Integer phases (1, 2, 3, 4): Planned milestone work
 - Decimal phases (e.g., 2.1): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Foundation** - Notification infrastructure + onboarding with birthday/profile collection
-- [ ] **Phase 2: Celebrations & Coordination** - Gift Leader system + secret chat rooms
+- [x] **Phase 1: Foundation** - Notification infrastructure + onboarding with birthday/profile collection
+- [x] **Phase 2: Celebrations & Coordination** - Gift Leader system + secret chat rooms
 - [ ] **Phase 3: Calendar** - In-app calendar view + device calendar sync
 - [ ] **Phase 4: Smart Reminders** - Birthday reminder sequences + Gift Leader notifications
 
@@ -31,8 +31,8 @@ This roadmap delivers coordinated birthday gifting through four phases: first es
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Notification infrastructure (database, push token registration, Edge Function)
-- [ ] 01-02-PLAN.md — Onboarding flow, profile screens, notification inbox
+- [x] 01-01-PLAN.md — Notification infrastructure (database, push token registration, Edge Function)
+- [x] 01-02-PLAN.md — Onboarding flow, profile screens, notification inbox
 
 ### Phase 2: Celebrations & Coordination
 **Goal**: Users can coordinate gifts through secret chat rooms with an assigned Gift Leader per celebration
@@ -50,8 +50,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Celebrations database schema, Gift Leader assignment, celebration screens
-- [ ] 02-02-PLAN.md — Real-time secret chat, contribution tracking, integration
+- [x] 02-01-PLAN.md — Celebrations database schema, Gift Leader assignment, celebration screens
+- [x] 02-02-PLAN.md — Real-time secret chat, contribution tracking, integration
 
 ### Phase 3: Calendar
 **Goal**: Users can view birthdays in an in-app calendar and sync events to their device calendar
@@ -62,11 +62,11 @@ Plans:
   2. Celebrations are automatically created when birthdays approach
   3. User can sync birthday events to Google Calendar or Apple Calendar
   4. User can see countdown to each upcoming birthday in planning window
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: In-app calendar view
-- [ ] 03-02: Device calendar sync
+- [ ] 03-01-PLAN.md — In-app calendar with birthday marking and countdown display
+- [ ] 03-02-PLAN.md — Device calendar sync and auto-celebration creation
 
 ### Phase 4: Smart Reminders
 **Goal**: Users receive timely birthday reminders and Gift Leaders are notified when assigned
@@ -90,8 +90,8 @@ Note: Phase 3 (Calendar) could run in parallel with Phase 2 if needed.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 2/2 | Complete (awaiting verification) | - |
-| 2. Celebrations & Coordination | 0/2 | Planned | - |
+| 1. Foundation | 2/2 | ✅ Complete | 2026-02-02 |
+| 2. Celebrations & Coordination | 2/2 | ✅ Complete | 2026-02-02 |
 | 3. Calendar | 0/2 | Not started | - |
 | 4. Smart Reminders | 0/2 | Not started | - |
 
