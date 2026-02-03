@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 9 of 10 (Favorite Marking)
-Plan: 1 of 3 in current phase
-Status: In progress
-Last activity: 2026-02-03 - Completed 09-01-PLAN.md
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-02-03 - Completed 09-03-PLAN.md
 
-Progress: [████████░░] 77% (17/22 total plans completed)
+Progress: [█████████░] 86% (19/22 total plans completed)
 
 ## Milestone History
 
@@ -61,6 +61,8 @@ Key decisions from v1.0 are now archived in PROJECT.md Key Decisions table.
 | D-0901-1 | 9 | Upsert with onConflict for atomic favorite replacement | Applied |
 | D-0901-2 | 9 | Gold accent color for favorites (heart/badge) | Applied |
 | D-0901-3 | 9 | MotiView spring animation for heart pulse | Applied |
+| D-0903-1 | 9 | showFavoriteHeart=false for viewing others' wishlists | Applied |
+| D-0903-2 | 9 | Celebrant favorite shown in celebration info view | Applied |
 
 ### v1.1 Roadmap Structure
 
@@ -144,9 +146,22 @@ Profile editing features complete:
 - MostWantedBadge component with gold accent
 - Upsert with onConflict pattern for atomic replacement
 
+**09-02 Complete:**
+- LuxuryWishlistCard favorite props (isFavorite, showFavoriteHeart, onToggleFavorite)
+- My Wishlist favorite state management with optimistic updates
+- Favorite sorting (pinned to top)
+- Gold border (2px) and MostWantedBadge for favorites
+- Heart toggle with spring animation
+
+**09-03 Complete:**
+- Wishlist items service (lib/wishlistItems.ts)
+- Celebrant wishlist display in celebration screen
+- Favorite highlighting in viewer mode (no interaction)
+- Viewer-only card pattern (showFavoriteHeart=false)
+
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed 09-01-PLAN.md
+Stopped at: Completed 09-03-PLAN.md (Phase 9 complete)
 Resume file: None
-Next: 09-02 (My Wishlist Integration) - FAV-01 continued
+Next: Phase 10 (Wishlist Display Polish) - UI fixes and final polish

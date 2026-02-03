@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 04-smart-reminders
 source: [04-01-SUMMARY.md, 04-02-SUMMARY.md, 04-03-SUMMARY.md]
 started: 2026-02-02T18:00:00Z
@@ -73,10 +73,13 @@ skipped: 9
 
 - truth: "Timezone is automatically detected and saved to users.timezone column"
   status: failed
-  reason: "User reported: in the supabase users table i can only find created_at and updated_at fields but not the timezone column"
+  reason: "User reported: I see UTC and it should be Europe/Madrid - timezone column exists but shows default value"
   severity: blocker
   test: 1
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "usePushNotifications hook is defined but never used in any component - saveUserTimezone() is never called"
+  artifacts:
+    - path: "hooks/usePushNotifications.ts"
+      issue: "Hook defined with saveUserTimezone() but not imported/used anywhere"
+  missing:
+    - "Import and call usePushNotifications() in app root (e.g., _layout.tsx or App.tsx)"
   debug_session: ""
