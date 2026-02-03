@@ -6,17 +6,25 @@ import { WishlistItem } from '../../types/database.types';
 import StarRating from '../ui/StarRating';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ItemTypeBadge } from './ItemTypeBadge';
+import { FavoriteHeart } from './FavoriteHeart';
+import { MostWantedBadge } from './MostWantedBadge';
 
 interface LuxuryWishlistCardProps {
   item: WishlistItem;
   onDelete?: (id: string) => void;
   index: number;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
+  showFavoriteHeart?: boolean;
 }
 
 export default function LuxuryWishlistCard({
   item,
   onDelete,
   index,
+  isFavorite,
+  onToggleFavorite,
+  showFavoriteHeart,
 }: LuxuryWishlistCardProps) {
   // Detect special item types
   const isSpecialItem = item.item_type && item.item_type !== 'standard';
@@ -35,6 +43,11 @@ export default function LuxuryWishlistCard({
 
   // Get border color based on item type
   const getCardBorderColor = () => {
+    // Favorite items get strong gold border (unless they're special items)
+    if (isFavorite && !isSpecialItem) {
+      return colors.gold[400];
+    }
+
     switch (item.item_type) {
       case 'surprise_me':
         return colors.burgundy[200];
@@ -123,7 +136,7 @@ export default function LuxuryWishlistCard({
           backgroundColor: colors.white,
           borderRadius: borderRadius.lg,
           overflow: 'hidden',
-          borderWidth: 1,
+          borderWidth: isFavorite ? 2 : 1,
           borderColor: getCardBorderColor(),
           ...shadows.md,
         }}
@@ -170,6 +183,8 @@ export default function LuxuryWishlistCard({
               </View>
 
               <View style={{ flex: 1 }}>
+                {/* Most Wanted badge when favorite */}
+                {isFavorite && <MostWantedBadge />}
                 {/* Item type badge for special items */}
                 {isSpecialItem && (
                   <ItemTypeBadge
@@ -191,8 +206,14 @@ export default function LuxuryWishlistCard({
               </View>
             </View>
 
-            {/* Delete Button */}
-            {onDelete && (
+            {/* Favorite Heart or Delete Button */}
+            {showFavoriteHeart && (
+              <FavoriteHeart
+                isFavorite={isFavorite || false}
+                onPress={() => onToggleFavorite?.()}
+              />
+            )}
+            {!showFavoriteHeart && onDelete && (
               <TouchableOpacity
                 onPress={handleDelete}
                 style={{
