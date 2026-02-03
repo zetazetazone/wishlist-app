@@ -24,7 +24,7 @@ export function FavoriteHeart({ isFavorite, onPress, disabled }: FavoriteHeartPr
         <MaterialCommunityIcons
           name={isFavorite ? 'heart' : 'heart-outline'}
           size={24}
-          color={isFavorite ? colors.gold[500] : colors.burgundy[300]}
+          color={colors.burgundy[300]}
         />
       </MotiView>
     </TouchableOpacity>
