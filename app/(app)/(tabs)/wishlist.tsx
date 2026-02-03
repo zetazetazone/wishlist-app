@@ -298,6 +298,29 @@ export default function LuxuryWishlistScreen() {
     }
   };
 
+  const handlePriorityChange = async (itemId: string, newPriority: number) => {
+    // Optimistic update
+    setItems(prevItems =>
+      prevItems.map(item =>
+        item.id === itemId ? { ...item, priority: newPriority } : item
+      )
+    );
+
+    try {
+      const { error } = await supabase
+        .from('wishlist_items')
+        .update({ priority: newPriority })
+        .eq('id', itemId);
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error updating priority:', error);
+      // Revert optimistic update on error
+      await fetchWishlistItems();
+      Alert.alert('Error', 'Failed to update priority');
+    }
+  };
+
   const selectedItemType = (selectedItemForPicker?.item_type || 'standard') as ItemType;
   const selectedItemGroupIds = selectedItemForPicker
     ? favorites.filter(f => f.itemId === selectedItemForPicker.id).map(f => f.groupId)
@@ -546,6 +569,7 @@ export default function LuxuryWishlistScreen() {
                     key={item.id}
                     item={item}
                     onDelete={handleDeleteItem}
+                    onPriorityChange={handlePriorityChange}
                     index={index}
                     favoriteGroups={itemFavorites}
                     onToggleFavorite={() => handleHeartPress(item)}
