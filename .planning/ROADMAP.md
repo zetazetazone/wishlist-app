@@ -87,7 +87,7 @@ Plans:
 - [x] 07-01: Profile settings screen with name/photo editing and locked birthday
 - [x] 07-02: Birthday confirmation step during onboarding
 
-#### Phase 8: Special Item Types
+#### Phase 8: Special Item Types ✓
 **Goal**: Users can add special wishlist items (Surprise Me, Mystery Box)
 **Depends on**: Phase 6
 **Requirements**: SPEC-01, SPEC-02, SPEC-03, SPEC-04, SPEC-05
@@ -100,8 +100,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 08-01-PLAN.md — Add item form with type selector (Gift, Surprise Me, Mystery Box)
-- [ ] 08-02-PLAN.md — Visual distinction for special items (badges, type-aware cards)
+- [x] 08-01: Add item form with type selector (Gift, Surprise Me, Mystery Box)
+- [x] 08-02: Visual distinction for special items (badges, type-aware cards)
 
 #### Phase 9: Favorite Marking
 **Goal**: Users can mark one item as favorite per group with visual distinction
@@ -145,6 +145,6 @@ Phases execute in numeric order: 6 → 7 → 8 → 9 → 10
 | 5. Integration Fixes | v1.0 | 1/1 | Complete | 2026-02-02 |
 | 6. Schema Foundation | v1.1 | 1/1 | Complete | 2026-02-02 |
 | 7. Profile Editing | v1.1 | 2/2 | Complete | 2026-02-03 |
-| 8. Special Item Types | v1.1 | 0/2 | Not started | - |
+| 8. Special Item Types | v1.1 | 2/2 | Complete | 2026-02-03 |
 | 9. Favorite Marking | v1.1 | 0/? | Not started | - |
 | 10. Wishlist Display Polish | v1.1 | 0/? | Not started | - |

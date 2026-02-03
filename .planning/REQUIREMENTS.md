@@ -20,11 +20,11 @@ Requirements for My Wishlist Polish + Profile Editing milestone. Each maps to ro
 
 ### Special Item Types
 
-- [ ] **SPEC-01**: User can add a "Surprise Me" item to their wishlist
-- [ ] **SPEC-02**: "Surprise Me" item signals openness to any gift (optional budget guidance)
-- [ ] **SPEC-03**: User can add a "Mystery Box" placeholder item to their wishlist
-- [ ] **SPEC-04**: "Mystery Box" has selectable tiers: €25, €50, or €100
-- [ ] **SPEC-05**: Special items display with distinct visual styling (icons/badges)
+- [x] **SPEC-01**: User can add a "Surprise Me" item to their wishlist
+- [x] **SPEC-02**: "Surprise Me" item signals openness to any gift (optional budget guidance)
+- [x] **SPEC-03**: User can add a "Mystery Box" placeholder item to their wishlist
+- [x] **SPEC-04**: "Mystery Box" has selectable tiers: €25, €50, or €100
+- [x] **SPEC-05**: Special items display with distinct visual styling (icons/badges)
 
 ### Profile Editing
 
@@ -83,11 +83,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FAV-01 | Phase 9 | Pending |
 | FAV-02 | Phase 9 | Pending |
 | FAV-03 | Phase 9 | Pending |
-| SPEC-01 | Phase 8 | Pending |
-| SPEC-02 | Phase 8 | Pending |
-| SPEC-03 | Phase 8 | Pending |
-| SPEC-04 | Phase 8 | Pending |
-| SPEC-05 | Phase 8 | Pending |
+| SPEC-01 | Phase 8 | Complete |
+| SPEC-02 | Phase 8 | Complete |
+| SPEC-03 | Phase 8 | Complete |
+| SPEC-04 | Phase 8 | Complete |
+| SPEC-05 | Phase 8 | Complete |
 | PROF-01 | Phase 7 | Complete |
 | PROF-02 | Phase 7 | Complete |
 | PROF-03 | Phase 7 | Complete |
@@ -101,4 +101,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-02*
-*Last updated: 2026-02-03 after Phase 7 completion*
+*Last updated: 2026-02-03 after Phase 8 completion*

@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.1 My Wishlist Polish + Profile Editing - Phase 8 In Progress
+**Current focus:** v1.1 My Wishlist Polish + Profile Editing - Phase 8 Complete
 
 ## Current Position
 
 Phase: 8 of 10 (Special Item Types)
-Plan: 2 of 3
-Status: In progress
-Last activity: 2026-02-03 - Completed 08-02-PLAN.md (card display variants)
+Plan: 2 of 2 COMPLETE
+Status: Phase 8 complete
+Last activity: 2026-02-03 - Completed phase verification
 
 Progress: [███████░░░] 68% (15/22 total plans completed)
 
@@ -62,7 +62,7 @@ Key decisions from v1.0 are now archived in PROJECT.md Key Decisions table.
 **5 phases (6-10):**
 - Phase 6: Schema Foundation (group_favorites table, item_type) - COMPLETE
 - Phase 7: Profile Editing (PROF-01, PROF-02, PROF-03, ONBD-01, ONBD-02) - COMPLETE
-- Phase 8: Special Item Types (SPEC-01 through SPEC-05) - IN PROGRESS (2/3 plans)
+- Phase 8: Special Item Types (SPEC-01 through SPEC-05) - COMPLETE
 - Phase 9: Favorite Marking (FAV-01, FAV-02, FAV-03) - depends on schema
 - Phase 10: Wishlist Display Polish (WISH-01, WISH-02) - UI fixes, final polish
 
@@ -102,14 +102,14 @@ Profile editing features complete:
 - Gear icon entry point on Home screen
 - Birthday confirmation step during onboarding (07-02)
 
-### Phase 8 Deliverables (In Progress)
+### Phase 8 Deliverables
 
 **08-01 Complete:**
 - Type selector UI in AddItemModal (Gift, Surprise, Mystery)
 - Conditional form fields per item type
 - Standard: URL + title + price + priority
 - Surprise Me: helper text + optional budget
-- Mystery Box: tier selector (25/50/100)
+- Mystery Box: tier selector (€25/€50/€100)
 - Insert handler updated with item_type fields
 
 **08-02 Complete:**
@@ -119,12 +119,13 @@ Profile editing features complete:
 - Conditional "View on Amazon" button visibility
 - Price display for tier/budget values
 
-**Remaining:**
-- 08-03: UAT verification
+**Verification:**
+- 5/5 must-haves verified against codebase
+- All SPEC-01 through SPEC-05 requirements satisfied
 
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed 08-02-PLAN.md
+Stopped at: Phase 8 complete, verified
 Resume file: None
-Next: Phase 8 Plan 03 (UAT Verification)
+Next: Phase 9 (Favorite Marking) - FAV-01, FAV-02, FAV-03
