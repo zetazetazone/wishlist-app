@@ -130,10 +130,10 @@ Plans:
   1. User sees their profile picture in the My Wishlist screen header
   2. Wishlist item cards display star ratings horizontally (not vertically)
   3. Profile picture updates immediately when changed in settings
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 10-01: TBD
+- [ ] 10-01-PLAN.md — Profile header with avatar and horizontal star ratings
 
 ## Progress
 
@@ -151,4 +151,4 @@ Phases execute in numeric order: 6 → 7 → 8 → 9 → 10
 | 7. Profile Editing | v1.1 | 2/2 | Complete | 2026-02-03 |
 | 8. Special Item Types | v1.1 | 3/3 | Complete | 2026-02-03 |
 | 9. Favorite Marking | v1.1 | 4/4 | Complete | 2026-02-03 |
-| 10. Wishlist Display Polish | v1.1 | 0/? | Not started | - |
+| 10. Wishlist Display Polish | v1.1 | 0/1 | Not started | - |
