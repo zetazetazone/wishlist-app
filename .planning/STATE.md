@@ -5,22 +5,26 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.1 My Wishlist Polish + Profile Editing - Phase 9 Complete (Favorite Marking with multi-group support)
+**Current focus:** v1.1 My Wishlist Polish + Profile Editing - Phase 10 Complete (Wishlist Display Polish)
 
 ## Current Position
 
-Phase: 9 of 10 (Favorite Marking)
-Plan: 4 of 4 in current phase
-Status: Phase complete (verified)
-Last activity: 2026-02-03 - Verified phase 9 goal achievement
+Phase: 10 of 10 (Wishlist Display Polish)
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-02-03 - Completed 10-01-PLAN.md
 
-Progress: [█████████░] 91% (21/23 total plans completed)
+Progress: [██████████] 100% (22/22 total plans completed)
 
 ## Milestone History
 
 - **v1.0 MVP** - Shipped 2026-02-02 (5 phases, 10 plans + 1 gap closure)
   - Full birthday gift coordination with push notifications, secret chat, calendar, and smart reminders
   - Gap closure: Timezone hook integration (04-04)
+
+- **v1.1 Polish** - Shipped 2026-02-03 (5 phases, 12 plans including gap closures)
+  - Schema foundation, profile editing, special item types, favorite marking, wishlist display polish
+  - Gap closures: 08-03 (special items), 09-04 (favorites)
 
 ## Performance Metrics (v1.0)
 
@@ -63,6 +67,8 @@ Key decisions from v1.0 are now archived in PROJECT.md Key Decisions table.
 | D-0901-3 | 9 | MotiView spring animation for heart pulse | Applied |
 | D-0903-1 | 9 | showFavoriteHeart=false for viewing others' wishlists | Applied |
 | D-0903-2 | 9 | Celebrant favorite shown in celebration info view | Applied |
+| D-1001-1 | 10 | 64px circular avatar with 2px white border | Applied |
+| D-1001-2 | 10 | MaterialCommunityIcons for gold star ratings | Applied |
 
 ### v1.1 Roadmap Structure
 
@@ -71,7 +77,7 @@ Key decisions from v1.0 are now archived in PROJECT.md Key Decisions table.
 - Phase 7: Profile Editing (PROF-01, PROF-02, PROF-03, ONBD-01, ONBD-02) - COMPLETE
 - Phase 8: Special Item Types (SPEC-01 through SPEC-05) - COMPLETE
 - Phase 9: Favorite Marking (FAV-01, FAV-02, FAV-03) - COMPLETE
-- Phase 10: Wishlist Display Polish (WISH-01, WISH-02) - UI fixes, final polish
+- Phase 10: Wishlist Display Polish (WISH-01, WISH-02) - COMPLETE
 
 **Coverage:** 15/15 requirements mapped (100%)
 
@@ -138,27 +144,6 @@ Profile editing features complete:
 - All SPEC-01 through SPEC-05 requirements satisfied
 - UAT gap closure verified
 
-### Phase 9 Deliverables
-
-**09-01 Complete:**
-- Favorites service layer (lib/favorites.ts)
-- FavoriteHeart animated toggle component
-- MostWantedBadge component with gold accent
-- Upsert with onConflict pattern for atomic replacement
-
-**09-02 Complete:**
-- LuxuryWishlistCard favorite props (isFavorite, showFavoriteHeart, onToggleFavorite)
-- My Wishlist favorite state management with optimistic updates
-- Favorite sorting (pinned to top)
-- Gold border (2px) and MostWantedBadge for favorites
-- Heart toggle with spring animation
-
-**09-03 Complete:**
-- Wishlist items service (lib/wishlistItems.ts)
-- Celebrant wishlist display in celebration screen
-- Favorite highlighting in viewer mode (no interaction)
-- Viewer-only card pattern (showFavoriteHeart=false)
-
 ### Phase 9 Deliverables (Favorite Marking)
 
 **09-01 Complete:**
@@ -188,9 +173,23 @@ Profile editing features complete:
 - 5/5 must-haves verified against codebase
 - All FAV-01, FAV-02, FAV-03 requirements satisfied
 
+### Phase 10 Deliverables (Wishlist Display Polish)
+
+**10-01 Complete:**
+- Profile header with 64px circular avatar in My Wishlist
+- Tap-to-navigate to settings/profile
+- Greeting with user's first name
+- Initials fallback with gold[200] background
+- Horizontal star ratings with MaterialCommunityIcons
+- Gold accent colors (gold[500] filled, gold[200] empty)
+
+**Verification:**
+- 4/4 must-haves verified against codebase
+- All WISH-01, WISH-02 requirements satisfied
+
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Phase 9 verified complete
+Stopped at: Completed 10-01-PLAN.md (v1.1 complete)
 Resume file: None
-Next: Phase 10 (Wishlist Display Polish) - UI fixes and final polish
+Next: v1.1 complete - all phases finished
