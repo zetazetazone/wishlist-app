@@ -92,16 +92,17 @@ Plans:
 **Depends on**: Phase 6
 **Requirements**: SPEC-01, SPEC-02, SPEC-03, SPEC-04, SPEC-05
 **Success Criteria** (what must be TRUE):
-  1. User can add "Surprise Me" item to their wishlist with optional budget guidance
+  1. User can add "Surprise Me" item to their wishlist (no per-item budget - that's group-specific)
   2. User can add "Mystery Box" item to their wishlist
-  3. User can select Mystery Box tier (€25, €50, or €100)
+  3. User can select Mystery Box tier (€50 or €100 only)
   4. Special items display with distinct visual styling (icons/badges)
   5. Special items appear correctly in other group members' views
-**Plans**: 2 plans
+**Plans**: 2 plans + 1 gap closure
 
 Plans:
 - [x] 08-01: Add item form with type selector (Gift, Surprise Me, Mystery Box)
 - [x] 08-02: Visual distinction for special items (badges, type-aware cards)
+- [ ] 08-03: Gap closure - fix budget field, tier options, and amazon_url constraint
 
 #### Phase 9: Favorite Marking
 **Goal**: Users can mark one item as favorite per group with visual distinction
@@ -145,6 +146,6 @@ Phases execute in numeric order: 6 → 7 → 8 → 9 → 10
 | 5. Integration Fixes | v1.0 | 1/1 | Complete | 2026-02-02 |
 | 6. Schema Foundation | v1.1 | 1/1 | Complete | 2026-02-02 |
 | 7. Profile Editing | v1.1 | 2/2 | Complete | 2026-02-03 |
-| 8. Special Item Types | v1.1 | 2/2 | Complete | 2026-02-03 |
+| 8. Special Item Types | v1.1 | 2/3 | Gap closure ready | 2026-02-03 |
 | 9. Favorite Marking | v1.1 | 0/? | Not started | - |
 | 10. Wishlist Display Polish | v1.1 | 0/? | Not started | - |
