@@ -74,3 +74,40 @@ export async function getFavoriteForGroup(
 
   return data?.item_id || null;
 }
+
+/** Get all groups user belongs to */
+export async function getUserGroups(userId: string): Promise<Array<{ id: string; name: string }>> {
+  const { data, error } = await supabase
+    .from('group_members')
+    .select('group_id, groups!inner(id, name)')
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('Failed to fetch user groups:', error);
+    throw new Error(`Failed to fetch user groups: ${error.message}`);
+  }
+
+  return (data || []).map(d => ({
+    id: d.groups.id,
+    name: d.groups.name,
+  }));
+}
+
+/** Get all favorites for a user across all groups (for My Wishlist view) */
+export async function getAllFavoritesForUser(userId: string): Promise<Array<{ groupId: string; groupName: string; itemId: string }>> {
+  const { data, error } = await supabase
+    .from('group_favorites')
+    .select('group_id, item_id, groups!inner(name)')
+    .eq('user_id', userId);
+
+  if (error) {
+    console.error('Failed to fetch user favorites:', error);
+    throw new Error(`Failed to fetch user favorites: ${error.message}`);
+  }
+
+  return (data || []).map(d => ({
+    groupId: d.group_id,
+    groupName: d.groups.name,
+    itemId: d.item_id,
+  }));
+}
