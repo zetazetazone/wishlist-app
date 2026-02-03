@@ -1,11 +1,15 @@
 import { View, Text } from 'react-native';
 import { colors, spacing, borderRadius } from '../../constants/theme';
 
-export function MostWantedBadge() {
+interface MostWantedBadgeProps {
+  groupName?: string; // Optional: show "MOST WANTED in [Group]"
+}
+
+export function MostWantedBadge({ groupName }: MostWantedBadgeProps) {
   return (
     <View
       style={{
-        backgroundColor: colors.gold[100],
+        backgroundColor: colors.burgundy[100],
         paddingHorizontal: spacing.sm,
         paddingVertical: spacing.xs / 2,
         borderRadius: borderRadius.sm,
@@ -15,13 +19,14 @@ export function MostWantedBadge() {
     >
       <Text
         style={{
-          color: colors.gold[700],
+          color: colors.burgundy[700],
           fontSize: 11,
           fontWeight: '600',
           letterSpacing: 0.3,
         }}
+        numberOfLines={1}
       >
-        MOST WANTED
+        {groupName ? `♥ MOST WANTED in ${groupName}` : '♥ MOST WANTED'}
       </Text>
     </View>
   );
