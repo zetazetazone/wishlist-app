@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.1 My Wishlist Polish + Profile Editing - Phase 8 Complete (with gap closure)
+**Current focus:** v1.1 My Wishlist Polish + Profile Editing - Phase 9 Complete (Favorite Marking with multi-group support)
 
 ## Current Position
 
 Phase: 9 of 10 (Favorite Marking)
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-02-03 - Completed 09-03-PLAN.md
+Plan: 4 of 4 in current phase
+Status: Phase complete (verified)
+Last activity: 2026-02-03 - Verified phase 9 goal achievement
 
-Progress: [█████████░] 86% (19/22 total plans completed)
+Progress: [█████████░] 91% (21/23 total plans completed)
 
 ## Milestone History
 
@@ -70,7 +70,7 @@ Key decisions from v1.0 are now archived in PROJECT.md Key Decisions table.
 - Phase 6: Schema Foundation (group_favorites table, item_type) - COMPLETE
 - Phase 7: Profile Editing (PROF-01, PROF-02, PROF-03, ONBD-01, ONBD-02) - COMPLETE
 - Phase 8: Special Item Types (SPEC-01 through SPEC-05) - COMPLETE
-- Phase 9: Favorite Marking (FAV-01, FAV-02, FAV-03) - depends on schema
+- Phase 9: Favorite Marking (FAV-01, FAV-02, FAV-03) - COMPLETE
 - Phase 10: Wishlist Display Polish (WISH-01, WISH-02) - UI fixes, final polish
 
 **Coverage:** 15/15 requirements mapped (100%)
@@ -159,9 +159,38 @@ Profile editing features complete:
 - Favorite highlighting in viewer mode (no interaction)
 - Viewer-only card pattern (showFavoriteHeart=false)
 
+### Phase 9 Deliverables (Favorite Marking)
+
+**09-01 Complete:**
+- Favorites service layer (lib/favorites.ts)
+- FavoriteHeart animated toggle component
+- MostWantedBadge component
+
+**09-02 Complete:**
+- LuxuryWishlistCard favorite props (favoriteGroups, onToggleFavorite, showFavoriteHeart)
+- My Wishlist favorite state management with multi-group support
+- Favorite sorting (pinned to top)
+- LayoutAnimation for smooth card sliding
+
+**09-03 Complete:**
+- Celebrant wishlist display in celebration screen
+- Favorite highlighting in viewer mode (no interaction)
+- Group-specific favorite filtering
+
+**09-04 Gap Closure Complete:**
+- Heart fill color burgundy (user feedback)
+- GroupPickerSheet with item-type-aware selection
+- Multi-group favorites support
+- Standard items: single group selection (radio buttons)
+- Special items: multi-group selection (checkboxes)
+
+**Verification:**
+- 5/5 must-haves verified against codebase
+- All FAV-01, FAV-02, FAV-03 requirements satisfied
+
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed 09-03-PLAN.md (Phase 9 complete)
+Stopped at: Phase 9 verified complete
 Resume file: None
 Next: Phase 10 (Wishlist Display Polish) - UI fixes and final polish

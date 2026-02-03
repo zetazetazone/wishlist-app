@@ -104,7 +104,7 @@ Plans:
 - [x] 08-02: Visual distinction for special items (badges, type-aware cards)
 - [x] 08-03: Gap closure - fix budget field, tier options, and amazon_url constraint
 
-#### Phase 9: Favorite Marking
+#### Phase 9: Favorite Marking ✓
 **Goal**: Users can mark one item as favorite per group with visual distinction
 **Depends on**: Phase 6
 **Requirements**: FAV-01, FAV-02, FAV-03
@@ -114,12 +114,13 @@ Plans:
   3. Favorite item has visual highlight distinguishing it from other items
   4. Only one favorite per user per group is enforced
   5. Favorite status updates optimistically with proper conflict resolution
-**Plans**: 3 plans
+**Plans**: 4 plans (3 + 1 gap closure)
 
 Plans:
-- [ ] 09-01-PLAN.md — Favorites service and UI components (FavoriteHeart, MostWantedBadge)
-- [ ] 09-02-PLAN.md — Integration into My Wishlist with visual distinction and pinning
-- [ ] 09-03-PLAN.md — Integration into celebrant event view (celebration screen wishlist display)
+- [x] 09-01: Favorites service and UI components (FavoriteHeart, MostWantedBadge)
+- [x] 09-02: Integration into My Wishlist with visual distinction and pinning
+- [x] 09-03: Integration into celebrant event view (celebration screen wishlist display)
+- [x] 09-04: Multi-group favorites redesign (gap closure)
 
 #### Phase 10: Wishlist Display Polish
 **Goal**: Polish My Wishlist screen with profile picture and horizontal star ratings
@@ -149,5 +150,5 @@ Phases execute in numeric order: 6 → 7 → 8 → 9 → 10
 | 6. Schema Foundation | v1.1 | 1/1 | Complete | 2026-02-02 |
 | 7. Profile Editing | v1.1 | 2/2 | Complete | 2026-02-03 |
 | 8. Special Item Types | v1.1 | 3/3 | Complete | 2026-02-03 |
-| 9. Favorite Marking | v1.1 | 0/3 | Not started | - |
+| 9. Favorite Marking | v1.1 | 4/4 | Complete | 2026-02-03 |
 | 10. Wishlist Display Polish | v1.1 | 0/? | Not started | - |

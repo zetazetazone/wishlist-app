@@ -14,9 +14,9 @@ Requirements for My Wishlist Polish + Profile Editing milestone. Each maps to ro
 
 ### Favorite Item
 
-- [ ] **FAV-01**: User can mark one wishlist item as "favorite" per group
-- [ ] **FAV-02**: Favorite item appears pinned to top of wishlist for other group members
-- [ ] **FAV-03**: Favorite item has visual highlight distinguishing it from other items
+- [x] **FAV-01**: User can mark one wishlist item as "favorite" per group
+- [x] **FAV-02**: Favorite item appears pinned to top of wishlist for other group members
+- [x] **FAV-03**: Favorite item has visual highlight distinguishing it from other items
 
 ### Special Item Types
 
@@ -80,9 +80,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | WISH-01 | Phase 10 | Pending |
 | WISH-02 | Phase 10 | Pending |
-| FAV-01 | Phase 9 | Pending |
-| FAV-02 | Phase 9 | Pending |
-| FAV-03 | Phase 9 | Pending |
+| FAV-01 | Phase 9 | Complete |
+| FAV-02 | Phase 9 | Complete |
+| FAV-03 | Phase 9 | Complete |
 | SPEC-01 | Phase 8 | Complete |
 | SPEC-02 | Phase 8 | Complete |
 | SPEC-03 | Phase 8 | Complete |
@@ -101,4 +101,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-02*
-*Last updated: 2026-02-03 after Phase 8 completion*
+*Last updated: 2026-02-03 after Phase 9 completion*
