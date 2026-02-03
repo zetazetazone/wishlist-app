@@ -16,6 +16,7 @@ import { WishlistItem } from '../../../types/database.types';
 import AddItemModal from '../../../components/wishlist/AddItemModal';
 import LuxuryWishlistCard from '../../../components/wishlist/LuxuryWishlistCard';
 import { colors, spacing, borderRadius, shadows } from '../../../constants/theme';
+import { setFavorite, removeFavorite, getFavoriteForGroup } from '../../../lib/favorites';
 
 export default function LuxuryWishlistScreen() {
   const [items, setItems] = useState<WishlistItem[]>([]);
@@ -23,6 +24,8 @@ export default function LuxuryWishlistScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [favoriteItemId, setFavoriteItemId] = useState<string | null>(null);
+  const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
 
   useEffect(() => {
     getCurrentUser();
@@ -39,6 +42,23 @@ export default function LuxuryWishlistScreen() {
       data: { user },
     } = await supabase.auth.getUser();
     setUserId(user?.id || null);
+
+    // Load user's first group and favorite
+    if (user) {
+      const { data: membership } = await supabase
+        .from('group_members')
+        .select('group_id')
+        .eq('user_id', user.id)
+        .limit(1)
+        .single();
+
+      if (membership) {
+        setActiveGroupId(membership.group_id);
+        // Load favorite for this group
+        const favId = await getFavoriteForGroup(user.id, membership.group_id);
+        setFavoriteItemId(favId);
+      }
+    }
   };
 
   const fetchWishlistItems = async () => {
@@ -63,7 +83,40 @@ export default function LuxuryWishlistScreen() {
   const handleRefresh = async () => {
     setRefreshing(true);
     await fetchWishlistItems();
+    if (userId && activeGroupId) {
+      const favId = await getFavoriteForGroup(userId, activeGroupId);
+      setFavoriteItemId(favId);
+    }
     setRefreshing(false);
+  };
+
+  const handleToggleFavorite = async (itemId: string) => {
+    if (!userId || !activeGroupId) return;
+
+    // Store previous for rollback
+    const previousFavorite = favoriteItemId;
+
+    // Optimistic update
+    if (itemId === favoriteItemId) {
+      setFavoriteItemId(null); // Unfavoriting
+    } else {
+      setFavoriteItemId(itemId); // Favoriting (auto-replaces old)
+    }
+
+    try {
+      if (itemId === previousFavorite) {
+        // Unfavoriting
+        await removeFavorite(userId, activeGroupId);
+      } else {
+        // Favoriting (upsert handles replacement)
+        await setFavorite(userId, activeGroupId, itemId);
+      }
+    } catch (error) {
+      // Rollback on error
+      console.error('Failed to toggle favorite:', error);
+      setFavoriteItemId(previousFavorite);
+      Alert.alert('Error', 'Failed to update favorite');
+    }
   };
 
   const handleAddItem = async (itemData: {
@@ -295,14 +348,27 @@ export default function LuxuryWishlistScreen() {
               </View>
             </MotiView>
           ) : (
-            items.map((item, index) => (
-              <LuxuryWishlistCard
-                key={item.id}
-                item={item}
-                onDelete={handleDeleteItem}
-                index={index}
-              />
-            ))
+            (() => {
+              // Sort items with favorite pinned to top
+              const sortedItems = [...items].sort((a, b) => {
+                if (a.id === favoriteItemId) return -1;
+                if (b.id === favoriteItemId) return 1;
+                // Then by priority (stars) descending
+                return (b.priority || 0) - (a.priority || 0);
+              });
+
+              return sortedItems.map((item, index) => (
+                <LuxuryWishlistCard
+                  key={item.id}
+                  item={item}
+                  onDelete={handleDeleteItem}
+                  index={index}
+                  isFavorite={item.id === favoriteItemId}
+                  onToggleFavorite={() => handleToggleFavorite(item.id)}
+                  showFavoriteHeart={true}
+                />
+              ));
+            })()
           )}
         </ScrollView>
       </View>
