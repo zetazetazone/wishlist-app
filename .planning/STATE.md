@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.1 My Wishlist Polish + Profile Editing - Phase 8 Complete
+**Current focus:** v1.1 My Wishlist Polish + Profile Editing - Phase 8 Complete (with gap closure)
 
 ## Current Position
 
 Phase: 8 of 10 (Special Item Types)
-Plan: 2 of 2 COMPLETE
-Status: Phase 8 complete
-Last activity: 2026-02-03 - Completed phase verification
+Plan: 3 of 3 COMPLETE (including gap closure)
+Status: Phase 8 complete with UAT fixes
+Last activity: 2026-02-03 - Completed 08-03 gap closure plan
 
-Progress: [███████░░░] 68% (15/22 total plans completed)
+Progress: [████████░░] 72% (16/22 total plans completed)
 
 ## Milestone History
 
@@ -56,6 +56,8 @@ Key decisions from v1.0 are now archived in PROJECT.md Key Decisions table.
 | D-0801-1 | 8 | Euro symbol for prices (app locale) | Applied |
 | D-0802-1 | 8 | Burgundy for Surprise Me, gold for Mystery Box badges | Applied |
 | D-0802-2 | 8 | isSpecialItem pattern for conditional rendering | Established |
+| D-0803-1 | 8 | Smart CHECK constraint for amazon_url (type-based) | Applied |
+| D-0803-2 | 8 | Remove surprise_me_budget from UI (budget is group-level) | Applied |
 
 ### v1.1 Roadmap Structure
 
@@ -73,7 +75,7 @@ Key decisions from v1.0 are now archived in PROJECT.md Key Decisions table.
 Schema changes applied to remote Supabase:
 - `group_favorites` table with RLS policies
 - `wishlist_items.item_type` column (standard, surprise_me, mystery_box)
-- `wishlist_items.mystery_box_tier` column (25, 50, 100)
+- `wishlist_items.mystery_box_tier` column (50, 100) - updated from (25, 50, 100)
 - `wishlist_items.surprise_me_budget` column
 - Cross-column constraint: mystery_box_tier requires item_type='mystery_box'
 - TypeScript types updated in types/database.types.ts
@@ -119,13 +121,21 @@ Profile editing features complete:
 - Conditional "View on Amazon" button visibility
 - Price display for tier/budget values
 
+**08-03 Gap Closure Complete:**
+- Fixed amazon_url NOT NULL constraint (now nullable for special items)
+- Added smart CHECK constraint (standard requires URL, special forbids URL)
+- Removed budget field from Surprise Me form (budget is group-level)
+- Updated mystery_box_tier to only allow 50 and 100 (removed 25)
+- TypeScript types updated to match schema changes
+
 **Verification:**
 - 5/5 must-haves verified against codebase
 - All SPEC-01 through SPEC-05 requirements satisfied
+- UAT gap closure verified
 
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Phase 8 complete, verified
+Stopped at: Completed 08-03 gap closure plan
 Resume file: None
 Next: Phase 9 (Favorite Marking) - FAV-01, FAV-02, FAV-03
