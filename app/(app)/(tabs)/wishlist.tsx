@@ -418,12 +418,12 @@ export default function LuxuryWishlistScreen() {
           setSelectedItemForPicker(null);
         }}
         groups={userGroups}
-        currentFavoriteGroups={
+        currentFavoriteGroupId={
           selectedItemForPicker
-            ? favorites.filter(f => f.itemId === selectedItemForPicker.id).map(f => f.groupId)
-            : []
+            ? favorites.find(f => f.itemId === selectedItemForPicker.id)?.groupId ?? null
+            : null
         }
-        onToggleGroup={(groupId) => {
+        onSelectGroup={(groupId) => {
           if (selectedItemForPicker) {
             handleToggleFavorite(selectedItemForPicker.id, groupId);
           }

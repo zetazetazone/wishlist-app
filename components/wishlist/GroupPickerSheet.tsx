@@ -1,14 +1,13 @@
-import { View, Text, TouchableOpacity, Modal, Pressable, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, Pressable } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { MotiView } from 'moti';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 
 interface GroupPickerSheetProps {
   visible: boolean;
   onClose: () => void;
   groups: Array<{ id: string; name: string }>;
-  currentFavoriteGroups: string[]; // Groups where this item is currently favorited
-  onToggleGroup: (groupId: string) => void;
+  currentFavoriteGroupId: string | null; // Single group where this item is currently favorited
+  onSelectGroup: (groupId: string) => void;
   itemTitle: string;
 }
 
@@ -16,32 +15,61 @@ export function GroupPickerSheet({
   visible,
   onClose,
   groups,
-  currentFavoriteGroups,
-  onToggleGroup,
+  currentFavoriteGroupId,
+  onSelectGroup,
   itemTitle,
 }: GroupPickerSheetProps) {
+  const handleSelect = (groupId: string) => {
+    onSelectGroup(groupId);
+    onClose(); // Auto-close after selection
+  };
+
   return (
     <Modal
       visible={visible}
-      animationType="slide"
-      presentationStyle="pageSheet"
+      animationType="fade"
+      transparent={true}
       onRequestClose={onClose}
     >
-      <View style={{
-        flex: 1,
-        backgroundColor: colors.cream[50],
-      }}>
-        {/* Header */}
-        <View style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: spacing.lg,
-          borderBottomWidth: 1,
-          borderBottomColor: colors.gold[100],
-          backgroundColor: colors.white,
-        }}>
-          <View style={{ flex: 1 }}>
+      {/* Backdrop */}
+      <Pressable
+        style={{
+          flex: 1,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          justifyContent: 'flex-end',
+        }}
+        onPress={onClose}
+      >
+        {/* Sheet */}
+        <Pressable
+          style={{
+            backgroundColor: colors.white,
+            borderTopLeftRadius: borderRadius.xl,
+            borderTopRightRadius: borderRadius.xl,
+            paddingBottom: spacing.xl,
+            maxHeight: '60%',
+          }}
+          onPress={(e) => e.stopPropagation()}
+        >
+          {/* Handle */}
+          <View style={{
+            alignItems: 'center',
+            paddingTop: spacing.sm,
+            paddingBottom: spacing.md,
+          }}>
+            <View style={{
+              width: 40,
+              height: 4,
+              backgroundColor: colors.burgundy[200],
+              borderRadius: 2,
+            }} />
+          </View>
+
+          {/* Header */}
+          <View style={{
+            paddingHorizontal: spacing.lg,
+            paddingBottom: spacing.md,
+          }}>
             <Text style={{
               fontSize: 18,
               fontWeight: '600',
@@ -57,103 +85,95 @@ export function GroupPickerSheet({
               {itemTitle}
             </Text>
           </View>
-          <TouchableOpacity onPress={onClose}>
-            <MaterialCommunityIcons name="close" size={24} color={colors.burgundy[400]} />
-          </TouchableOpacity>
-        </View>
 
-        {/* Instructions */}
-        <Text style={{
-          fontSize: 14,
-          color: colors.burgundy[500],
-          padding: spacing.lg,
-          paddingBottom: spacing.sm,
-        }}>
-          Select which group(s) this item is your "Most Wanted" for:
-        </Text>
+          {/* Group List */}
+          <View style={{ paddingHorizontal: spacing.lg }}>
+            {groups.map(group => {
+              const isSelected = currentFavoriteGroupId === group.id;
+              return (
+                <TouchableOpacity
+                  key={group.id}
+                  onPress={() => handleSelect(group.id)}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: spacing.md,
+                    marginBottom: spacing.sm,
+                    backgroundColor: isSelected ? colors.burgundy[50] : colors.cream[50],
+                    borderRadius: borderRadius.md,
+                    borderWidth: 2,
+                    borderColor: isSelected ? colors.burgundy[400] : colors.gold[100],
+                  }}
+                >
+                  {/* Radio button */}
+                  <View style={{
+                    width: 22,
+                    height: 22,
+                    borderRadius: 11,
+                    borderWidth: 2,
+                    borderColor: isSelected ? colors.burgundy[400] : colors.burgundy[200],
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: spacing.md,
+                  }}>
+                    {isSelected && (
+                      <View style={{
+                        width: 12,
+                        height: 12,
+                        borderRadius: 6,
+                        backgroundColor: colors.burgundy[400],
+                      }} />
+                    )}
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{
+                      fontSize: 16,
+                      fontWeight: '500',
+                      color: colors.burgundy[800],
+                    }}>
+                      {group.name}
+                    </Text>
+                  </View>
+                  {isSelected && (
+                    <MaterialCommunityIcons
+                      name="heart"
+                      size={20}
+                      color={colors.burgundy[400]}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
 
-        {/* Group List */}
-        <ScrollView style={{ flex: 1, padding: spacing.lg, paddingTop: 0 }}>
-          {groups.map(group => {
-            const isSelected = currentFavoriteGroups.includes(group.id);
-            return (
+            {/* Clear selection option */}
+            {currentFavoriteGroupId && (
               <TouchableOpacity
-                key={group.id}
-                onPress={() => onToggleGroup(group.id)}
+                onPress={() => handleSelect(currentFavoriteGroupId)}
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   padding: spacing.md,
-                  marginBottom: spacing.sm,
-                  backgroundColor: colors.white,
-                  borderRadius: borderRadius.md,
-                  borderWidth: 2,
-                  borderColor: isSelected ? colors.burgundy[400] : colors.gold[100],
-                  ...shadows.sm,
+                  marginTop: spacing.sm,
                 }}
               >
-                <View style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: 4,
-                  borderWidth: 2,
-                  borderColor: isSelected ? colors.burgundy[400] : colors.burgundy[200],
-                  backgroundColor: isSelected ? colors.burgundy[400] : 'transparent',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginRight: spacing.md,
+                <MaterialCommunityIcons
+                  name="heart-off-outline"
+                  size={18}
+                  color={colors.burgundy[400]}
+                  style={{ marginRight: spacing.xs }}
+                />
+                <Text style={{
+                  fontSize: 14,
+                  color: colors.burgundy[400],
                 }}>
-                  {isSelected && (
-                    <MaterialCommunityIcons name="check" size={16} color={colors.white} />
-                  )}
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={{
-                    fontSize: 16,
-                    fontWeight: '600',
-                    color: colors.burgundy[800],
-                  }}>
-                    {group.name}
-                  </Text>
-                </View>
-                {isSelected && (
-                  <MaterialCommunityIcons
-                    name="heart"
-                    size={20}
-                    color={colors.burgundy[400]}
-                  />
-                )}
+                  Remove from Most Wanted
+                </Text>
               </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-
-        {/* Done Button */}
-        <View style={{
-          padding: spacing.lg,
-          backgroundColor: colors.white,
-          borderTopWidth: 1,
-          borderTopColor: colors.gold[100],
-        }}>
-          <TouchableOpacity
-            onPress={onClose}
-            style={{
-              backgroundColor: colors.burgundy[700],
-              borderRadius: borderRadius.md,
-              padding: spacing.md,
-              alignItems: 'center',
-            }}
-          >
-            <Text style={{
-              color: colors.white,
-              fontSize: 16,
-              fontWeight: '600',
-            }}>
-              Done
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+            )}
+          </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }
