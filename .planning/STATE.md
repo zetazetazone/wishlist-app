@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 ## Current Position
 
 Phase: 8 of 10 (Special Item Types)
-Plan: 1 of 3
+Plan: 2 of 3
 Status: In progress
-Last activity: 2026-02-03 - Completed 08-01-PLAN.md (item type selection)
+Last activity: 2026-02-03 - Completed 08-02-PLAN.md (card display variants)
 
-Progress: [███████░░░] 64% (14/22 total plans completed)
+Progress: [███████░░░] 68% (15/22 total plans completed)
 
 ## Milestone History
 
@@ -54,13 +54,15 @@ Key decisions from v1.0 are now archived in PROJECT.md Key Decisions table.
 | D-0701-1 | 7 | Folder-based routing for settings (allows expansion) | Applied |
 | D-0701-2 | 7 | Locked field pattern: gray Box + lock icon + helper | Established |
 | D-0801-1 | 8 | Euro symbol for prices (app locale) | Applied |
+| D-0802-1 | 8 | Burgundy for Surprise Me, gold for Mystery Box badges | Applied |
+| D-0802-2 | 8 | isSpecialItem pattern for conditional rendering | Established |
 
 ### v1.1 Roadmap Structure
 
 **5 phases (6-10):**
 - Phase 6: Schema Foundation (group_favorites table, item_type) - COMPLETE
 - Phase 7: Profile Editing (PROF-01, PROF-02, PROF-03, ONBD-01, ONBD-02) - COMPLETE
-- Phase 8: Special Item Types (SPEC-01 through SPEC-05) - IN PROGRESS (1/3 plans)
+- Phase 8: Special Item Types (SPEC-01 through SPEC-05) - IN PROGRESS (2/3 plans)
 - Phase 9: Favorite Marking (FAV-01, FAV-02, FAV-03) - depends on schema
 - Phase 10: Wishlist Display Polish (WISH-01, WISH-02) - UI fixes, final polish
 
@@ -110,13 +112,19 @@ Profile editing features complete:
 - Mystery Box: tier selector (25/50/100)
 - Insert handler updated with item_type fields
 
+**08-02 Complete:**
+- ItemTypeBadge component (burgundy Surprise Me, gold Mystery Box)
+- LuxuryWishlistCard type-aware rendering
+- Dynamic icons, border colors, gradient accents
+- Conditional "View on Amazon" button visibility
+- Price display for tier/budget values
+
 **Remaining:**
-- 08-02: Card display variants for special types
 - 08-03: UAT verification
 
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed 08-01-PLAN.md
+Stopped at: Completed 08-02-PLAN.md
 Resume file: None
-Next: Phase 8 Plan 02 (Card Display Variants)
+Next: Phase 8 Plan 03 (UAT Verification)
