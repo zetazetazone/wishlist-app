@@ -1,4 +1,6 @@
-import { View, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { colors } from '../../constants/theme';
 
 interface StarRatingProps {
   rating: number;
@@ -10,7 +12,7 @@ interface StarRatingProps {
 export default function StarRating({
   rating,
   onRatingChange,
-  size = 24,
+  size = 20,
   readonly = false,
 }: StarRatingProps) {
   const stars = [1, 2, 3, 4, 5];
@@ -22,7 +24,13 @@ export default function StarRating({
   };
 
   return (
-    <View className="flex-row items-center gap-1">
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+      }}
+    >
       {stars.map((star) => (
         <TouchableOpacity
           key={star}
@@ -30,9 +38,11 @@ export default function StarRating({
           disabled={readonly}
           activeOpacity={0.7}
         >
-          <Text style={{ fontSize: size }}>
-            {star <= rating ? '⭐' : '☆'}
-          </Text>
+          <MaterialCommunityIcons
+            name={star <= rating ? 'star' : 'star-outline'}
+            size={size}
+            color={star <= rating ? colors.gold[500] : colors.gold[200]}
+          />
         </TouchableOpacity>
       ))}
     </View>
