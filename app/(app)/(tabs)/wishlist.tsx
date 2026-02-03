@@ -8,7 +8,6 @@ import {
   RefreshControl,
   StatusBar,
   LayoutAnimation,
-  UIManager,
   Platform,
   Image,
 } from 'react-native';
@@ -31,11 +30,6 @@ import {
   isSpecialItem,
 } from '../../../lib/favorites';
 import { GroupPickerSheet } from '../../../components/wishlist/GroupPickerSheet';
-
-// Enable LayoutAnimation on Android
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
 
 type ItemType = 'standard' | 'surprise_me' | 'mystery_box';
 
