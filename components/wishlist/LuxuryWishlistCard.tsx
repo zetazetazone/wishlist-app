@@ -13,19 +13,23 @@ interface LuxuryWishlistCardProps {
   item: WishlistItem;
   onDelete?: (id: string) => void;
   index: number;
-  isFavorite?: boolean;
+  favoriteGroups?: Array<{ groupId: string; groupName: string }>; // NEW: groups where this is favorited
   onToggleFavorite?: () => void;
   showFavoriteHeart?: boolean;
+  singleGroupName?: string; // NEW: for celebration view where only one group matters
 }
 
 export default function LuxuryWishlistCard({
   item,
   onDelete,
   index,
-  isFavorite,
+  favoriteGroups,
   onToggleFavorite,
   showFavoriteHeart,
+  singleGroupName,
 }: LuxuryWishlistCardProps) {
+  // Determine if this item is favorited (for any group or single group context)
+  const isFavorite = (favoriteGroups && favoriteGroups.length > 0) || !!singleGroupName;
   // Detect special item types
   const isSpecialItem = item.item_type && item.item_type !== 'standard';
 
@@ -43,9 +47,9 @@ export default function LuxuryWishlistCard({
 
   // Get border color based on item type
   const getCardBorderColor = () => {
-    // Favorite items get strong gold border (unless they're special items)
+    // Favorite items get burgundy border (unless they're special items)
     if (isFavorite && !isSpecialItem) {
-      return colors.gold[400];
+      return colors.burgundy[300];
     }
 
     switch (item.item_type) {
@@ -183,8 +187,13 @@ export default function LuxuryWishlistCard({
               </View>
 
               <View style={{ flex: 1 }}>
-                {/* Most Wanted badge when favorite */}
-                {isFavorite && <MostWantedBadge />}
+                {/* Most Wanted badges - show one per group */}
+                {singleGroupName && <MostWantedBadge />}
+                {!singleGroupName && favoriteGroups && favoriteGroups.length > 0 && (
+                  favoriteGroups.map(fg => (
+                    <MostWantedBadge key={fg.groupId} groupName={fg.groupName} />
+                  ))
+                )}
                 {/* Item type badge for special items */}
                 {isSpecialItem && (
                   <ItemTypeBadge
