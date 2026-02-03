@@ -19,13 +19,22 @@ import { WishlistItem } from '../../../types/database.types';
 import AddItemModal from '../../../components/wishlist/AddItemModal';
 import LuxuryWishlistCard from '../../../components/wishlist/LuxuryWishlistCard';
 import { colors, spacing, borderRadius, shadows } from '../../../constants/theme';
-import { getUserGroups, getAllFavoritesForUser, setFavorite, removeFavorite } from '../../../lib/favorites';
+import {
+  getUserGroups,
+  getAllFavoritesForUser,
+  setFavorite,
+  toggleFavoriteForGroup,
+  ensureAllGroupsHaveFavorites,
+  isSpecialItem,
+} from '../../../lib/favorites';
 import { GroupPickerSheet } from '../../../components/wishlist/GroupPickerSheet';
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
+
+type ItemType = 'standard' | 'surprise_me' | 'mystery_box';
 
 export default function LuxuryWishlistScreen() {
   const [items, setItems] = useState<WishlistItem[]>([]);
@@ -57,6 +66,9 @@ export default function LuxuryWishlistScreen() {
       const groups = await getUserGroups(user.id);
       setUserGroups(groups);
 
+      // Ensure all groups have a favorite (defaults to Surprise Me)
+      await ensureAllGroupsHaveFavorites(user.id);
+
       // Load all favorites across all groups
       const allFavs = await getAllFavoritesForUser(user.id);
       setFavorites(allFavs);
@@ -86,6 +98,7 @@ export default function LuxuryWishlistScreen() {
     setRefreshing(true);
     await fetchWishlistItems();
     if (userId) {
+      await ensureAllGroupsHaveFavorites(userId);
       const allFavs = await getAllFavoritesForUser(userId);
       setFavorites(allFavs);
     }
@@ -98,46 +111,85 @@ export default function LuxuryWishlistScreen() {
       return;
     }
 
-    if (userGroups.length === 1) {
-      // Single group: toggle directly
-      handleToggleFavorite(item.id, userGroups[0].id);
+    const itemType = (item.item_type || 'standard') as ItemType;
+
+    if (userGroups.length === 1 && !isSpecialItem(itemType)) {
+      // Single group + standard item: select directly
+      handleSelectFavorite(item.id, userGroups[0].id, itemType);
     } else {
-      // Multiple groups: show picker
+      // Multiple groups OR special item: show picker
       setSelectedItemForPicker(item);
       setPickerVisible(true);
     }
   };
 
-  const handleToggleFavorite = async (itemId: string, groupId: string) => {
+  // For standard items: select as favorite for a single group
+  const handleSelectFavorite = async (itemId: string, groupId: string, itemType: ItemType) => {
     if (!userId) return;
 
-    const existingFav = favorites.find(f => f.groupId === groupId && f.itemId === itemId);
+    const group = userGroups.find(g => g.id === groupId);
+
+    // Animate list reordering
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
+    // Optimistic update: replace favorite for this group, remove from others if standard
+    if (!isSpecialItem(itemType)) {
+      // Standard item: can only be in one group
+      setFavorites(prevFavs => {
+        // Remove this item from all groups, then add to selected group
+        const withoutThisItem = prevFavs.filter(f => f.itemId !== itemId);
+        // Replace favorite for selected group
+        const withoutSelectedGroup = withoutThisItem.filter(f => f.groupId !== groupId);
+        return [...withoutSelectedGroup, { groupId, groupName: group?.name || '', itemId }];
+      });
+    } else {
+      // Special item: just update this group
+      setFavorites(prevFavs => {
+        const withoutSelectedGroup = prevFavs.filter(f => f.groupId !== groupId);
+        return [...withoutSelectedGroup, { groupId, groupName: group?.name || '', itemId }];
+      });
+    }
+
+    try {
+      await setFavorite(userId, groupId, itemId, itemType);
+    } catch (error) {
+      console.error('Failed to set favorite:', error);
+      // Reload favorites on error
+      const allFavs = await getAllFavoritesForUser(userId);
+      setFavorites(allFavs);
+      Alert.alert('Error', 'Failed to update favorite');
+    }
+  };
+
+  // For special items: toggle favorite for a specific group
+  const handleToggleSpecialItem = async (itemId: string, groupId: string, itemType: ItemType) => {
+    if (!userId) return;
+
+    const currentlySelected = favorites.some(f => f.groupId === groupId && f.itemId === itemId);
     const group = userGroups.find(g => g.id === groupId);
 
     // Animate list reordering
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
     // Optimistic update
-    if (existingFav) {
-      // Remove favorite
-      setFavorites(favorites.filter(f => !(f.groupId === groupId && f.itemId === itemId)));
+    if (currentlySelected) {
+      // Will be replaced by Surprise Me default - we'll reload after
+      setFavorites(prevFavs => prevFavs.filter(f => !(f.groupId === groupId && f.itemId === itemId)));
     } else {
-      // Add favorite (replace any existing for this group)
-      setFavorites([
-        ...favorites.filter(f => f.groupId !== groupId),
-        { groupId, groupName: group?.name || '', itemId },
-      ]);
+      // Add to this group
+      setFavorites(prevFavs => {
+        const withoutGroup = prevFavs.filter(f => f.groupId !== groupId);
+        return [...withoutGroup, { groupId, groupName: group?.name || '', itemId }];
+      });
     }
 
     try {
-      if (existingFav) {
-        await removeFavorite(userId, groupId);
-      } else {
-        await setFavorite(userId, groupId, itemId);
-      }
+      await toggleFavoriteForGroup(userId, groupId, itemId, itemType, currentlySelected);
+      // Reload to get any default Surprise Me that was set
+      const allFavs = await getAllFavoritesForUser(userId);
+      setFavorites(allFavs);
     } catch (error) {
       console.error('Failed to toggle favorite:', error);
-      // Reload favorites on error
       const allFavs = await getAllFavoritesForUser(userId);
       setFavorites(allFavs);
       Alert.alert('Error', 'Failed to update favorite');
@@ -209,6 +261,11 @@ export default function LuxuryWishlistScreen() {
       Alert.alert('Error', 'Failed to delete item');
     }
   };
+
+  const selectedItemType = (selectedItemForPicker?.item_type || 'standard') as ItemType;
+  const selectedItemGroupIds = selectedItemForPicker
+    ? favorites.filter(f => f.itemId === selectedItemForPicker.id).map(f => f.groupId)
+    : [];
 
   return (
     <>
@@ -418,17 +475,19 @@ export default function LuxuryWishlistScreen() {
           setSelectedItemForPicker(null);
         }}
         groups={userGroups}
-        currentFavoriteGroupId={
-          selectedItemForPicker
-            ? favorites.find(f => f.itemId === selectedItemForPicker.id)?.groupId ?? null
-            : null
-        }
+        selectedGroupIds={selectedItemGroupIds}
         onSelectGroup={(groupId) => {
           if (selectedItemForPicker) {
-            handleToggleFavorite(selectedItemForPicker.id, groupId);
+            handleSelectFavorite(selectedItemForPicker.id, groupId, selectedItemType);
+          }
+        }}
+        onToggleGroup={(groupId) => {
+          if (selectedItemForPicker) {
+            handleToggleSpecialItem(selectedItemForPicker.id, groupId, selectedItemType);
           }
         }}
         itemTitle={selectedItemForPicker?.title || ''}
+        itemType={selectedItemType}
       />
     </>
   );
