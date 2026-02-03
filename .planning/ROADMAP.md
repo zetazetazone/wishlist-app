@@ -97,10 +97,11 @@ Plans:
   3. User can select Mystery Box tier (€25, €50, or €100)
   4. Special items display with distinct visual styling (icons/badges)
   5. Special items appear correctly in other group members' views
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 08-01: TBD
+- [ ] 08-01-PLAN.md — Add item form with type selector (Gift, Surprise Me, Mystery Box)
+- [ ] 08-02-PLAN.md — Visual distinction for special items (badges, type-aware cards)
 
 #### Phase 9: Favorite Marking
 **Goal**: Users can mark one item as favorite per group with visual distinction
@@ -144,6 +145,6 @@ Phases execute in numeric order: 6 → 7 → 8 → 9 → 10
 | 5. Integration Fixes | v1.0 | 1/1 | Complete | 2026-02-02 |
 | 6. Schema Foundation | v1.1 | 1/1 | Complete | 2026-02-02 |
 | 7. Profile Editing | v1.1 | 2/2 | Complete | 2026-02-03 |
-| 8. Special Item Types | v1.1 | 0/? | Not started | - |
+| 8. Special Item Types | v1.1 | 0/2 | Not started | - |
 | 9. Favorite Marking | v1.1 | 0/? | Not started | - |
 | 10. Wishlist Display Polish | v1.1 | 0/? | Not started | - |
