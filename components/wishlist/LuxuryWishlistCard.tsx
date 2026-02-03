@@ -5,6 +5,7 @@ import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 import { WishlistItem } from '../../types/database.types';
 import StarRating from '../ui/StarRating';
 import { LinearGradient } from 'expo-linear-gradient';
+import { ItemTypeBadge } from './ItemTypeBadge';
 
 interface LuxuryWishlistCardProps {
   item: WishlistItem;
@@ -17,7 +18,49 @@ export default function LuxuryWishlistCard({
   onDelete,
   index,
 }: LuxuryWishlistCardProps) {
+  // Detect special item types
+  const isSpecialItem = item.item_type && item.item_type !== 'standard';
+
+  // Get appropriate icon for item type
+  const getCardIcon = (): 'help-circle' | 'gift' | 'gift-outline' => {
+    switch (item.item_type) {
+      case 'surprise_me':
+        return 'help-circle';
+      case 'mystery_box':
+        return 'gift';
+      default:
+        return 'gift-outline';
+    }
+  };
+
+  // Get border color based on item type
+  const getCardBorderColor = () => {
+    switch (item.item_type) {
+      case 'surprise_me':
+        return colors.burgundy[200];
+      case 'mystery_box':
+        return colors.gold[300];
+      default:
+        return colors.gold[100];
+    }
+  };
+
+  // Get gradient colors for accent bar
+  const getGradientColors = (): [string, string] => {
+    switch (item.item_type) {
+      case 'surprise_me':
+        return [colors.burgundy[400], colors.burgundy[600]];
+      case 'mystery_box':
+        return [colors.gold[400], colors.gold[600]];
+      default:
+        return [colors.gold[400], colors.gold[600]];
+    }
+  };
+
   const handleOpenLink = async () => {
+    // Guard against opening for special items or empty URLs
+    if (isSpecialItem || !item.amazon_url) return;
+
     try {
       const canOpen = await Linking.canOpenURL(item.amazon_url);
       if (canOpen) {
@@ -41,7 +84,14 @@ export default function LuxuryWishlistCard({
     ]);
   };
 
-  const formatPrice = (price?: number) => {
+  const formatPrice = (price?: number | null) => {
+    // Handle special item types
+    if (item.item_type === 'mystery_box' && item.mystery_box_tier) {
+      return `€${item.mystery_box_tier}`;
+    }
+    if (item.item_type === 'surprise_me' && item.surprise_me_budget) {
+      return `Budget: €${item.surprise_me_budget}`;
+    }
     if (!price) return null;
     return `$${price.toFixed(2)}`;
   };
@@ -74,13 +124,13 @@ export default function LuxuryWishlistCard({
           borderRadius: borderRadius.lg,
           overflow: 'hidden',
           borderWidth: 1,
-          borderColor: colors.gold[100],
+          borderColor: getCardBorderColor(),
           ...shadows.md,
         }}
       >
-        {/* Gold accent border */}
+        {/* Accent border - color varies by item type */}
         <LinearGradient
-          colors={[colors.gold[400], colors.gold[600]]}
+          colors={getGradientColors()}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={{
@@ -113,13 +163,20 @@ export default function LuxuryWishlistCard({
                 }}
               >
                 <MaterialCommunityIcons
-                  name="gift"
+                  name={getCardIcon()}
                   size={28}
                   color={colors.burgundy[600]}
                 />
               </View>
 
               <View style={{ flex: 1 }}>
+                {/* Item type badge for special items */}
+                {isSpecialItem && (
+                  <ItemTypeBadge
+                    itemType={item.item_type!}
+                    tier={item.mystery_box_tier}
+                  />
+                )}
                 <Text
                   numberOfLines={2}
                   style={{
@@ -162,7 +219,7 @@ export default function LuxuryWishlistCard({
               paddingVertical: spacing.sm,
             }}
           >
-            {item.price ? (
+            {formatPrice(item.price) ? (
               <View
                 style={{
                   backgroundColor: colors.gold[50],
@@ -188,36 +245,38 @@ export default function LuxuryWishlistCard({
             <StarRating rating={item.priority} readonly size={20} />
           </View>
 
-          {/* Action Button */}
-          <TouchableOpacity
-            onPress={handleOpenLink}
-            style={{
-              backgroundColor: colors.burgundy[700],
-              borderRadius: borderRadius.md,
-              padding: spacing.md,
-              alignItems: 'center',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              ...shadows.sm,
-            }}
-          >
-            <MaterialCommunityIcons
-              name="shopping"
-              size={20}
-              color={colors.white}
-              style={{ marginRight: spacing.xs }}
-            />
-            <Text
+          {/* Action Button - hidden for special items */}
+          {!isSpecialItem && (
+            <TouchableOpacity
+              onPress={handleOpenLink}
               style={{
-                color: colors.white,
-                fontSize: 16,
-                fontWeight: '600',
-                letterSpacing: 0.3,
+                backgroundColor: colors.burgundy[700],
+                borderRadius: borderRadius.md,
+                padding: spacing.md,
+                alignItems: 'center',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                ...shadows.sm,
               }}
             >
-              View on Amazon
-            </Text>
-          </TouchableOpacity>
+              <MaterialCommunityIcons
+                name="shopping"
+                size={20}
+                color={colors.white}
+                style={{ marginRight: spacing.xs }}
+              />
+              <Text
+                style={{
+                  color: colors.white,
+                  fontSize: 16,
+                  fontWeight: '600',
+                  letterSpacing: 0.3,
+                }}
+              >
+                View on Amazon
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </MotiView>
