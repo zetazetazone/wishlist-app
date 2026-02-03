@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 10-wishlist-display-polish
 source: 10-01-SUMMARY.md
 started: 2026-02-03T16:30:00Z
@@ -45,7 +45,19 @@ skipped: 0
   reason: "User reported: this stars should be able to be tapped to dinamically change the priority. Also make them bigger"
   severity: major
   test: 4
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "Two distinct issues: (1) StarRating component rendered with readonly={true} in LuxuryWishlistCard line 275, plus missing entire data flow for priority updates (no onPriorityChange prop, no handler in wishlist.tsx, no Supabase update). (2) Current size={20} creates ~20x20px tap targets, far below mobile guidelines (iOS: 44x44pt, Android: 48x48dp)."
+  artifacts:
+    - path: "components/wishlist/LuxuryWishlistCard.tsx"
+      issue: "Line 275 passes readonly={true} and size={20}; missing onPriorityChange prop"
+    - path: "app/(app)/(tabs)/wishlist.tsx"
+      issue: "Missing handlePriorityChange function and Supabase update call"
+    - path: "components/ui/StarRating.tsx"
+      issue: "Default size=20 too small for tap targets"
+  missing:
+    - "onPriorityChange prop in LuxuryWishlistCardProps interface"
+    - "handlePriorityChange function in wishlist.tsx with Supabase update"
+    - "Pass onRatingChange to StarRating (replace readonly={true})"
+    - "Optimistic UI update + error recovery pattern"
+    - "Increase star size to 32-40 for comfortable tapping"
+    - "Consider hit slop/padding for larger touch targets"
+  debug_session: ".planning/debug/star-rating-tap-priority.md"

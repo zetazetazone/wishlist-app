@@ -7,7 +7,7 @@ Use this code to join our gift-giving group.
 
 ##########################
 START SERVER INSTRUCTIONS
-###########################
+##########################
 
 npx expo start --dev-client --clear
 
