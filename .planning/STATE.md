@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-02)
 
 ## Current Position
 
-Phase: 8 of 10 (Special Item Types)
-Plan: 3 of 3 COMPLETE (including gap closure)
-Status: Phase 8 complete with UAT fixes
-Last activity: 2026-02-03 - Completed 08-03 gap closure plan
+Phase: 9 of 10 (Favorite Marking)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-02-03 - Completed 09-01-PLAN.md
 
-Progress: [████████░░] 72% (16/22 total plans completed)
+Progress: [████████░░] 77% (17/22 total plans completed)
 
 ## Milestone History
 
@@ -58,6 +58,9 @@ Key decisions from v1.0 are now archived in PROJECT.md Key Decisions table.
 | D-0802-2 | 8 | isSpecialItem pattern for conditional rendering | Established |
 | D-0803-1 | 8 | Smart CHECK constraint for amazon_url (type-based) | Applied |
 | D-0803-2 | 8 | Remove surprise_me_budget from UI (budget is group-level) | Applied |
+| D-0901-1 | 9 | Upsert with onConflict for atomic favorite replacement | Applied |
+| D-0901-2 | 9 | Gold accent color for favorites (heart/badge) | Applied |
+| D-0901-3 | 9 | MotiView spring animation for heart pulse | Applied |
 
 ### v1.1 Roadmap Structure
 
@@ -133,9 +136,17 @@ Profile editing features complete:
 - All SPEC-01 through SPEC-05 requirements satisfied
 - UAT gap closure verified
 
+### Phase 9 Deliverables
+
+**09-01 Complete:**
+- Favorites service layer (lib/favorites.ts)
+- FavoriteHeart animated toggle component
+- MostWantedBadge component with gold accent
+- Upsert with onConflict pattern for atomic replacement
+
 ## Session Continuity
 
 Last session: 2026-02-03
-Stopped at: Completed 08-03 gap closure plan
+Stopped at: Completed 09-01-PLAN.md
 Resume file: None
-Next: Phase 9 (Favorite Marking) - FAV-01, FAV-02, FAV-03
+Next: 09-02 (My Wishlist Integration) - FAV-01 continued
