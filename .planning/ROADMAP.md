@@ -135,7 +135,7 @@ Plans:
 
 Plans:
 - [x] 10-01-PLAN.md — Profile header with avatar and horizontal star ratings
-- [ ] 10-02-PLAN.md — Gap closure: Interactive star ratings with priority persistence
+- [x] 10-02-PLAN.md — Gap closure: Interactive star ratings with priority persistence
 
 ## Progress
 
@@ -153,4 +153,4 @@ Phases execute in numeric order: 6 -> 7 -> 8 -> 9 -> 10
 | 7. Profile Editing | v1.1 | 2/2 | Complete | 2026-02-03 |
 | 8. Special Item Types | v1.1 | 3/3 | Complete | 2026-02-03 |
 | 9. Favorite Marking | v1.1 | 4/4 | Complete | 2026-02-03 |
-| 10. Wishlist Display Polish | v1.1 | 1/2 | In Progress | - |
+| 10. Wishlist Display Polish | v1.1 | 2/2 | Complete | 2026-02-03 |

@@ -22,9 +22,9 @@ Progress: [██████████] 100% (23/23 total plans completed)
   - Full birthday gift coordination with push notifications, secret chat, calendar, and smart reminders
   - Gap closure: Timezone hook integration (04-04)
 
-- **v1.1 Polish** - Shipped 2026-02-03 (5 phases, 12 plans including gap closures)
+- **v1.1 Polish** - Shipped 2026-02-03 (5 phases, 13 plans including gap closures)
   - Schema foundation, profile editing, special item types, favorite marking, wishlist display polish
-  - Gap closures: 08-03 (special items), 09-04 (favorites)
+  - Gap closures: 08-03 (special items), 09-04 (favorites), 10-02 (interactive stars)
 
 ## Performance Metrics (v1.0)
 
