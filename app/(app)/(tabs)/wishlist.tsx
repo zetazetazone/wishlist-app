@@ -71,6 +71,9 @@ export default function LuxuryWishlistScreen() {
     title: string;
     price?: number;
     priority: number;
+    item_type: 'standard' | 'surprise_me' | 'mystery_box';
+    mystery_box_tier?: 25 | 50 | 100 | null;
+    surprise_me_budget?: number | null;
   }) => {
     if (!userId) {
       Alert.alert('Error', 'You must be logged in to add items');
@@ -88,6 +91,9 @@ export default function LuxuryWishlistScreen() {
             price: itemData.price,
             priority: itemData.priority,
             status: 'active',
+            item_type: itemData.item_type,
+            mystery_box_tier: itemData.mystery_box_tier,
+            surprise_me_budget: itemData.surprise_me_budget,
           },
         ])
         .select()
@@ -96,7 +102,14 @@ export default function LuxuryWishlistScreen() {
       if (error) throw error;
 
       setItems([data, ...items]);
-      Alert.alert('Success!', 'Gift added to your wishlist 🎁');
+
+      // Success message based on item type
+      const successMessages = {
+        standard: 'Gift added to your wishlist!',
+        surprise_me: 'Added Surprise Me to your wishlist!',
+        mystery_box: 'Added Mystery Box to your wishlist!',
+      };
+      Alert.alert('Success!', successMessages[itemData.item_type]);
     } catch (error) {
       console.error('Error adding item:', error);
       throw error;
