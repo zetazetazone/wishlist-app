@@ -551,7 +551,7 @@ export default function CelebrationDetailScreen() {
                       key={item.id}
                       item={item}
                       index={index}
-                      isFavorite={item.id === celebrantFavoriteId}
+                      favoriteGroups={item.id === celebrantFavoriteId ? [{ groupId: celebration.group_id, groupName: '' }] : []}
                       showFavoriteHeart={false}
                     />
                   ))}
