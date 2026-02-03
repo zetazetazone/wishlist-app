@@ -7,6 +7,9 @@ import {
   Alert,
   RefreshControl,
   StatusBar,
+  LayoutAnimation,
+  UIManager,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MotiView } from 'moti';
@@ -16,7 +19,13 @@ import { WishlistItem } from '../../../types/database.types';
 import AddItemModal from '../../../components/wishlist/AddItemModal';
 import LuxuryWishlistCard from '../../../components/wishlist/LuxuryWishlistCard';
 import { colors, spacing, borderRadius, shadows } from '../../../constants/theme';
-import { setFavorite, removeFavorite, getFavoriteForGroup } from '../../../lib/favorites';
+import { getUserGroups, getAllFavoritesForUser, setFavorite, removeFavorite } from '../../../lib/favorites';
+import { GroupPickerSheet } from '../../../components/wishlist/GroupPickerSheet';
+
+// Enable LayoutAnimation on Android
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 export default function LuxuryWishlistScreen() {
   const [items, setItems] = useState<WishlistItem[]>([]);
@@ -24,8 +33,10 @@ export default function LuxuryWishlistScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [favoriteItemId, setFavoriteItemId] = useState<string | null>(null);
-  const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
+  const [userGroups, setUserGroups] = useState<Array<{ id: string; name: string }>>([]);
+  const [favorites, setFavorites] = useState<Array<{ groupId: string; groupName: string; itemId: string }>>([]);
+  const [pickerVisible, setPickerVisible] = useState(false);
+  const [selectedItemForPicker, setSelectedItemForPicker] = useState<WishlistItem | null>(null);
 
   useEffect(() => {
     getCurrentUser();
@@ -38,26 +49,17 @@ export default function LuxuryWishlistScreen() {
   }, [userId]);
 
   const getCurrentUser = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     setUserId(user?.id || null);
 
-    // Load user's first group and favorite
     if (user) {
-      const { data: membership } = await supabase
-        .from('group_members')
-        .select('group_id')
-        .eq('user_id', user.id)
-        .limit(1)
-        .single();
+      // Load user's groups
+      const groups = await getUserGroups(user.id);
+      setUserGroups(groups);
 
-      if (membership) {
-        setActiveGroupId(membership.group_id);
-        // Load favorite for this group
-        const favId = await getFavoriteForGroup(user.id, membership.group_id);
-        setFavoriteItemId(favId);
-      }
+      // Load all favorites across all groups
+      const allFavs = await getAllFavoritesForUser(user.id);
+      setFavorites(allFavs);
     }
   };
 
@@ -83,38 +85,61 @@ export default function LuxuryWishlistScreen() {
   const handleRefresh = async () => {
     setRefreshing(true);
     await fetchWishlistItems();
-    if (userId && activeGroupId) {
-      const favId = await getFavoriteForGroup(userId, activeGroupId);
-      setFavoriteItemId(favId);
+    if (userId) {
+      const allFavs = await getAllFavoritesForUser(userId);
+      setFavorites(allFavs);
     }
     setRefreshing(false);
   };
 
-  const handleToggleFavorite = async (itemId: string) => {
-    if (!userId || !activeGroupId) return;
+  const handleHeartPress = (item: WishlistItem) => {
+    if (userGroups.length === 0) {
+      Alert.alert('No Groups', 'Join a group to mark favorites');
+      return;
+    }
 
-    // Store previous for rollback
-    const previousFavorite = favoriteItemId;
+    if (userGroups.length === 1) {
+      // Single group: toggle directly
+      handleToggleFavorite(item.id, userGroups[0].id);
+    } else {
+      // Multiple groups: show picker
+      setSelectedItemForPicker(item);
+      setPickerVisible(true);
+    }
+  };
+
+  const handleToggleFavorite = async (itemId: string, groupId: string) => {
+    if (!userId) return;
+
+    const existingFav = favorites.find(f => f.groupId === groupId && f.itemId === itemId);
+    const group = userGroups.find(g => g.id === groupId);
+
+    // Animate list reordering
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
     // Optimistic update
-    if (itemId === favoriteItemId) {
-      setFavoriteItemId(null); // Unfavoriting
+    if (existingFav) {
+      // Remove favorite
+      setFavorites(favorites.filter(f => !(f.groupId === groupId && f.itemId === itemId)));
     } else {
-      setFavoriteItemId(itemId); // Favoriting (auto-replaces old)
+      // Add favorite (replace any existing for this group)
+      setFavorites([
+        ...favorites.filter(f => f.groupId !== groupId),
+        { groupId, groupName: group?.name || '', itemId },
+      ]);
     }
 
     try {
-      if (itemId === previousFavorite) {
-        // Unfavoriting
-        await removeFavorite(userId, activeGroupId);
+      if (existingFav) {
+        await removeFavorite(userId, groupId);
       } else {
-        // Favoriting (upsert handles replacement)
-        await setFavorite(userId, activeGroupId, itemId);
+        await setFavorite(userId, groupId, itemId);
       }
     } catch (error) {
-      // Rollback on error
       console.error('Failed to toggle favorite:', error);
-      setFavoriteItemId(previousFavorite);
+      // Reload favorites on error
+      const allFavs = await getAllFavoritesForUser(userId);
+      setFavorites(allFavs);
       Alert.alert('Error', 'Failed to update favorite');
     }
   };
@@ -349,25 +374,32 @@ export default function LuxuryWishlistScreen() {
             </MotiView>
           ) : (
             (() => {
-              // Sort items with favorite pinned to top
+              // Sort items: favorited items first (any group), then by priority
               const sortedItems = [...items].sort((a, b) => {
-                if (a.id === favoriteItemId) return -1;
-                if (b.id === favoriteItemId) return 1;
-                // Then by priority (stars) descending
+                const aFavorited = favorites.some(f => f.itemId === a.id);
+                const bFavorited = favorites.some(f => f.itemId === b.id);
+                if (aFavorited && !bFavorited) return -1;
+                if (!aFavorited && bFavorited) return 1;
                 return (b.priority || 0) - (a.priority || 0);
               });
 
-              return sortedItems.map((item, index) => (
-                <LuxuryWishlistCard
-                  key={item.id}
-                  item={item}
-                  onDelete={handleDeleteItem}
-                  index={index}
-                  isFavorite={item.id === favoriteItemId}
-                  onToggleFavorite={() => handleToggleFavorite(item.id)}
-                  showFavoriteHeart={true}
-                />
-              ));
+              return sortedItems.map((item, index) => {
+                const itemFavorites = favorites
+                  .filter(f => f.itemId === item.id)
+                  .map(f => ({ groupId: f.groupId, groupName: f.groupName }));
+
+                return (
+                  <LuxuryWishlistCard
+                    key={item.id}
+                    item={item}
+                    onDelete={handleDeleteItem}
+                    index={index}
+                    favoriteGroups={itemFavorites}
+                    onToggleFavorite={() => handleHeartPress(item)}
+                    showFavoriteHeart={true}
+                  />
+                );
+              });
             })()
           )}
         </ScrollView>
@@ -377,6 +409,26 @@ export default function LuxuryWishlistScreen() {
         visible={showAddModal}
         onClose={() => setShowAddModal(false)}
         onAdd={handleAddItem}
+      />
+
+      <GroupPickerSheet
+        visible={pickerVisible}
+        onClose={() => {
+          setPickerVisible(false);
+          setSelectedItemForPicker(null);
+        }}
+        groups={userGroups}
+        currentFavoriteGroups={
+          selectedItemForPicker
+            ? favorites.filter(f => f.itemId === selectedItemForPicker.id).map(f => f.groupId)
+            : []
+        }
+        onToggleGroup={(groupId) => {
+          if (selectedItemForPicker) {
+            handleToggleFavorite(selectedItemForPicker.id, groupId);
+          }
+        }}
+        itemTitle={selectedItemForPicker?.title || ''}
       />
     </>
   );
