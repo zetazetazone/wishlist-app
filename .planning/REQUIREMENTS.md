@@ -23,7 +23,7 @@ Requirements for My Wishlist Polish + Profile Editing milestone. Each maps to ro
 - [x] **SPEC-01**: User can add a "Surprise Me" item to their wishlist
 - [x] **SPEC-02**: "Surprise Me" item signals openness to any gift (optional budget guidance)
 - [x] **SPEC-03**: User can add a "Mystery Box" placeholder item to their wishlist
-- [x] **SPEC-04**: "Mystery Box" has selectable tiers: €25, €50, or €100
+- [x] **SPEC-04**: "Mystery Box" has selectable tiers: €50 or €100
 - [x] **SPEC-05**: Special items display with distinct visual styling (icons/badges)
 
 ### Profile Editing
@@ -68,7 +68,7 @@ Explicitly excluded. Documented to prevent scope creep.
 |---------|--------|
 | Mystery Box purchasing | v1.1 adds placeholder only, actual purchasing deferred |
 | Birthday editing | Cascades to celebrations, requires careful design |
-| Custom Mystery Box tiers | Fixed €25/€50/€100 tiers for v1.1 |
+| Custom Mystery Box tiers | Fixed €50/€100 tiers for v1.1 |
 | AI gift suggestions | Scope creep, focus on coordination |
 | Multiple favorites per group | One favorite per group is sufficient signal |
 

@@ -102,7 +102,7 @@ Plans:
 Plans:
 - [x] 08-01: Add item form with type selector (Gift, Surprise Me, Mystery Box)
 - [x] 08-02: Visual distinction for special items (badges, type-aware cards)
-- [ ] 08-03: Gap closure - fix budget field, tier options, and amazon_url constraint
+- [x] 08-03: Gap closure - fix budget field, tier options, and amazon_url constraint
 
 #### Phase 9: Favorite Marking
 **Goal**: Users can mark one item as favorite per group with visual distinction
@@ -146,6 +146,6 @@ Phases execute in numeric order: 6 → 7 → 8 → 9 → 10
 | 5. Integration Fixes | v1.0 | 1/1 | Complete | 2026-02-02 |
 | 6. Schema Foundation | v1.1 | 1/1 | Complete | 2026-02-02 |
 | 7. Profile Editing | v1.1 | 2/2 | Complete | 2026-02-03 |
-| 8. Special Item Types | v1.1 | 2/3 | Gap closure ready | 2026-02-03 |
+| 8. Special Item Types | v1.1 | 3/3 | Complete | 2026-02-03 |
 | 9. Favorite Marking | v1.1 | 0/? | Not started | - |
 | 10. Wishlist Display Polish | v1.1 | 0/? | Not started | - |

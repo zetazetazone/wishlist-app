@@ -110,8 +110,8 @@ Profile editing features complete:
 - Type selector UI in AddItemModal (Gift, Surprise, Mystery)
 - Conditional form fields per item type
 - Standard: URL + title + price + priority
-- Surprise Me: helper text + optional budget
-- Mystery Box: tier selector (€25/€50/€100)
+- Surprise Me: helper text (no per-item budget - budget is group-level)
+- Mystery Box: tier selector (€50/€100)
 - Insert handler updated with item_type fields
 
 **08-02 Complete:**
