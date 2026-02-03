@@ -97,14 +97,14 @@ export interface Database {
           id: string
           user_id: string
           group_id: string | null
-          amazon_url: string
+          amazon_url: string | null
           title: string
           image_url: string | null
           price: number | null
           priority: number
           status: 'active' | 'claimed' | 'purchased' | 'received' | 'archived'
           item_type: 'standard' | 'surprise_me' | 'mystery_box'
-          mystery_box_tier: 25 | 50 | 100 | null
+          mystery_box_tier: 50 | 100 | null
           surprise_me_budget: number | null
           created_at: string
           updated_at: string
@@ -113,14 +113,14 @@ export interface Database {
           id?: string
           user_id: string
           group_id?: string | null
-          amazon_url: string
+          amazon_url?: string | null
           title: string
           image_url?: string | null
           price?: number | null
           priority?: number
           status?: 'active' | 'claimed' | 'purchased' | 'received' | 'archived'
           item_type?: 'standard' | 'surprise_me' | 'mystery_box'
-          mystery_box_tier?: 25 | 50 | 100 | null
+          mystery_box_tier?: 50 | 100 | null
           surprise_me_budget?: number | null
           created_at?: string
           updated_at?: string
@@ -129,14 +129,14 @@ export interface Database {
           id?: string
           user_id?: string
           group_id?: string | null
-          amazon_url?: string
+          amazon_url?: string | null
           title?: string
           image_url?: string | null
           price?: number | null
           priority?: number
           status?: 'active' | 'claimed' | 'purchased' | 'received' | 'archived'
           item_type?: 'standard' | 'surprise_me' | 'mystery_box'
-          mystery_box_tier?: 25 | 50 | 100 | null
+          mystery_box_tier?: 50 | 100 | null
           surprise_me_budget?: number | null
           created_at?: string
           updated_at?: string
