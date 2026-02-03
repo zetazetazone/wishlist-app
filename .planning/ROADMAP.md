@@ -114,10 +114,11 @@ Plans:
   3. Favorite item has visual highlight distinguishing it from other items
   4. Only one favorite per user per group is enforced
   5. Favorite status updates optimistically with proper conflict resolution
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 09-01: TBD
+- [ ] 09-01-PLAN.md — Favorites service and UI components (FavoriteHeart, MostWantedBadge)
+- [ ] 09-02-PLAN.md — Integration into My Wishlist with visual distinction and pinning
 
 #### Phase 10: Wishlist Display Polish
 **Goal**: Polish My Wishlist screen with profile picture and horizontal star ratings
@@ -147,5 +148,5 @@ Phases execute in numeric order: 6 → 7 → 8 → 9 → 10
 | 6. Schema Foundation | v1.1 | 1/1 | Complete | 2026-02-02 |
 | 7. Profile Editing | v1.1 | 2/2 | Complete | 2026-02-03 |
 | 8. Special Item Types | v1.1 | 3/3 | Complete | 2026-02-03 |
-| 9. Favorite Marking | v1.1 | 0/? | Not started | - |
+| 9. Favorite Marking | v1.1 | 0/2 | Not started | - |
 | 10. Wishlist Display Polish | v1.1 | 0/? | Not started | - |
