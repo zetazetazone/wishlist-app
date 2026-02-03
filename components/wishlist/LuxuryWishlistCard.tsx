@@ -12,6 +12,7 @@ import { MostWantedBadge } from './MostWantedBadge';
 interface LuxuryWishlistCardProps {
   item: WishlistItem;
   onDelete?: (id: string) => void;
+  onPriorityChange?: (id: string, priority: number) => void;
   index: number;
   favoriteGroups?: Array<{ groupId: string; groupName: string }>; // NEW: groups where this is favorited
   onToggleFavorite?: () => void;
@@ -22,6 +23,7 @@ interface LuxuryWishlistCardProps {
 export default function LuxuryWishlistCard({
   item,
   onDelete,
+  onPriorityChange,
   index,
   favoriteGroups,
   onToggleFavorite,
@@ -272,7 +274,11 @@ export default function LuxuryWishlistCard({
               <View />
             )}
 
-            <StarRating rating={item.priority} readonly size={20} />
+            <StarRating
+              rating={item.priority}
+              onRatingChange={(newPriority) => onPriorityChange?.(item.id, newPriority)}
+              size={36}
+            />
           </View>
 
           {/* Action Button - hidden for special items */}

@@ -12,7 +12,7 @@ interface StarRatingProps {
 export default function StarRating({
   rating,
   onRatingChange,
-  size = 20,
+  size = 36,
   readonly = false,
 }: StarRatingProps) {
   const stars = [1, 2, 3, 4, 5];
@@ -37,6 +37,7 @@ export default function StarRating({
           onPress={() => handlePress(star)}
           disabled={readonly}
           activeOpacity={0.7}
+          hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
         >
           <MaterialCommunityIcons
             name={star <= rating ? 'star' : 'star-outline'}
