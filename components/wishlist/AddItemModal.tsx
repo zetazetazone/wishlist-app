@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -15,7 +15,6 @@ import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 import StarRating from '../ui/StarRating';
 
 type ItemType = 'standard' | 'surprise_me' | 'mystery_box';
-type MysteryBoxTier = 50 | 100;
 
 interface AddItemModalProps {
   visible: boolean;
@@ -26,7 +25,6 @@ interface AddItemModalProps {
     price?: number;
     priority: number;
     item_type: ItemType;
-    mystery_box_tier?: MysteryBoxTier | null;
   }) => Promise<void>;
 }
 
@@ -39,14 +37,6 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
 
   // New state for item types
   const [itemType, setItemType] = useState<ItemType>('standard');
-  const [selectedTier, setSelectedTier] = useState<MysteryBoxTier | null>(null);
-
-  // Reset type-specific fields when itemType changes
-  useEffect(() => {
-    if (itemType !== 'mystery_box') {
-      setSelectedTier(null);
-    }
-  }, [itemType]);
 
   const validateAmazonUrl = (url: string): boolean => {
     try {
@@ -74,13 +64,8 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
         Alert.alert('Error', 'Please enter a product title');
         return;
       }
-    } else if (itemType === 'mystery_box') {
-      if (!selectedTier) {
-        Alert.alert('Error', 'Please select a Mystery Box tier');
-        return;
-      }
     }
-    // Surprise Me has no required fields
+    // Surprise Me and Mystery Box have no required fields
 
     setLoading(true);
     try {
@@ -91,7 +76,6 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
         price?: number;
         priority: number;
         item_type: ItemType;
-        mystery_box_tier?: MysteryBoxTier | null;
       };
 
       if (itemType === 'standard') {
@@ -110,14 +94,12 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
           item_type: 'surprise_me',
         };
       } else {
-        // mystery_box
+        // mystery_box - no tier selection, just "Mystery Box"
         payload = {
           amazon_url: null,
-          title: `€${selectedTier} Mystery Box`,
-          price: selectedTier!,
+          title: 'Mystery Box',
           priority: 3,
           item_type: 'mystery_box',
-          mystery_box_tier: selectedTier,
         };
       }
 
@@ -140,7 +122,6 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
     setPrice('');
     setPriority(3);
     setItemType('standard');
-    setSelectedTier(null);
   };
 
   const handleCancel = () => {
@@ -569,57 +550,12 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                     style={{
                       fontSize: 14,
                       color: colors.burgundy[600],
-                      marginBottom: spacing.md,
+                      marginBottom: spacing.lg,
                       textAlign: 'center',
                     }}
                   >
-                    Select a Mystery Box tier
+                    Let your group choose a mystery gift for you!
                   </Text>
-
-                  {/* Tier Selector */}
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      gap: spacing.sm,
-                      marginBottom: spacing.lg,
-                    }}
-                  >
-                    {([50, 100] as MysteryBoxTier[]).map((tier) => (
-                      <TouchableOpacity
-                        key={tier}
-                        onPress={() => setSelectedTier(tier)}
-                        style={{
-                          flex: 1,
-                          paddingVertical: spacing.md,
-                          borderRadius: borderRadius.md,
-                          alignItems: 'center',
-                          backgroundColor:
-                            selectedTier === tier
-                              ? colors.burgundy[700]
-                              : colors.cream[100],
-                          borderWidth: 2,
-                          borderColor:
-                            selectedTier === tier
-                              ? colors.burgundy[700]
-                              : colors.gold[200],
-                        }}
-                        activeOpacity={0.7}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 18,
-                            fontWeight: '700',
-                            color:
-                              selectedTier === tier
-                                ? colors.white
-                                : colors.burgundy[700],
-                          }}
-                        >
-                          €{tier}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
                 </>
               )}
 
