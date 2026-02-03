@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-02)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.1 My Wishlist Polish + Profile Editing - Phase 7 Complete
+**Current focus:** v1.1 My Wishlist Polish + Profile Editing - Phase 8 In Progress
 
 ## Current Position
 
-Phase: 7 of 10 (Profile Editing)
-Plan: 2 of 2 COMPLETE
-Status: Phase 7 complete
-Last activity: 2026-02-02 - Completed 07-01-PLAN.md (profile settings screen)
+Phase: 8 of 10 (Special Item Types)
+Plan: 1 of 3
+Status: In progress
+Last activity: 2026-02-03 - Completed 08-01-PLAN.md (item type selection)
 
-Progress: [██████░░░░] 60% (13/22 total plans completed)
+Progress: [███████░░░] 64% (14/22 total plans completed)
 
 ## Milestone History
 
@@ -53,13 +53,14 @@ Key decisions from v1.0 are now archived in PROJECT.md Key Decisions table.
 | D-0601-1 | 6 | CHECK constraint over ENUM for item_type | Pending |
 | D-0701-1 | 7 | Folder-based routing for settings (allows expansion) | Applied |
 | D-0701-2 | 7 | Locked field pattern: gray Box + lock icon + helper | Established |
+| D-0801-1 | 8 | Euro symbol for prices (app locale) | Applied |
 
 ### v1.1 Roadmap Structure
 
 **5 phases (6-10):**
 - Phase 6: Schema Foundation (group_favorites table, item_type) - COMPLETE
 - Phase 7: Profile Editing (PROF-01, PROF-02, PROF-03, ONBD-01, ONBD-02) - COMPLETE
-- Phase 8: Special Item Types (SPEC-01 through SPEC-05) - introduces item_type pattern
+- Phase 8: Special Item Types (SPEC-01 through SPEC-05) - IN PROGRESS (1/3 plans)
 - Phase 9: Favorite Marking (FAV-01, FAV-02, FAV-03) - depends on schema
 - Phase 10: Wishlist Display Polish (WISH-01, WISH-02) - UI fixes, final polish
 
@@ -99,9 +100,23 @@ Profile editing features complete:
 - Gear icon entry point on Home screen
 - Birthday confirmation step during onboarding (07-02)
 
+### Phase 8 Deliverables (In Progress)
+
+**08-01 Complete:**
+- Type selector UI in AddItemModal (Gift, Surprise, Mystery)
+- Conditional form fields per item type
+- Standard: URL + title + price + priority
+- Surprise Me: helper text + optional budget
+- Mystery Box: tier selector (25/50/100)
+- Insert handler updated with item_type fields
+
+**Remaining:**
+- 08-02: Card display variants for special types
+- 08-03: UAT verification
+
 ## Session Continuity
 
-Last session: 2026-02-02
-Stopped at: Completed 07-01-PLAN.md, Phase 7 complete
+Last session: 2026-02-03
+Stopped at: Completed 08-01-PLAN.md
 Resume file: None
-Next: Phase 8 (Special Item Types) - SPEC-01 through SPEC-05
+Next: Phase 8 Plan 02 (Card Display Variants)
