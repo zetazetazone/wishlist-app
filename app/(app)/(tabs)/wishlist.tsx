@@ -10,15 +10,18 @@ import {
   LayoutAnimation,
   UIManager,
   Platform,
+  Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { supabase } from '../../../lib/supabase';
 import { WishlistItem } from '../../../types/database.types';
 import AddItemModal from '../../../components/wishlist/AddItemModal';
 import LuxuryWishlistCard from '../../../components/wishlist/LuxuryWishlistCard';
 import { colors, spacing, borderRadius, shadows } from '../../../constants/theme';
+import { getAvatarUrl } from '../../../lib/storage';
 import {
   getUserGroups,
   getAllFavoritesForUser,
@@ -37,6 +40,7 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 type ItemType = 'standard' | 'surprise_me' | 'mystery_box';
 
 export default function LuxuryWishlistScreen() {
+  const router = useRouter();
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -46,6 +50,10 @@ export default function LuxuryWishlistScreen() {
   const [favorites, setFavorites] = useState<Array<{ groupId: string; groupName: string; itemId: string }>>([]);
   const [pickerVisible, setPickerVisible] = useState(false);
   const [selectedItemForPicker, setSelectedItemForPicker] = useState<WishlistItem | null>(null);
+  const [userProfile, setUserProfile] = useState<{ display_name: string | null; avatar_url: string | null }>({
+    display_name: null,
+    avatar_url: null,
+  });
 
   useEffect(() => {
     getCurrentUser();
@@ -62,6 +70,20 @@ export default function LuxuryWishlistScreen() {
     setUserId(user?.id || null);
 
     if (user) {
+      // Load user's profile (display name and avatar)
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('display_name, avatar_url')
+        .eq('id', user.id)
+        .single();
+
+      if (profile) {
+        setUserProfile({
+          display_name: profile.display_name,
+          avatar_url: profile.avatar_url,
+        });
+      }
+
       // Load user's groups
       const groups = await getUserGroups(user.id);
       setUserGroups(groups);
@@ -98,6 +120,20 @@ export default function LuxuryWishlistScreen() {
     setRefreshing(true);
     await fetchWishlistItems();
     if (userId) {
+      // Refresh profile data
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('display_name, avatar_url')
+        .eq('id', userId)
+        .single();
+
+      if (profile) {
+        setUserProfile({
+          display_name: profile.display_name,
+          avatar_url: profile.avatar_url,
+        });
+      }
+
       await ensureAllGroupsHaveFavorites(userId);
       const allFavs = await getAllFavoritesForUser(userId);
       setFavorites(allFavs);
@@ -287,6 +323,66 @@ export default function LuxuryWishlistScreen() {
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ type: 'timing', duration: 600 }}
           >
+            {/* Profile Row */}
+            <TouchableOpacity
+              onPress={() => router.push('/settings/profile')}
+              activeOpacity={0.8}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: spacing.md,
+              }}
+            >
+              {/* Avatar */}
+              {userProfile.avatar_url ? (
+                <Image
+                  source={{ uri: getAvatarUrl(userProfile.avatar_url) || undefined }}
+                  style={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: 32,
+                    borderWidth: 2,
+                    borderColor: colors.white,
+                  }}
+                />
+              ) : (
+                <View
+                  style={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: 32,
+                    borderWidth: 2,
+                    borderColor: colors.white,
+                    backgroundColor: colors.gold[200],
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 24,
+                      fontWeight: '700',
+                      color: colors.burgundy[800],
+                    }}
+                  >
+                    {userProfile.display_name?.[0]?.toUpperCase() || '?'}
+                  </Text>
+                </View>
+              )}
+              {/* Greeting */}
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: colors.gold[200],
+                  fontWeight: '500',
+                  marginLeft: spacing.sm,
+                }}
+              >
+                Hi, {userProfile.display_name?.split(' ')[0] || 'there'}!
+              </Text>
+            </TouchableOpacity>
+
+            {/* Title Row */}
             <View
               style={{
                 flexDirection: 'row',
