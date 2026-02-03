@@ -43,6 +43,9 @@ import { ContributionProgress } from '../../../components/celebrations/Contribut
 import { ContributionModal } from '../../../components/celebrations/ContributionModal';
 import { ChatList } from '../../../components/chat/ChatList';
 import { ChatInput } from '../../../components/chat/ChatInput';
+import { getFavoriteForGroup } from '../../../lib/favorites';
+import { getWishlistItemsByUserId, WishlistItem } from '../../../lib/wishlistItems';
+import LuxuryWishlistCard from '../../../components/wishlist/LuxuryWishlistCard';
 
 /**
  * Format date as "Month Day, Year" (e.g., "March 15, 2026")
@@ -95,6 +98,11 @@ export default function CelebrationDetailScreen() {
   // Chat state
   const [chatRoomId, setChatRoomId] = useState<string | null>(null);
   const [chatError, setChatError] = useState<string | null>(null);
+
+  // Celebrant wishlist state
+  const [celebrantItems, setCelebrantItems] = useState<WishlistItem[]>([]);
+  const [celebrantFavoriteId, setCelebrantFavoriteId] = useState<string | null>(null);
+  const [wishlistLoading, setWishlistLoading] = useState(true);
 
   // View mode: 'info' shows header/contributions, 'chat' shows full chat
   const [viewMode, setViewMode] = useState<'info' | 'chat'>('info');
@@ -157,10 +165,36 @@ export default function CelebrationDetailScreen() {
     }
   }, [id]);
 
+  // Load celebrant's wishlist items and their favorite
+  const loadCelebrantWishlist = useCallback(async () => {
+    if (!celebration?.celebrant_id || !celebration?.group_id) return;
+
+    setWishlistLoading(true);
+    try {
+      const [items, favoriteId] = await Promise.all([
+        getWishlistItemsByUserId(celebration.celebrant_id),
+        getFavoriteForGroup(celebration.celebrant_id, celebration.group_id),
+      ]);
+      setCelebrantItems(items);
+      setCelebrantFavoriteId(favoriteId);
+    } catch (err) {
+      console.error('Failed to load celebrant wishlist:', err);
+    } finally {
+      setWishlistLoading(false);
+    }
+  }, [celebration?.celebrant_id, celebration?.group_id]);
+
   useEffect(() => {
     loadCelebration();
     loadContributions();
   }, [loadCelebration, loadContributions]);
+
+  // Load celebrant wishlist when celebration is loaded
+  useEffect(() => {
+    if (celebration) {
+      loadCelebrantWishlist();
+    }
+  }, [celebration, loadCelebrantWishlist]);
 
   // Handle Gift Leader reassignment
   const handleReassign = async (newLeaderId: string) => {
@@ -226,6 +260,13 @@ export default function CelebrationDetailScreen() {
 
   // Calculate contribution totals
   const totalContributed = contributions.reduce((sum, c) => sum + c.amount, 0);
+
+  // Sort celebrant items with favorite pinned to top
+  const sortedCelebrantItems = [...celebrantItems].sort((a, b) => {
+    if (a.id === celebrantFavoriteId) return -1;
+    if (b.id === celebrantFavoriteId) return 1;
+    return (b.priority || 0) - (a.priority || 0);
+  });
 
   // Loading state
   if (loading) {
@@ -485,6 +526,36 @@ export default function CelebrationDetailScreen() {
                     </View>
                   )}
                 </>
+              )}
+            </View>
+
+            {/* Celebrant's Wishlist Section */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <MaterialCommunityIcons name="gift" size={22} color="#8B1538" />
+                <Text style={styles.sectionTitle}>{celebrantName}'s Wishlist</Text>
+              </View>
+
+              {wishlistLoading ? (
+                <View style={styles.loadingCard}>
+                  <ActivityIndicator size="small" color="#8B1538" />
+                </View>
+              ) : sortedCelebrantItems.length === 0 ? (
+                <View style={styles.emptyCard}>
+                  <Text style={styles.emptyText}>No wishlist items yet</Text>
+                </View>
+              ) : (
+                <View style={styles.wishlistContainer}>
+                  {sortedCelebrantItems.map((item, index) => (
+                    <LuxuryWishlistCard
+                      key={item.id}
+                      item={item}
+                      index={index}
+                      isFavorite={item.id === celebrantFavoriteId}
+                      showFavoriteHeart={false}
+                    />
+                  ))}
+                </View>
               )}
             </View>
 
@@ -871,6 +942,19 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 24,
     alignItems: 'center',
+  },
+  emptyCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 24,
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 14,
+    color: '#9ca3af',
+  },
+  wishlistContainer: {
+    gap: 12,
   },
   yourContributionCard: {
     flexDirection: 'row',
