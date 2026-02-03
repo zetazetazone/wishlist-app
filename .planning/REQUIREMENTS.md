@@ -9,8 +9,8 @@ Requirements for My Wishlist Polish + Profile Editing milestone. Each maps to ro
 
 ### Wishlist Display
 
-- [ ] **WISH-01**: User sees wishlist item cards with horizontal star ratings (not vertical)
-- [ ] **WISH-02**: User sees their profile picture in the My Wishlist screen header
+- [x] **WISH-01**: User sees wishlist item cards with horizontal star ratings (not vertical)
+- [x] **WISH-02**: User sees their profile picture in the My Wishlist screen header
 
 ### Favorite Item
 
@@ -78,8 +78,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WISH-01 | Phase 10 | Pending |
-| WISH-02 | Phase 10 | Pending |
+| WISH-01 | Phase 10 | Complete |
+| WISH-02 | Phase 10 | Complete |
 | FAV-01 | Phase 9 | Complete |
 | FAV-02 | Phase 9 | Complete |
 | FAV-03 | Phase 9 | Complete |
@@ -101,4 +101,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-02*
-*Last updated: 2026-02-03 after Phase 9 completion*
+*Last updated: 2026-02-03 after Phase 10 completion*
