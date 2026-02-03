@@ -2,13 +2,13 @@
 
 ## Milestones
 
-- ✅ **v1.0 MVP** - Phases 1-5 (shipped 2026-02-02)
-- 🚧 **v1.1 My Wishlist Polish + Profile Editing** - Phases 6-10 (in progress)
+- **v1.0 MVP** - Phases 1-5 (shipped 2026-02-02)
+- **v1.1 My Wishlist Polish + Profile Editing** - Phases 6-10 (in progress)
 
 ## Phases
 
 <details>
-<summary>✅ v1.0 MVP (Phases 1-5) - SHIPPED 2026-02-02</summary>
+<summary>v1.0 MVP (Phases 1-5) - SHIPPED 2026-02-02</summary>
 
 ### Phase 1: Foundation
 **Goal**: Core database structure and authentication
@@ -53,7 +53,7 @@ Plans:
 
 </details>
 
-### 🚧 v1.1 My Wishlist Polish + Profile Editing (In Progress)
+### v1.1 My Wishlist Polish + Profile Editing (In Progress)
 
 **Milestone Goal:** Enable users to personalize their wishlist with special items, mark favorites, edit their profile, and see polished wishlist displays.
 
@@ -71,7 +71,7 @@ Plans:
 Plans:
 - [x] 06-01-PLAN.md — Schema migration for group_favorites table and item_type column
 
-#### Phase 7: Profile Editing ✓
+#### Phase 7: Profile Editing
 **Goal**: Users can edit their profile information post-onboarding
 **Depends on**: Phase 6
 **Requirements**: PROF-01, PROF-02, PROF-03, ONBD-01, ONBD-02
@@ -87,7 +87,7 @@ Plans:
 - [x] 07-01: Profile settings screen with name/photo editing and locked birthday
 - [x] 07-02: Birthday confirmation step during onboarding
 
-#### Phase 8: Special Item Types ✓
+#### Phase 8: Special Item Types
 **Goal**: Users can add special wishlist items (Surprise Me, Mystery Box)
 **Depends on**: Phase 6
 **Requirements**: SPEC-01, SPEC-02, SPEC-03, SPEC-04, SPEC-05
@@ -97,14 +97,14 @@ Plans:
   3. User can select Mystery Box tier (€50 or €100 only)
   4. Special items display with distinct visual styling (icons/badges)
   5. Special items appear correctly in other group members' views
-**Plans**: 2 plans + 1 gap closure
+**Plans**: 3 plans (2 + 1 gap closure)
 
 Plans:
 - [x] 08-01: Add item form with type selector (Gift, Surprise Me, Mystery Box)
 - [x] 08-02: Visual distinction for special items (badges, type-aware cards)
 - [x] 08-03: Gap closure - fix budget field, tier options, and amazon_url constraint
 
-#### Phase 9: Favorite Marking ✓
+#### Phase 9: Favorite Marking
 **Goal**: Users can mark one item as favorite per group with visual distinction
 **Depends on**: Phase 6
 **Requirements**: FAV-01, FAV-02, FAV-03
@@ -123,22 +123,24 @@ Plans:
 - [x] 09-04: Multi-group favorites redesign (gap closure)
 
 #### Phase 10: Wishlist Display Polish
-**Goal**: Polish My Wishlist screen with profile picture and horizontal star ratings
+**Goal**: Polish My Wishlist screen with profile picture, horizontal star ratings, and interactive priority
 **Depends on**: Phases 7, 8, 9
 **Requirements**: WISH-01, WISH-02
 **Success Criteria** (what must be TRUE):
   1. User sees their profile picture in the My Wishlist screen header
   2. Wishlist item cards display star ratings horizontally (not vertically)
   3. Profile picture updates immediately when changed in settings
-**Plans**: 1 plan
+  4. User can tap stars on wishlist cards to change item priority
+**Plans**: 2 plans (1 + 1 gap closure)
 
 Plans:
 - [x] 10-01-PLAN.md — Profile header with avatar and horizontal star ratings
+- [ ] 10-02-PLAN.md — Gap closure: Interactive star ratings with priority persistence
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 6 → 7 → 8 → 9 → 10
+Phases execute in numeric order: 6 -> 7 -> 8 -> 9 -> 10
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -151,4 +153,4 @@ Phases execute in numeric order: 6 → 7 → 8 → 9 → 10
 | 7. Profile Editing | v1.1 | 2/2 | Complete | 2026-02-03 |
 | 8. Special Item Types | v1.1 | 3/3 | Complete | 2026-02-03 |
 | 9. Favorite Marking | v1.1 | 4/4 | Complete | 2026-02-03 |
-| 10. Wishlist Display Polish | v1.1 | 1/1 | Complete | 2026-02-03 |
+| 10. Wishlist Display Polish | v1.1 | 1/2 | In Progress | - |
