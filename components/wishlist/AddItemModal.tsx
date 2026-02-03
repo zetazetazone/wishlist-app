@@ -15,19 +15,18 @@ import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 import StarRating from '../ui/StarRating';
 
 type ItemType = 'standard' | 'surprise_me' | 'mystery_box';
-type MysteryBoxTier = 25 | 50 | 100;
+type MysteryBoxTier = 50 | 100;
 
 interface AddItemModalProps {
   visible: boolean;
   onClose: () => void;
   onAdd: (item: {
-    amazon_url: string;
+    amazon_url: string | null;
     title: string;
     price?: number;
     priority: number;
     item_type: ItemType;
     mystery_box_tier?: MysteryBoxTier | null;
-    surprise_me_budget?: number | null;
   }) => Promise<void>;
 }
 
@@ -41,15 +40,11 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
   // New state for item types
   const [itemType, setItemType] = useState<ItemType>('standard');
   const [selectedTier, setSelectedTier] = useState<MysteryBoxTier | null>(null);
-  const [budget, setBudget] = useState('');
 
   // Reset type-specific fields when itemType changes
   useEffect(() => {
     if (itemType !== 'mystery_box') {
       setSelectedTier(null);
-    }
-    if (itemType !== 'surprise_me') {
-      setBudget('');
     }
   }, [itemType]);
 
@@ -91,13 +86,12 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
     try {
       // Build payload based on item type
       let payload: {
-        amazon_url: string;
+        amazon_url: string | null;
         title: string;
         price?: number;
         priority: number;
         item_type: ItemType;
         mystery_box_tier?: MysteryBoxTier | null;
-        surprise_me_budget?: number | null;
       };
 
       if (itemType === 'standard') {
@@ -110,16 +104,15 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
         };
       } else if (itemType === 'surprise_me') {
         payload = {
-          amazon_url: '',
+          amazon_url: null,
           title: 'Surprise Me!',
           priority: 3,
           item_type: 'surprise_me',
-          surprise_me_budget: budget ? parseFloat(budget) : null,
         };
       } else {
         // mystery_box
         payload = {
-          amazon_url: '',
+          amazon_url: null,
           title: `€${selectedTier} Mystery Box`,
           price: selectedTier!,
           priority: 3,
@@ -148,7 +141,6 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
     setPriority(3);
     setItemType('standard');
     setSelectedTier(null);
-    setBudget('');
   };
 
   const handleCancel = () => {
@@ -561,63 +553,12 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                     style={{
                       fontSize: 14,
                       color: colors.burgundy[600],
-                      marginBottom: spacing.md,
+                      marginBottom: spacing.lg,
                       textAlign: 'center',
                     }}
                   >
                     Let your group know you're open to any gift!
                   </Text>
-
-                  {/* Budget Input (Optional) */}
-                  <View style={{ marginBottom: spacing.lg }}>
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        fontWeight: '600',
-                        color: colors.burgundy[700],
-                        marginBottom: spacing.xs,
-                      }}
-                    >
-                      Budget (Optional)
-                    </Text>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        backgroundColor: colors.white,
-                        borderRadius: borderRadius.md,
-                        paddingHorizontal: spacing.md,
-                        paddingVertical: spacing.md,
-                        borderWidth: 2,
-                        borderColor: colors.gold[200],
-                        ...shadows.sm,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontWeight: '600',
-                          color: colors.gold[600],
-                          marginRight: spacing.xs,
-                        }}
-                      >
-                        €
-                      </Text>
-                      <TextInput
-                        style={{
-                          flex: 1,
-                          fontSize: 15,
-                          color: colors.burgundy[900],
-                          paddingVertical: 0,
-                        }}
-                        placeholder="Max budget..."
-                        placeholderTextColor={colors.cream[400]}
-                        value={budget}
-                        onChangeText={setBudget}
-                        keyboardType="decimal-pad"
-                      />
-                    </View>
-                  </View>
                 </>
               )}
 
@@ -643,7 +584,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                       marginBottom: spacing.lg,
                     }}
                   >
-                    {([25, 50, 100] as MysteryBoxTier[]).map((tier) => (
+                    {([50, 100] as MysteryBoxTier[]).map((tier) => (
                       <TouchableOpacity
                         key={tier}
                         onPress={() => setSelectedTier(tier)}
