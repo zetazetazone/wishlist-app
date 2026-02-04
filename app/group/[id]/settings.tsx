@@ -17,9 +17,10 @@ import * as ImagePicker from 'expo-image-picker';
 import { MotiView } from 'moti';
 import { supabase } from '../../../lib/supabase';
 import { uploadGroupPhotoFromUri } from '../../../lib/storage';
-import { updateGroupInfo } from '../../../utils/groups';
+import { updateGroupInfo, removeMember, transferAdmin, leaveGroup } from '../../../utils/groups';
 import { GroupAvatar } from '../../../components/groups/GroupAvatar';
 import { InviteCodeSection } from '../../../components/groups/InviteCodeSection';
+import { MemberListItem } from '../../../components/groups/MemberListItem';
 import { colors, spacing, borderRadius, shadows } from '../../../constants/theme';
 
 interface GroupDetails {
@@ -30,12 +31,21 @@ interface GroupDetails {
   invite_code: string | null;
 }
 
+interface MemberInfo {
+  user_id: string;
+  role: 'admin' | 'member';
+  full_name: string;
+  avatar_url: string | null;
+}
+
 export default function GroupSettingsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [group, setGroup] = useState<GroupDetails | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [members, setMembers] = useState<MemberInfo[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   // Editable form state (admin only)
   const [editName, setEditName] = useState('');
@@ -66,8 +76,10 @@ export default function GroupSettingsScreen() {
         return;
       }
 
-      // Fetch group details and membership role in parallel
-      const [groupResult, membershipResult] = await Promise.all([
+      setCurrentUserId(user.id);
+
+      // Fetch group details, membership role, and all members in parallel
+      const [groupResult, membershipResult, membersResult] = await Promise.all([
         supabase
           .from('groups')
           .select('name, description, photo_url, mode, invite_code')
@@ -79,6 +91,18 @@ export default function GroupSettingsScreen() {
           .eq('group_id', id)
           .eq('user_id', user.id)
           .single(),
+        supabase
+          .from('group_members')
+          .select(`
+            user_id,
+            role,
+            users (
+              id,
+              full_name,
+              avatar_url
+            )
+          `)
+          .eq('group_id', id),
       ]);
 
       if (groupResult.data) {
@@ -86,6 +110,23 @@ export default function GroupSettingsScreen() {
       }
 
       setIsAdmin(membershipResult.data?.role === 'admin');
+
+      // Transform members data
+      if (membersResult.data) {
+        const transformedMembers: MemberInfo[] = membersResult.data.map((m: any) => ({
+          user_id: m.user_id,
+          role: m.role as 'admin' | 'member',
+          full_name: m.users?.full_name || 'Unknown',
+          avatar_url: m.users?.avatar_url || null,
+        }));
+        // Sort: admin first, then alphabetical
+        transformedMembers.sort((a, b) => {
+          if (a.role === 'admin' && b.role !== 'admin') return -1;
+          if (a.role !== 'admin' && b.role === 'admin') return 1;
+          return a.full_name.localeCompare(b.full_name);
+        });
+        setMembers(transformedMembers);
+      }
     } catch (error) {
       console.error('Error loading settings:', error);
     } finally {
@@ -184,6 +225,78 @@ export default function GroupSettingsScreen() {
     } finally {
       setIsUploadingPhoto(false);
     }
+  };
+
+  const handleRemoveMember = (member: MemberInfo) => {
+    Alert.alert(
+      'Remove Member',
+      `Are you sure you want to remove ${member.full_name} from the group? This cannot be undone.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: async () => {
+            const { error } = await removeMember(id!, member.user_id);
+            if (error) {
+              Alert.alert('Error', 'Failed to remove member');
+            } else {
+              setMembers(prev => prev.filter(m => m.user_id !== member.user_id));
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleMakeAdmin = (member: MemberInfo) => {
+    Alert.alert(
+      'Transfer Admin Role',
+      `Are you sure you want to make ${member.full_name} the group admin? You will become a regular member and lose admin privileges.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Transfer',
+          style: 'destructive',
+          onPress: async () => {
+            const { error } = await transferAdmin(id!, member.user_id);
+            if (error) {
+              Alert.alert('Error', 'Failed to transfer admin role');
+            } else {
+              // Update local state: demote self, promote target
+              setMembers(prev => prev.map(m => ({
+                ...m,
+                role: m.user_id === member.user_id ? 'admin' as const : m.user_id === currentUserId ? 'member' as const : m.role,
+              })));
+              setIsAdmin(false);
+              Alert.alert('Done', `${member.full_name} is now the group admin.`);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleLeaveGroup = () => {
+    Alert.alert(
+      'Leave Group',
+      'Are you sure you want to leave this group? You will need an invite code to rejoin.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Leave',
+          style: 'destructive',
+          onPress: async () => {
+            const { error } = await leaveGroup(id!);
+            if (error) {
+              Alert.alert('Error', 'Failed to leave group');
+            } else {
+              router.replace('/(app)/(tabs)/groups');
+            }
+          },
+        },
+      ]
+    );
   };
 
   if (loading) {
@@ -354,12 +467,24 @@ export default function GroupSettingsScreen() {
             transition={{ type: 'spring', delay: 200 }}
           >
             <SettingsSection
-              title="Members"
+              title={`Members (${members.length})`}
               icon="account-multiple"
             >
-              <Text style={styles.placeholderText}>
-                Member management will appear here
-              </Text>
+              {members.map((member) => (
+                <MemberListItem
+                  key={member.user_id}
+                  member={member}
+                  isCurrentUser={member.user_id === currentUserId}
+                  isViewerAdmin={isAdmin}
+                  onRemove={() => handleRemoveMember(member)}
+                  onMakeAdmin={() => handleMakeAdmin(member)}
+                />
+              ))}
+              {members.length === 0 && (
+                <Text style={styles.placeholderText}>
+                  No members found
+                </Text>
+              )}
             </SettingsSection>
           </MotiView>
 
@@ -398,13 +523,66 @@ export default function GroupSettingsScreen() {
               danger
             >
               {isAdmin ? (
-                <Text style={styles.placeholderText}>
-                  Transfer admin role will appear here
-                </Text>
+                <View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm }}>
+                    <MaterialCommunityIcons
+                      name="information-outline"
+                      size={16}
+                      color={colors.cream[600]}
+                      style={{ marginRight: spacing.xs }}
+                    />
+                    <Text
+                      style={{
+                        fontSize: 13,
+                        color: colors.cream[600],
+                        flex: 1,
+                      }}
+                    >
+                      To leave this group, first transfer the admin role to another member using the shield icon in the Members section above.
+                    </Text>
+                  </View>
+                </View>
               ) : (
-                <Text style={styles.placeholderText}>
-                  Leave group will appear here
-                </Text>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      color: colors.cream[600],
+                      marginBottom: spacing.md,
+                    }}
+                  >
+                    You will need an invite code to rejoin this group after leaving.
+                  </Text>
+                  <TouchableOpacity
+                    onPress={handleLeaveGroup}
+                    activeOpacity={0.7}
+                    style={{
+                      backgroundColor: colors.error,
+                      borderRadius: borderRadius.md,
+                      paddingVertical: spacing.sm + 4,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <MaterialCommunityIcons
+                        name="logout"
+                        size={18}
+                        color={colors.white}
+                        style={{ marginRight: spacing.sm }}
+                      />
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: '700',
+                          color: colors.white,
+                        }}
+                      >
+                        Leave Group
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
               )}
             </SettingsSection>
           </MotiView>
