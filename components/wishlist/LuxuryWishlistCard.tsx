@@ -159,36 +159,38 @@ export default function LuxuryWishlistCard({
           }}
         />
 
-        <View style={{ padding: spacing.md }}>
-          {/* Header Row */}
+        <View style={{ padding: spacing.md, flexDirection: 'row' }}>
+          {/* Icon - spans both rows */}
           <View
             style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              marginBottom: spacing.sm,
+              width: 72,
+              height: 100,
+              borderRadius: borderRadius.md,
+              backgroundColor: colors.burgundy[50],
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: spacing.md,
             }}
           >
-            {/* Icon & Title */}
-            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-start' }}>
-              <View
-                style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: borderRadius.sm,
-                  backgroundColor: colors.burgundy[50],
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginRight: spacing.sm,
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={getCardIcon()}
-                  size={28}
-                  color={colors.burgundy[600]}
-                />
-              </View>
+            <MaterialCommunityIcons
+              name={getCardIcon()}
+              size={40}
+              color={colors.burgundy[600]}
+            />
+          </View>
 
+          {/* Content Column */}
+          <View style={{ flex: 1 }}>
+            {/* Header Row */}
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                marginBottom: spacing.xs,
+              }}
+            >
+              {/* Title */}
               <View style={{ flex: 1 }}>
                 {/* Most Wanted badges */}
                 {singleGroupName && <MostWantedBadge />}
@@ -228,55 +230,54 @@ export default function LuxuryWishlistCard({
                   </Text>
                 )}
               </View>
-            </View>
 
-            {/* Actions: Favorite Heart and/or Delete Button */}
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
-              {showFavoriteHeart && (
-                <FavoriteHeart
-                  isFavorite={isFavorite || false}
-                  onPress={() => onToggleFavorite?.()}
-                />
-              )}
-              {onDelete && (
-                <TouchableOpacity
-                  onPress={handleDelete}
-                  style={{
-                    padding: spacing.xs,
-                  }}
-                >
-                  <MaterialCommunityIcons
-                    name="trash-can-outline"
-                    size={22}
-                    color={colors.burgundy[300]}
+              {/* Actions: Favorite Heart and/or Delete Button */}
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
+                {showFavoriteHeart && (
+                  <FavoriteHeart
+                    isFavorite={isFavorite || false}
+                    onPress={() => onToggleFavorite?.()}
                   />
-                </TouchableOpacity>
-              )}
+                )}
+                {onDelete && (
+                  <TouchableOpacity
+                    onPress={handleDelete}
+                    style={{
+                      padding: spacing.xs,
+                    }}
+                  >
+                    <MaterialCommunityIcons
+                      name="trash-can-outline"
+                      size={22}
+                      color={colors.burgundy[300]}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
-          </View>
 
-          {/* Price & Stars Row */}
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: spacing.md,
-              paddingVertical: spacing.sm,
-            }}
-          >
+            {/* Price & Stars Row */}
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: spacing.xs,
+                paddingVertical: spacing.xs,
+              }}
+            >
             {formatPrice(item.price) ? (
               <View
                 style={{
                   backgroundColor: colors.gold[50],
-                  paddingHorizontal: spacing.md,
-                  paddingVertical: spacing.xs,
+                  paddingHorizontal: spacing.sm,
+                  paddingVertical: 4,
                   borderRadius: borderRadius.sm,
                 }}
               >
                 <Text
                   style={{
-                    fontSize: 22,
+                    fontSize: 16,
                     fontWeight: '700',
                     color: colors.gold[700],
                   }}
@@ -291,12 +292,15 @@ export default function LuxuryWishlistCard({
             <StarRating
               rating={item.priority}
               onRatingChange={(newPriority) => onPriorityChange?.(item.id, newPriority)}
-              size={36}
+              size={24}
             />
+            </View>
           </View>
+        </View>
 
-          {/* Action Button - hidden for special items */}
-          {!isSpecialItem && (
+        {/* Action Button - hidden for special items */}
+        {!isSpecialItem && (
+          <View style={{ paddingHorizontal: spacing.md, paddingBottom: spacing.md }}>
             <TouchableOpacity
               onPress={handleOpenLink}
               style={{
@@ -326,8 +330,8 @@ export default function LuxuryWishlistCard({
                 View Product
               </Text>
             </TouchableOpacity>
-          )}
-        </View>
+          </View>
+        )}
       </View>
     </MotiView>
   );
