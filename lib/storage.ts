@@ -163,3 +163,48 @@ export function getGroupPhotoUrl(path: string | null): string | null {
     return null;
   }
 }
+
+/**
+ * Upload group photo from a local URI to Supabase Storage with compression
+ * Use this when you already have a picked image URI (e.g., from a preview)
+ * @param uri - The local image URI to upload
+ * @param groupId - The group's ID to associate with the photo
+ * @returns The storage path of the uploaded photo or null if failed
+ */
+export async function uploadGroupPhotoFromUri(uri: string, groupId: string): Promise<string | null> {
+  try {
+    // Compress image using expo-image-manipulator
+    const manipulated = await manipulateAsync(
+      uri,
+      [{ resize: { width: 800 } }],
+      { compress: 0.8, format: SaveFormat.JPEG }
+    );
+    const compressedUri = manipulated.uri;
+
+    // Convert compressed image to ArrayBuffer
+    const response = await fetch(compressedUri);
+    const arrayBuffer = await response.arrayBuffer();
+
+    // Generate unique file name in groups folder
+    const fileName = `${Date.now()}.jpg`;
+    const filePath = `groups/${groupId}/${fileName}`;
+
+    // Upload to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, arrayBuffer, {
+        contentType: 'image/jpeg',
+        upsert: true,
+      });
+
+    if (error) {
+      console.error('Error uploading group photo:', error);
+      return null;
+    }
+
+    return data.path;
+  } catch (error) {
+    console.error('Error in uploadGroupPhotoFromUri:', error);
+    return null;
+  }
+}
