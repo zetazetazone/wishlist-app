@@ -39,7 +39,7 @@ export default function RootLayout() {
             router.replace('/(onboarding)');
           } else if (isOnboarded && (inAuthGroup || inOnboardingGroup)) {
             // Onboarded but still on auth/onboarding, go to app
-            router.replace('/(app)/(tabs)/wishlist');
+            router.replace('/(app)/(tabs)');
           }
         }
         // Otherwise stay on current page
@@ -73,7 +73,7 @@ export default function RootLayout() {
           router.replace('/(onboarding)');
         } else if (isOnboarded && (inAuthGroup || inOnboardingGroup)) {
           // Onboarded but on auth/onboarding, go to app
-          router.replace('/(app)/(tabs)/wishlist');
+          router.replace('/(app)/(tabs)');
         }
       }
     });

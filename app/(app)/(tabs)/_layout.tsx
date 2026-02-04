@@ -13,16 +13,6 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          headerShown: false, // Home has its own custom header
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="home" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="wishlist"
-        options={{
           title: 'My Wishlist',
           headerShown: false, // Wishlist has its own custom header
           tabBarIcon: ({ color, size }) => (

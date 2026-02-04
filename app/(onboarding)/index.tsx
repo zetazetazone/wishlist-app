@@ -102,7 +102,7 @@ export default function OnboardingScreen() {
       }
 
       // Navigate to main app
-      router.replace('/(app)/(tabs)/wishlist');
+      router.replace('/(app)/(tabs)');
     } catch (error) {
       console.error('Error in onboarding:', error);
       Alert.alert('Error', 'Something went wrong');
