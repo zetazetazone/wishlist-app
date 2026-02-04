@@ -43,13 +43,13 @@ Requirements for Group Experience milestone. Each maps to roadmap phases.
 
 ### Group View
 
-- [ ] **GVIEW-01**: Group header displays photo, name, description
-- [ ] **GVIEW-02**: Group header shows mode badge
-- [ ] **GVIEW-03**: Member cards display profile photo and name (no email)
-- [ ] **GVIEW-04**: Member cards sorted by closest birthday
-- [ ] **GVIEW-05**: Member cards show birthday countdown ("12 days", "2 months")
-- [ ] **GVIEW-06**: Member cards show favorite item preview (thumbnail + title)
-- [ ] **GVIEW-07**: Tapping member card navigates to their celebration page
+- [x] **GVIEW-01**: Group header displays photo, name, description
+- [x] **GVIEW-02**: Group header shows mode badge
+- [x] **GVIEW-03**: Member cards display profile photo and name (no email)
+- [x] **GVIEW-04**: Member cards sorted by closest birthday
+- [x] **GVIEW-05**: Member cards show birthday countdown ("12 days", "2 months")
+- [x] **GVIEW-06**: Member cards show favorite item preview (thumbnail + title)
+- [x] **GVIEW-07**: Tapping member card navigates to their celebration page
 
 ## Future Requirements
 
@@ -118,13 +118,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GSET-05 | Phase 15 | Pending |
 | GSET-06 | Phase 15 | Pending |
 | GSET-07 | Phase 15 | Pending |
-| GVIEW-01 | Phase 14 | Pending |
-| GVIEW-02 | Phase 14 | Pending |
-| GVIEW-03 | Phase 14 | Pending |
-| GVIEW-04 | Phase 14 | Pending |
-| GVIEW-05 | Phase 14 | Pending |
-| GVIEW-06 | Phase 14 | Pending |
-| GVIEW-07 | Phase 14 | Pending |
+| GVIEW-01 | Phase 14 | Complete |
+| GVIEW-02 | Phase 14 | Complete |
+| GVIEW-03 | Phase 14 | Complete |
+| GVIEW-04 | Phase 14 | Complete |
+| GVIEW-05 | Phase 14 | Complete |
+| GVIEW-06 | Phase 14 | Complete |
+| GVIEW-07 | Phase 14 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 25 total
@@ -133,4 +133,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-04*
-*Last updated: 2026-02-04 after roadmap creation*
+*Last updated: 2026-02-04 after Phase 14 completion*
