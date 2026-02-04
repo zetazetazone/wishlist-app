@@ -447,101 +447,72 @@ export default function LuxuryWishlistScreen() {
             transition={{ type: 'timing', duration: 600 }}
           >
             {/* Title Row with Profile Picture */}
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                {/* Profile Picture */}
-                <TouchableOpacity
-                  onPress={() => router.push('/settings/profile')}
-                  activeOpacity={0.8}
-                  style={{ marginRight: spacing.md }}
-                >
-                  {userProfile.avatar_url ? (
-                    <Image
-                      source={{ uri: getAvatarUrl(userProfile.avatar_url) || undefined }}
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {/* Profile Picture */}
+              <TouchableOpacity
+                onPress={() => router.push('/settings/profile')}
+                activeOpacity={0.8}
+                style={{ marginRight: spacing.md }}
+              >
+                {userProfile.avatar_url ? (
+                  <Image
+                    source={{ uri: getAvatarUrl(userProfile.avatar_url) || undefined }}
+                    style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: 28,
+                      borderWidth: 2,
+                      borderColor: colors.white,
+                    }}
+                  />
+                ) : (
+                  <View
+                    style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: 28,
+                      borderWidth: 2,
+                      borderColor: colors.white,
+                      backgroundColor: colors.gold[200],
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Text
                       style={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: 28,
-                        borderWidth: 2,
-                        borderColor: colors.white,
-                      }}
-                    />
-                  ) : (
-                    <View
-                      style={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: 28,
-                        borderWidth: 2,
-                        borderColor: colors.white,
-                        backgroundColor: colors.gold[200],
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        fontSize: 22,
+                        fontWeight: '700',
+                        color: colors.burgundy[800],
                       }}
                     >
-                      <Text
-                        style={{
-                          fontSize: 22,
-                          fontWeight: '700',
-                          color: colors.burgundy[800],
-                        }}
-                      >
-                        {userProfile.display_name?.[0]?.toUpperCase() || '?'}
-                      </Text>
-                    </View>
-                  )}
-                </TouchableOpacity>
-
-                {/* Title and Count */}
-                <View>
-                  <Text
-                    style={{
-                      fontSize: 32,
-                      fontWeight: '700',
-                      color: colors.white,
-                      marginBottom: spacing.xs,
-                    }}
-                  >
-                    My Wishlist
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 15,
-                      color: colors.gold[200],
-                      fontWeight: '400',
-                    }}
-                  >
-                    {items.length} {items.length === 1 ? 'gift' : 'gifts'}
-                  </Text>
-                </View>
-              </View>
-
-              {/* FAB Add Button */}
-              <TouchableOpacity
-                onPress={() => setShowAddModal(true)}
-                activeOpacity={0.7}
-                style={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: 30,
-                  backgroundColor: colors.gold[500],
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  ...shadows.gold,
-                }}
-              >
-                <MaterialCommunityIcons
-                  name="plus"
-                  size={32}
-                  color={colors.white}
-                />
+                      {userProfile.display_name?.[0]?.toUpperCase() || '?'}
+                    </Text>
+                  </View>
+                )}
               </TouchableOpacity>
+
+              {/* Title and Count */}
+              <View>
+                <Text
+                  style={{
+                    fontSize: 32,
+                    fontWeight: '700',
+                    color: colors.white,
+                    marginBottom: spacing.xs,
+                  }}
+                >
+                  My Wishlist
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    color: colors.gold[200],
+                    fontWeight: '400',
+                  }}
+                >
+                  {items.length} {items.length === 1 ? 'gift' : 'gifts'}
+                </Text>
+              </View>
             </View>
           </MotiView>
         </LinearGradient>
@@ -722,7 +693,7 @@ export default function LuxuryWishlistScreen() {
                     lineHeight: 24,
                   }}
                 >
-                  Tap the golden + button above to add{'\n'}gifts you're wishing for
+                  Tap the gift button below to add{'\n'}gifts you're wishing for
                 </Text>
               </View>
             </MotiView>
@@ -759,6 +730,31 @@ export default function LuxuryWishlistScreen() {
             })()
           )}
         </ScrollView>
+
+        {/* Floating Add Button */}
+        <TouchableOpacity
+          onPress={() => setShowAddModal(true)}
+          activeOpacity={0.8}
+          style={{
+            position: 'absolute',
+            bottom: 24,
+            right: 24,
+            width: 64,
+            height: 64,
+            borderRadius: 32,
+            backgroundColor: colors.gold[500],
+            alignItems: 'center',
+            justifyContent: 'center',
+            ...shadows.gold,
+            elevation: 8,
+          }}
+        >
+          <MaterialCommunityIcons
+            name="gift-outline"
+            size={32}
+            color={colors.white}
+          />
+        </TouchableOpacity>
       </View>
 
       <AddItemModal

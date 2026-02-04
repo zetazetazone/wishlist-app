@@ -44,16 +44,16 @@ export default function AddItemBottomSheet({
   const translateY = useRef(new Animated.Value(SHEET_HEIGHT)).current;
   const titleInputRef = useRef<TextInput>(null);
 
-  // Validate Amazon URL in real-time
-  const validateAmazonUrl = (url: string): boolean => {
+  // Validate URL in real-time
+  const validateUrl = (url: string): boolean => {
     if (!url.trim()) {
       setUrlError('');
       return false;
     }
     try {
       const urlObj = new URL(url);
-      const isValid = urlObj.hostname.includes('amazon');
-      setUrlError(isValid ? '' : 'Please enter a valid Amazon link');
+      const isValid = urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+      setUrlError(isValid ? '' : 'Please enter a valid URL');
       return isValid;
     } catch {
       setUrlError('Please enter a valid URL');
@@ -115,11 +115,11 @@ export default function AddItemBottomSheet({
   const handleSubmit = async () => {
     // Validation
     if (!amazonUrl.trim()) {
-      setUrlError('Please paste an Amazon link');
+      setUrlError('Please paste a product link');
       return;
     }
 
-    if (!validateAmazonUrl(amazonUrl)) {
+    if (!validateUrl(amazonUrl)) {
       return;
     }
 
@@ -203,18 +203,18 @@ export default function AddItemBottomSheet({
                 Add to Wishlist
               </Text>
 
-              {/* Amazon URL Input */}
+              {/* Product URL Input */}
               <View className="mb-4">
                 <View className="flex-row items-center border-2 border-gray-200 rounded-xl p-4 focus:border-blue-500">
                   <Text className="text-xl mr-2">🔗</Text>
                   <TextInput
                     className="flex-1 text-base text-gray-900"
-                    placeholder="Paste Amazon link here..."
+                    placeholder="Paste product link here..."
                     placeholderTextColor="#9ca3af"
                     value={amazonUrl}
                     onChangeText={(text) => {
                       setAmazonUrl(text);
-                      validateAmazonUrl(text);
+                      validateUrl(text);
                     }}
                     onSubmitEditing={() => titleInputRef.current?.focus()}
                     autoCapitalize="none"

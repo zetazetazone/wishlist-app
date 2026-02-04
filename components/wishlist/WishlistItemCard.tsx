@@ -8,6 +8,10 @@ interface WishlistItemCardProps {
 
 export default function WishlistItemCard({ item, onDelete }: WishlistItemCardProps) {
   const handleOpenLink = async () => {
+    if (!item.amazon_url) {
+      Alert.alert('Error', 'No link available for this item');
+      return;
+    }
     try {
       const canOpen = await Linking.canOpenURL(item.amazon_url);
       if (canOpen) {
@@ -94,7 +98,7 @@ export default function WishlistItemCard({ item, onDelete }: WishlistItemCardPro
           className="flex-1 bg-blue-500 rounded-lg py-3"
         >
           <Text className="text-white text-center font-semibold">
-            View on Amazon
+            View Product
           </Text>
         </TouchableOpacity>
         {onDelete && (

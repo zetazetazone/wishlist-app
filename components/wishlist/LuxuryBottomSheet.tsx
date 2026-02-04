@@ -49,11 +49,11 @@ export default forwardRef<LuxuryBottomSheetRef, LuxuryBottomSheetProps>(
       close: () => bottomSheetRef.current?.close(),
     }));
 
-    const validateAmazonUrl = (url: string): boolean => {
+    const validateUrl = (url: string): boolean => {
       if (!url.trim()) return false;
       try {
         const urlObj = new URL(url);
-        return urlObj.hostname.includes('amazon');
+        return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
       } catch {
         return false;
       }
@@ -61,12 +61,12 @@ export default forwardRef<LuxuryBottomSheetRef, LuxuryBottomSheetProps>(
 
     const handleSubmit = async () => {
       if (!amazonUrl.trim()) {
-        Alert.alert('Missing URL', 'Please paste an Amazon link');
+        Alert.alert('Missing URL', 'Please paste a product link');
         return;
       }
 
-      if (!validateAmazonUrl(amazonUrl)) {
-        Alert.alert('Invalid URL', 'Please enter a valid Amazon link');
+      if (!validateUrl(amazonUrl)) {
+        Alert.alert('Invalid URL', 'Please enter a valid URL');
         return;
       }
 
@@ -187,7 +187,7 @@ export default forwardRef<LuxuryBottomSheetRef, LuxuryBottomSheetProps>(
                   style={{ marginRight: spacing.sm }}
                 />
                 <TextInput
-                  placeholder="Paste Amazon link..."
+                  placeholder="Paste product link..."
                   placeholderTextColor={colors.cream[400]}
                   value={amazonUrl}
                   onChangeText={setAmazonUrl}

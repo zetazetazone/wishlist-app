@@ -33,10 +33,10 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
   const [priority, setPriority] = useState(3);
   const [loading, setLoading] = useState(false);
 
-  const validateAmazonUrl = (url: string): boolean => {
+  const validateUrl = (url: string): boolean => {
     try {
       const urlObj = new URL(url);
-      return urlObj.hostname.includes('amazon');
+      return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
     } catch {
       return false;
     }
@@ -45,12 +45,12 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
   const handleSubmit = async () => {
     // Validation for standard items
     if (!amazonUrl.trim()) {
-      Alert.alert('Error', 'Please enter an Amazon URL');
+      Alert.alert('Error', 'Please enter a product URL');
       return;
     }
 
-    if (!validateAmazonUrl(amazonUrl)) {
-      Alert.alert('Error', 'Please enter a valid Amazon URL');
+    if (!validateUrl(amazonUrl)) {
+      Alert.alert('Error', 'Please enter a valid URL');
       return;
     }
 
@@ -162,7 +162,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-              {/* Amazon URL Input */}
+              {/* Product URL Input */}
                   <View style={{ marginBottom: spacing.md }}>
                     <Text
                       style={{
@@ -172,7 +172,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                         marginBottom: spacing.xs,
                       }}
                     >
-                      Amazon URL *
+                      Product URL *
                     </Text>
                     <View
                       style={{
@@ -199,7 +199,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                           color: colors.burgundy[900],
                           paddingVertical: 0,
                         }}
-                        placeholder="Paste Amazon link..."
+                        placeholder="Paste product link..."
                         placeholderTextColor={colors.cream[400]}
                         value={amazonUrl}
                         onChangeText={setAmazonUrl}

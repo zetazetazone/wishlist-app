@@ -15,6 +15,10 @@ export default function WishlistItemCardSimple({
   const [showMenu, setShowMenu] = useState(false);
 
   const handleOpenLink = async () => {
+    if (!item.amazon_url) {
+      Alert.alert('Error', 'No link available for this item');
+      return;
+    }
     try {
       const canOpen = await Linking.canOpenURL(item.amazon_url);
       if (canOpen) {
@@ -82,7 +86,7 @@ export default function WishlistItemCardSimple({
           activeOpacity={0.8}
         >
           <Text className="text-white text-center font-semibold text-sm">
-            View on Amazon
+            View Product
           </Text>
         </TouchableOpacity>
 

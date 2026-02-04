@@ -317,7 +317,7 @@ export default function LuxuryWishlistCard({
                   letterSpacing: 0.3,
                 }}
               >
-                View on Amazon
+                View Product
               </Text>
             </TouchableOpacity>
           )}
