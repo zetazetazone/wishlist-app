@@ -14,6 +14,38 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      users: {
+        Row: {
+          id: string
+          email: string | null
+          full_name: string | null
+          avatar_url: string | null
+          birthday: string | null
+          onboarding_completed: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          email?: string | null
+          full_name?: string | null
+          avatar_url?: string | null
+          birthday?: string | null
+          onboarding_completed?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string | null
+          full_name?: string | null
+          avatar_url?: string | null
+          birthday?: string | null
+          onboarding_completed?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
       user_profiles: {
         Row: {
           id: string
@@ -441,4 +473,4 @@ export type WishlistItem = Database['public']['Tables']['wishlist_items']['Row']
 export type UserProfile = Database['public']['Tables']['user_profiles']['Row'];
 export type Group = Database['public']['Tables']['groups']['Row'];
 export type GroupMember = Database['public']['Tables']['group_members']['Row'];
-export type User = UserProfile;
+export type User = Database['public']['Tables']['users']['Row'];

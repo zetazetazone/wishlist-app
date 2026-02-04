@@ -9,19 +9,22 @@ import {
   Share,
   StatusBar,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { fetchGroupDetails } from '../../utils/groups';
 import { Group, User } from '../../types';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
+import { GroupViewHeader } from '../../components/groups/GroupViewHeader';
+import { MemberCard } from '../../components/groups/MemberCard';
+import { getDaysUntilBirthday } from '../../utils/countdown';
 
 interface GroupWithMembers extends Group {
   members: Array<{
     role: string;
     users: User;
   }>;
+  favoritesByUser?: Record<string, { title: string; image_url: string | null; item_type: string } | null>;
 }
 
 export default function GroupDetailScreen() {
@@ -29,10 +32,35 @@ export default function GroupDetailScreen() {
   const router = useRouter();
   const [group, setGroup] = useState<GroupWithMembers | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sortedMembers, setSortedMembers] = useState<Array<{
+    role: string;
+    users: User;
+    daysUntil: number;
+  }>>([]);
 
   useEffect(() => {
     loadGroupDetails();
   }, [id]);
+
+  // Sort members by birthday when group data loads
+  useEffect(() => {
+    if (!group?.members) return;
+
+    const membersWithCountdown = group.members.map(member => ({
+      ...member,
+      daysUntil: getDaysUntilBirthday(member.users.birthday || ''),
+    }));
+
+    // Sort by daysUntil (ascending - closest birthday first)
+    const sorted = [...membersWithCountdown].sort((a, b) => {
+      // Handle invalid dates (-1) by putting them at the end
+      if (a.daysUntil === -1) return 1;
+      if (b.daysUntil === -1) return -1;
+      return a.daysUntil - b.daysUntil;
+    });
+
+    setSortedMembers(sorted);
+  }, [group?.members]);
 
   const loadGroupDetails = async () => {
     if (!id) return;
@@ -100,79 +128,17 @@ export default function GroupDetailScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
       <View style={{ flex: 1, backgroundColor: colors.cream[50] }}>
-        {/* Gradient Header */}
-        <LinearGradient
-          colors={[colors.burgundy[800], colors.burgundy[600]]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={{
-            paddingTop: 60,
-            paddingBottom: spacing.xl,
-            paddingHorizontal: spacing.lg,
+        {/* Group Header with Avatar, Name, Description, Mode Badge */}
+        <GroupViewHeader
+          group={{
+            name: group.name,
+            description: group.description,
+            photo_url: group.photo_url,
+            mode: group.mode || 'gifts',
           }}
-        >
-          <MotiView
-            from={{ opacity: 0, translateY: -20 }}
-            animate={{ opacity: 1, translateY: 0 }}
-            transition={{ type: 'timing', duration: 600 }}
-          >
-            {/* Back Button - Positioned at top */}
-            <View style={{ marginBottom: spacing.md }}>
-              <TouchableOpacity
-                onPress={() => router.push('/(app)/(tabs)/groups')}
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 20,
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-                activeOpacity={0.7}
-              >
-                <MaterialCommunityIcons name="arrow-left" size={24} color={colors.white} />
-              </TouchableOpacity>
-            </View>
-
-            {/* Group Info */}
-            <View>
-              <Text
-                style={{
-                  fontSize: 32,
-                  fontWeight: '700',
-                  color: colors.white,
-                  marginBottom: spacing.xs,
-                }}
-              >
-                {group.name}
-              </Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <MaterialCommunityIcons
-                    name="cash"
-                    size={16}
-                    color={colors.gold[200]}
-                    style={{ marginRight: spacing.xs }}
-                  />
-                  <Text style={{ fontSize: 14, color: colors.gold[200], fontWeight: '500' }}>
-                    ${group.budget_limit_per_gift} per gift
-                  </Text>
-                </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <MaterialCommunityIcons
-                    name="account-multiple"
-                    size={16}
-                    color={colors.gold[200]}
-                    style={{ marginRight: spacing.xs }}
-                  />
-                  <Text style={{ fontSize: 14, color: colors.gold[200], fontWeight: '500' }}>
-                    {group.members?.length || 0} members
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </MotiView>
-        </LinearGradient>
+          memberCount={group.members?.length || 0}
+          onBack={() => router.push('/(app)/(tabs)/groups')}
+        />
 
         <ScrollView
           style={{ flex: 1 }}
@@ -252,7 +218,7 @@ export default function GroupDetailScreen() {
             </View>
           </MotiView>
 
-          {/* Members Section */}
+          {/* Members Section - Sorted by Birthday */}
           <View style={{ marginBottom: spacing.lg }}>
             <Text
               style={{
@@ -266,124 +232,22 @@ export default function GroupDetailScreen() {
             </Text>
 
             <View style={{ gap: spacing.sm }}>
-              {group.members?.map((member, index) => (
-                <MotiView
+              {sortedMembers.map((member, index) => (
+                <MemberCard
                   key={member.users.id}
-                  from={{ opacity: 0, translateX: -20 }}
-                  animate={{ opacity: 1, translateX: 0 }}
-                  transition={{ type: 'spring', delay: 200 + index * 50 }}
-                >
-                  <View
-                    style={{
-                      backgroundColor: colors.white,
-                      borderRadius: borderRadius.lg,
-                      padding: spacing.md,
-                      borderWidth: 2,
-                      borderColor: colors.gold[100],
-                      ...shadows.sm,
-                    }}
-                  >
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      {/* Avatar Circle */}
-                      <View
-                        style={{
-                          width: 56,
-                          height: 56,
-                          borderRadius: 28,
-                          backgroundColor: colors.burgundy[100],
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          marginRight: spacing.md,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 20,
-                            fontWeight: '700',
-                            color: colors.burgundy[700],
-                          }}
-                        >
-                          {member.users.full_name?.charAt(0).toUpperCase()}
-                        </Text>
-                      </View>
-
-                      {/* Member Info */}
-                      <View style={{ flex: 1 }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.xs }}>
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              fontWeight: '700',
-                              color: colors.burgundy[800],
-                              flex: 1,
-                            }}
-                          >
-                            {member.users.full_name}
-                          </Text>
-                          {member.role === 'admin' && (
-                            <View
-                              style={{
-                                backgroundColor: colors.gold[100],
-                                paddingHorizontal: spacing.sm,
-                                paddingVertical: 4,
-                                borderRadius: borderRadius.sm,
-                                borderWidth: 1,
-                                borderColor: colors.gold[300],
-                              }}
-                            >
-                              <Text
-                                style={{
-                                  color: colors.gold[800],
-                                  fontSize: 11,
-                                  fontWeight: '700',
-                                }}
-                              >
-                                ADMIN
-                              </Text>
-                            </View>
-                          )}
-                        </View>
-
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.xs / 2 }}>
-                          <MaterialCommunityIcons
-                            name="email"
-                            size={14}
-                            color={colors.burgundy[400]}
-                            style={{ marginRight: spacing.xs }}
-                          />
-                          <Text
-                            style={{
-                              fontSize: 13,
-                              color: colors.burgundy[500],
-                            }}
-                          >
-                            {member.users.email}
-                          </Text>
-                        </View>
-
-                        {member.users.birthday && (
-                          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <MaterialCommunityIcons
-                              name="cake-variant"
-                              size={14}
-                              color={colors.gold[600]}
-                              style={{ marginRight: spacing.xs }}
-                            />
-                            <Text
-                              style={{
-                                fontSize: 12,
-                                color: colors.gold[700],
-                                fontWeight: '500',
-                              }}
-                            >
-                              Birthday: {new Date(member.users.birthday).toLocaleDateString()}
-                            </Text>
-                          </View>
-                        )}
-                      </View>
-                    </View>
-                  </View>
-                </MotiView>
+                  member={{
+                    role: member.role,
+                    users: {
+                      id: member.users.id,
+                      full_name: member.users.full_name || 'Unknown',
+                      avatar_url: member.users.avatar_url,
+                    },
+                  }}
+                  daysUntilBirthday={member.daysUntil}
+                  favoriteItem={group.favoritesByUser?.[member.users.id] as { title: string; image_url: string | null; item_type: 'standard' | 'surprise_me' | 'mystery_box' } | null}
+                  onPress={() => router.push(`/celebration/${member.users.id}`)}
+                  index={index}
+                />
               ))}
             </View>
           </View>
