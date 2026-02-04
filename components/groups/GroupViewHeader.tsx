@@ -15,12 +15,14 @@ interface GroupViewHeaderProps {
   };
   memberCount: number;
   onBack: () => void;
+  onSettings?: () => void;
 }
 
 export function GroupViewHeader({
   group,
   memberCount,
   onBack,
+  onSettings,
 }: GroupViewHeaderProps) {
   return (
     <LinearGradient
@@ -38,8 +40,8 @@ export function GroupViewHeader({
         animate={{ opacity: 1, translateY: 0 }}
         transition={{ type: 'timing', duration: 600 }}
       >
-        {/* Back Button */}
-        <View style={{ marginBottom: spacing.md }}>
+        {/* Navigation Row: Back Button + Settings Gear */}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md }}>
           <TouchableOpacity
             onPress={onBack}
             style={{
@@ -58,6 +60,27 @@ export function GroupViewHeader({
               color={colors.white}
             />
           </TouchableOpacity>
+
+          {onSettings && (
+            <TouchableOpacity
+              onPress={onSettings}
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: borderRadius.full,
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              activeOpacity={0.7}
+            >
+              <MaterialCommunityIcons
+                name="cog"
+                size={24}
+                color={colors.white}
+              />
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Group Avatar */}
