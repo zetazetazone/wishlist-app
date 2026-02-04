@@ -223,27 +223,40 @@ export default function LuxuryWishlistScreen() {
     }
   };
 
-  // For special items: toggle favorite for a specific group
-  const handleToggleSpecialItem = async (itemId: string, groupId: string, itemType: ItemType) => {
+  // For special items: batch confirm favorite changes
+  const handleConfirmSpecialItemGroups = async (
+    itemId: string,
+    itemType: ItemType,
+    addedGroupIds: string[],
+    removedGroupIds: string[]
+  ) => {
     if (!userId) return;
-
-    const currentlySelected = favorites.some(f => f.groupId === groupId && f.itemId === itemId);
-    const group = userGroups.find(g => g.id === groupId);
 
     // Animate list reordering
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
     // Optimistic update
-    if (currentlySelected) {
-      // Will be replaced by Surprise Me default - we'll reload after
-      setFavorites(prevFavs => prevFavs.filter(f => !(f.groupId === groupId && f.itemId === itemId)));
-    } else {
-      // Add to this group
-      setFavorites(prevFavs => {
-        const withoutGroup = prevFavs.filter(f => f.groupId !== groupId);
-        return [...withoutGroup, { groupId, groupName: group?.name || '', itemId }];
-      });
-      // Also set priority to 5 stars when marking as Most Wanted
+    setFavorites(prevFavs => {
+      let updated = [...prevFavs];
+
+      // Remove from removed groups
+      for (const groupId of removedGroupIds) {
+        updated = updated.filter(f => !(f.groupId === groupId && f.itemId === itemId));
+      }
+
+      // Add to added groups
+      for (const groupId of addedGroupIds) {
+        const group = userGroups.find(g => g.id === groupId);
+        // Remove any existing favorite for this group first
+        updated = updated.filter(f => f.groupId !== groupId);
+        updated.push({ groupId, groupName: group?.name || '', itemId });
+      }
+
+      return updated;
+    });
+
+    // Set priority to 5 stars if adding to any group
+    if (addedGroupIds.length > 0) {
       setItems(prevItems =>
         prevItems.map(item =>
           item.id === itemId ? { ...item, priority: 5 } : item
@@ -252,11 +265,18 @@ export default function LuxuryWishlistScreen() {
     }
 
     try {
-      // Toggle favorite
-      await toggleFavoriteForGroup(userId, groupId, itemId, itemType, currentlySelected);
+      // Process removals first (will set default Surprise Me)
+      for (const groupId of removedGroupIds) {
+        await toggleFavoriteForGroup(userId, groupId, itemId, itemType, true);
+      }
+
+      // Process additions
+      for (const groupId of addedGroupIds) {
+        await toggleFavoriteForGroup(userId, groupId, itemId, itemType, false);
+      }
 
       // If adding as Most Wanted, also update priority to 5
-      if (!currentlySelected) {
+      if (addedGroupIds.length > 0) {
         await supabase
           .from('wishlist_items')
           .update({ priority: 5 })
@@ -267,11 +287,11 @@ export default function LuxuryWishlistScreen() {
       const allFavs = await getAllFavoritesForUser(userId);
       setFavorites(allFavs);
     } catch (error) {
-      console.error('Failed to toggle favorite:', error);
+      console.error('Failed to update favorites:', error);
       const allFavs = await getAllFavoritesForUser(userId);
       setFavorites(allFavs);
       await fetchWishlistItems();
-      Alert.alert('Error', 'Failed to update favorite');
+      Alert.alert('Error', 'Failed to update favorites');
     }
   };
 
@@ -774,9 +794,14 @@ export default function LuxuryWishlistScreen() {
             handleSelectFavorite(selectedItemForPicker.id, groupId, selectedItemType);
           }
         }}
-        onToggleGroup={(groupId) => {
+        onConfirmSpecialItemGroups={(addedGroupIds, removedGroupIds) => {
           if (selectedItemForPicker) {
-            handleToggleSpecialItem(selectedItemForPicker.id, groupId, selectedItemType);
+            handleConfirmSpecialItemGroups(
+              selectedItemForPicker.id,
+              selectedItemType,
+              addedGroupIds,
+              removedGroupIds
+            );
           }
         }}
         itemTitle={selectedItemForPicker?.title || ''}

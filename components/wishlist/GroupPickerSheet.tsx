@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, Pressable, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius } from '../../constants/theme';
@@ -10,7 +11,7 @@ interface GroupPickerSheetProps {
   groups: Array<{ id: string; name: string }>;
   selectedGroupIds: string[]; // Groups where this item is currently Most Wanted
   onSelectGroup: (groupId: string) => void; // For standard items (single select)
-  onToggleGroup: (groupId: string) => void; // For special items (multi select)
+  onConfirmSpecialItemGroups: (addedGroupIds: string[], removedGroupIds: string[]) => void; // For special items (batch confirm)
   itemTitle: string;
   itemType: ItemType;
 }
@@ -21,22 +22,58 @@ export function GroupPickerSheet({
   groups,
   selectedGroupIds,
   onSelectGroup,
-  onToggleGroup,
+  onConfirmSpecialItemGroups,
   itemTitle,
   itemType,
 }: GroupPickerSheetProps) {
   const isSpecialItem = itemType === 'surprise_me' || itemType === 'mystery_box';
   const currentGroupId = selectedGroupIds[0] || null; // For standard items
 
+  // Local state for pending selections (only for special items)
+  const [pendingSelections, setPendingSelections] = useState<string[]>([]);
+
+  // Sync pending selections with actual selections when modal opens
+  useEffect(() => {
+    if (visible && isSpecialItem) {
+      setPendingSelections([...selectedGroupIds]);
+    }
+  }, [visible, isSpecialItem, selectedGroupIds]);
+
   const handleSelect = (groupId: string) => {
     if (isSpecialItem) {
-      // Multi-select: toggle this group
-      onToggleGroup(groupId);
+      // Multi-select: toggle in pending state (don't apply yet)
+      setPendingSelections(prev => {
+        if (prev.includes(groupId)) {
+          return prev.filter(id => id !== groupId);
+        } else {
+          return [...prev, groupId];
+        }
+      });
     } else {
       // Single-select: select this group and close
       onSelectGroup(groupId);
       onClose();
     }
+  };
+
+  const handleDone = () => {
+    if (isSpecialItem) {
+      // Calculate which groups were added and which were removed
+      const addedGroupIds = pendingSelections.filter(id => !selectedGroupIds.includes(id));
+      const removedGroupIds = selectedGroupIds.filter(id => !pendingSelections.includes(id));
+
+      // Only call if there are actual changes
+      if (addedGroupIds.length > 0 || removedGroupIds.length > 0) {
+        onConfirmSpecialItemGroups(addedGroupIds, removedGroupIds);
+      }
+    }
+    onClose();
+  };
+
+  const handleCancel = () => {
+    // Reset pending selections and close
+    setPendingSelections([...selectedGroupIds]);
+    onClose();
   };
 
   const getHeaderText = () => {
@@ -60,7 +97,7 @@ export function GroupPickerSheet({
       visible={visible}
       animationType="fade"
       transparent={true}
-      onRequestClose={onClose}
+      onRequestClose={isSpecialItem ? handleCancel : onClose}
     >
       {/* Backdrop */}
       <Pressable
@@ -69,7 +106,7 @@ export function GroupPickerSheet({
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
           justifyContent: 'flex-end',
         }}
-        onPress={onClose}
+        onPress={isSpecialItem ? handleCancel : onClose}
       >
         {/* Sheet */}
         <Pressable
@@ -120,7 +157,10 @@ export function GroupPickerSheet({
           {/* Group List */}
           <ScrollView style={{ paddingHorizontal: spacing.lg }}>
             {groups.map(group => {
-              const isSelected = selectedGroupIds.includes(group.id);
+              // Use pending selections for special items, actual selections for standard
+              const isSelected = isSpecialItem
+                ? pendingSelections.includes(group.id)
+                : selectedGroupIds.includes(group.id);
               return (
                 <TouchableOpacity
                   key={group.id}
@@ -200,28 +240,48 @@ export function GroupPickerSheet({
               );
             })}
 
-            {/* Done button for special items (multi-select mode) */}
+            {/* Done and Cancel buttons for special items (multi-select mode) */}
             {isSpecialItem && (
-              <TouchableOpacity
-                onPress={onClose}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: spacing.md,
-                  marginTop: spacing.sm,
-                  backgroundColor: colors.burgundy[600],
-                  borderRadius: borderRadius.md,
-                }}
-              >
-                <Text style={{
-                  fontSize: 16,
-                  fontWeight: '600',
-                  color: colors.white,
-                }}>
-                  Done
-                </Text>
-              </TouchableOpacity>
+              <View style={{ gap: spacing.sm, marginTop: spacing.sm }}>
+                <TouchableOpacity
+                  onPress={handleDone}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: spacing.md,
+                    backgroundColor: colors.burgundy[600],
+                    borderRadius: borderRadius.md,
+                  }}
+                >
+                  <Text style={{
+                    fontSize: 16,
+                    fontWeight: '600',
+                    color: colors.white,
+                  }}>
+                    Confirm Selection
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleCancel}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: spacing.md,
+                    backgroundColor: colors.cream[100],
+                    borderRadius: borderRadius.md,
+                  }}
+                >
+                  <Text style={{
+                    fontSize: 16,
+                    fontWeight: '600',
+                    color: colors.burgundy[600],
+                  }}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+              </View>
             )}
 
             {/* Change selection hint for standard items */}
