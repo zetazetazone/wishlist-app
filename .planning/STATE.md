@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-04)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.2 Group Experience - Phase 13 Plan 01 complete
+**Current focus:** v1.2 Group Experience - Phase 13 complete
 
 ## Current Position
 
 Phase: 13 of 17 (Create Group Enhancement)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-02-04 - Completed 13-01-PLAN.md (photo upload, description, extended createGroup)
+Plan: 2 of 2 in current phase
+Status: Phase complete
+Last activity: 2026-02-04 - Completed 13-02-PLAN.md (mode selector and budget configuration)
 
-Progress: [##########] 100% v1.0+v1.1 | [###░░░░░░░] 19% v1.2 (3/16 plans)
+Progress: [##########] 100% v1.0+v1.1 | [####░░░░░░] 25% v1.2 (4/16 plans)
 
 ## Milestone History
 
@@ -34,7 +34,7 @@ Progress: [##########] 100% v1.0+v1.1 | [###░░░░░░░] 19% v1.2 (3/1
 **7 phases (11-17):**
 - Phase 11: Schema Foundation (mode, budget, description, photo_url columns) - COMPLETE
 - Phase 12: Group Photo Storage (upload service, generated avatars) - COMPLETE
-- Phase 13: Create Group Enhancement (CRGRP-01 through CRGRP-05) - IN PROGRESS (Plan 01 complete)
+- Phase 13: Create Group Enhancement (CRGRP-01 through CRGRP-05) - COMPLETE
 - Phase 14: Group View Redesign (GVIEW-01 through GVIEW-07)
 - Phase 15: Group Settings (GSET-01 through GSET-07)
 - Phase 16: Mode System (MODE-01 through MODE-05)
@@ -58,6 +58,9 @@ Key decisions from v1.0/v1.1 archived in PROJECT.md Key Decisions table.
 - Phase 13-01: Added uploadGroupPhotoFromUri for separated pick/upload flow
 - Phase 13-01: Upload photo after group creation to avoid orphaned files
 - Phase 13-01: Removed legacy budget field in favor of mode-based system
+- Phase 13-02: Budget approach options toggleable (tap again to deselect)
+- Phase 13-02: Green highlighting for budget vs blue for mode differentiation
+- Phase 13-02: Budget validation only when approach selected (optional feature)
 
 ### Research Findings (v1.2)
 
@@ -83,7 +86,7 @@ From v1.0/v1.1:
 
 ## Session Continuity
 
-Last session: 2026-02-04T19:46:41Z
-Stopped at: Completed 13-01-PLAN.md (photo upload, description, extended createGroup)
+Last session: 2026-02-04T19:50:28Z
+Stopped at: Completed 13-02-PLAN.md (mode selector and budget configuration)
 Resume file: None
-Next: Plan 13-02 (Mode selector and budget configuration) or Phase 14
+Next: Phase 14 (Group View Redesign)
