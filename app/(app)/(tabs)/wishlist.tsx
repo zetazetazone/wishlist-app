@@ -163,6 +163,7 @@ export default function LuxuryWishlistScreen() {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
     // Optimistic update: replace favorite for this group, remove from others if standard
+    // Also set priority to 5 stars (Most Wanted = highest priority)
     if (!isSpecialItem(itemType)) {
       // Standard item: can only be in one group
       setFavorites(prevFavs => {
@@ -180,13 +181,28 @@ export default function LuxuryWishlistScreen() {
       });
     }
 
+    // Optimistic update: set priority to 5 stars for Most Wanted
+    setItems(prevItems =>
+      prevItems.map(item =>
+        item.id === itemId ? { ...item, priority: 5 } : item
+      )
+    );
+
     try {
-      await setFavorite(userId, groupId, itemId, itemType);
+      // Set favorite and update priority to 5 stars in parallel
+      await Promise.all([
+        setFavorite(userId, groupId, itemId, itemType),
+        supabase
+          .from('wishlist_items')
+          .update({ priority: 5 })
+          .eq('id', itemId)
+      ]);
     } catch (error) {
       console.error('Failed to set favorite:', error);
-      // Reload favorites on error
+      // Reload favorites and items on error
       const allFavs = await getAllFavoritesForUser(userId);
       setFavorites(allFavs);
+      await fetchWishlistItems();
       Alert.alert('Error', 'Failed to update favorite');
     }
   };
@@ -211,10 +227,26 @@ export default function LuxuryWishlistScreen() {
         const withoutGroup = prevFavs.filter(f => f.groupId !== groupId);
         return [...withoutGroup, { groupId, groupName: group?.name || '', itemId }];
       });
+      // Also set priority to 5 stars when marking as Most Wanted
+      setItems(prevItems =>
+        prevItems.map(item =>
+          item.id === itemId ? { ...item, priority: 5 } : item
+        )
+      );
     }
 
     try {
+      // Toggle favorite
       await toggleFavoriteForGroup(userId, groupId, itemId, itemType, currentlySelected);
+
+      // If adding as Most Wanted, also update priority to 5
+      if (!currentlySelected) {
+        await supabase
+          .from('wishlist_items')
+          .update({ priority: 5 })
+          .eq('id', itemId);
+      }
+
       // Reload to get any default Surprise Me that was set
       const allFavs = await getAllFavoritesForUser(userId);
       setFavorites(allFavs);
@@ -222,6 +254,7 @@ export default function LuxuryWishlistScreen() {
       console.error('Failed to toggle favorite:', error);
       const allFavs = await getAllFavoritesForUser(userId);
       setFavorites(allFavs);
+      await fetchWishlistItems();
       Alert.alert('Error', 'Failed to update favorite');
     }
   };
