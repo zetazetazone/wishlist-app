@@ -746,6 +746,7 @@ export default function LuxuryWishlistScreen() {
                     favoriteGroups={itemFavorites}
                     onToggleFavorite={() => handleHeartPress(item)}
                     showFavoriteHeart={true}
+                    totalUserGroups={userGroups.length}
                   />
                 );
               });

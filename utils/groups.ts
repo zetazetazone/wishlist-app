@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase';
 import { Group, GroupMember } from '../types';
+import { setDefaultFavorite } from '../lib/favorites';
 
 /**
  * Generate a unique 6-character invite code
@@ -83,6 +84,15 @@ export async function createGroup(name: string, budgetLimit: number = 50) {
     if (memberError) {
       console.error('Failed to add group member:', memberError);
       throw new Error(`Failed to add group member: ${memberError.message}`);
+    }
+
+    // Set Surprise Me as the default favorite for this new group
+    try {
+      await setDefaultFavorite(user.id, group.id);
+      console.log('Default favorite set for new group');
+    } catch (error) {
+      console.error('Error setting default favorite:', error);
+      // Non-blocking - group creation still succeeded
     }
 
     console.log('Group created successfully!');
@@ -206,6 +216,14 @@ export async function joinGroup(groupId: string) {
       });
 
     if (memberError) throw memberError;
+
+    // Set Surprise Me as the default favorite for this group
+    try {
+      await setDefaultFavorite(user.id, groupId);
+    } catch (error) {
+      console.error('Error setting default favorite:', error);
+      // Non-blocking - group join still succeeded
+    }
 
     return { data: group, error: null };
   } catch (error) {

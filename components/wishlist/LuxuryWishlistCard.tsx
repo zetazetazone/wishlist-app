@@ -18,6 +18,7 @@ interface LuxuryWishlistCardProps {
   onToggleFavorite?: () => void;
   showFavoriteHeart?: boolean;
   singleGroupName?: string; // NEW: for celebration view where only one group matters
+  totalUserGroups?: number; // Total groups user belongs to (for "all groups" badge)
 }
 
 export default function LuxuryWishlistCard({
@@ -29,6 +30,7 @@ export default function LuxuryWishlistCard({
   onToggleFavorite,
   showFavoriteHeart,
   singleGroupName,
+  totalUserGroups,
 }: LuxuryWishlistCardProps) {
   // Determine if this item is favorited (for any group or single group context)
   const isFavorite = (favoriteGroups && favoriteGroups.length > 0) || !!singleGroupName;
@@ -189,12 +191,17 @@ export default function LuxuryWishlistCard({
               </View>
 
               <View style={{ flex: 1 }}>
-                {/* Most Wanted badges - show one per group */}
+                {/* Most Wanted badges */}
                 {singleGroupName && <MostWantedBadge />}
                 {!singleGroupName && favoriteGroups && favoriteGroups.length > 0 && (
-                  favoriteGroups.map(fg => (
-                    <MostWantedBadge key={fg.groupId} groupName={fg.groupName} />
-                  ))
+                  // Show single "all groups" badge if favorited in all groups, otherwise show individual badges
+                  totalUserGroups && totalUserGroups > 1 && favoriteGroups.length === totalUserGroups ? (
+                    <MostWantedBadge allGroups />
+                  ) : (
+                    favoriteGroups.map(fg => (
+                      <MostWantedBadge key={fg.groupId} groupName={fg.groupName} />
+                    ))
+                  )
                 )}
                 {/* Item type badge for special items */}
                 {isSpecialItem && (

@@ -3,9 +3,20 @@ import { colors, spacing, borderRadius } from '../../constants/theme';
 
 interface MostWantedBadgeProps {
   groupName?: string; // Optional: show "MOST WANTED in [Group]"
+  allGroups?: boolean; // Optional: show "MOST WANTED in all groups"
 }
 
-export function MostWantedBadge({ groupName }: MostWantedBadgeProps) {
+export function MostWantedBadge({ groupName, allGroups }: MostWantedBadgeProps) {
+  const getBadgeText = () => {
+    if (allGroups) {
+      return '♥ MOST WANTED in all groups';
+    }
+    if (groupName) {
+      return `♥ MOST WANTED in ${groupName}`;
+    }
+    return '♥ MOST WANTED';
+  };
+
   return (
     <View
       style={{
@@ -26,7 +37,7 @@ export function MostWantedBadge({ groupName }: MostWantedBadgeProps) {
         }}
         numberOfLines={1}
       >
-        {groupName ? `♥ MOST WANTED in ${groupName}` : '♥ MOST WANTED'}
+        {getBadgeText()}
       </Text>
     </View>
   );

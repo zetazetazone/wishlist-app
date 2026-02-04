@@ -18,6 +18,7 @@ import {
 } from '@gluestack-ui/themed';
 import { supabase } from '@/lib/supabase';
 import { uploadAvatar, getAvatarUrl } from '@/lib/storage';
+import { getOrCreateSurpriseMe } from '@/lib/favorites';
 
 export default function OnboardingScreen() {
   const [displayName, setDisplayName] = useState('');
@@ -90,6 +91,14 @@ export default function OnboardingScreen() {
         Alert.alert('Error', 'Failed to save profile information');
         setIsLoading(false);
         return;
+      }
+
+      // Create the default "Surprise Me" wishlist item for the new user
+      try {
+        await getOrCreateSurpriseMe(user.id);
+      } catch (error) {
+        console.error('Error creating Surprise Me item:', error);
+        // Non-blocking - continue to app even if this fails
       }
 
       // Navigate to main app
