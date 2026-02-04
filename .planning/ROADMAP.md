@@ -182,11 +182,11 @@ Plans:
   3. User can select group mode (Greetings or Gifts) during creation
   4. User can select budget approach (per-gift/monthly/yearly) when Gifts mode selected
   5. Group displays generated avatar when no photo is set
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 13-01: Create group form with photo picker and description field
-- [ ] 13-02: Mode selector and budget approach configuration
+- [ ] 13-01-PLAN.md — Photo upload section, description textarea, extend createGroup
+- [ ] 13-02-PLAN.md — Mode selector (Greetings/Gifts) and conditional budget configuration
 
 #### Phase 14: Group View Redesign
 **Goal**: Redesigned group screen with header, member cards, birthday sorting, and favorite previews
