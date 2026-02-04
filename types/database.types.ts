@@ -440,3 +440,5 @@ export interface Database {
 export type WishlistItem = Database['public']['Tables']['wishlist_items']['Row'];
 export type UserProfile = Database['public']['Tables']['user_profiles']['Row'];
 export type Group = Database['public']['Tables']['groups']['Row'];
+export type GroupMember = Database['public']['Tables']['group_members']['Row'];
+export type User = UserProfile;

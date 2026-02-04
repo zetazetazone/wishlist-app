@@ -159,7 +159,7 @@ export async function fetchUserGroups() {
 }
 
 /**
- * Fetch a single group with members
+ * Fetch a single group with members and their favorites
  */
 export async function fetchGroupDetails(groupId: string) {
   try {
@@ -187,7 +187,38 @@ export async function fetchGroupDetails(groupId: string) {
 
     if (membersError) throw membersError;
 
-    return { data: { ...group, members }, error: null };
+    // Fetch favorites for all members in this group (batch query to avoid N+1)
+    const memberIds = (members || []).map(m => m.users.id);
+    const { data: favorites, error: favoritesError } = await supabase
+      .from('group_favorites')
+      .select(`
+        user_id,
+        item_id,
+        wishlist_items (
+          id,
+          title,
+          image_url,
+          item_type
+        )
+      `)
+      .eq('group_id', groupId)
+      .in('user_id', memberIds);
+
+    if (favoritesError) {
+      console.error('Failed to fetch favorites:', favoritesError);
+      // Non-blocking - continue without favorites
+    }
+
+    // Build a map of user_id -> favorite item
+    const favoritesByUser: Record<string, { title: string; image_url: string | null; item_type: string } | null> = {};
+    (favorites || []).forEach(f => {
+      if (f.wishlist_items) {
+        const item = f.wishlist_items as unknown as { title: string; image_url: string | null; item_type: string };
+        favoritesByUser[f.user_id] = item;
+      }
+    });
+
+    return { data: { ...group, members, favoritesByUser }, error: null };
   } catch (error) {
     return { data: null, error };
   }
