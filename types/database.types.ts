@@ -52,6 +52,11 @@ export interface Database {
           name: string
           created_by: string
           budget_limit_per_gift: number
+          mode: 'greetings' | 'gifts'
+          budget_approach: 'per_gift' | 'monthly' | 'yearly' | null
+          budget_amount: number | null
+          description: string | null
+          photo_url: string | null
           created_at: string
           updated_at: string
         }
@@ -60,6 +65,11 @@ export interface Database {
           name: string
           created_by: string
           budget_limit_per_gift: number
+          mode?: 'greetings' | 'gifts'
+          budget_approach?: 'per_gift' | 'monthly' | 'yearly' | null
+          budget_amount?: number | null
+          description?: string | null
+          photo_url?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -68,6 +78,11 @@ export interface Database {
           name?: string
           created_by?: string
           budget_limit_per_gift?: number
+          mode?: 'greetings' | 'gifts'
+          budget_approach?: 'per_gift' | 'monthly' | 'yearly' | null
+          budget_amount?: number | null
+          description?: string | null
+          photo_url?: string | null
           created_at?: string
           updated_at?: string
         }
