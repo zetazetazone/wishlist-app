@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-04)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.2 Group Experience - Phase 14 in progress
+**Current focus:** v1.2 Group Experience - Phase 14 complete
 
 ## Current Position
 
 Phase: 14 of 17 (Group View Redesign)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-02-04 - Completed 14-02-PLAN.md (member card components)
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-02-04 - Completed 14-03-PLAN.md (group detail integration)
 
-Progress: [##########] 100% v1.0+v1.1 | [#####░░░░░] 31% v1.2 (5/16 plans)
+Progress: [##########] 100% v1.0+v1.1 | [######░░░░] 38% v1.2 (6/16 plans)
 
 ## Milestone History
 
@@ -35,7 +35,7 @@ Progress: [##########] 100% v1.0+v1.1 | [#####░░░░░] 31% v1.2 (5/16 pl
 - Phase 11: Schema Foundation (mode, budget, description, photo_url columns) - COMPLETE
 - Phase 12: Group Photo Storage (upload service, generated avatars) - COMPLETE
 - Phase 13: Create Group Enhancement (CRGRP-01 through CRGRP-05) - COMPLETE
-- Phase 14: Group View Redesign (GVIEW-01 through GVIEW-07) - IN PROGRESS (2/3)
+- Phase 14: Group View Redesign (GVIEW-01 through GVIEW-07) - COMPLETE
 - Phase 15: Group Settings (GSET-01 through GSET-07)
 - Phase 16: Mode System (MODE-01 through MODE-05)
 - Phase 17: Budget Tracking (BUDG-01 through BUDG-05)
@@ -64,6 +64,9 @@ Key decisions from v1.0/v1.1 archived in PROJECT.md Key Decisions table.
 - Phase 14-02: Icon fallbacks for special items (help-circle for surprise_me, gift for mystery_box)
 - Phase 14-02: Urgency-based coloring from countdown.ts for MemberCard birthday display
 - Phase 14-02: No email in MemberCard per GVIEW-03 privacy requirement
+- Phase 14-03: Batch query for favorites using .in() to avoid N+1
+- Phase 14-03: Invalid birthday dates sorted to end of member list
+- Phase 14-03: Added users table type with full_name (distinct from user_profiles view)
 
 ### Research Findings (v1.2)
 
@@ -89,7 +92,7 @@ From v1.0/v1.1:
 
 ## Session Continuity
 
-Last session: 2026-02-04T20:22:50Z
-Stopped at: Completed 14-02-PLAN.md (member card components)
+Last session: 2026-02-04T20:22:31Z
+Stopped at: Completed 14-03-PLAN.md (group detail integration)
 Resume file: None
-Next: 14-03-PLAN.md (group detail screen integration)
+Next: Phase 15 Group Settings (15-01-PLAN.md)
