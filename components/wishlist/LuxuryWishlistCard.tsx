@@ -203,10 +203,10 @@ export default function LuxuryWishlistCard({
                     ))
                   )
                 )}
-                {/* Item type badge for special items */}
-                {isSpecialItem && (
+                {/* Item type badge for mystery box only (surprise_me shows description instead) */}
+                {item.item_type === 'mystery_box' && (
                   <ItemTypeBadge
-                    itemType={item.item_type!}
+                    itemType={item.item_type}
                     tier={item.mystery_box_tier}
                   />
                 )}
@@ -221,6 +221,20 @@ export default function LuxuryWishlistCard({
                 >
                   {item.title}
                 </Text>
+                {/* Description for surprise_me items */}
+                {item.item_type === 'surprise_me' && (
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      color: colors.burgundy[500],
+                      marginTop: spacing.xs,
+                      lineHeight: 18,
+                      fontStyle: 'italic',
+                    }}
+                  >
+                    Open to any gift, as long as it comes with care 💝
+                  </Text>
+                )}
               </View>
             </View>
 
