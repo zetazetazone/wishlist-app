@@ -245,7 +245,7 @@ export default function GroupDetailScreen() {
                   }}
                   daysUntilBirthday={member.daysUntil}
                   favoriteItem={group.favoritesByUser?.[member.users.id] as { title: string; image_url: string | null; item_type: 'standard' | 'surprise_me' | 'mystery_box' } | null}
-                  onPress={() => router.push(`/celebration/${member.users.id}`)}
+                  onPress={() => router.push(`/(app)/celebration/${member.users.id}`)}
                   index={index}
                 />
               ))}
