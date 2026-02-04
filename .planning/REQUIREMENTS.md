@@ -9,11 +9,11 @@ Requirements for Group Experience milestone. Each maps to roadmap phases.
 
 ### Create Group
 
-- [ ] **CRGRP-01**: User can add group photo when creating a group
-- [ ] **CRGRP-02**: User can add group description when creating a group
-- [ ] **CRGRP-03**: User can select group mode (Greetings/Gifts) when creating a group
-- [ ] **CRGRP-04**: User can select budget approach (per-gift/monthly/yearly) when creating a group (Gifts mode only)
-- [ ] **CRGRP-05**: Group shows generated avatar if no photo is set
+- [x] **CRGRP-01**: User can add group photo when creating a group
+- [x] **CRGRP-02**: User can add group description when creating a group
+- [x] **CRGRP-03**: User can select group mode (Greetings/Gifts) when creating a group
+- [x] **CRGRP-04**: User can select budget approach (per-gift/monthly/yearly) when creating a group (Gifts mode only)
+- [x] **CRGRP-05**: Group shows generated avatar if no photo is set
 
 ### Group Modes
 
@@ -96,11 +96,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CRGRP-01 | Phase 13 | Pending |
-| CRGRP-02 | Phase 13 | Pending |
-| CRGRP-03 | Phase 13 | Pending |
-| CRGRP-04 | Phase 13 | Pending |
-| CRGRP-05 | Phase 13 | Pending |
+| CRGRP-01 | Phase 13 | Complete |
+| CRGRP-02 | Phase 13 | Complete |
+| CRGRP-03 | Phase 13 | Complete |
+| CRGRP-04 | Phase 13 | Complete |
+| CRGRP-05 | Phase 13 | Complete |
 | MODE-01 | Phase 16 | Pending |
 | MODE-02 | Phase 16 | Pending |
 | MODE-03 | Phase 16 | Pending |

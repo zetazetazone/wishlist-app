@@ -185,8 +185,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 13-01-PLAN.md — Photo upload section, description textarea, extend createGroup
-- [ ] 13-02-PLAN.md — Mode selector (Greetings/Gifts) and conditional budget configuration
+- [x] 13-01-PLAN.md — Photo upload section, description textarea, extend createGroup
+- [x] 13-02-PLAN.md — Mode selector (Greetings/Gifts) and conditional budget configuration
 
 #### Phase 14: Group View Redesign
 **Goal**: Redesigned group screen with header, member cards, birthday sorting, and favorite previews
@@ -279,7 +279,7 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17
 | 10. Wishlist Display Polish | v1.1 | 2/2 | Complete | 2026-02-03 |
 | 11. Schema Foundation | v1.2 | 1/1 | Complete | 2026-02-04 |
 | 12. Group Photo Storage | v1.2 | 1/1 | Complete | 2026-02-04 |
-| 13. Create Group Enhancement | v1.2 | 0/2 | Not started | - |
+| 13. Create Group Enhancement | v1.2 | 2/2 | Complete | 2026-02-04 |
 | 14. Group View Redesign | v1.2 | 0/3 | Not started | - |
 | 15. Group Settings | v1.2 | 0/3 | Not started | - |
 | 16. Mode System | v1.2 | 0/3 | Not started | - |
