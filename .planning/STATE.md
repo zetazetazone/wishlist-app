@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-04)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.2 Group Experience - Phase 11 complete, Phase 12 ready
+**Current focus:** v1.2 Group Experience - Phase 12 complete, Phase 13 ready
 
 ## Current Position
 
-Phase: 11 of 17 (Schema Foundation) - COMPLETE
+Phase: 12 of 17 (Group Photo Storage) - COMPLETE
 Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-02-04 - Completed 11-01-PLAN.md (groups schema extension)
+Last activity: 2026-02-04 - Completed 12-01-PLAN.md (group photo storage infrastructure)
 
-Progress: [##########] 100% v1.0+v1.1 | [#░░░░░░░░░] 6% v1.2 (1/16 plans)
+Progress: [##########] 100% v1.0+v1.1 | [##░░░░░░░░] 12% v1.2 (2/16 plans)
 
 ## Milestone History
 
@@ -32,8 +32,8 @@ Progress: [##########] 100% v1.0+v1.1 | [#░░░░░░░░░] 6% v1.2 (
 ## v1.2 Roadmap Structure
 
 **7 phases (11-17):**
-- Phase 11: Schema Foundation (mode, budget, description, photo_url columns)
-- Phase 12: Group Photo Storage (upload service, generated avatars)
+- Phase 11: Schema Foundation (mode, budget, description, photo_url columns) - COMPLETE
+- Phase 12: Group Photo Storage (upload service, generated avatars) - COMPLETE
 - Phase 13: Create Group Enhancement (CRGRP-01 through CRGRP-05)
 - Phase 14: Group View Redesign (GVIEW-01 through GVIEW-07)
 - Phase 15: Group Settings (GSET-01 through GSET-07)
@@ -52,10 +52,13 @@ Key decisions from v1.0/v1.1 archived in PROJECT.md Key Decisions table.
 - Phase 11: Used CHECK constraints (not ENUMs) for mode/budget_approach
 - Phase 11: budget_amount in cents as INTEGER, cross-column constraint for validation
 - Phase 11: mode DEFAULT 'gifts' for backward compatibility
+- Phase 12: Reuse avatars bucket with groups/ subfolder (not separate bucket)
+- Phase 12: 16:9 aspect ratio for group photos (vs 1:1 for user avatars)
+- Phase 12: Compress to 800px width, 0.8 quality via expo-image-manipulator
 
 ### Research Findings (v1.2)
 
-- No new dependencies needed - existing stack sufficient
+- No new dependencies needed - existing stack sufficient (expo-image-manipulator added for compression)
 - Schema changes: add columns to groups table (description, photo_url, mode, budget_approach, budget_amount)
 - Group photos use same storage pattern as avatars
 - Critical pitfall: mode switching with existing data needs soft-archiving consideration
@@ -77,7 +80,7 @@ From v1.0/v1.1:
 
 ## Session Continuity
 
-Last session: 2026-02-04T17:28:48Z
-Stopped at: Completed 11-01-PLAN.md (groups schema extension)
+Last session: 2026-02-04T18:06:00Z
+Stopped at: Completed 12-01-PLAN.md (group photo storage infrastructure)
 Resume file: None
-Next: Plan Phase 12 (Group Photo Storage)
+Next: Plan Phase 13 (Create Group Enhancement)
