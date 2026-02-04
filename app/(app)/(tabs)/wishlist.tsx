@@ -390,8 +390,7 @@ export default function LuxuryWishlistScreen() {
         // Remove from missing items
         setMissingSpecialItems(prev => prev.filter(t => t !== itemType));
 
-        const itemName = itemType === 'surprise_me' ? 'Surprise Me' : 'Mystery Box';
-        Alert.alert('Added!', `${itemName} has been added to your wishlist.`);
+        // Item added silently - no alert needed
       }
     } catch (error) {
       console.error('Error re-adding special item:', error);
@@ -447,66 +446,7 @@ export default function LuxuryWishlistScreen() {
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ type: 'timing', duration: 600 }}
           >
-            {/* Profile Row */}
-            <TouchableOpacity
-              onPress={() => router.push('/settings/profile')}
-              activeOpacity={0.8}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginBottom: spacing.md,
-              }}
-            >
-              {/* Avatar */}
-              {userProfile.avatar_url ? (
-                <Image
-                  source={{ uri: getAvatarUrl(userProfile.avatar_url) || undefined }}
-                  style={{
-                    width: 64,
-                    height: 64,
-                    borderRadius: 32,
-                    borderWidth: 2,
-                    borderColor: colors.white,
-                  }}
-                />
-              ) : (
-                <View
-                  style={{
-                    width: 64,
-                    height: 64,
-                    borderRadius: 32,
-                    borderWidth: 2,
-                    borderColor: colors.white,
-                    backgroundColor: colors.gold[200],
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 24,
-                      fontWeight: '700',
-                      color: colors.burgundy[800],
-                    }}
-                  >
-                    {userProfile.display_name?.[0]?.toUpperCase() || '?'}
-                  </Text>
-                </View>
-              )}
-              {/* Greeting */}
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: colors.gold[200],
-                  fontWeight: '500',
-                  marginLeft: spacing.sm,
-                }}
-              >
-                Hi, {userProfile.display_name?.split(' ')[0] || 'there'}!
-              </Text>
-            </TouchableOpacity>
-
-            {/* Title Row */}
+            {/* Title Row with Profile Picture */}
             <View
               style={{
                 flexDirection: 'row',
@@ -514,26 +454,72 @@ export default function LuxuryWishlistScreen() {
                 alignItems: 'center',
               }}
             >
-              <View>
-                <Text
-                  style={{
-                    fontSize: 36,
-                    fontWeight: '700',
-                    color: colors.white,
-                    marginBottom: spacing.xs,
-                  }}
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                {/* Profile Picture */}
+                <TouchableOpacity
+                  onPress={() => router.push('/settings/profile')}
+                  activeOpacity={0.8}
+                  style={{ marginRight: spacing.md }}
                 >
-                  My Wishlist
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: colors.gold[200],
-                    fontWeight: '400',
-                  }}
-                >
-                  {items.length} {items.length === 1 ? 'gift' : 'gifts'}
-                </Text>
+                  {userProfile.avatar_url ? (
+                    <Image
+                      source={{ uri: getAvatarUrl(userProfile.avatar_url) || undefined }}
+                      style={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 28,
+                        borderWidth: 2,
+                        borderColor: colors.white,
+                      }}
+                    />
+                  ) : (
+                    <View
+                      style={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 28,
+                        borderWidth: 2,
+                        borderColor: colors.white,
+                        backgroundColor: colors.gold[200],
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 22,
+                          fontWeight: '700',
+                          color: colors.burgundy[800],
+                        }}
+                      >
+                        {userProfile.display_name?.[0]?.toUpperCase() || '?'}
+                      </Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+
+                {/* Title and Count */}
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 32,
+                      fontWeight: '700',
+                      color: colors.white,
+                      marginBottom: spacing.xs,
+                    }}
+                  >
+                    My Wishlist
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      color: colors.gold[200],
+                      fontWeight: '400',
+                    }}
+                  >
+                    {items.length} {items.length === 1 ? 'gift' : 'gifts'}
+                  </Text>
+                </View>
               </View>
 
               {/* FAB Add Button */}
