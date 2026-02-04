@@ -28,7 +28,7 @@ import {
   ensureAllGroupsHaveFavorites,
   isSpecialItem,
   getGroupsWithItemAsFavorite,
-  setDefaultFavorite,
+  setNextHighestPriorityFavorite,
   ensureUniversalSpecialItems,
   getMissingSpecialItems,
   readdSpecialItem,
@@ -346,9 +346,9 @@ export default function LuxuryWishlistScreen() {
       // Check if this item is a favorite for any groups
       const affectedGroups = await getGroupsWithItemAsFavorite(userId, itemId);
 
-      // Reset favorites to Surprise Me for all affected groups
+      // Promote next highest priority item as favorite for all affected groups
       for (const groupId of affectedGroups) {
-        await setDefaultFavorite(userId, groupId);
+        await setNextHighestPriorityFavorite(userId, groupId, itemId);
       }
 
       // Delete the item

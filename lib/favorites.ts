@@ -3,8 +3,9 @@
  * Per-group favorite wishlist item tracking ("Most Wanted" feature)
  *
  * Rules:
- * - Every user MUST have a Most Wanted for each group
- * - "Surprise Me" is the default Most Wanted
+ * - Every user MUST have a Most Wanted for each group at all times
+ * - When a Most Wanted item is deleted, the next highest priority item is automatically promoted
+ * - "Surprise Me" is the fallback only when no other items exist
  * - Special items (surprise_me, mystery_box) can be Most Wanted in MULTIPLE groups
  * - Standard items can only be Most Wanted in ONE group
  */
@@ -341,6 +342,46 @@ export async function setDefaultFavorite(userId: string, groupId: string): Promi
     console.error('Failed to set default favorite:', error);
     throw new Error(`Failed to set default favorite: ${error.message}`);
   }
+}
+
+/**
+ * Set the next highest priority item as favorite for a group
+ * Called when deleting a Most Wanted item - automatically promotes next item
+ * Falls back to Surprise Me if no other items exist
+ */
+export async function setNextHighestPriorityFavorite(
+  userId: string,
+  groupId: string,
+  excludeItemId: string
+): Promise<void> {
+  // Get user's items ordered by priority (highest first), excluding the deleted item
+  const { data: items, error: fetchError } = await supabase
+    .from('wishlist_items')
+    .select('id, item_type')
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .neq('id', excludeItemId)
+    .order('priority', { ascending: false })
+    .limit(1);
+
+  if (fetchError) {
+    console.error('Failed to fetch items for next favorite:', fetchError);
+    // Fall back to default on error
+    await setDefaultFavorite(userId, groupId);
+    return;
+  }
+
+  if (!items || items.length === 0) {
+    // No other items exist, fall back to Surprise Me
+    await setDefaultFavorite(userId, groupId);
+    return;
+  }
+
+  const nextItem = items[0];
+  const itemType = (nextItem.item_type || 'standard') as ItemType;
+
+  // Set the next highest priority item as favorite
+  await setFavorite(userId, groupId, nextItem.id, itemType);
 }
 
 /**
