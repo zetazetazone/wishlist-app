@@ -217,28 +217,29 @@ export default function LuxuryWishlistCard({
               </View>
             </View>
 
-            {/* Favorite Heart or Delete Button */}
-            {showFavoriteHeart && (
-              <FavoriteHeart
-                isFavorite={isFavorite || false}
-                onPress={() => onToggleFavorite?.()}
-              />
-            )}
-            {!showFavoriteHeart && onDelete && (
-              <TouchableOpacity
-                onPress={handleDelete}
-                style={{
-                  padding: spacing.xs,
-                  marginLeft: spacing.xs,
-                }}
-              >
-                <MaterialCommunityIcons
-                  name="close-circle"
-                  size={24}
-                  color={colors.burgundy[300]}
+            {/* Actions: Favorite Heart and/or Delete Button */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
+              {showFavoriteHeart && (
+                <FavoriteHeart
+                  isFavorite={isFavorite || false}
+                  onPress={() => onToggleFavorite?.()}
                 />
-              </TouchableOpacity>
-            )}
+              )}
+              {onDelete && (
+                <TouchableOpacity
+                  onPress={handleDelete}
+                  style={{
+                    padding: spacing.xs,
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="trash-can-outline"
+                    size={22}
+                    color={colors.burgundy[300]}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
 
           {/* Price & Stars Row */}

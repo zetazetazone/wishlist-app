@@ -187,7 +187,7 @@ export async function getOrCreateSurpriseMe(userId: string): Promise<string> {
       title: 'Surprise Me!',
       item_type: 'surprise_me',
       status: 'active',
-      priority: 5,
+      priority: 3,
     })
     .select('id')
     .single();
@@ -198,6 +198,122 @@ export async function getOrCreateSurpriseMe(userId: string): Promise<string> {
   }
 
   return newItem.id;
+}
+
+/**
+ * Get or create the user's Mystery Box item
+ * Every user should have one Mystery Box item as a universal option
+ */
+export async function getOrCreateMysteryBox(userId: string): Promise<string> {
+  // Check if user already has a Mystery Box item
+  const { data: existing, error: fetchError } = await supabase
+    .from('wishlist_items')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('item_type', 'mystery_box')
+    .limit(1)
+    .single();
+
+  if (existing) {
+    return existing.id;
+  }
+
+  // Create a new Mystery Box item
+  const { data: newItem, error: createError } = await supabase
+    .from('wishlist_items')
+    .insert({
+      user_id: userId,
+      title: 'Mystery Box',
+      item_type: 'mystery_box',
+      status: 'active',
+      priority: 3,
+    })
+    .select('id')
+    .single();
+
+  if (createError) {
+    console.error('Failed to create Mystery Box item:', createError);
+    throw new Error(`Failed to create Mystery Box item: ${createError.message}`);
+  }
+
+  return newItem.id;
+}
+
+/**
+ * Ensure user has both universal special items (Surprise Me and Mystery Box)
+ * Each user should have exactly ONE of each - they are universal across all lists
+ */
+export async function ensureUniversalSpecialItems(userId: string): Promise<void> {
+  await Promise.all([
+    getOrCreateSurpriseMe(userId),
+    getOrCreateMysteryBox(userId),
+  ]);
+}
+
+type SpecialItemType = 'surprise_me' | 'mystery_box';
+
+/**
+ * Check which special items the user is missing (were deleted)
+ * Returns array of missing item types for re-add UI
+ */
+export async function getMissingSpecialItems(userId: string): Promise<SpecialItemType[]> {
+  const { data, error } = await supabase
+    .from('wishlist_items')
+    .select('item_type')
+    .eq('user_id', userId)
+    .in('item_type', ['surprise_me', 'mystery_box']);
+
+  if (error) {
+    console.error('Failed to check special items:', error);
+    return [];
+  }
+
+  const existingTypes = new Set((data || []).map(d => d.item_type));
+  const missing: SpecialItemType[] = [];
+
+  if (!existingTypes.has('surprise_me')) {
+    missing.push('surprise_me');
+  }
+  if (!existingTypes.has('mystery_box')) {
+    missing.push('mystery_box');
+  }
+
+  return missing;
+}
+
+/**
+ * Check if user has a specific special item
+ */
+export async function hasSpecialItem(userId: string, itemType: 'surprise_me' | 'mystery_box'): Promise<boolean> {
+  const { data, error } = await supabase
+    .from('wishlist_items')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('item_type', itemType)
+    .limit(1)
+    .single();
+
+  return !!data && !error;
+}
+
+/**
+ * Re-add a deleted special item
+ * Only allows adding if user doesn't already have one
+ */
+export async function readdSpecialItem(
+  userId: string,
+  itemType: 'surprise_me' | 'mystery_box'
+): Promise<string | null> {
+  const hasItem = await hasSpecialItem(userId, itemType);
+  if (hasItem) {
+    return null; // Already has this item
+  }
+
+  if (itemType === 'surprise_me') {
+    return getOrCreateSurpriseMe(userId);
+  } else {
+    return getOrCreateMysteryBox(userId);
+  }
 }
 
 /**

@@ -14,8 +14,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 import StarRating from '../ui/StarRating';
 
-type ItemType = 'standard' | 'surprise_me' | 'mystery_box';
-
 interface AddItemModalProps {
   visible: boolean;
   onClose: () => void;
@@ -24,7 +22,7 @@ interface AddItemModalProps {
     title: string;
     price?: number;
     priority: number;
-    item_type: ItemType;
+    item_type: 'standard';
   }) => Promise<void>;
 }
 
@@ -34,9 +32,6 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
   const [price, setPrice] = useState('');
   const [priority, setPriority] = useState(3);
   const [loading, setLoading] = useState(false);
-
-  // New state for item types
-  const [itemType, setItemType] = useState<ItemType>('standard');
 
   const validateAmazonUrl = (url: string): boolean => {
     try {
@@ -48,60 +43,31 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
   };
 
   const handleSubmit = async () => {
-    // Validation based on item type
-    if (itemType === 'standard') {
-      if (!amazonUrl.trim()) {
-        Alert.alert('Error', 'Please enter an Amazon URL');
-        return;
-      }
-
-      if (!validateAmazonUrl(amazonUrl)) {
-        Alert.alert('Error', 'Please enter a valid Amazon URL');
-        return;
-      }
-
-      if (!title.trim()) {
-        Alert.alert('Error', 'Please enter a product title');
-        return;
-      }
+    // Validation for standard items
+    if (!amazonUrl.trim()) {
+      Alert.alert('Error', 'Please enter an Amazon URL');
+      return;
     }
-    // Surprise Me and Mystery Box have no required fields
+
+    if (!validateAmazonUrl(amazonUrl)) {
+      Alert.alert('Error', 'Please enter a valid Amazon URL');
+      return;
+    }
+
+    if (!title.trim()) {
+      Alert.alert('Error', 'Please enter a product title');
+      return;
+    }
 
     setLoading(true);
     try {
-      // Build payload based on item type
-      let payload: {
-        amazon_url: string | null;
-        title: string;
-        price?: number;
-        priority: number;
-        item_type: ItemType;
+      const payload = {
+        amazon_url: amazonUrl.trim(),
+        title: title.trim(),
+        price: price ? parseFloat(price) : undefined,
+        priority,
+        item_type: 'standard' as const,
       };
-
-      if (itemType === 'standard') {
-        payload = {
-          amazon_url: amazonUrl.trim(),
-          title: title.trim(),
-          price: price ? parseFloat(price) : undefined,
-          priority,
-          item_type: 'standard',
-        };
-      } else if (itemType === 'surprise_me') {
-        payload = {
-          amazon_url: null,
-          title: 'Surprise Me!',
-          priority: 3,
-          item_type: 'surprise_me',
-        };
-      } else {
-        // mystery_box - no tier selection, just "Mystery Box"
-        payload = {
-          amazon_url: null,
-          title: 'Mystery Box',
-          priority: 3,
-          item_type: 'mystery_box',
-        };
-      }
 
       await onAdd(payload);
 
@@ -121,23 +87,11 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
     setTitle('');
     setPrice('');
     setPriority(3);
-    setItemType('standard');
   };
 
   const handleCancel = () => {
     resetForm();
     onClose();
-  };
-
-  const getHeaderTitle = () => {
-    switch (itemType) {
-      case 'surprise_me':
-        return 'Add Surprise Me';
-      case 'mystery_box':
-        return 'Add Mystery Box';
-      default:
-        return 'Add a Gift';
-    }
   };
 
   return (
@@ -186,7 +140,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                   color: colors.burgundy[800],
                 }}
               >
-                {getHeaderTitle()}
+                Add a Gift
               </Text>
               <TouchableOpacity
                 onPress={handleCancel}
@@ -208,136 +162,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-              {/* Type Selector */}
-              <View
-                style={{
-                  flexDirection: 'row',
-                  gap: spacing.sm,
-                  marginBottom: spacing.lg,
-                }}
-              >
-                {/* Gift Button */}
-                <TouchableOpacity
-                  onPress={() => setItemType('standard')}
-                  style={{
-                    flex: 1,
-                    paddingVertical: spacing.sm,
-                    borderRadius: borderRadius.md,
-                    alignItems: 'center',
-                    backgroundColor:
-                      itemType === 'standard'
-                        ? colors.burgundy[700]
-                        : colors.cream[100],
-                  }}
-                  activeOpacity={0.7}
-                >
-                  <MaterialCommunityIcons
-                    name="gift-outline"
-                    size={24}
-                    color={
-                      itemType === 'standard'
-                        ? colors.white
-                        : colors.burgundy[600]
-                    }
-                  />
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      fontWeight: '600',
-                      marginTop: spacing.xs,
-                      color:
-                        itemType === 'standard'
-                          ? colors.white
-                          : colors.burgundy[600],
-                    }}
-                  >
-                    Gift
-                  </Text>
-                </TouchableOpacity>
-
-                {/* Surprise Me Button */}
-                <TouchableOpacity
-                  onPress={() => setItemType('surprise_me')}
-                  style={{
-                    flex: 1,
-                    paddingVertical: spacing.sm,
-                    borderRadius: borderRadius.md,
-                    alignItems: 'center',
-                    backgroundColor:
-                      itemType === 'surprise_me'
-                        ? colors.burgundy[700]
-                        : colors.cream[100],
-                  }}
-                  activeOpacity={0.7}
-                >
-                  <MaterialCommunityIcons
-                    name="help-circle-outline"
-                    size={24}
-                    color={
-                      itemType === 'surprise_me'
-                        ? colors.white
-                        : colors.burgundy[600]
-                    }
-                  />
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      fontWeight: '600',
-                      marginTop: spacing.xs,
-                      color:
-                        itemType === 'surprise_me'
-                          ? colors.white
-                          : colors.burgundy[600],
-                    }}
-                  >
-                    Surprise
-                  </Text>
-                </TouchableOpacity>
-
-                {/* Mystery Box Button */}
-                <TouchableOpacity
-                  onPress={() => setItemType('mystery_box')}
-                  style={{
-                    flex: 1,
-                    paddingVertical: spacing.sm,
-                    borderRadius: borderRadius.md,
-                    alignItems: 'center',
-                    backgroundColor:
-                      itemType === 'mystery_box'
-                        ? colors.burgundy[700]
-                        : colors.cream[100],
-                  }}
-                  activeOpacity={0.7}
-                >
-                  <MaterialCommunityIcons
-                    name="gift"
-                    size={24}
-                    color={
-                      itemType === 'mystery_box'
-                        ? colors.white
-                        : colors.burgundy[600]
-                    }
-                  />
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      fontWeight: '600',
-                      marginTop: spacing.xs,
-                      color:
-                        itemType === 'mystery_box'
-                          ? colors.white
-                          : colors.burgundy[600],
-                    }}
-                  >
-                    Mystery
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* Conditional Form Fields */}
-              {itemType === 'standard' && (
-                <>
-                  {/* Amazon URL Input */}
+              {/* Amazon URL Input */}
                   <View style={{ marginBottom: spacing.md }}>
                     <Text
                       style={{
@@ -524,40 +349,6 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                       </View>
                     </View>
                   </View>
-                </>
-              )}
-
-              {itemType === 'surprise_me' && (
-                <>
-                  {/* Helper Text */}
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: colors.burgundy[600],
-                      marginBottom: spacing.lg,
-                      textAlign: 'center',
-                    }}
-                  >
-                    Let your group know you're open to any gift!
-                  </Text>
-                </>
-              )}
-
-              {itemType === 'mystery_box' && (
-                <>
-                  {/* Helper Text */}
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: colors.burgundy[600],
-                      marginBottom: spacing.lg,
-                      textAlign: 'center',
-                    }}
-                  >
-                    Let your group choose a mystery gift for you!
-                  </Text>
-                </>
-              )}
 
               {/* Action Buttons */}
               <View style={{ flexDirection: 'row', gap: spacing.md }}>

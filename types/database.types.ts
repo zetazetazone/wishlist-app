@@ -420,3 +420,8 @@ export interface Database {
     }
   }
 }
+
+// Convenience type exports
+export type WishlistItem = Database['public']['Tables']['wishlist_items']['Row'];
+export type UserProfile = Database['public']['Tables']['user_profiles']['Row'];
+export type Group = Database['public']['Tables']['groups']['Row'];

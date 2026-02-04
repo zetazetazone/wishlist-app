@@ -8,7 +8,6 @@ import {
   RefreshControl,
   StatusBar,
   LayoutAnimation,
-  Platform,
   Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -28,6 +27,11 @@ import {
   toggleFavoriteForGroup,
   ensureAllGroupsHaveFavorites,
   isSpecialItem,
+  getGroupsWithItemAsFavorite,
+  setDefaultFavorite,
+  ensureUniversalSpecialItems,
+  getMissingSpecialItems,
+  readdSpecialItem,
 } from '../../../lib/favorites';
 import { GroupPickerSheet } from '../../../components/wishlist/GroupPickerSheet';
 
@@ -48,6 +52,7 @@ export default function LuxuryWishlistScreen() {
     display_name: null,
     avatar_url: null,
   });
+  const [missingSpecialItems, setMissingSpecialItems] = useState<Array<'surprise_me' | 'mystery_box'>>([]);
 
   useEffect(() => {
     getCurrentUser();
@@ -82,12 +87,19 @@ export default function LuxuryWishlistScreen() {
       const groups = await getUserGroups(user.id);
       setUserGroups(groups);
 
+      // Ensure universal special items exist (Surprise Me and Mystery Box)
+      await ensureUniversalSpecialItems(user.id);
+
       // Ensure all groups have a favorite (defaults to Surprise Me)
       await ensureAllGroupsHaveFavorites(user.id);
 
       // Load all favorites across all groups
       const allFavs = await getAllFavoritesForUser(user.id);
       setFavorites(allFavs);
+
+      // Check for any missing special items (in case user deleted them)
+      const missing = await getMissingSpecialItems(user.id);
+      setMissingSpecialItems(missing);
     }
   };
 
@@ -131,6 +143,10 @@ export default function LuxuryWishlistScreen() {
       await ensureAllGroupsHaveFavorites(userId);
       const allFavs = await getAllFavoritesForUser(userId);
       setFavorites(allFavs);
+
+      // Check for missing special items
+      const missing = await getMissingSpecialItems(userId);
+      setMissingSpecialItems(missing);
     }
     setRefreshing(false);
   };
@@ -260,13 +276,11 @@ export default function LuxuryWishlistScreen() {
   };
 
   const handleAddItem = async (itemData: {
-    amazon_url: string;
+    amazon_url: string | null;
     title: string;
     price?: number;
     priority: number;
-    item_type: 'standard' | 'surprise_me' | 'mystery_box';
-    mystery_box_tier?: 25 | 50 | 100 | null;
-    surprise_me_budget?: number | null;
+    item_type: 'standard';
   }) => {
     if (!userId) {
       Alert.alert('Error', 'You must be logged in to add items');
@@ -284,9 +298,7 @@ export default function LuxuryWishlistScreen() {
             price: itemData.price,
             priority: itemData.priority,
             status: 'active',
-            item_type: itemData.item_type,
-            mystery_box_tier: itemData.mystery_box_tier,
-            surprise_me_budget: itemData.surprise_me_budget,
+            item_type: 'standard',
           },
         ])
         .select()
@@ -296,13 +308,7 @@ export default function LuxuryWishlistScreen() {
 
       setItems([data, ...items]);
 
-      // Success message based on item type
-      const successMessages = {
-        standard: 'Gift added to your wishlist!',
-        surprise_me: 'Added Surprise Me to your wishlist!',
-        mystery_box: 'Added Mystery Box to your wishlist!',
-      };
-      Alert.alert('Success!', successMessages[itemData.item_type]);
+      Alert.alert('Success!', 'Gift added to your wishlist!');
     } catch (error) {
       console.error('Error adding item:', error);
       throw error;
@@ -310,7 +316,22 @@ export default function LuxuryWishlistScreen() {
   };
 
   const handleDeleteItem = async (itemId: string) => {
+    if (!userId) return;
+
     try {
+      // Find the item to check if it's a special item
+      const itemToDelete = items.find(item => item.id === itemId);
+      const isSpecialItemType = itemToDelete && isSpecialItem(itemToDelete.item_type as ItemType);
+
+      // Check if this item is a favorite for any groups
+      const affectedGroups = await getGroupsWithItemAsFavorite(userId, itemId);
+
+      // Reset favorites to Surprise Me for all affected groups
+      for (const groupId of affectedGroups) {
+        await setDefaultFavorite(userId, groupId);
+      }
+
+      // Delete the item
       const { error } = await supabase
         .from('wishlist_items')
         .delete()
@@ -318,10 +339,43 @@ export default function LuxuryWishlistScreen() {
 
       if (error) throw error;
 
+      // Update local state
       setItems(items.filter((item) => item.id !== itemId));
+
+      // If a special item was deleted, update the missing items list
+      if (isSpecialItemType && itemToDelete) {
+        const itemType = itemToDelete.item_type as 'surprise_me' | 'mystery_box';
+        setMissingSpecialItems(prev => [...prev, itemType]);
+      }
+
+      // Refresh favorites to reflect the Surprise Me defaults
+      if (affectedGroups.length > 0) {
+        const allFavs = await getAllFavoritesForUser(userId);
+        setFavorites(allFavs);
+      }
     } catch (error) {
       console.error('Error deleting item:', error);
       Alert.alert('Error', 'Failed to delete item');
+    }
+  };
+
+  const handleReaddSpecialItem = async (itemType: 'surprise_me' | 'mystery_box') => {
+    if (!userId) return;
+
+    try {
+      const newItemId = await readdSpecialItem(userId, itemType);
+      if (newItemId) {
+        // Refresh the wishlist to show the new item
+        await fetchWishlistItems();
+        // Remove from missing items
+        setMissingSpecialItems(prev => prev.filter(t => t !== itemType));
+
+        const itemName = itemType === 'surprise_me' ? 'Surprise Me' : 'Mystery Box';
+        Alert.alert('Added!', `${itemName} has been added to your wishlist.`);
+      }
+    } catch (error) {
+      console.error('Error re-adding special item:', error);
+      Alert.alert('Error', 'Failed to add item');
     }
   };
 
@@ -503,6 +557,97 @@ export default function LuxuryWishlistScreen() {
             />
           }
         >
+          {/* Re-add Special Items Banner */}
+          {missingSpecialItems.length > 0 && !loading && (
+            <View
+              style={{
+                backgroundColor: colors.cream[100],
+                borderRadius: borderRadius.lg,
+                padding: spacing.md,
+                marginBottom: spacing.md,
+                borderWidth: 1,
+                borderColor: colors.gold[200],
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: '600',
+                  color: colors.burgundy[700],
+                  marginBottom: spacing.sm,
+                }}
+              >
+                Add Special Items
+              </Text>
+              <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+                {missingSpecialItems.includes('surprise_me') && (
+                  <TouchableOpacity
+                    onPress={() => handleReaddSpecialItem('surprise_me')}
+                    style={{
+                      flex: 1,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: colors.burgundy[100],
+                      paddingVertical: spacing.sm,
+                      paddingHorizontal: spacing.md,
+                      borderRadius: borderRadius.md,
+                      gap: spacing.xs,
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <MaterialCommunityIcons
+                      name="help-circle-outline"
+                      size={20}
+                      color={colors.burgundy[700]}
+                    />
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        fontWeight: '600',
+                        color: colors.burgundy[700],
+                      }}
+                    >
+                      Surprise Me
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                {missingSpecialItems.includes('mystery_box') && (
+                  <TouchableOpacity
+                    onPress={() => handleReaddSpecialItem('mystery_box')}
+                    style={{
+                      flex: 1,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: colors.gold[100],
+                      paddingVertical: spacing.sm,
+                      paddingHorizontal: spacing.md,
+                      borderRadius: borderRadius.md,
+                      gap: spacing.xs,
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <MaterialCommunityIcons
+                      name="gift"
+                      size={20}
+                      color={colors.gold[700]}
+                    />
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        fontWeight: '600',
+                        color: colors.gold[700],
+                      }}
+                    >
+                      Mystery Box
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+          )}
+
           {loading ? (
             <View style={{ paddingVertical: spacing.xxl }}>
               <Text
