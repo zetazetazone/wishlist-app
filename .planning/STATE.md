@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-04)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.2 Group Experience - Phase 11 ready to plan
+**Current focus:** v1.2 Group Experience - Phase 11 complete, Phase 12 ready
 
 ## Current Position
 
-Phase: 11 of 17 (Schema Foundation)
-Plan: 0 of 1 in current phase
-Status: Ready to plan
-Last activity: 2026-02-04 — Roadmap created for v1.2 (7 phases, 16 plans)
+Phase: 11 of 17 (Schema Foundation) - COMPLETE
+Plan: 1 of 1 in current phase
+Status: Phase complete
+Last activity: 2026-02-04 - Completed 11-01-PLAN.md (groups schema extension)
 
-Progress: [##########] 100% v1.0+v1.1 | [░░░░░░░░░░] 0% v1.2
+Progress: [##########] 100% v1.0+v1.1 | [#░░░░░░░░░] 6% v1.2 (1/16 plans)
 
 ## Milestone History
 
@@ -48,7 +48,10 @@ Progress: [##########] 100% v1.0+v1.1 | [░░░░░░░░░░] 0% v1.2
 
 Key decisions from v1.0/v1.1 archived in PROJECT.md Key Decisions table.
 
-**v1.2 Decisions:** (none yet)
+**v1.2 Decisions:**
+- Phase 11: Used CHECK constraints (not ENUMs) for mode/budget_approach
+- Phase 11: budget_amount in cents as INTEGER, cross-column constraint for validation
+- Phase 11: mode DEFAULT 'gifts' for backward compatibility
 
 ### Research Findings (v1.2)
 
@@ -74,7 +77,7 @@ From v1.0/v1.1:
 
 ## Session Continuity
 
-Last session: 2026-02-04
-Stopped at: Created v1.2 roadmap with 7 phases
+Last session: 2026-02-04T17:28:48Z
+Stopped at: Completed 11-01-PLAN.md (groups schema extension)
 Resume file: None
-Next: Plan Phase 11 (Schema Foundation)
+Next: Plan Phase 12 (Group Photo Storage)
