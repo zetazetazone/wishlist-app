@@ -284,14 +284,16 @@ export async function joinGroup(codeOrId: string) {
     // If it doesn't look like a UUID, treat as invite code
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(codeOrId)) {
-      const { data: group, error: lookupError } = await supabase
+      // invite_code column added via migration but not yet in generated types;
+      // cast to any to avoid TS2589 deep type instantiation error
+      const { data: foundGroup, error: findError } = await (supabase as any)
         .from('groups')
         .select('id')
-        .eq('invite_code' as any, codeOrId.toUpperCase())
+        .eq('invite_code', codeOrId.toUpperCase())
         .single();
 
-      if (lookupError || !group) throw new Error('Invalid invite code');
-      groupId = group.id;
+      if (findError || !foundGroup) throw new Error('Invalid invite code');
+      groupId = (foundGroup as { id: string }).id;
     }
 
     // Check if group exists
