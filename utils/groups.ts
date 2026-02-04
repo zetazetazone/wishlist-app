@@ -10,9 +10,21 @@ function generateInviteCode(): string {
 }
 
 /**
+ * Options for creating a new group (v1.2 schema)
+ */
+export interface CreateGroupOptions {
+  name: string;
+  description?: string | null;
+  photo_url?: string | null;
+  mode?: 'greetings' | 'gifts';
+  budget_approach?: 'per_gift' | 'monthly' | 'yearly' | null;
+  budget_amount?: number | null;  // in cents
+}
+
+/**
  * Create a new group
  */
-export async function createGroup(name: string, budgetLimit: number = 50) {
+export async function createGroup(options: CreateGroupOptions) {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
@@ -52,14 +64,19 @@ export async function createGroup(name: string, budgetLimit: number = 50) {
       }
     }
 
-    // Create the group
-    console.log('Creating group with name:', name, 'budget:', budgetLimit);
+    // Create the group with v1.2 fields
+    console.log('Creating group with name:', options.name, 'mode:', options.mode || 'gifts');
     const { data: group, error: groupError } = await supabase
       .from('groups')
       .insert({
-        name,
+        name: options.name,
         created_by: user.id,
-        budget_limit_per_gift: budgetLimit,
+        budget_limit_per_gift: 50, // Legacy field, keep default for compatibility
+        description: options.description || null,
+        photo_url: options.photo_url || null,
+        mode: options.mode || 'gifts',
+        budget_approach: options.budget_approach || null,
+        budget_amount: options.budget_amount || null,
       })
       .select()
       .single();
