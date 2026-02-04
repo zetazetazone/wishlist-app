@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-04)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.2 Group Experience - Phase 12 complete, Phase 13 ready
+**Current focus:** v1.2 Group Experience - Phase 13 Plan 01 complete
 
 ## Current Position
 
-Phase: 12 of 17 (Group Photo Storage) - COMPLETE
-Plan: 1 of 1 in current phase
-Status: Phase complete
-Last activity: 2026-02-04 - Completed 12-01-PLAN.md (group photo storage infrastructure)
+Phase: 13 of 17 (Create Group Enhancement)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-02-04 - Completed 13-01-PLAN.md (photo upload, description, extended createGroup)
 
-Progress: [##########] 100% v1.0+v1.1 | [##░░░░░░░░] 12% v1.2 (2/16 plans)
+Progress: [##########] 100% v1.0+v1.1 | [###░░░░░░░] 19% v1.2 (3/16 plans)
 
 ## Milestone History
 
@@ -34,7 +34,7 @@ Progress: [##########] 100% v1.0+v1.1 | [##░░░░░░░░] 12% v1.2 (2
 **7 phases (11-17):**
 - Phase 11: Schema Foundation (mode, budget, description, photo_url columns) - COMPLETE
 - Phase 12: Group Photo Storage (upload service, generated avatars) - COMPLETE
-- Phase 13: Create Group Enhancement (CRGRP-01 through CRGRP-05)
+- Phase 13: Create Group Enhancement (CRGRP-01 through CRGRP-05) - IN PROGRESS (Plan 01 complete)
 - Phase 14: Group View Redesign (GVIEW-01 through GVIEW-07)
 - Phase 15: Group Settings (GSET-01 through GSET-07)
 - Phase 16: Mode System (MODE-01 through MODE-05)
@@ -55,6 +55,9 @@ Key decisions from v1.0/v1.1 archived in PROJECT.md Key Decisions table.
 - Phase 12: Reuse avatars bucket with groups/ subfolder (not separate bucket)
 - Phase 12: 16:9 aspect ratio for group photos (vs 1:1 for user avatars)
 - Phase 12: Compress to 800px width, 0.8 quality via expo-image-manipulator
+- Phase 13-01: Added uploadGroupPhotoFromUri for separated pick/upload flow
+- Phase 13-01: Upload photo after group creation to avoid orphaned files
+- Phase 13-01: Removed legacy budget field in favor of mode-based system
 
 ### Research Findings (v1.2)
 
@@ -80,7 +83,7 @@ From v1.0/v1.1:
 
 ## Session Continuity
 
-Last session: 2026-02-04T18:06:00Z
-Stopped at: Completed 12-01-PLAN.md (group photo storage infrastructure)
+Last session: 2026-02-04T19:46:41Z
+Stopped at: Completed 13-01-PLAN.md (photo upload, description, extended createGroup)
 Resume file: None
-Next: Plan Phase 13 (Create Group Enhancement)
+Next: Plan 13-02 (Mode selector and budget configuration) or Phase 14
