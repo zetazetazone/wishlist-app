@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -30,7 +30,18 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [mode, setMode] = useState<'greetings' | 'gifts'>('gifts');
+  const [budgetApproach, setBudgetApproach] = useState<'per_gift' | 'monthly' | 'yearly' | null>(null);
+  const [budgetAmount, setBudgetAmount] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Clear budget fields when switching to greetings mode
+  useEffect(() => {
+    if (mode === 'greetings') {
+      setBudgetApproach(null);
+      setBudgetAmount('');
+    }
+  }, [mode]);
 
   const handlePhotoUpload = async () => {
     // Request media library permissions
@@ -213,7 +224,7 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
             </View>
 
             {/* Description */}
-            <View style={{ marginBottom: 24 }}>
+            <View style={{ marginBottom: 20 }}>
               <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 8 }}>
                 Description (Optional)
               </Text>
@@ -240,6 +251,102 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
               <Text style={{ fontSize: 12, color: '#6B7280', marginTop: 4 }}>
                 {description.length} / {MAX_DESCRIPTION} characters
               </Text>
+            </View>
+
+            {/* Mode Selection */}
+            <View style={{ marginBottom: 20 }}>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 12 }}>
+                Group Mode
+              </Text>
+
+              {/* Gifts Option */}
+              <TouchableOpacity
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'flex-start',
+                  padding: 12,
+                  backgroundColor: mode === 'gifts' ? '#EFF6FF' : '#F9FAFB',
+                  borderRadius: 12,
+                  borderWidth: 2,
+                  borderColor: mode === 'gifts' ? '#3B82F6' : 'transparent',
+                  marginBottom: 8,
+                }}
+                onPress={() => setMode('gifts')}
+                disabled={loading}
+              >
+                <View style={{
+                  width: 20,
+                  height: 20,
+                  borderRadius: 10,
+                  borderWidth: 2,
+                  borderColor: mode === 'gifts' ? '#3B82F6' : '#9CA3AF',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: 12,
+                  marginTop: 2,
+                }}>
+                  {mode === 'gifts' && (
+                    <View style={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: 5,
+                      backgroundColor: '#3B82F6',
+                    }} />
+                  )}
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827' }}>
+                    Gifts
+                  </Text>
+                  <Text style={{ fontSize: 13, color: '#6B7280', marginTop: 2 }}>
+                    Coordinate gifts with budget tracking and wishlists
+                  </Text>
+                </View>
+              </TouchableOpacity>
+
+              {/* Greetings Option */}
+              <TouchableOpacity
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'flex-start',
+                  padding: 12,
+                  backgroundColor: mode === 'greetings' ? '#EFF6FF' : '#F9FAFB',
+                  borderRadius: 12,
+                  borderWidth: 2,
+                  borderColor: mode === 'greetings' ? '#3B82F6' : 'transparent',
+                }}
+                onPress={() => setMode('greetings')}
+                disabled={loading}
+              >
+                <View style={{
+                  width: 20,
+                  height: 20,
+                  borderRadius: 10,
+                  borderWidth: 2,
+                  borderColor: mode === 'greetings' ? '#3B82F6' : '#9CA3AF',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: 12,
+                  marginTop: 2,
+                }}>
+                  {mode === 'greetings' && (
+                    <View style={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: 5,
+                      backgroundColor: '#3B82F6',
+                    }} />
+                  )}
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827' }}>
+                    Greetings Only
+                  </Text>
+                  <Text style={{ fontSize: 13, color: '#6B7280', marginTop: 2 }}>
+                    Collect digital birthday greetings without gifts
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </View>
 
             {/* Create Button */}
