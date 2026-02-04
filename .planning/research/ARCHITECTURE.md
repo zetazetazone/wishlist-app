@@ -1,383 +1,463 @@
-# Architecture Research: v1.1 Wishlist Polish
+# Architecture Research: v1.2 Group Experience
 
-**Research Date:** 2026-02-02
-**Focus:** Integration of favorite marking, special item types, profile editing, and star rating fix
-**Confidence:** HIGH — Based on existing codebase analysis and established patterns
+**Domain:** Group customization, modes, and budget tracking
+**Researched:** 2026-02-04
+**Overall confidence:** HIGH
 
-## Summary
+## Executive Summary
 
-All v1.1 features integrate cleanly with existing architecture. Favorite marking requires one new junction table (group_favorites). Special item types (Surprise Me, Mystery Box) leverage existing wishlist_items schema with new type field. Profile editing reuses existing profile screen with edit mode. Star rating is pure UI fix with no schema changes.
+The v1.2 group experience features integrate cleanly with the existing Supabase + React Native architecture. Schema changes are additive columns to the existing `groups` table (no new tables required). Group photo storage reuses the existing `avatars` bucket pattern. Member cards with birthday sorting and favorite preview require a single optimized query joining `group_members`, `users`, and `group_favorites` tables. Budget approach impacts how `celebration_contributions` are validated but does not require schema changes to that table.
+
+The recommended build order is: (1) Schema migration for groups table columns, (2) Storage integration for group photos, (3) Create/Edit group flow updates, (4) Group view with member cards, (5) Admin settings panel. This order minimizes rework by establishing data layer first.
 
 ## Schema Changes
 
-### New Table: group_favorites
+### groups table modifications
 
-**Purpose:** Track one favorite item per user per group (pinned + highlighted).
-
-```sql
-CREATE TABLE IF NOT EXISTS public.group_favorites (
-  user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
-  group_id UUID REFERENCES public.groups(id) ON DELETE CASCADE,
-  item_id UUID REFERENCES public.wishlist_items(id) ON DELETE CASCADE,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  PRIMARY KEY (user_id, group_id)
-);
-
--- Index for fast lookups when viewing group members' wishlists
-CREATE INDEX idx_group_favorites_group ON public.group_favorites(group_id);
-CREATE INDEX idx_group_favorites_item ON public.group_favorites(item_id);
-
--- RLS: Users can view favorites in their groups
-CREATE POLICY "Users can view group favorites"
-  ON public.group_favorites FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.group_members
-      WHERE group_id = group_favorites.group_id
-        AND user_id = auth.uid()
-    )
-  );
-
--- RLS: Users can set their own favorites
-CREATE POLICY "Users can manage own favorites"
-  ON public.group_favorites FOR ALL
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
-```
-
-**Key constraint:** PRIMARY KEY (user_id, group_id) enforces one favorite per group.
-
-**Data flow:** When user marks item as favorite, INSERT with ON CONFLICT UPDATE to replace existing favorite. When viewing group members' wishlists, LEFT JOIN to show favorite status.
-
-### Modified Table: wishlist_items
-
-**Add item_type field** to distinguish regular items from special types:
+Add new columns to support group customization, mode selection, and budget approach:
 
 ```sql
--- Migration to add item_type column
-ALTER TABLE public.wishlist_items
-  ADD COLUMN item_type TEXT DEFAULT 'standard'
-  CHECK (item_type IN ('standard', 'surprise_me', 'mystery_box'));
+-- New columns for groups table
+ALTER TABLE public.groups
+ADD COLUMN IF NOT EXISTS description TEXT,
+ADD COLUMN IF NOT EXISTS photo_url TEXT,
+ADD COLUMN IF NOT EXISTS mode TEXT CHECK (mode IN ('greetings_only', 'gifts')) DEFAULT 'gifts',
+ADD COLUMN IF NOT EXISTS budget_approach TEXT CHECK (budget_approach IN ('per_gift', 'monthly_pooled', 'yearly')) DEFAULT 'per_gift';
 
--- For mystery_box type, price represents tier (25, 50, 100)
--- For surprise_me type, title/url optional, priority indicates openness level
+-- Rename existing column for clarity (optional, maintains backward compatibility)
+-- budget_limit_per_gift stays as-is since it's still relevant for per_gift approach
 ```
 
-**Rationale:**
-- Avoids separate tables for special items
-- Maintains single wishlist query
-- Enables filtering/sorting by type
-- Price field repurposed for Mystery Box tier (€25/€50/€100)
+**Column Details:**
+| Column | Type | Default | Purpose |
+|--------|------|---------|---------|
+| `description` | TEXT | NULL | Optional group description/tagline |
+| `photo_url` | TEXT | NULL | Storage path to group photo (same pattern as user avatars) |
+| `mode` | TEXT (CHECK) | 'gifts' | Group mode - 'greetings_only' disables gift coordination |
+| `budget_approach` | TEXT (CHECK) | 'per_gift' | How budget is calculated/enforced |
 
-**Validation logic:**
-- `surprise_me`: title optional, url can be empty string, priority = openness level
-- `mystery_box`: price restricted to [25, 50, 100], title describes tier
-- `standard`: existing validation (title + url required)
+**Budget Approach Values:**
+- `per_gift`: Uses existing `budget_limit_per_gift` per celebration
+- `monthly_pooled`: Group contributes fixed monthly amount to shared pool
+- `yearly`: Fixed annual budget per member for all celebrations
 
-### No Changes: user_profiles table
+### New tables (if any)
 
-Profile editing reuses existing fields:
-- `display_name` (already exists)
-- `avatar_url` (already exists, points to Supabase Storage)
-- `birthday` (already exists)
+**No new tables required.** The existing schema supports all v1.2 features:
+- Group favorites already exist in `group_favorites` table
+- Celebrations already have contribution tracking
+- User profiles already have birthday data
 
-**Photo upload:** Uses existing `avatars` bucket and `getAvatarUrl()` helper.
+### RLS Policy Updates
 
-## Component Changes
+The existing RLS policies on `groups` table are sufficient:
+- "Users can view their groups" - SELECT for group members
+- "Admins can update their groups" - UPDATE for admins
+
+**No policy changes needed** because:
+1. New columns follow same access pattern as existing columns
+2. Group members can view all group data (including new fields)
+3. Only admins can update group data (including new fields)
+
+## Component Architecture
 
 ### New Components
 
-**1. FavoriteButton.tsx** (components/wishlist/)
-- Purpose: Toggle favorite status per group
-- Props: `itemId: string, groupId: string, isFavorite: boolean, onToggle: () => void`
-- Visual: Gold star icon (filled = favorite, outline = not favorite)
-- Location: Top-right corner of LuxuryWishlistCard
-- State: Local optimistic update, syncs to Supabase
-
-**2. AddSpecialItemModal.tsx** (components/wishlist/)
-- Purpose: Guided flow for Surprise Me / Mystery Box
-- Props: `visible: boolean, type: 'surprise_me' | 'mystery_box', onClose: () => void, onAdd: (data) => void`
-- Sections:
-  - Surprise Me: Title (optional), openness level (star rating), why you trust them (note)
-  - Mystery Box: Tier selection (€25/€50/€100 radio buttons), description
-- Validation: Type-specific rules, clear CTAs
-
-**3. EditProfileScreen.tsx** (app/profile/edit.tsx)
-- Purpose: Edit display name, birthday, profile photo after onboarding
-- Layout: Form with three sections (photo picker, text input, date picker)
-- Photo flow: expo-image-picker → Supabase Storage upload → update avatar_url
-- Validation: Name required, birthday optional, photo optional
-- Navigation: Save → router.back(), Cancel → router.back()
-
-**4. ProfileHeader.tsx** (components/wishlist/)
-- Purpose: Display user's profile picture in My Wishlist header
-- Props: `userId: string, displayName: string, avatarUrl: string | null`
-- Visual: 40px circular avatar next to "My Wishlist" title
-- Clickable: Navigates to EditProfileScreen
-- Fallback: Initials if no photo
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| `GroupHeader` | Displays group photo, name, description, mode badge | `components/groups/GroupHeader.tsx` |
+| `GroupMemberCard` | Member card with avatar, name, countdown, favorite preview | `components/groups/GroupMemberCard.tsx` |
+| `GroupPhotoUploader` | Image picker + upload for group photos | `components/groups/GroupPhotoUploader.tsx` |
+| `GroupModeSelector` | Radio/segmented control for greetings_only vs gifts | `components/groups/GroupModeSelector.tsx` |
+| `BudgetApproachSelector` | Dropdown/picker for budget approach | `components/groups/BudgetApproachSelector.tsx` |
+| `GroupSettingsSheet` | Bottom sheet for admin group settings | `components/groups/GroupSettingsSheet.tsx` |
+| `MemberManagementSheet` | Bottom sheet for admin member management (remove, role) | `components/groups/MemberManagementSheet.tsx` |
 
 ### Modified Components
 
-**1. LuxuryWishlistCard.tsx** (existing)
-- **Change:** Add FavoriteButton to top-right corner
-- **Change:** Visual treatment for special types:
-  - `surprise_me`: Purple gradient border, "Surprise Me" badge
-  - `mystery_box`: Gold gradient border, "€XX Mystery Box" badge
-  - `standard`: Existing gold accent border
-- **Change:** Conditional rendering of price (mystery_box shows tier, standard shows actual price)
-- **Props added:** `isFavorite: boolean, groupId: string, onToggleFavorite: (itemId: string) => void`
+| Component | Changes |
+|-----------|---------|
+| `CreateGroupModal` | Add photo upload, description input, mode selector, budget approach selector |
+| `GroupCard` | Show group photo thumbnail, mode badge if greetings_only |
+| `app/group/[id].tsx` | Replace current member list with member cards sorted by birthday, add group header |
+| `utils/groups.ts` | Update `createGroup` and `updateGroup` to handle new fields |
+| `types/database.types.ts` | Add new columns to `groups` type definition |
 
-**2. StarRating.tsx** (existing - BUG FIX)
-- **Bug:** Currently renders vertically due to missing `flex-row` class
-- **Fix:** Line 25 already has `className="flex-row items-center gap-1"` — verify TailwindCSS config
-- **Root cause:** Likely metro cache or NativeWind config issue
-- **Solution:** Clear cache, verify tailwind.config.js includes `flex-row` utility
-- **No code changes needed** — investigate build/cache issue first
+### Existing Components Reused
 
-**3. wishlist.tsx screen** (existing)
-- **Change:** Add ProfileHeader component below gradient header
-- **Change:** Add favorite status loading from group_favorites
-- **Change:** Pass groupId to cards for favorite context
-- **Change:** Add "Add Special Item" button next to regular "Add Item"
-- **Query change:** JOIN group_favorites to enrich items with favorite status
-
-**4. AddItemModal.tsx** (existing)
-- **Change:** Add "or add special item" link at bottom
-- **Flow:** Opens AddSpecialItemModal with type selection
+| Component | How Reused |
+|-----------|------------|
+| `lib/storage.ts` | Extend pattern for group photos (new `uploadGroupPhoto` function) |
+| `lib/favorites.ts` | Use `getFavoriteForGroup` for member card favorite preview |
+| `lib/birthdays.ts` | Use birthday countdown logic for member cards |
 
 ## Data Flow
 
-### Favorite Marking Flow
+### Create Group Flow
 
 ```
-User taps star on item card (in group context)
-  ↓
-FavoriteButton: Optimistic UI update (gold fill)
-  ↓
-Supabase INSERT INTO group_favorites (user_id, group_id, item_id)
-  ON CONFLICT (user_id, group_id) DO UPDATE SET item_id = EXCLUDED.item_id
-  ↓
-Other group members query wishlist with LEFT JOIN group_favorites
-  ↓
-Cards display gold star badge if item.id IN favorites for that user
+User taps "Create Group"
+    |
+    v
+CreateGroupModal (enhanced)
+    - Name (required) [existing]
+    - Description (optional) [NEW]
+    - Photo (optional) [NEW]
+    - Mode selector (gifts default) [NEW]
+    - Budget approach (per_gift default) [NEW]
+    - Budget limit (if per_gift) [existing]
+    |
+    v
+Photo selected? --> GroupPhotoUploader --> Supabase Storage (avatars bucket)
+    |                                              |
+    |                                              v
+    |                                        Returns storage path
+    |
+    v
+createGroup(name, description, photoPath, mode, budgetApproach, budgetLimit)
+    |
+    v
+Supabase INSERT into groups table
+    |
+    v
+Supabase INSERT into group_members (creator as admin)
+    |
+    v
+setDefaultFavorite(userId, groupId) [existing behavior]
+    |
+    v
+Return to groups list (refreshed)
 ```
 
-**Key insight:** Favorite is per-group, not global. User can have different favorites in different groups.
-
-**RLS enforcement:** Users can only set favorites in groups they're members of. Favorites visible to all group members.
-
-### Special Item Creation Flow
-
+**Storage Path Pattern:**
 ```
-User taps "Add Special Item" → type selection sheet
-  ↓
-User selects "Surprise Me" or "Mystery Box"
-  ↓
-AddSpecialItemModal shows type-specific form
-  ↓
-Validation: surprise_me (openness level required), mystery_box (tier required)
-  ↓
-INSERT INTO wishlist_items (
-  user_id,
-  group_id: NULL,  -- special items not tied to specific group
-  item_type: 'surprise_me' | 'mystery_box',
-  title,
-  price: tier for mystery_box,
-  priority: openness for surprise_me,
-  amazon_url: empty for surprise_me
-)
-  ↓
-My Wishlist refreshes, card renders with special visual treatment
+avatars/groups/{groupId}/{timestamp}.{ext}
 ```
 
-**Validation rules:**
-- Surprise Me: title optional, url empty, priority 1-5 (openness level)
-- Mystery Box: price ∈ [25, 50, 100], title describes tier, url empty
+This reuses the existing `avatars` bucket but organizes group photos in a `groups/` subfolder.
 
-**Display logic:** Filter rendering based on item_type in LuxuryWishlistCard.
+### Group View with Member Cards
 
-### Profile Editing Flow
+**Query Pattern for Member Cards:**
+
+```typescript
+// Optimized single query with joins
+const { data, error } = await supabase
+  .from('group_members')
+  .select(`
+    role,
+    users!inner (
+      id,
+      full_name,
+      avatar_url,
+      birthday
+    ),
+    group_favorites!inner (
+      item_id,
+      wishlist_items!inner (
+        id,
+        title,
+        item_type,
+        image_url
+      )
+    )
+  `)
+  .eq('group_id', groupId)
+  .order('users.birthday', { ascending: true }); // Sort by birthday
+```
+
+**Note:** The birthday sort needs adjustment for "closest upcoming" rather than calendar order. This requires client-side sorting:
+
+```typescript
+// Client-side sorting for "closest upcoming birthday"
+const sortByUpcomingBirthday = (members) => {
+  const today = new Date();
+
+  return members.sort((a, b) => {
+    const aNext = getNextBirthday(a.users.birthday, today);
+    const bNext = getNextBirthday(b.users.birthday, today);
+    return aNext.getTime() - bNext.getTime();
+  });
+};
+
+const getNextBirthday = (birthday: string, today: Date) => {
+  const bday = new Date(birthday);
+  const thisYear = new Date(today.getFullYear(), bday.getMonth(), bday.getDate());
+
+  if (thisYear < today) {
+    // Birthday passed this year, use next year
+    return new Date(today.getFullYear() + 1, bday.getMonth(), bday.getDate());
+  }
+  return thisYear;
+};
+```
+
+**Data Flow:**
 
 ```
-User taps avatar in My Wishlist header
-  ↓
-Navigate to /profile/edit?id={userId}
-  ↓
-EditProfileScreen loads current profile from user_profiles
-  ↓
-User edits name/birthday/photo → photo triggers expo-image-picker
-  ↓
-Photo selected → upload to Supabase Storage avatars bucket
-  ↓
-UPDATE user_profiles SET
-  display_name = $1,
-  birthday = $2,
-  avatar_url = $3 (storage path)
-WHERE id = auth.uid()
-  ↓
-Router.back() to My Wishlist → ProfileHeader shows updated info
+User navigates to Group Detail Screen
+    |
+    v
+fetchGroupWithMembers(groupId)
+    |
+    v
+Single optimized query returns:
+    - group (name, description, photo_url, mode, budget_approach)
+    - members (with user data, favorites, favorite items)
+    |
+    v
+Client-side sort by upcoming birthday
+    |
+    v
+Render GroupHeader + sorted MemberCards
+    |
+    v
+User taps member card --> router.push(`/profile/${memberId}`) or celebration
 ```
 
-**Photo upload:** Reuse onboarding photo upload logic from app/(onboarding)/index.tsx.
+### Budget Tracking
 
-**Storage path format:** `avatars/{userId}-{timestamp}.jpg`
+Budget approach affects how contributions are validated and displayed, but does not change the `celebration_contributions` schema.
 
-**RLS:** Users can only update their own profile (existing policy).
+**per_gift (existing behavior):**
+- Each celebration has `target_amount` from `groups.budget_limit_per_gift`
+- Contributions tracked per celebration
+- Progress bar shows % of target
+
+**monthly_pooled:**
+- New concept: monthly contribution target per member
+- Contributions still tracked per celebration
+- UI shows monthly pool status vs individual celebration
+- Requires new helper functions but no schema change
+
+**yearly:**
+- Annual budget per member across all celebrations
+- Contributions tracked per celebration (existing)
+- UI shows yearly budget remaining
+- Requires new helper functions but no schema change
+
+**Recommended approach:** Start with `per_gift` as fully functional, add pooled/yearly UI as "coming soon" badges to avoid scope creep.
 
 ## Suggested Build Order
 
-**Rationale:** Start with infrastructure (schema), then isolated features (profile edit), then integrated features (favorites, special items), finally UI polish (star rating).
+### Phase 1: Schema Foundation (Day 1)
 
-### Phase 1: Database Schema (30 min)
-1. Create migration: `20260202000011_group_favorites.sql`
-   - Add group_favorites table
-   - Add RLS policies
-   - Add indexes
-2. Create migration: `20260202000012_item_types.sql`
-   - Add item_type column to wishlist_items
-   - Add CHECK constraint
-   - Backfill existing items with 'standard'
+**Rationale:** All other features depend on these columns existing.
 
-**Validation:** Run migrations, test INSERT/SELECT with new schema.
+- [ ] Create migration `20260205000001_group_experience.sql`
+  - Add `description`, `photo_url`, `mode`, `budget_approach` columns
+  - No RLS changes needed
+- [ ] Update `types/database.types.ts` with new columns
 
-### Phase 2: Profile Editing (2 hours)
-3. Create EditProfileScreen.tsx
-   - Form layout with photo picker
-   - Integrate expo-image-picker
-   - Upload logic to Supabase Storage
-   - Update mutation
-4. Create ProfileHeader.tsx
-   - Avatar display component
-   - Click → navigate to edit screen
-5. Integrate ProfileHeader into wishlist.tsx
-   - Position below gradient header
-   - Pass userId, displayName, avatarUrl
+### Phase 2: Group Photo Storage (Day 1-2)
 
-**Validation:** Edit profile, verify changes persist and display in header.
+**Rationale:** Photo upload is standalone, needed for create/edit flows.
 
-### Phase 3: Special Item Types (3 hours)
-6. Update wishlist_items TypeScript types
-   - Add item_type to database.types.ts
-   - Update WishlistItem interface
-7. Create AddSpecialItemModal.tsx
-   - Type selection (Surprise Me / Mystery Box)
-   - Type-specific forms
-   - Validation logic
-8. Modify LuxuryWishlistCard.tsx
-   - Visual treatment by item_type
-   - Conditional price display
-   - Special badges
-9. Update AddItemModal.tsx
-   - Add "special item" link
-   - Wire to AddSpecialItemModal
+- [ ] Add `uploadGroupPhoto(groupId)` to `lib/storage.ts`
+  - Follow existing `uploadAvatar` pattern
+  - Use path `avatars/groups/{groupId}/{timestamp}.{ext}`
+- [ ] Add `getGroupPhotoUrl(path)` helper
+- [ ] Create `GroupPhotoUploader` component
+  - Reuse `expo-image-picker` integration from avatar upload
 
-**Validation:** Add both special item types, verify display and data integrity.
+### Phase 3: Create Group Flow (Day 2-3)
 
-### Phase 4: Favorite Marking (2 hours)
-10. Create FavoriteButton.tsx
-    - Star icon toggle
-    - Optimistic UI update
-    - Supabase mutation
-11. Update wishlist.tsx query
-    - LEFT JOIN group_favorites
-    - Enrich items with isFavorite flag
-12. Integrate FavoriteButton into LuxuryWishlistCard
-    - Position top-right
-    - Pass groupId context
-13. Update group member wishlist views
-    - Show favorite badge on other users' items
+**Rationale:** New groups can use all v1.2 features, establishes patterns.
 
-**Validation:** Mark favorite in group, verify visible to other members, verify one-per-group constraint.
+- [ ] Create `GroupModeSelector` component
+- [ ] Create `BudgetApproachSelector` component
+- [ ] Enhance `CreateGroupModal`:
+  - Add description input
+  - Add photo uploader
+  - Add mode selector
+  - Add budget approach selector
+- [ ] Update `createGroup()` in `utils/groups.ts`
 
-### Phase 5: Star Rating Fix (30 min)
-14. Investigate StarRating.tsx vertical layout
-    - Clear metro cache: `npx expo start -c`
-    - Verify tailwind.config.js
-    - Check NativeWind version compatibility
-15. If code fix needed, update StarRating.tsx
-    - Ensure View wrapper has flexDirection: 'row'
-    - Test with Expo Go
+### Phase 4: Group View Enhancement (Day 3-4)
 
-**Validation:** Star rating displays horizontally on all cards.
+**Rationale:** This is the main user-facing feature.
+
+- [ ] Create `GroupHeader` component
+  - Photo with fallback to initial
+  - Name, description
+  - Mode badge (if greetings_only)
+  - Member count, budget info
+- [ ] Create `GroupMemberCard` component
+  - Avatar, name
+  - Birthday countdown (reuse from `CountdownCard`)
+  - Favorite item preview (thumbnail + title)
+  - Navigation to profile/celebration
+- [ ] Create `fetchGroupWithMembers()` optimized query
+- [ ] Implement client-side birthday sorting
+- [ ] Update `app/group/[id].tsx` with new components
+
+### Phase 5: Admin Settings (Day 4-5)
+
+**Rationale:** Admin features last since they're less critical for MVP.
+
+- [ ] Create `GroupSettingsSheet` component
+  - Edit name, description, photo
+  - Change mode
+  - Adjust budget approach/limit
+- [ ] Create `MemberManagementSheet` component
+  - Remove member (with confirmation)
+  - Change role (member <-> admin)
+- [ ] Add settings button to `GroupHeader` (admin only)
+- [ ] Update `updateGroup()` in `utils/groups.ts`
 
 ## Integration Points
 
-### With Existing Features
+### Celebrations Integration
 
-**Groups:**
-- Favorites are group-scoped → query group_favorites with group_id filter
-- Special items visible in all groups (group_id NULL) → universal wishlist items
-- Profile changes visible across all groups → single source of truth in user_profiles
+**Mode affects celebrations:**
+- `greetings_only` mode: Celebrations still created (birthday tracking), but:
+  - No Gift Leader assignment
+  - No contribution tracking
+  - Chat available for greetings coordination
+- `gifts` mode: Full functionality (existing behavior)
 
-**Wishlists:**
-- Special items query: `WHERE user_id = ? AND (group_id IS NULL OR group_id = ?)`
-- Favorite items query: `LEFT JOIN group_favorites ON wishlist_items.id = group_favorites.item_id AND group_favorites.group_id = ?`
-- Type filtering: `WHERE item_type IN ('standard', 'surprise_me', 'mystery_box')`
+**Implementation:**
+```typescript
+// In celebrations.ts
+export async function getCelebrationType(groupId: string) {
+  const { data: group } = await supabase
+    .from('groups')
+    .select('mode')
+    .eq('id', groupId)
+    .single();
 
-**Chat:**
-- Favorite items more likely to be discussed → no schema changes needed
-- Special items can be linked in messages → existing linked_item_id FK works
+  return group?.mode === 'gifts' ? 'full' : 'greetings';
+}
+```
 
-**Celebrations:**
-- Gift Leader sees favorites highlighted → query join on member favorites
-- Mystery Box requires no fulfillment → placeholder only in v1.1
+### Chat Integration
 
-### With Future Features (v1.2+)
+Chat rooms work in both modes:
+- `gifts`: Coordinate gift purchasing
+- `greetings_only`: Coordinate greeting cards, virtual celebration
 
-**Monetization:**
-- Mystery Box purchasing: Add payment flow, order fulfillment, status tracking
-- Premium tiers: Unlock unlimited favorites (currently one per group)
+No changes needed to chat system.
 
-**Social:**
-- Favorite notifications: "Sarah marked your gift as a favorite ❤️"
-- Popular items: "3 people favorited this in your group"
+### Notifications Integration
 
-**AI Suggestions:**
-- Train on favorite patterns: "Users who favorited X also liked Y"
-- Surprise Me intelligence: Match openness level with gift categories
+Notification text should reflect mode:
+- `gifts`: "You're the Gift Leader for..."
+- `greetings_only`: "Plan a greeting for..." (or skip Gift Leader notification entirely)
 
-## Dependencies
+**Implementation:** Check group mode before sending Gift Leader notification.
 
-**External:**
-- expo-image-picker (already installed) — profile photo selection
-- Supabase Storage (already configured) — avatar uploads
-- NativeWind/TailwindCSS (already configured) — star rating flex-row fix
+### Favorites Integration
 
-**Internal:**
-- getAvatarUrl() helper (already exists) — profile photo display
-- Existing RLS policies (extend for group_favorites) — security
-- LuxuryWishlistCard (modify) — integrate favorites + special types
+Favorite preview on member cards uses existing `group_favorites` and `wishlist_items` tables. No changes needed to favorites system.
+
+**Query already handles this:**
+```typescript
+// From member card query
+group_favorites!inner (
+  item_id,
+  wishlist_items!inner (
+    id, title, item_type, image_url
+  )
+)
+```
+
+## File Structure Changes
+
+```
+components/
+  groups/
+    CreateGroupModal.tsx      [MODIFY]
+    GroupCard.tsx             [MODIFY]
+    JoinGroupModal.tsx        [NO CHANGE]
+    GroupHeader.tsx           [NEW]
+    GroupMemberCard.tsx       [NEW]
+    GroupPhotoUploader.tsx    [NEW]
+    GroupModeSelector.tsx     [NEW]
+    BudgetApproachSelector.tsx [NEW]
+    GroupSettingsSheet.tsx    [NEW]
+    MemberManagementSheet.tsx [NEW]
+
+lib/
+  storage.ts                  [MODIFY - add group photo functions]
+  groups.ts                   [NEW - optimized query for member cards]
+
+utils/
+  groups.ts                   [MODIFY - add new fields to create/update]
+
+types/
+  database.types.ts           [MODIFY - add new group columns]
+
+app/
+  group/[id].tsx              [MODIFY - new group view]
+
+supabase/
+  migrations/
+    20260205000001_group_experience.sql [NEW]
+```
 
 ## Performance Considerations
 
-**Query Optimization:**
-- group_favorites indexes on (group_id) and (item_id) prevent full table scans
-- LEFT JOIN group_favorites adds minimal overhead (~10ms per query)
-- Special item filtering with item_type index if needed (add if slow)
+### Query Optimization
 
-**Caching Strategy:**
-- Profile photo: Cache avatar URLs in AsyncStorage (already done)
-- Favorites: Optimistic updates reduce perceived latency
-- Special items: No caching needed (infrequent writes)
+The member card query joins 4 tables. Ensure indexes exist:
+- `group_members(group_id)` - EXISTS
+- `group_favorites(group_id, user_id)` - EXISTS
+- `users(birthday)` - NEEDS ADDING for sort performance
 
-**Realtime Updates:**
-- Favorites: Subscribe to group_favorites changes for live updates
-- Profile: Broadcast profile updates to group members (optional)
+```sql
+CREATE INDEX IF NOT EXISTS idx_users_birthday ON public.users(birthday);
+```
 
-## Confidence
+### Image Loading
 
-**HIGH** because:
+Group photos and member avatars should use:
+- `expo-image` with caching (already used for avatars)
+- Placeholder/skeleton while loading
+- Reasonable image dimensions (200x200 for group photos)
 
-✅ Reviewed existing schema (wishlist_items has group_id, users table has avatar_url)
-✅ Analyzed component structure (LuxuryWishlistCard, AddItemModal, StarRating exist)
-✅ Verified data flow patterns (Supabase RLS, storage upload, query joins)
-✅ Identified exact integration points (ProfileHeader, FavoriteButton, AddSpecialItemModal)
-✅ Build order follows dependencies (schema → isolated features → integrated features)
-✅ All features leverage existing infrastructure (no new services)
+### List Performance
 
-**Potential unknowns:**
-- Star rating bug root cause (likely cache, not code)
-- Exact expo-image-picker API if changed in Expo 54
-- GROUP BY performance with favorites join at scale (test with >1000 items)
+Member cards use `FlashList` (already in project) for performant rendering.
 
-**Recommendation:** Proceed with Phase 1 (schema), validate with seed data, then continue sequentially through Phase 5.
+## Confidence Assessment
+
+| Area | Confidence | Notes |
+|------|------------|-------|
+| Schema changes | HIGH | Additive columns, no complex migrations |
+| Storage integration | HIGH | Follows proven avatar pattern exactly |
+| Create/Edit flows | HIGH | Extends existing modal pattern |
+| Member card query | HIGH | Standard Supabase joins, tested pattern |
+| Birthday sorting | HIGH | Client-side calculation, well-understood |
+| Mode integration | MEDIUM | Need to verify celebration/notification touch points |
+| Budget approaches | MEDIUM | per_gift works, pooled/yearly UI is additive |
+| RLS policies | HIGH | No changes needed, existing policies sufficient |
+
+## Risk Areas
+
+### Birthday Sort Edge Cases
+
+- Members without birthday: Sort to end of list
+- All birthdays passed: Show next year's dates
+- Same day birthdays: Secondary sort by name
+
+### Greetings Only Mode
+
+If user switches mode after celebrations exist:
+- Existing celebrations keep their state
+- New celebrations created in new mode
+- Gift Leader field becomes ignored (not cleared)
+
+**Recommendation:** Add confirmation dialog when switching from `gifts` to `greetings_only`.
+
+### Pooled/Yearly Budgets
+
+These are more complex than `per_gift`:
+- Need UI for pool status
+- Need calculation of remaining budget
+- Need enforcement logic
+
+**Recommendation:** Ship with `per_gift` only, show pooled/yearly as "Coming Soon" in selector.
+
+---
+*Research completed: 2026-02-04*
+*Source: Existing codebase analysis, Supabase schema patterns*
