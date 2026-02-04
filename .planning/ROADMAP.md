@@ -206,7 +206,7 @@ Plans:
 - [x] 14-01-PLAN.md — GroupModeBadge and GroupViewHeader components (GVIEW-01, GVIEW-02)
 - [x] 14-02-PLAN.md — FavoritePreview and MemberCard components (GVIEW-03, GVIEW-05)
 - [x] 14-03-PLAN.md — Integration with birthday sorting and favorites fetch (GVIEW-04, GVIEW-06, GVIEW-07)
-- [ ] 14-04-PLAN.md — Gap closure: fix member card celebration navigation (GVIEW-07)
+- [x] 14-04-PLAN.md — Gap closure: fix member card celebration navigation (GVIEW-07)
 
 #### Phase 15: Group Settings
 **Goal**: Comprehensive group settings for admin editing and member management
@@ -281,7 +281,7 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17
 | 11. Schema Foundation | v1.2 | 1/1 | Complete | 2026-02-04 |
 | 12. Group Photo Storage | v1.2 | 1/1 | Complete | 2026-02-04 |
 | 13. Create Group Enhancement | v1.2 | 2/2 | Complete | 2026-02-04 |
-| 14. Group View Redesign | v1.2 | 3/4 | Gap closure | 2026-02-04 |
+| 14. Group View Redesign | v1.2 | 4/4 | Complete | 2026-02-04 |
 | 15. Group Settings | v1.2 | 0/3 | Not started | - |
 | 16. Mode System | v1.2 | 0/3 | Not started | - |
 | 17. Budget Tracking | v1.2 | 0/3 | Not started | - |
