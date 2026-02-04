@@ -18,6 +18,7 @@ import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 import { GroupViewHeader } from '../../components/groups/GroupViewHeader';
 import { MemberCard } from '../../components/groups/MemberCard';
 import { getDaysUntilBirthday } from '../../utils/countdown';
+import { findCelebrationForMember } from '../../lib/celebrations';
 
 interface GroupWithMembers extends Group {
   members: Array<{
@@ -76,6 +77,21 @@ export default function GroupDetailScreen() {
     }
 
     setGroup(data as GroupWithMembers);
+  };
+
+  const handleMemberPress = async (userId: string) => {
+    if (!id) return;
+
+    const celebration = await findCelebrationForMember(userId, id);
+
+    if (celebration) {
+      router.push(`/(app)/celebration/${celebration.id}`);
+    } else {
+      Alert.alert(
+        'No Celebration Yet',
+        'There is no upcoming celebration for this member yet. Celebrations are created automatically as birthdays approach.'
+      );
+    }
   };
 
   const handleShare = async () => {
@@ -245,7 +261,7 @@ export default function GroupDetailScreen() {
                   }}
                   daysUntilBirthday={member.daysUntil}
                   favoriteItem={group.favoritesByUser?.[member.users.id] as { title: string; image_url: string | null; item_type: 'standard' | 'surprise_me' | 'mystery_box' } | null}
-                  onPress={() => router.push(`/(app)/celebration/${member.users.id}`)}
+                  onPress={() => handleMemberPress(member.users.id)}
                   index={index}
                 />
               ))}

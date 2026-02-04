@@ -661,3 +661,32 @@ export async function isCurrentUserGroupAdmin(celebrationId: string): Promise<bo
 
   return membership?.role === 'admin';
 }
+
+/**
+ * Find a celebration for a specific member in a group
+ *
+ * Looks up the most recent celebration where the given user is the celebrant
+ * in the given group. Returns the celebration ID and status, or null if none exists.
+ *
+ * RLS handles access control -- no explicit auth check needed here.
+ */
+export async function findCelebrationForMember(
+  userId: string,
+  groupId: string
+): Promise<{ id: string; status: string } | null> {
+  const { data, error } = await supabase
+    .from('celebrations')
+    .select('id, status')
+    .eq('celebrant_id', userId)
+    .eq('group_id', groupId)
+    .order('event_date', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Failed to find celebration for member:', error);
+    return null;
+  }
+
+  return data;
+}
