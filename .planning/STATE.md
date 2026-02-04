@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-04)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.2 Group Experience - Phase 14 complete
+**Current focus:** v1.2 Group Experience - Phase 14 complete (including gap closure)
 
 ## Current Position
 
 Phase: 14 of 17 (Group View Redesign)
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-02-04 - Completed 14-03-PLAN.md (group detail integration)
+Plan: 4 of 4 in current phase (3 plans + 1 gap closure)
+Status: Phase complete (including gap closure)
+Last activity: 2026-02-04 - Completed 14-04-PLAN.md (member card navigation gap closure)
 
-Progress: [##########] 100% v1.0+v1.1 | [#######░░░] 44% v1.2 (7/16 plans)
+Progress: [##########] 100% v1.0+v1.1 | [########░░] 47% v1.2 (8/17 plans)
 
 ## Milestone History
 
@@ -35,7 +35,7 @@ Progress: [##########] 100% v1.0+v1.1 | [#######░░░] 44% v1.2 (7/16 plans)
 - Phase 11: Schema Foundation (mode, budget, description, photo_url columns) - COMPLETE
 - Phase 12: Group Photo Storage (upload service, generated avatars) - COMPLETE
 - Phase 13: Create Group Enhancement (CRGRP-01 through CRGRP-05) - COMPLETE
-- Phase 14: Group View Redesign (GVIEW-01 through GVIEW-07) - COMPLETE
+- Phase 14: Group View Redesign (GVIEW-01 through GVIEW-07) - COMPLETE (+ gap closure 14-04)
 - Phase 15: Group Settings (GSET-01 through GSET-07)
 - Phase 16: Mode System (MODE-01 through MODE-05)
 - Phase 17: Budget Tracking (BUDG-01 through BUDG-05)
@@ -67,6 +67,8 @@ Key decisions from v1.0/v1.1 archived in PROJECT.md Key Decisions table.
 - Phase 14-03: Batch query for favorites using .in() to avoid N+1
 - Phase 14-03: Invalid birthday dates sorted to end of member list
 - Phase 14-03: Added users table type with full_name (distinct from user_profiles view)
+- Phase 14-04: Lookup-then-navigate pattern with findCelebrationForMember before router.push
+- Phase 14-04: maybeSingle() for graceful null when no celebration exists
 
 ### Research Findings (v1.2)
 
@@ -92,7 +94,7 @@ From v1.0/v1.1:
 
 ## Session Continuity
 
-Last session: 2026-02-04T20:50:00Z
-Stopped at: Phase 14 complete (group view redesign) - verified 7/7 GVIEW requirements
+Last session: 2026-02-04T22:03:44Z
+Stopped at: Phase 14 gap closure complete (14-04) - member card navigation fixed
 Resume file: None
 Next: Phase 15 (Group Settings)
