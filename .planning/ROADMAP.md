@@ -167,10 +167,10 @@ Plans:
   2. Upload service handles image compression and format validation
   3. Generated avatars display when no photo is set (initials-based)
   4. Photo URLs update correctly in groups table
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 12-01: Group photo storage service and generated avatar component
+- [ ] 12-01-PLAN.md — RLS policies, upload service with compression, GroupAvatar component
 
 #### Phase 13: Create Group Enhancement
 **Goal**: Rich group creation with photo, description, mode, and budget selectors
@@ -278,7 +278,7 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17
 | 9. Favorite Marking | v1.1 | 4/4 | Complete | 2026-02-03 |
 | 10. Wishlist Display Polish | v1.1 | 2/2 | Complete | 2026-02-03 |
 | 11. Schema Foundation | v1.2 | 1/1 | Complete | 2026-02-04 |
-| 12. Group Photo Storage | v1.2 | 0/1 | Not started | - |
+| 12. Group Photo Storage | v1.2 | 0/1 | Planned | - |
 | 13. Create Group Enhancement | v1.2 | 0/2 | Not started | - |
 | 14. Group View Redesign | v1.2 | 0/3 | Not started | - |
 | 15. Group Settings | v1.2 | 0/3 | Not started | - |
