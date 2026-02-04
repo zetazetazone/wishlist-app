@@ -12,13 +12,13 @@ import {
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
-import { fetchGroupDetails } from '../../utils/groups';
-import { Group, User } from '../../types';
-import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
-import { GroupViewHeader } from '../../components/groups/GroupViewHeader';
-import { MemberCard } from '../../components/groups/MemberCard';
-import { getDaysUntilBirthday } from '../../utils/countdown';
-import { findCelebrationForMember } from '../../lib/celebrations';
+import { fetchGroupDetails } from '../../../utils/groups';
+import { Group, User } from '../../../types';
+import { colors, spacing, borderRadius, shadows } from '../../../constants/theme';
+import { GroupViewHeader } from '../../../components/groups/GroupViewHeader';
+import { MemberCard } from '../../../components/groups/MemberCard';
+import { getDaysUntilBirthday } from '../../../utils/countdown';
+import { findCelebrationForMember } from '../../../lib/celebrations';
 
 interface GroupWithMembers extends Group {
   members: Array<{
@@ -154,6 +154,7 @@ export default function GroupDetailScreen() {
           }}
           memberCount={group.members?.length || 0}
           onBack={() => router.push('/(app)/(tabs)/groups')}
+          onSettings={() => router.push(`/group/${id}/settings`)}
         />
 
         <ScrollView
