@@ -200,12 +200,12 @@ Plans:
   5. Member cards show birthday countdown text ("12 days", "2 months")
   6. Member cards show favorite item preview (thumbnail and title) if available
   7. Tapping member card navigates to their celebration page
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 14-01: Group header component with photo, name, description, mode badge
-- [ ] 14-02: Member card component with birthday sorting and countdown
-- [ ] 14-03: Favorite item preview in member cards
+- [ ] 14-01-PLAN.md — GroupModeBadge and GroupViewHeader components (GVIEW-01, GVIEW-02)
+- [ ] 14-02-PLAN.md — FavoritePreview and MemberCard components (GVIEW-03, GVIEW-05)
+- [ ] 14-03-PLAN.md — Integration with birthday sorting and favorites fetch (GVIEW-04, GVIEW-06, GVIEW-07)
 
 #### Phase 15: Group Settings
 **Goal**: Comprehensive group settings for admin editing and member management
