@@ -225,13 +225,74 @@ export async function fetchGroupDetails(groupId: string) {
 }
 
 /**
- * Join a group using an invite code
- * For MVP, we'll use the group ID as the invite code
+ * Options for updating group info (admin editing)
  */
-export async function joinGroup(groupId: string) {
+export interface UpdateGroupInfoOptions {
+  name?: string;
+  description?: string | null;
+  photo_url?: string | null;
+}
+
+/**
+ * Update group info (name, description, photo)
+ * Used by admin from the group settings screen
+ */
+export async function updateGroupInfo(groupId: string, updates: UpdateGroupInfoOptions) {
+  try {
+    const { data, error } = await supabase
+      .from('groups')
+      .update(updates)
+      .eq('id', groupId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    return { data: null, error };
+  }
+}
+
+/**
+ * Regenerate the invite code for a group
+ * Calls the database function created in the group settings migration.
+ * Any group member can call this (SECURITY DEFINER bypasses admin-only UPDATE RLS).
+ */
+export async function regenerateInviteCode(groupId: string) {
+  try {
+    const { data, error } = await supabase
+      .rpc('regenerate_invite_code', { p_group_id: groupId });
+
+    if (error) throw error;
+    return { data: data as string, error: null };
+  } catch (error) {
+    return { data: null, error };
+  }
+}
+
+/**
+ * Join a group using an invite code or group ID
+ * Accepts either a UUID (direct group ID) or a 6-character invite code.
+ */
+export async function joinGroup(codeOrId: string) {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
+
+    let groupId = codeOrId;
+
+    // If it doesn't look like a UUID, treat as invite code
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(codeOrId)) {
+      const { data: group, error: lookupError } = await supabase
+        .from('groups')
+        .select('id')
+        .eq('invite_code' as any, codeOrId.toUpperCase())
+        .single();
+
+      if (lookupError || !group) throw new Error('Invalid invite code');
+      groupId = group.id;
+    }
 
     // Check if group exists
     const { data: group, error: groupError } = await supabase
