@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-04)
 ## Current Position
 
 Phase: 15 of 17 (Group Settings)
-Plan: 1 of N in current phase
+Plan: 2 of N in current phase
 Status: In progress
-Last activity: 2026-02-05 - Completed 15-01-PLAN.md (group settings foundation)
+Last activity: 2026-02-05 - Completed 15-02-PLAN.md (group info editing + invite code management)
 
-Progress: [##########] 100% v1.0+v1.1 | [#########░] 53% v1.2 (9/17 plans)
+Progress: [##########] 100% v1.0+v1.1 | [##########] 59% v1.2 (10/17 plans)
 
 ## Milestone History
 
@@ -36,7 +36,7 @@ Progress: [##########] 100% v1.0+v1.1 | [#########░] 53% v1.2 (9/17 plans)
 - Phase 12: Group Photo Storage (upload service, generated avatars) - COMPLETE
 - Phase 13: Create Group Enhancement (CRGRP-01 through CRGRP-05) - COMPLETE
 - Phase 14: Group View Redesign (GVIEW-01 through GVIEW-07) - COMPLETE (+ gap closure 14-04)
-- Phase 15: Group Settings (GSET-01 through GSET-07) - IN PROGRESS (plan 01 complete)
+- Phase 15: Group Settings (GSET-01 through GSET-07) - IN PROGRESS (plans 01-02 complete)
 - Phase 16: Mode System (MODE-01 through MODE-05)
 - Phase 17: Budget Tracking (BUDG-01 through BUDG-05)
 
@@ -73,6 +73,10 @@ Key decisions from v1.0/v1.1 archived in PROJECT.md Key Decisions table.
 - Phase 15-01: regenerate_invite_code() callable by any member (SECURITY DEFINER bypasses admin-only UPDATE RLS)
 - Phase 15-01: Route restructured from [id].tsx to [id]/ folder with Stack navigator
 - Phase 15-01: Settings sections conditionally rendered based on isAdmin role
+- Phase 15-02: Separate updateGroupInfo() from legacy updateGroup() to avoid breaking callers
+- Phase 15-02: Cast supabase as any for invite_code query (column not in generated types)
+- Phase 15-02: Photo change is independent action, not part of form Save flow
+- Phase 15-02: Optimistic update with rollback for name/description saves
 
 ### Research Findings (v1.2)
 
@@ -99,7 +103,7 @@ From v1.0/v1.1:
 
 ## Session Continuity
 
-Last session: 2026-02-05T00:33:00Z
-Stopped at: Completed 15-01-PLAN.md (group settings foundation)
+Last session: 2026-02-05T00:41:00Z
+Stopped at: Completed 15-02-PLAN.md (group info editing + invite code management)
 Resume file: None
-Next: Phase 15 Plan 02 (group info editing) or Plan 03 (member management)
+Next: Phase 15 Plan 03 (member management + danger zone)
