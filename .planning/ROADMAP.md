@@ -220,12 +220,12 @@ Plans:
   5. Admin can transfer admin role to another member
   6. Any member can view and regenerate invite code
   7. Non-admin members can leave the group
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 15-01: Group settings screen with name/description/photo editing
-- [ ] 15-02: Member management (remove members, admin transfer, leave group)
-- [ ] 15-03: Invite code management
+- [ ] 15-01-PLAN.md — DB migration (invite_code, RLS policies, helper functions) + route restructure + settings skeleton
+- [ ] 15-02-PLAN.md — Group info editing (GSET-01,02,03) + invite code management (GSET-06)
+- [ ] 15-03-PLAN.md — Member management: remove, admin transfer, leave group (GSET-04,05,07)
 
 #### Phase 16: Mode System
 **Goal**: Group modes control feature visibility with smooth transitions
