@@ -1,4 +1,5 @@
 import * as ImagePicker from 'expo-image-picker';
+import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { supabase } from './supabase';
 
 /**
@@ -74,6 +75,91 @@ export function getAvatarUrl(path: string | null): string | null {
     return data.publicUrl;
   } catch (error) {
     console.error('Error getting avatar URL:', error);
+    return null;
+  }
+}
+
+/**
+ * Upload group photo image to Supabase Storage with compression
+ * @param groupId - The group's ID to associate with the photo
+ * @returns The storage path of the uploaded photo or null if failed/canceled
+ */
+export async function uploadGroupPhoto(groupId: string): Promise<string | null> {
+  try {
+    // Request media library permissions
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      console.error('Media library permissions not granted');
+      return null;
+    }
+
+    // Launch image picker with 16:9 aspect for group headers
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'images',
+      allowsEditing: true,
+      aspect: [16, 9],
+      quality: 0.85,
+    });
+
+    if (result.canceled) {
+      return null;
+    }
+
+    const uri = result.assets[0].uri;
+
+    // Compress image using expo-image-manipulator
+    const manipulated = await manipulateAsync(
+      uri,
+      [{ resize: { width: 800 } }],
+      { compress: 0.8, format: SaveFormat.JPEG }
+    );
+    const compressedUri = manipulated.uri;
+
+    // Convert compressed image to ArrayBuffer
+    const response = await fetch(compressedUri);
+    const arrayBuffer = await response.arrayBuffer();
+
+    // Generate unique file name in groups folder
+    const fileExt = uri.split('.').pop() || 'jpg';
+    const fileName = `${Date.now()}.${fileExt}`;
+    const filePath = `groups/${groupId}/${fileName}`;
+
+    // Upload to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, arrayBuffer, {
+        contentType: `image/${fileExt}`,
+        upsert: true,
+      });
+
+    if (error) {
+      console.error('Error uploading group photo:', error);
+      return null;
+    }
+
+    return data.path;
+  } catch (error) {
+    console.error('Error in uploadGroupPhoto:', error);
+    return null;
+  }
+}
+
+/**
+ * Get public URL for a group photo from storage
+ * @param path - The storage path of the group photo
+ * @returns The public URL or null if path is null
+ */
+export function getGroupPhotoUrl(path: string | null): string | null {
+  if (!path) return null;
+
+  try {
+    const { data } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(path);
+
+    return data.publicUrl;
+  } catch (error) {
+    console.error('Error getting group photo URL:', error);
     return null;
   }
 }
