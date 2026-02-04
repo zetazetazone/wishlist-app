@@ -1,6 +1,7 @@
 import { supabase } from '../lib/supabase';
 import { Group, GroupMember } from '../types';
 import { setDefaultFavorite } from '../lib/favorites';
+import { getNextGiftLeader } from '../lib/celebrations';
 
 /**
  * Generate a unique 6-character invite code
@@ -381,5 +382,100 @@ export async function updateGroup(groupId: string, updates: { name?: string; bud
     return { data, error: null };
   } catch (error) {
     return { data: null, error };
+  }
+}
+
+/**
+ * Remove a member from a group (admin action)
+ *
+ * Handles Gift Leader reassignment before deletion:
+ * 1. Finds all active/upcoming celebrations where removed user is Gift Leader
+ * 2. Reassigns Gift Leader using birthday rotation (getNextGiftLeader)
+ * 3. Records reassignment in gift_leader_history with 'member_left' reason
+ * 4. Deletes the group_members row
+ *
+ * If reassignment fails (e.g., group would have <2 members), sets gift_leader_id to NULL.
+ */
+export async function removeMember(groupId: string, removedUserId: string) {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    // Step 1: Check if removed user is Gift Leader for any active/upcoming celebrations
+    const { data: celebrations } = await supabase
+      .from('celebrations')
+      .select('id, celebrant_id')
+      .eq('group_id', groupId)
+      .eq('gift_leader_id', removedUserId)
+      .in('status', ['upcoming', 'active']);
+
+    // Step 2: Reassign Gift Leader for each affected celebration
+    if (celebrations && celebrations.length > 0) {
+      for (const celebration of celebrations) {
+        try {
+          const newLeaderId = await getNextGiftLeader(groupId, celebration.celebrant_id);
+
+          // Update celebration with new leader
+          await supabase
+            .from('celebrations')
+            .update({ gift_leader_id: newLeaderId })
+            .eq('id', celebration.id);
+
+          // Record in gift_leader_history with 'member_left' reason
+          await supabase
+            .from('gift_leader_history')
+            .insert({
+              celebration_id: celebration.id,
+              assigned_to: newLeaderId,
+              assigned_by: null, // System reassignment
+              reason: 'member_left',
+            });
+        } catch (reassignError) {
+          console.error('Failed to reassign gift leader for celebration:', celebration.id, reassignError);
+          // If reassignment fails (e.g., only 2 members and removing one leaves <2),
+          // set gift_leader_id to NULL as fallback
+          await supabase
+            .from('celebrations')
+            .update({ gift_leader_id: null })
+            .eq('id', celebration.id);
+        }
+      }
+    }
+
+    // Step 3: Delete the group_members row
+    // RLS policy allows admin to delete other members
+    const { error } = await supabase
+      .from('group_members')
+      .delete()
+      .eq('group_id', groupId)
+      .eq('user_id', removedUserId);
+
+    if (error) throw error;
+    return { error: null };
+  } catch (error) {
+    return { error };
+  }
+}
+
+/**
+ * Transfer admin role to another member (atomic via database function)
+ *
+ * Calls the transfer_admin_role RPC which:
+ * - Demotes current admin to 'member'
+ * - Promotes target user to 'admin'
+ * - Executes in a single transaction for atomicity
+ */
+export async function transferAdmin(groupId: string, newAdminId: string) {
+  try {
+    const { error } = await supabase
+      .rpc('transfer_admin_role', {
+        p_group_id: groupId,
+        p_new_admin_id: newAdminId,
+      });
+
+    if (error) throw error;
+    return { error: null };
+  } catch (error) {
+    return { error };
   }
 }
