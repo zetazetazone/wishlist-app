@@ -349,6 +349,179 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
               </TouchableOpacity>
             </View>
 
+            {/* Budget Settings - Only for Gifts mode */}
+            {mode === 'gifts' && (
+              <View style={{ marginBottom: 20 }}>
+                <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 12 }}>
+                  Budget Approach (Optional)
+                </Text>
+
+                {/* Per Gift Option */}
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: 12,
+                    backgroundColor: budgetApproach === 'per_gift' ? '#F0FDF4' : '#F9FAFB',
+                    borderRadius: 12,
+                    borderWidth: 2,
+                    borderColor: budgetApproach === 'per_gift' ? '#22C55E' : 'transparent',
+                    marginBottom: 8,
+                  }}
+                  onPress={() => setBudgetApproach(budgetApproach === 'per_gift' ? null : 'per_gift')}
+                  disabled={loading}
+                >
+                  <View style={{
+                    width: 20,
+                    height: 20,
+                    borderRadius: 10,
+                    borderWidth: 2,
+                    borderColor: budgetApproach === 'per_gift' ? '#22C55E' : '#9CA3AF',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: 12,
+                  }}>
+                    {budgetApproach === 'per_gift' && (
+                      <View style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: 5,
+                        backgroundColor: '#22C55E',
+                      }} />
+                    )}
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, fontWeight: '500', color: '#111827' }}>
+                      Per Gift
+                    </Text>
+                    <Text style={{ fontSize: 12, color: '#6B7280' }}>
+                      Set a budget for each birthday gift
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+
+                {/* Monthly Option */}
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: 12,
+                    backgroundColor: budgetApproach === 'monthly' ? '#F0FDF4' : '#F9FAFB',
+                    borderRadius: 12,
+                    borderWidth: 2,
+                    borderColor: budgetApproach === 'monthly' ? '#22C55E' : 'transparent',
+                    marginBottom: 8,
+                  }}
+                  onPress={() => setBudgetApproach(budgetApproach === 'monthly' ? null : 'monthly')}
+                  disabled={loading}
+                >
+                  <View style={{
+                    width: 20,
+                    height: 20,
+                    borderRadius: 10,
+                    borderWidth: 2,
+                    borderColor: budgetApproach === 'monthly' ? '#22C55E' : '#9CA3AF',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: 12,
+                  }}>
+                    {budgetApproach === 'monthly' && (
+                      <View style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: 5,
+                        backgroundColor: '#22C55E',
+                      }} />
+                    )}
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, fontWeight: '500', color: '#111827' }}>
+                      Monthly
+                    </Text>
+                    <Text style={{ fontSize: 12, color: '#6B7280' }}>
+                      Pool budget for all birthdays in a month
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+
+                {/* Yearly Option */}
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: 12,
+                    backgroundColor: budgetApproach === 'yearly' ? '#F0FDF4' : '#F9FAFB',
+                    borderRadius: 12,
+                    borderWidth: 2,
+                    borderColor: budgetApproach === 'yearly' ? '#22C55E' : 'transparent',
+                    marginBottom: 8,
+                  }}
+                  onPress={() => setBudgetApproach(budgetApproach === 'yearly' ? null : 'yearly')}
+                  disabled={loading}
+                >
+                  <View style={{
+                    width: 20,
+                    height: 20,
+                    borderRadius: 10,
+                    borderWidth: 2,
+                    borderColor: budgetApproach === 'yearly' ? '#22C55E' : '#9CA3AF',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: 12,
+                  }}>
+                    {budgetApproach === 'yearly' && (
+                      <View style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: 5,
+                        backgroundColor: '#22C55E',
+                      }} />
+                    )}
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, fontWeight: '500', color: '#111827' }}>
+                      Yearly
+                    </Text>
+                    <Text style={{ fontSize: 12, color: '#6B7280' }}>
+                      Set annual budget for all group celebrations
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+
+                {/* Budget Amount Input - only show when approach selected */}
+                {budgetApproach && (
+                  <View style={{ marginTop: 16 }}>
+                    <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 8 }}>
+                      Budget Amount ($)
+                    </Text>
+                    <TextInput
+                      style={{
+                        backgroundColor: '#F3F4F6',
+                        borderRadius: 12,
+                        paddingHorizontal: 16,
+                        paddingVertical: 14,
+                        fontSize: 16,
+                        color: '#111827',
+                      }}
+                      placeholder={budgetApproach === 'per_gift' ? '50' : budgetApproach === 'monthly' ? '100' : '500'}
+                      placeholderTextColor="#9CA3AF"
+                      value={budgetAmount}
+                      onChangeText={setBudgetAmount}
+                      keyboardType="decimal-pad"
+                      editable={!loading}
+                    />
+                    <Text style={{ fontSize: 12, color: '#6B7280', marginTop: 4 }}>
+                      {budgetApproach === 'per_gift'
+                        ? 'Spending limit per birthday gift'
+                        : budgetApproach === 'monthly'
+                        ? 'Total budget for all birthdays each month'
+                        : 'Total annual budget for all celebrations'}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            )}
+
             {/* Create Button */}
             <TouchableOpacity
               style={{
