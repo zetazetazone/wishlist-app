@@ -153,10 +153,10 @@ Plans:
   3. Database supports budget_amount column for pooled budgets
   4. Database supports description and photo_url columns
   5. Schema migrations apply cleanly without breaking existing groups
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 11-01: Schema migration for groups table enhancements
+- [ ] 11-01-PLAN.md — Schema migration for groups table (mode, budget, description, photo_url)
 
 #### Phase 12: Group Photo Storage
 **Goal**: Enable group photo upload following avatar infrastructure pattern
@@ -277,7 +277,7 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17
 | 8. Special Item Types | v1.1 | 3/3 | Complete | 2026-02-03 |
 | 9. Favorite Marking | v1.1 | 4/4 | Complete | 2026-02-03 |
 | 10. Wishlist Display Polish | v1.1 | 2/2 | Complete | 2026-02-03 |
-| 11. Schema Foundation | v1.2 | 0/1 | Not started | - |
+| 11. Schema Foundation | v1.2 | 0/1 | Planned | - |
 | 12. Group Photo Storage | v1.2 | 0/1 | Not started | - |
 | 13. Create Group Enhancement | v1.2 | 0/2 | Not started | - |
 | 14. Group View Redesign | v1.2 | 0/3 | Not started | - |
