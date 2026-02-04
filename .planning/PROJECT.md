@@ -39,19 +39,30 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 - ✓ Gift Leader sees their responsibilities clearly in UI — v1.0
 - ✓ Gift Leader can be manually reassigned by group admin — v1.0
 - ✓ Contribution tracking logs who spent what on each gift — v1.0
+- ✓ User sees wishlist cards with horizontal star ratings — v1.1
+- ✓ User sees their profile picture in the My Wishlist header — v1.1
+- ✓ User can mark one item as "favorite" per group (pinned + highlighted) — v1.1
+- ✓ User can add a "Surprise Me" item (signals openness to any gift) — v1.1
+- ✓ User can add a "Mystery Box" placeholder item (€50/€100 tiers) — v1.1
+- ✓ User can edit their profile (name, photo) after onboarding — v1.1
 
 ### Active
 
-**v1.1 — My Wishlist Polish + Profile Editing**
+**v1.2 — Group Experience**
 
-- [ ] User sees wishlist cards with horizontal star ratings (fix vertical bug)
-- [ ] User sees their profile picture in the My Wishlist header
-- [ ] User can mark one item as "favorite" per group (pinned + highlighted)
-- [ ] User can add a "Surprise Me" item (signals openness to any gift)
-- [ ] User can add a "Mystery Box" placeholder item (€25/€50/€100 tiers)
-- [ ] User can edit their profile (name, photo, birthday) after onboarding
+- [ ] User can add group photo and description when creating a group
+- [ ] User can select group mode: "Greetings only" or "Gifts"
+- [ ] User can set budget approach: per-gift, monthly pooled, or yearly budget
+- [ ] Admin can edit group details (name, description, photo)
+- [ ] Admin can manage members (remove, change admin role)
+- [ ] Admin can change group mode anytime
+- [ ] Admin can adjust budget settings
+- [ ] User sees group header with photo and description in group view
+- [ ] User sees member cards sorted by closest birthday
+- [ ] Member cards show profile pic, name, birthday countdown, favorite item preview
+- [ ] User can tap member card to go to their celebration page
 
-**Deferred to v1.2+**
+**Deferred to v1.3+**
 
 - [ ] User can configure notification preferences
 - [ ] User can see read receipts in chat
@@ -115,17 +126,16 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 | 15-minute cron for timezone coverage | Matches 9:00 AM local time targeting | ✓ Good - accurate delivery |
 | Nullable TIMESTAMPTZ for read_at | Richer info than boolean, same query pattern | ✓ Good - future-proof |
 
-## Current Milestone: v1.1 My Wishlist Polish
+## Current Milestone: v1.2 Group Experience
 
-**Goal:** Improve the My Wishlist screen UX and enable profile editing post-onboarding.
+**Goal:** Improve the group creation flow, group settings, and group view to support different group types and provide better member visibility.
 
 **Target features:**
-- Fix horizontal star rating display (bug)
-- Profile picture in header
-- Favorite item per group (pinned + highlighted to others)
-- "Surprise Me" option for users open to any gift
-- "Mystery Box" placeholder (€25/€50/€100 tiers for future monetization)
-- Profile editing (name, photo, birthday)
+- Create Group: Add photo, description, group mode, budget approach
+- Group Settings: Edit details, manage members, change mode/budget
+- Group View: Header with identity, member cards sorted by birthday with favorite preview
+- Group Modes: "Greetings only" (no gifts) or "Gifts" (full coordination)
+- Budget Approaches: Per-gift, monthly pooled, or yearly budget
 
 ---
-*Last updated: 2026-02-02 after v1.1 milestone start*
+*Last updated: 2026-02-04 after v1.2 milestone start*

@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-02)
+See: .planning/PROJECT.md (updated 2026-02-04)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.1 My Wishlist Polish + Profile Editing - Phase 10 Complete (Wishlist Display Polish)
+**Current focus:** v1.2 Group Experience - Defining requirements
 
 ## Current Position
 
-Phase: 10 of 10 (Wishlist Display Polish)
-Plan: 2 of 2 in current phase (gap closure complete)
-Status: Phase complete
-Last activity: 2026-02-03 - Completed 10-02-PLAN.md (gap closure)
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-04 — Milestone v1.2 started
 
-Progress: [██████████] 100% (23/23 total plans completed)
+Progress: [░░░░░░░░░░] 0%
 
 ## Milestone History
 
@@ -25,6 +25,10 @@ Progress: [██████████] 100% (23/23 total plans completed)
 - **v1.1 Polish** - Shipped 2026-02-03 (5 phases, 13 plans including gap closures)
   - Schema foundation, profile editing, special item types, favorite marking, wishlist display polish
   - Gap closures: 08-03 (special items), 09-04 (favorites), 10-02 (interactive stars)
+
+- **v1.2 Group Experience** - In progress (started 2026-02-04)
+  - Create group flow, group settings, group view redesign
+  - Group modes (greetings/gifts), budget approaches (per-gift/monthly/yearly)
 
 ## Performance Metrics (v1.0)
 
@@ -198,7 +202,7 @@ Profile editing features complete:
 
 ## Session Continuity
 
-Last session: 2026-02-03
-Stopped at: Completed 10-02-PLAN.md (gap closure - interactive stars)
+Last session: 2026-02-04
+Stopped at: Started v1.2 milestone, defining requirements
 Resume file: None
-Next: v1.1 complete - all phases and gap closures finished
+Next: Complete requirements definition, create roadmap
