@@ -70,15 +70,29 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
       return;
     }
 
+    // Validate budget if gifts mode with approach selected
+    if (mode === 'gifts' && budgetApproach) {
+      const budgetNum = parseFloat(budgetAmount);
+      if (isNaN(budgetNum) || budgetNum <= 0) {
+        Alert.alert('Error', 'Please enter a valid budget amount');
+        return;
+      }
+    }
+
     setLoading(true);
 
-    // Create group first (without photo)
+    // Calculate budget in cents (database stores cents as INTEGER)
+    const budgetCents = mode === 'gifts' && budgetApproach && budgetAmount
+      ? Math.round(parseFloat(budgetAmount) * 100)
+      : null;
+
+    // Create group with all fields
     const { data: group, error } = await createGroup({
       name: name.trim(),
       description: description.trim() || null,
-      mode: 'gifts',
-      budget_approach: null,
-      budget_amount: null,
+      mode,
+      budget_approach: mode === 'gifts' ? budgetApproach : null,
+      budget_amount: budgetCents,
     });
 
     if (error || !group) {
@@ -114,6 +128,9 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
     setName('');
     setDescription('');
     setPhotoUri(null);
+    setMode('gifts');
+    setBudgetApproach(null);
+    setBudgetAmount('');
 
     Alert.alert('Success!', `Group "${name}" created successfully`);
     onSuccess();
@@ -125,6 +142,9 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
     setName('');
     setDescription('');
     setPhotoUri(null);
+    setMode('gifts');
+    setBudgetApproach(null);
+    setBudgetAmount('');
     onClose();
   };
 
