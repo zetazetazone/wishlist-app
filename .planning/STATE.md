@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-04)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.2 Group Experience - Phase 14 complete (including gap closure)
+**Current focus:** v1.2 Group Experience - Phase 15 in progress (Group Settings)
 
 ## Current Position
 
-Phase: 14 of 17 (Group View Redesign)
-Plan: 4 of 4 in current phase (3 plans + 1 gap closure)
-Status: Phase complete (including gap closure)
-Last activity: 2026-02-04 - Completed 14-04-PLAN.md (member card navigation gap closure)
+Phase: 15 of 17 (Group Settings)
+Plan: 1 of N in current phase
+Status: In progress
+Last activity: 2026-02-05 - Completed 15-01-PLAN.md (group settings foundation)
 
-Progress: [##########] 100% v1.0+v1.1 | [########░░] 47% v1.2 (8/17 plans)
+Progress: [##########] 100% v1.0+v1.1 | [#########░] 53% v1.2 (9/17 plans)
 
 ## Milestone History
 
@@ -36,7 +36,7 @@ Progress: [##########] 100% v1.0+v1.1 | [########░░] 47% v1.2 (8/17 plans)
 - Phase 12: Group Photo Storage (upload service, generated avatars) - COMPLETE
 - Phase 13: Create Group Enhancement (CRGRP-01 through CRGRP-05) - COMPLETE
 - Phase 14: Group View Redesign (GVIEW-01 through GVIEW-07) - COMPLETE (+ gap closure 14-04)
-- Phase 15: Group Settings (GSET-01 through GSET-07)
+- Phase 15: Group Settings (GSET-01 through GSET-07) - IN PROGRESS (plan 01 complete)
 - Phase 16: Mode System (MODE-01 through MODE-05)
 - Phase 17: Budget Tracking (BUDG-01 through BUDG-05)
 
@@ -69,10 +69,15 @@ Key decisions from v1.0/v1.1 archived in PROJECT.md Key Decisions table.
 - Phase 14-03: Added users table type with full_name (distinct from user_profiles view)
 - Phase 14-04: Lookup-then-navigate pattern with findCelebrationForMember before router.push
 - Phase 14-04: maybeSingle() for graceful null when no celebration exists
+- Phase 15-01: is_group_admin() mirrors is_group_member() with SECURITY DEFINER STABLE
+- Phase 15-01: regenerate_invite_code() callable by any member (SECURITY DEFINER bypasses admin-only UPDATE RLS)
+- Phase 15-01: Route restructured from [id].tsx to [id]/ folder with Stack navigator
+- Phase 15-01: Settings sections conditionally rendered based on isAdmin role
 
 ### Research Findings (v1.2)
 
-- No new dependencies needed - existing stack sufficient (expo-image-manipulator added for compression)
+- expo-clipboard added for clipboard operations in group settings
+- No new dependencies needed beyond expo-clipboard (expo-image-manipulator added earlier for compression)
 - Schema changes: add columns to groups table (description, photo_url, mode, budget_approach, budget_amount)
 - Group photos use same storage pattern as avatars
 - Critical pitfall: mode switching with existing data needs soft-archiving consideration
@@ -94,7 +99,7 @@ From v1.0/v1.1:
 
 ## Session Continuity
 
-Last session: 2026-02-04T23:15:00Z
-Stopped at: Phase 14 fully verified (7/7 must-haves, gap closure 14-04 passed re-verification)
+Last session: 2026-02-05T00:33:00Z
+Stopped at: Completed 15-01-PLAN.md (group settings foundation)
 Resume file: None
-Next: Phase 15 (Group Settings)
+Next: Phase 15 Plan 02 (group info editing) or Plan 03 (member management)
