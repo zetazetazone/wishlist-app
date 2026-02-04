@@ -5,7 +5,6 @@ import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 import { WishlistItem } from '../../types/database.types';
 import StarRating from '../ui/StarRating';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ItemTypeBadge } from './ItemTypeBadge';
 import { FavoriteHeart } from './FavoriteHeart';
 import { MostWantedBadge } from './MostWantedBadge';
 
@@ -202,13 +201,6 @@ export default function LuxuryWishlistCard({
                       <MostWantedBadge key={fg.groupId} groupName={fg.groupName} />
                     ))
                   )
-                )}
-                {/* Item type badge for mystery box only (surprise_me shows description instead) */}
-                {item.item_type === 'mystery_box' && (
-                  <ItemTypeBadge
-                    itemType={item.item_type}
-                    tier={item.mystery_box_tier}
-                  />
                 )}
                 <Text
                   numberOfLines={2}
