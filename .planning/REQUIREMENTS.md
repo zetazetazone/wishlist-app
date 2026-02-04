@@ -96,41 +96,41 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CRGRP-01 | TBD | Pending |
-| CRGRP-02 | TBD | Pending |
-| CRGRP-03 | TBD | Pending |
-| CRGRP-04 | TBD | Pending |
-| CRGRP-05 | TBD | Pending |
-| MODE-01 | TBD | Pending |
-| MODE-02 | TBD | Pending |
-| MODE-03 | TBD | Pending |
-| MODE-04 | TBD | Pending |
-| MODE-05 | TBD | Pending |
-| BUDG-01 | TBD | Pending |
-| BUDG-02 | TBD | Pending |
-| BUDG-03 | TBD | Pending |
-| BUDG-04 | TBD | Pending |
-| BUDG-05 | TBD | Pending |
-| GSET-01 | TBD | Pending |
-| GSET-02 | TBD | Pending |
-| GSET-03 | TBD | Pending |
-| GSET-04 | TBD | Pending |
-| GSET-05 | TBD | Pending |
-| GSET-06 | TBD | Pending |
-| GSET-07 | TBD | Pending |
-| GVIEW-01 | TBD | Pending |
-| GVIEW-02 | TBD | Pending |
-| GVIEW-03 | TBD | Pending |
-| GVIEW-04 | TBD | Pending |
-| GVIEW-05 | TBD | Pending |
-| GVIEW-06 | TBD | Pending |
-| GVIEW-07 | TBD | Pending |
+| CRGRP-01 | Phase 13 | Pending |
+| CRGRP-02 | Phase 13 | Pending |
+| CRGRP-03 | Phase 13 | Pending |
+| CRGRP-04 | Phase 13 | Pending |
+| CRGRP-05 | Phase 13 | Pending |
+| MODE-01 | Phase 16 | Pending |
+| MODE-02 | Phase 16 | Pending |
+| MODE-03 | Phase 16 | Pending |
+| MODE-04 | Phase 16 | Pending |
+| MODE-05 | Phase 16 | Pending |
+| BUDG-01 | Phase 17 | Pending |
+| BUDG-02 | Phase 17 | Pending |
+| BUDG-03 | Phase 17 | Pending |
+| BUDG-04 | Phase 17 | Pending |
+| BUDG-05 | Phase 17 | Pending |
+| GSET-01 | Phase 15 | Pending |
+| GSET-02 | Phase 15 | Pending |
+| GSET-03 | Phase 15 | Pending |
+| GSET-04 | Phase 15 | Pending |
+| GSET-05 | Phase 15 | Pending |
+| GSET-06 | Phase 15 | Pending |
+| GSET-07 | Phase 15 | Pending |
+| GVIEW-01 | Phase 14 | Pending |
+| GVIEW-02 | Phase 14 | Pending |
+| GVIEW-03 | Phase 14 | Pending |
+| GVIEW-04 | Phase 14 | Pending |
+| GVIEW-05 | Phase 14 | Pending |
+| GVIEW-06 | Phase 14 | Pending |
+| GVIEW-07 | Phase 14 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 25 total
-- Mapped to phases: 0 (pending roadmap creation)
-- Unmapped: 25
+- Mapped to phases: 25
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-04*
-*Last updated: 2026-02-04 after initial definition*
+*Last updated: 2026-02-04 after roadmap creation*
