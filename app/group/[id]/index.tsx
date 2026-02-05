@@ -19,6 +19,8 @@ import { GroupViewHeader } from '../../../components/groups/GroupViewHeader';
 import { MemberCard } from '../../../components/groups/MemberCard';
 import { getDaysUntilBirthday } from '../../../utils/countdown';
 import { findCelebrationForMember } from '../../../lib/celebrations';
+import { getGroupBudgetStatus, BudgetStatus } from '../../../lib/budget';
+import { BudgetProgressBar } from '../../../components/groups/BudgetProgressBar';
 
 interface GroupWithMembers extends Group {
   members: Array<{
@@ -38,10 +40,27 @@ export default function GroupDetailScreen() {
     users: User;
     daysUntil: number;
   }>>([]);
+  const [budgetStatus, setBudgetStatus] = useState<BudgetStatus | null>(null);
 
   useEffect(() => {
     loadGroupDetails();
   }, [id]);
+
+  // Load budget status when group loads (gifts mode only)
+  useEffect(() => {
+    if (!group?.id) return;
+    // Only load budget in gifts mode
+    if ((group.mode || 'gifts') !== 'gifts') {
+      setBudgetStatus(null);
+      return;
+    }
+    getGroupBudgetStatus(group.id)
+      .then(setBudgetStatus)
+      .catch(err => {
+        console.error('Failed to load budget status:', err);
+        setBudgetStatus(null);
+      });
+  }, [group?.id, group?.mode]);
 
   // Sort members by birthday when group data loads
   useEffect(() => {
@@ -234,6 +253,13 @@ export default function GroupDetailScreen() {
               </TouchableOpacity>
             </View>
           </MotiView>
+
+          {/* Budget Section - visible to all members in gifts mode */}
+          {budgetStatus && (group.mode || 'gifts') === 'gifts' && (
+            <View style={{ marginBottom: spacing.lg }}>
+              <BudgetProgressBar status={budgetStatus} />
+            </View>
+          )}
 
           {/* Members Section - Sorted by Birthday */}
           <View style={{ marginBottom: spacing.lg }}>
