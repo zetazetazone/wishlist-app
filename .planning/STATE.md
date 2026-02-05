@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.3 Phase 18 — Schema & Atomic Functions
+**Current focus:** v1.3 Phase 19 — Gift Claiming UI (next)
 
 ## Current Position
 
-Phase: 18 of 22 (Schema & Atomic Functions)
-Plan: 01 of 2 complete
-Status: In progress
-Last activity: 2026-02-05 — Completed 18-01-PLAN.md (schema, RLS, RPC functions)
+Phase: 18 of 22 (Schema & Atomic Functions) -- COMPLETE
+Plan: 02 of 2 complete
+Status: Phase complete
+Last activity: 2026-02-05 — Completed 18-02-PLAN.md (TypeScript types & service libraries)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [#.........] 10% v1.3 (1/~10 plans)
+Progress: [##########] 100% v1.0+v1.1+v1.2 | [##........] 20% v1.3 (2/~10 plans)
 
 ## Milestone History
 
@@ -43,6 +43,12 @@ Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 - EXCEPTION WHEN unique_violation as race-condition safety net
 - Omitted pg_jsonschema -- client-side validation sufficient
 
+**Phase 18 Decisions (18-02):**
+- JSONB typed via separate interfaces (PersonalSizes, PersonalPreferences, ExternalLink) for reuse
+- Claims: RPC for mutations, direct queries for reads
+- Graceful degradation: read functions return empty arrays on error, mutation functions throw
+- personalDetails upsert casts through `unknown` to satisfy Supabase JSONB column types
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -68,7 +74,7 @@ From v1.0/v1.1:
 
 ## Session Continuity
 
-Last session: 2026-02-05T19:36Z
-Stopped at: Completed 18-01-PLAN.md (schema, RLS, RPC functions)
+Last session: 2026-02-05T19:42Z
+Stopped at: Completed 18-02-PLAN.md (TypeScript types & service libraries)
 Resume file: None
-Next: Execute 18-02-PLAN.md (integration tests for RLS and RPC functions)
+Next: Phase 19 — Gift Claiming UI
