@@ -240,9 +240,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 16-01-PLAN.md — Mode badge on GroupCard + mode-conditional MemberCard favorite hiding (MODE-01, MODE-02)
-- [ ] 16-02-PLAN.md — Mode switch in settings with confirmation dialog (MODE-03, MODE-04)
-- [ ] 16-03-PLAN.md — Celebration page dual-mode rendering (MODE-05)
+- [x] 16-01-PLAN.md — Mode badge on GroupCard + mode-conditional MemberCard favorite hiding (MODE-01, MODE-02)
+- [x] 16-02-PLAN.md — Mode switch in settings with confirmation dialog (MODE-03, MODE-04)
+- [x] 16-03-PLAN.md — Celebration page dual-mode rendering (MODE-05)
 
 #### Phase 17: Budget Tracking
 **Goal**: Track group spending against budget with visual progress indicators
@@ -283,5 +283,5 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17
 | 13. Create Group Enhancement | v1.2 | 2/2 | Complete | 2026-02-04 |
 | 14. Group View Redesign | v1.2 | 4/4 | Complete | 2026-02-04 |
 | 15. Group Settings | v1.2 | 3/3 | Complete | 2026-02-05 |
-| 16. Mode System | v1.2 | 0/3 | Not started | - |
+| 16. Mode System | v1.2 | 3/3 | Complete | 2026-02-05 |
 | 17. Budget Tracking | v1.2 | 0/3 | Not started | - |

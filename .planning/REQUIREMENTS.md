@@ -17,11 +17,11 @@ Requirements for Group Experience milestone. Each maps to roadmap phases.
 
 ### Group Modes
 
-- [ ] **MODE-01**: Group displays mode indicator (Greetings/Gifts badge)
-- [ ] **MODE-02**: "Greetings only" mode hides wishlists, Gift Leader, contributions, budget
-- [ ] **MODE-03**: Admin can change group mode in settings
-- [ ] **MODE-04**: Mode change shows confirmation dialog warning about feature visibility changes
-- [ ] **MODE-05**: Celebration page adapts to group mode (greetings-focused vs gift coordination)
+- [x] **MODE-01**: Group displays mode indicator (Greetings/Gifts badge)
+- [x] **MODE-02**: "Greetings only" mode hides wishlists, Gift Leader, contributions, budget
+- [x] **MODE-03**: Admin can change group mode in settings
+- [x] **MODE-04**: Mode change shows confirmation dialog warning about feature visibility changes
+- [x] **MODE-05**: Celebration page adapts to group mode (greetings-focused vs gift coordination)
 
 ### Budget Tracking
 
@@ -101,11 +101,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CRGRP-03 | Phase 13 | Complete |
 | CRGRP-04 | Phase 13 | Complete |
 | CRGRP-05 | Phase 13 | Complete |
-| MODE-01 | Phase 16 | Pending |
-| MODE-02 | Phase 16 | Pending |
-| MODE-03 | Phase 16 | Pending |
-| MODE-04 | Phase 16 | Pending |
-| MODE-05 | Phase 16 | Pending |
+| MODE-01 | Phase 16 | Complete |
+| MODE-02 | Phase 16 | Complete |
+| MODE-03 | Phase 16 | Complete |
+| MODE-04 | Phase 16 | Complete |
+| MODE-05 | Phase 16 | Complete |
 | BUDG-01 | Phase 17 | Pending |
 | BUDG-02 | Phase 17 | Pending |
 | BUDG-03 | Phase 17 | Pending |
@@ -133,4 +133,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-04*
-*Last updated: 2026-02-05 after Phase 15 completion*
+*Last updated: 2026-02-05 after Phase 16 completion*
