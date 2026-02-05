@@ -4,7 +4,7 @@
 
 - **v1.0 MVP** - Phases 1-5 (shipped 2026-02-02)
 - **v1.1 My Wishlist Polish + Profile Editing** - Phases 6-10 (shipped 2026-02-03)
-- **v1.2 Group Experience** - Phases 11-17 (in progress)
+- **v1.2 Group Experience** - Phases 11-17 (shipped 2026-02-05)
 
 ## Phases
 
@@ -139,7 +139,8 @@ Plans:
 
 </details>
 
-### v1.2 Group Experience (In Progress)
+<details>
+<summary>v1.2 Group Experience (Phases 11-17) - SHIPPED 2026-02-05</summary>
 
 **Milestone Goal:** Enable rich group creation with photos and descriptions, group modes (Greetings vs Gifts), budget tracking approaches, redesigned group view with birthday countdowns, and comprehensive group settings management.
 
@@ -258,9 +259,11 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 17-01-PLAN.md — Budget calculation service and updateGroupBudget data layer (TDD)
-- [ ] 17-02-PLAN.md — Budget settings UI with approach selector and amount configuration
-- [ ] 17-03-PLAN.md — Budget progress bar component and group view integration
+- [x] 17-01-PLAN.md — Budget calculation service and updateGroupBudget data layer (TDD)
+- [x] 17-02-PLAN.md — Budget settings UI with approach selector and amount configuration
+- [x] 17-03-PLAN.md — Budget progress bar component and group view integration
+
+</details>
 
 ## Progress
 
@@ -285,4 +288,4 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17
 | 14. Group View Redesign | v1.2 | 4/4 | Complete | 2026-02-04 |
 | 15. Group Settings | v1.2 | 3/3 | Complete | 2026-02-05 |
 | 16. Mode System | v1.2 | 4/4 | Complete | 2026-02-05 |
-| 17. Budget Tracking | v1.2 | 0/3 | Not started | - |
+| 17. Budget Tracking | v1.2 | 3/3 | Complete | 2026-02-05 |

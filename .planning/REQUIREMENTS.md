@@ -25,11 +25,11 @@ Requirements for Group Experience milestone. Each maps to roadmap phases.
 
 ### Budget Tracking
 
-- [ ] **BUDG-01**: Admin can set budget approach (per-gift/monthly pooled/yearly)
-- [ ] **BUDG-02**: Admin can set budget amount for monthly or yearly approaches
-- [ ] **BUDG-03**: Monthly pooled budget tracks all birthdays in a month against one pool
-- [ ] **BUDG-04**: Yearly budget tracks total annual spend against set amount
-- [ ] **BUDG-05**: Budget progress indicator shows spent vs available
+- [x] **BUDG-01**: Admin can set budget approach (per-gift/monthly pooled/yearly)
+- [x] **BUDG-02**: Admin can set budget amount for monthly or yearly approaches
+- [x] **BUDG-03**: Monthly pooled budget tracks all birthdays in a month against one pool
+- [x] **BUDG-04**: Yearly budget tracks total annual spend against set amount
+- [x] **BUDG-05**: Budget progress indicator shows spent vs available
 
 ### Group Settings
 
@@ -106,11 +106,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MODE-03 | Phase 16 | Complete |
 | MODE-04 | Phase 16 | Complete |
 | MODE-05 | Phase 16 | Complete |
-| BUDG-01 | Phase 17 | Pending |
-| BUDG-02 | Phase 17 | Pending |
-| BUDG-03 | Phase 17 | Pending |
-| BUDG-04 | Phase 17 | Pending |
-| BUDG-05 | Phase 17 | Pending |
+| BUDG-01 | Phase 17 | Complete |
+| BUDG-02 | Phase 17 | Complete |
+| BUDG-03 | Phase 17 | Complete |
+| BUDG-04 | Phase 17 | Complete |
+| BUDG-05 | Phase 17 | Complete |
 | GSET-01 | Phase 15 | Complete |
 | GSET-02 | Phase 15 | Complete |
 | GSET-03 | Phase 15 | Complete |
@@ -133,4 +133,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-04*
-*Last updated: 2026-02-05 after Phase 16 completion*
+*Last updated: 2026-02-05 after Phase 17 completion (v1.2 milestone complete)*

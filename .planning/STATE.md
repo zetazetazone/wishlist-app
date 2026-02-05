@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-04)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.2 Group Experience - Phase 17 in progress (Budget Tracking), plans 01-03 of 05 complete
+**Current focus:** v1.2 Group Experience - COMPLETE (all 7 phases, 17 phases total)
 
 ## Current Position
 
 Phase: 17 of 17 (Budget Tracking)
-Plan: 3 of 5 in current phase
-Status: In progress
-Last activity: 2026-02-05 - Completed 17-03-PLAN.md (Budget Progress Bar & Group View Integration)
+Plan: 3 of 3 in current phase
+Status: Phase complete — Milestone v1.2 complete
+Last activity: 2026-02-05 - Completed Phase 17 (Budget Tracking)
 
-Progress: [##########] 100% v1.0+v1.1 | [#################] 97% v1.2 (18/17+2 plans)
+Progress: [##########] 100% v1.0+v1.1 | [####################] 100% v1.2 (18/18 plans)
 
 ## Milestone History
 
@@ -24,23 +24,23 @@ Progress: [##########] 100% v1.0+v1.1 | [#################] 97% v1.2 (18/17+2 pl
 - **v1.1 Polish** - Shipped 2026-02-03 (5 phases, 13 plans including gap closures)
   - Schema foundation, profile editing, special item types, favorite marking, wishlist display polish
 
-- **v1.2 Group Experience** - In progress (started 2026-02-04)
-  - 7 phases (11-17), 16 planned plans
+- **v1.2 Group Experience** - Shipped 2026-02-05 (7 phases, 18 plans including gap closures)
   - Create group flow, group settings, group view redesign
   - Group modes (greetings/gifts), budget approaches (per-gift/monthly/yearly)
+  - Budget tracking with progress indicators
 
 ## v1.2 Roadmap Structure
 
-**7 phases (11-17):**
+**7 phases (11-17) — ALL COMPLETE:**
 - Phase 11: Schema Foundation (mode, budget, description, photo_url columns) - COMPLETE
 - Phase 12: Group Photo Storage (upload service, generated avatars) - COMPLETE
 - Phase 13: Create Group Enhancement (CRGRP-01 through CRGRP-05) - COMPLETE
 - Phase 14: Group View Redesign (GVIEW-01 through GVIEW-07) - COMPLETE (+ gap closure 14-04)
 - Phase 15: Group Settings (GSET-01 through GSET-07) - COMPLETE (plans 01-03)
 - Phase 16: Mode System (MODE-01 through MODE-05) - COMPLETE (plans 01-03 + gap closure 16-04)
-- Phase 17: Budget Tracking (BUDG-01 through BUDG-05) - IN PROGRESS (plans 01-03 complete)
+- Phase 17: Budget Tracking (BUDG-01 through BUDG-05) - COMPLETE (plans 01-03)
 
-**Coverage:** 25/25 requirements mapped (100%)
+**Coverage:** 25/25 requirements mapped and completed (100%)
 
 ## Accumulated Context
 
@@ -133,6 +133,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 17-03-PLAN.md (Budget Progress Bar & Group View Integration)
+Stopped at: Completed Phase 17 (Budget Tracking) — v1.2 milestone complete
 Resume file: None
-Next: 17-04-PLAN.md or 17-05-PLAN.md (remaining budget tracking plans)
+Next: /gsd:audit-milestone or /gsd:complete-milestone v1.2
