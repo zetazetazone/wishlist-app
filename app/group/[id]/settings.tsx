@@ -17,8 +17,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { MotiView } from 'moti';
 import { supabase } from '../../../lib/supabase';
 import { uploadGroupPhotoFromUri } from '../../../lib/storage';
-import { updateGroupInfo, removeMember, transferAdmin, leaveGroup } from '../../../utils/groups';
+import { updateGroupInfo, updateGroupMode, removeMember, transferAdmin, leaveGroup } from '../../../utils/groups';
 import { GroupAvatar } from '../../../components/groups/GroupAvatar';
+import { GroupModeBadge } from '../../../components/groups/GroupModeBadge';
 import { InviteCodeSection } from '../../../components/groups/InviteCodeSection';
 import { MemberListItem } from '../../../components/groups/MemberListItem';
 import { colors, spacing, borderRadius, shadows } from '../../../constants/theme';
@@ -53,6 +54,7 @@ export default function GroupSettingsScreen() {
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [photoTimestamp, setPhotoTimestamp] = useState(Date.now());
+  const [isSwitchingMode, setIsSwitchingMode] = useState(false);
 
   useEffect(() => {
     loadSettingsData();
@@ -299,6 +301,53 @@ export default function GroupSettingsScreen() {
     );
   };
 
+  const handleModeSwitch = (newMode: 'greetings' | 'gifts') => {
+    if (!id || !group || isSwitchingMode) return;
+    const currentMode = (group.mode as 'greetings' | 'gifts') || 'gifts';
+    if (newMode === currentMode) return;
+
+    const isToGreetings = newMode === 'greetings';
+
+    Alert.alert(
+      isToGreetings ? 'Switch to Greetings Mode?' : 'Switch to Gifts Mode?',
+      isToGreetings
+        ? 'The following features will be hidden from all members:\n\n\u2022 Wishlists and favorite items\n\u2022 Gift Leader assignments\n\u2022 Contribution tracking\n\nExisting gift data will be preserved and will reappear if you switch back to Gifts mode.'
+        : 'The following features will become visible to all members:\n\n\u2022 Wishlists and favorite items\n\u2022 Gift Leader assignments\n\u2022 Contribution tracking\n\nMembers will be able to coordinate gifts for upcoming birthdays.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: isToGreetings ? 'Switch to Greetings' : 'Switch to Gifts',
+          style: isToGreetings ? 'destructive' : 'default',
+          onPress: async () => {
+            setIsSwitchingMode(true);
+            const previousMode = group.mode;
+
+            // Optimistic update
+            setGroup(prev => prev ? { ...prev, mode: newMode } : prev);
+
+            try {
+              const { error } = await updateGroupMode(id, newMode);
+              if (error) throw error;
+
+              const modeName = newMode === 'greetings' ? 'Greetings' : 'Gifts';
+              Alert.alert(
+                'Mode Changed',
+                `This group is now in ${modeName} mode. Members will see the change on their next visit.`
+              );
+            } catch (error) {
+              console.error('Error switching mode:', error);
+              // Rollback optimistic update
+              setGroup(prev => prev ? { ...prev, mode: previousMode } : prev);
+              Alert.alert('Error', 'Failed to change group mode. Please try again.');
+            } finally {
+              setIsSwitchingMode(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   if (loading) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.cream[50], alignItems: 'center', justifyContent: 'center' }}>
@@ -460,11 +509,109 @@ export default function GroupSettingsScreen() {
             </MotiView>
           )}
 
+          {/* Group Mode Section (visible to all) */}
+          {group && (
+            <MotiView
+              from={{ opacity: 0, translateY: 20 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              transition={{ type: 'spring', delay: isAdmin ? 150 : 100 }}
+            >
+              <SettingsSection
+                title="Group Mode"
+                icon="swap-horizontal"
+              >
+                {isAdmin ? (
+                  <View>
+                    <View style={modeStyles.cardRow}>
+                      {/* Greetings Card */}
+                      <TouchableOpacity
+                        style={[
+                          modeStyles.modeCard,
+                          (group.mode || 'gifts') === 'greetings'
+                            ? modeStyles.modeCardGreetingsActive
+                            : modeStyles.modeCardInactive,
+                        ]}
+                        onPress={() => handleModeSwitch('greetings')}
+                        disabled={isSwitchingMode}
+                        activeOpacity={0.7}
+                      >
+                        <MaterialCommunityIcons
+                          name="party-popper"
+                          size={28}
+                          color={(group.mode || 'gifts') === 'greetings' ? colors.gold[700] : colors.cream[500]}
+                          style={{ marginBottom: spacing.xs }}
+                        />
+                        <Text
+                          style={[
+                            modeStyles.modeCardText,
+                            (group.mode || 'gifts') === 'greetings'
+                              ? modeStyles.modeCardTextGreetingsActive
+                              : modeStyles.modeCardTextInactive,
+                          ]}
+                        >
+                          Greetings
+                        </Text>
+                      </TouchableOpacity>
+
+                      {/* Gifts Card */}
+                      <TouchableOpacity
+                        style={[
+                          modeStyles.modeCard,
+                          (group.mode || 'gifts') === 'gifts'
+                            ? modeStyles.modeCardGiftsActive
+                            : modeStyles.modeCardInactive,
+                        ]}
+                        onPress={() => handleModeSwitch('gifts')}
+                        disabled={isSwitchingMode}
+                        activeOpacity={0.7}
+                      >
+                        <MaterialCommunityIcons
+                          name="gift"
+                          size={28}
+                          color={(group.mode || 'gifts') === 'gifts' ? colors.burgundy[700] : colors.cream[500]}
+                          style={{ marginBottom: spacing.xs }}
+                        />
+                        <Text
+                          style={[
+                            modeStyles.modeCardText,
+                            (group.mode || 'gifts') === 'gifts'
+                              ? modeStyles.modeCardTextGiftsActive
+                              : modeStyles.modeCardTextInactive,
+                          ]}
+                        >
+                          Gifts
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                    {isSwitchingMode && (
+                      <ActivityIndicator
+                        size="small"
+                        color={colors.burgundy[600]}
+                        style={{ marginTop: spacing.sm }}
+                      />
+                    )}
+                    <Text style={modeStyles.infoText}>
+                      Controls which features are visible to group members
+                    </Text>
+                  </View>
+                ) : (
+                  <View>
+                    <Text style={modeStyles.readOnlyLabel}>Current mode</Text>
+                    <GroupModeBadge mode={(group.mode as 'greetings' | 'gifts') || 'gifts'} />
+                    <Text style={modeStyles.readOnlyInfo}>
+                      Only the group admin can change the mode.
+                    </Text>
+                  </View>
+                )}
+              </SettingsSection>
+            </MotiView>
+          )}
+
           {/* Members Section (visible to all) */}
           <MotiView
             from={{ opacity: 0, translateY: 20 }}
             animate={{ opacity: 1, translateY: 0 }}
-            transition={{ type: 'spring', delay: 200 }}
+            transition={{ type: 'spring', delay: isAdmin ? 250 : 200 }}
           >
             <SettingsSection
               title={`Members (${members.length})`}
@@ -493,7 +640,7 @@ export default function GroupSettingsScreen() {
             <MotiView
               from={{ opacity: 0, translateY: 20 }}
               animate={{ opacity: 1, translateY: 0 }}
-              transition={{ type: 'spring', delay: 300 }}
+              transition={{ type: 'spring', delay: isAdmin ? 350 : 300 }}
             >
               <SettingsSection
                 title="Invite Code"
@@ -515,7 +662,7 @@ export default function GroupSettingsScreen() {
           <MotiView
             from={{ opacity: 0, translateY: 20 }}
             animate={{ opacity: 1, translateY: 0 }}
-            transition={{ type: 'spring', delay: 400 }}
+            transition={{ type: 'spring', delay: isAdmin ? 450 : 400 }}
           >
             <SettingsSection
               title="Danger Zone"
@@ -652,6 +799,64 @@ const styles = {
     paddingVertical: spacing.md,
   },
 };
+
+const modeStyles = StyleSheet.create({
+  cardRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  modeCard: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.lg,
+    borderRadius: borderRadius.md,
+    borderWidth: 2,
+  },
+  modeCardGreetingsActive: {
+    backgroundColor: colors.gold[100],
+    borderColor: colors.gold[300],
+  },
+  modeCardGiftsActive: {
+    backgroundColor: colors.burgundy[100],
+    borderColor: colors.burgundy[300],
+  },
+  modeCardInactive: {
+    backgroundColor: colors.white,
+    borderColor: colors.cream[300],
+  },
+  modeCardText: {
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  modeCardTextGreetingsActive: {
+    color: colors.gold[700],
+  },
+  modeCardTextGiftsActive: {
+    color: colors.burgundy[700],
+  },
+  modeCardTextInactive: {
+    color: colors.cream[500],
+  },
+  infoText: {
+    fontSize: 12,
+    color: colors.cream[600],
+    textAlign: 'center',
+    marginTop: spacing.sm,
+  },
+  readOnlyLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.cream[700],
+    marginBottom: spacing.sm,
+  },
+  readOnlyInfo: {
+    fontSize: 12,
+    color: colors.cream[500],
+    marginTop: spacing.sm,
+    fontStyle: 'italic',
+  },
+});
 
 const settingsStyles = StyleSheet.create({
   photoSection: {
