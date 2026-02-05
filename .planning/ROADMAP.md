@@ -237,12 +237,12 @@ Plans:
   3. Admin can change group mode in settings
   4. Mode change shows confirmation dialog explaining feature visibility changes
   5. Celebration page adapts to group mode (greetings-focused vs gift coordination)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 16-01: Mode-conditional rendering across group screens
-- [ ] 16-02: Mode change flow with confirmation dialog
-- [ ] 16-03: Celebration page mode adaptation
+- [ ] 16-01-PLAN.md — Mode badge on GroupCard + mode-conditional MemberCard favorite hiding (MODE-01, MODE-02)
+- [ ] 16-02-PLAN.md — Mode switch in settings with confirmation dialog (MODE-03, MODE-04)
+- [ ] 16-03-PLAN.md — Celebration page dual-mode rendering (MODE-05)
 
 #### Phase 17: Budget Tracking
 **Goal**: Track group spending against budget with visual progress indicators
