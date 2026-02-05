@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.3 Phase 19 — Gift Claims UI (next)
+**Current focus:** v1.3 Phase 19 — Gift Claims UI (in progress)
 
 ## Current Position
 
-Phase: 18 of 22 (Schema & Atomic Functions) — COMPLETE ✓
-Plan: 2/2 complete, verified (11/11 must-haves)
-Status: Phase complete — verified
-Last activity: 2026-02-05 — Phase 18 verified, all must-haves passed
+Phase: 19 of 22 (Gift Claims UI) — IN PROGRESS
+Plan: 1/3 complete (19-01)
+Status: In progress
+Last activity: 2026-02-05 — Completed 19-01 (core claim components)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [##........] 20% v1.3 (2/~10 plans)
+Progress: [##########] 100% v1.0+v1.1+v1.2 | [###.......] 30% v1.3 (3/~10 plans)
 
 ## Milestone History
 
@@ -49,6 +49,12 @@ Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 - Graceful degradation: read functions return empty arrays on error, mutation functions throw
 - personalDetails upsert casts through `unknown` to satisfy Supabase JSONB column types
 
+**Phase 19 Decisions (19-01):**
+- ClaimButton: Three visual states (claim/unclaim/loading), disabled returns null for special items
+- ClaimerAvatar: Modal popup for name reveal (better touch targets than tooltip)
+- TakenBadge: Gift icon only, no text (per CONTEXT decision)
+- YourClaimIndicator: MostWantedBadge pattern with burgundy colors
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -75,6 +81,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Phase 18 complete and verified (11/11 must-haves)
+Stopped at: Completed 19-01-PLAN.md (core claim components)
 Resume file: None
-Next: `/gsd:discuss-phase 19` or `/gsd:plan-phase 19` — Gift Claims UI
+Next: `/gsd:execute-plan 19-02` — Extend LuxuryWishlistCard with claim props
