@@ -250,6 +250,38 @@ export interface Database {
           created_at?: string
         }
       }
+      gift_claims: {
+        Row: {
+          id: string
+          wishlist_item_id: string
+          claimed_by: string
+          claim_type: 'full' | 'split'
+          amount: number | null
+          status: 'claimed' | 'purchased' | 'delivered'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          wishlist_item_id: string
+          claimed_by: string
+          claim_type?: 'full' | 'split'
+          amount?: number | null
+          status?: 'claimed' | 'purchased' | 'delivered'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          wishlist_item_id?: string
+          claimed_by?: string
+          claim_type?: 'full' | 'split'
+          amount?: number | null
+          status?: 'claimed' | 'purchased' | 'delivered'
+          created_at?: string
+          updated_at?: string
+        }
+      }
       device_tokens: {
         Row: {
           id: string
@@ -438,6 +470,61 @@ export interface Database {
           created_at?: string
         }
       }
+      member_notes: {
+        Row: {
+          id: string
+          group_id: string
+          about_user_id: string
+          author_id: string
+          content: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          group_id: string
+          about_user_id: string
+          author_id: string
+          content: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          group_id?: string
+          about_user_id?: string
+          author_id?: string
+          content?: string
+          created_at?: string
+        }
+      }
+      personal_details: {
+        Row: {
+          id: string
+          user_id: string
+          sizes: Json
+          preferences: Json
+          external_links: Json
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          sizes?: Json
+          preferences?: Json
+          external_links?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          sizes?: Json
+          preferences?: Json
+          external_links?: Json
+          created_at?: string
+          updated_at?: string
+        }
+      }
       group_favorites: {
         Row: {
           id: string
@@ -474,3 +561,34 @@ export type UserProfile = Database['public']['Tables']['user_profiles']['Row'];
 export type Group = Database['public']['Tables']['groups']['Row'];
 export type GroupMember = Database['public']['Tables']['group_members']['Row'];
 export type User = Database['public']['Tables']['users']['Row'];
+export type GiftClaim = Database['public']['Tables']['gift_claims']['Row'];
+export type PersonalDetails = Database['public']['Tables']['personal_details']['Row'];
+export type MemberNote = Database['public']['Tables']['member_notes']['Row'];
+
+// JSONB shape interfaces for personal_details columns
+export interface PersonalSizes {
+  shirt?: string;
+  shoe?: string;
+  pants?: string;
+  ring?: string;
+  dress?: string;
+  jacket?: string;
+}
+
+export interface PreferenceTag {
+  label: string;
+  custom?: boolean;
+}
+
+export interface PersonalPreferences {
+  colors?: PreferenceTag[];
+  brands?: PreferenceTag[];
+  interests?: PreferenceTag[];
+  dislikes?: PreferenceTag[];
+}
+
+export interface ExternalLink {
+  url: string;
+  label?: string;
+  platform?: string;
+}
