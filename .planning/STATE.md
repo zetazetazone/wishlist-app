@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-05)
 ## Current Position
 
 Phase: 19 of 22 (Gift Claims UI) — IN PROGRESS
-Plan: 4/5 complete (19-04)
+Plan: 4/5 complete (19-01, 19-02, 19-03, 19-04)
 Status: In progress
-Last activity: 2026-02-05 — Completed 19-04 (celebrant taken view)
+Last activity: 2026-02-05 — Completed 19-03 (claim integration in celebration page)
 
 Progress: [##########] 100% v1.0+v1.1+v1.2 | [######....] 60% v1.3 (6/~10 plans)
 
@@ -62,6 +62,12 @@ Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 - ClaimButton as separate section below View Product button
 - Dimmed opacity 0.6 for celebrant taken view
 
+**Phase 19 Decisions (19-03):**
+- Claimed items sort to bottom (unclaimed stay visible at top) for non-celebrant view
+- Confirmation dialogs before claim/unclaim operations
+- Race condition errors show friendly "Already Claimed" message
+- Celebrant view receives null for claim prop (no claim UI visible)
+
 **Phase 19 Decisions (19-04):**
 - TakenCounter positioned in header row alongside gift count text (horizontal layout)
 - Claim statuses stored in Map<string, boolean> for O(1) lookup
@@ -93,6 +99,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 19-04-PLAN.md (celebrant taken view)
+Stopped at: Completed 19-03-PLAN.md (claim integration in celebration page)
 Resume file: None
 Next: `/gsd:execute-plan 19-05` — Testing and polish
