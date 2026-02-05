@@ -7,6 +7,11 @@ import StarRating from '../ui/StarRating';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FavoriteHeart } from './FavoriteHeart';
 import { MostWantedBadge } from './MostWantedBadge';
+import { ClaimButton } from './ClaimButton';
+import { ClaimerAvatar } from './ClaimerAvatar';
+import { TakenBadge } from './TakenBadge';
+import { YourClaimIndicator } from './YourClaimIndicator';
+import type { ClaimWithUser } from '../../lib/claims';
 
 interface LuxuryWishlistCardProps {
   item: WishlistItem;
@@ -18,6 +23,15 @@ interface LuxuryWishlistCardProps {
   showFavoriteHeart?: boolean;
   singleGroupName?: string; // NEW: for celebration view where only one group matters
   totalUserGroups?: number; // Total groups user belongs to (for "all groups" badge)
+  // Claim-related props (all optional to maintain backward compatibility)
+  claimable?: boolean;           // Show claim button (non-celebrant view of unclaimed item)
+  onClaim?: () => void;          // Called when user taps Claim
+  onUnclaim?: () => void;        // Called when user taps Unclaim
+  claiming?: boolean;            // Loading state during claim operation
+  claim?: ClaimWithUser | null;  // Claim data (null = unclaimed, has data = claimed)
+  isYourClaim?: boolean;         // Current user owns this claim
+  isTaken?: boolean;             // Celebrant view: item is claimed (no claimer identity)
+  dimmed?: boolean;              // Visual dim for taken items (celebrant view)
 }
 
 export default function LuxuryWishlistCard({
@@ -30,6 +44,14 @@ export default function LuxuryWishlistCard({
   showFavoriteHeart,
   singleGroupName,
   totalUserGroups,
+  claimable,
+  onClaim,
+  onUnclaim,
+  claiming,
+  claim,
+  isYourClaim,
+  isTaken,
+  dimmed,
 }: LuxuryWishlistCardProps) {
   // Determine if this item is favorited (for any group or single group context)
   const isFavorite = (favoriteGroups && favoriteGroups.length > 0) || !!singleGroupName;
