@@ -28,6 +28,7 @@ export interface Celebration extends CelebrationRow {
   group?: {
     id: string;
     name: string;
+    mode?: 'greetings' | 'gifts';
   };
 }
 
@@ -478,7 +479,8 @@ export async function getCelebration(celebrationId: string): Promise<Celebration
       *,
       groups (
         id,
-        name
+        name,
+        mode
       )
     `)
     .eq('id', celebrationId)
