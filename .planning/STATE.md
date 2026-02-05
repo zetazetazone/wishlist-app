@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-04)
 Phase: 17 of 17 (Budget Tracking)
 Plan: 3 of 3 in current phase
 Status: Phase complete — Milestone v1.2 complete
-Last activity: 2026-02-05 - Quick task 002: Fix per-gift budget amount not persisted
+Last activity: 2026-02-05 - Quick task 003: Fix budget display stale after settings save
 
 Progress: [##########] 100% v1.0+v1.1 | [####################] 100% v1.2 (18/18 plans)
 
@@ -136,6 +136,7 @@ From v1.0/v1.1:
 |---|-------------|------|--------|-----------|
 | 001 | Fix budget per_gift check constraint violation | 2026-02-05 | a9da654 | [001-fix-budget-per-gift-constraint](./quick/001-fix-budget-per-gift-constraint/) |
 | 002 | Fix per-gift budget amount not persisted | 2026-02-05 | 84bb2fa | [002-fix-per-gift-budget-not-persisted](./quick/002-fix-per-gift-budget-not-persisted/) |
+| 003 | Fix budget display stale after settings save | 2026-02-05 | 6809669 | [003-fix-budget-display-stale-on-nav](./quick/003-fix-budget-display-stale-on-nav/) |
 
 ## Session Continuity
 
