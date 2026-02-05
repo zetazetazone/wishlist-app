@@ -3,9 +3,10 @@
 **Defined:** 2026-02-04
 **Core Value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
 
-## v1.2 Requirements
+## v1.2 Requirements (Complete)
 
-Requirements for Group Experience milestone. Each maps to roadmap phases.
+<details>
+<summary>25/25 requirements complete — shipped 2026-02-05</summary>
 
 ### Create Group
 
@@ -51,26 +52,76 @@ Requirements for Group Experience milestone. Each maps to roadmap phases.
 - [x] **GVIEW-06**: Member cards show favorite item preview (thumbnail + title)
 - [x] **GVIEW-07**: Tapping member card navigates to their celebration page
 
+</details>
+
+## v1.3 Requirements
+
+Requirements for Gift Claims & Personal Details milestone. Each maps to roadmap phases.
+
+### Gift Claims
+
+- [ ] **CLAIM-01**: Member can claim a standard wishlist item (one claimer at a time, atomic operation)
+- [ ] **CLAIM-02**: Claims are hidden from celebrant (celebrant cannot see who claimed what)
+- [ ] **CLAIM-03**: Celebrant sees claimed items as "taken" (no claimer identity shown)
+- [ ] **CLAIM-04**: Member can unclaim an item they previously claimed
+- [ ] **CLAIM-05**: All group members (except celebrant) can see who claimed which items
+- [ ] **CLAIM-06**: Claimed items display visual distinction (badge/dimmed) on wishlist cards
+- [ ] **CLAIM-07**: Surprise Me and Mystery Box items are not claimable
+- [ ] **CLAIM-08**: Claiming works in both Gifts and Greetings group modes
+
+### Split Contributions
+
+- [ ] **SPLIT-01**: Claimer can optionally open a claimed item for split contributions
+- [ ] **SPLIT-02**: Other members can pledge amounts toward a split-contribution item
+- [ ] **SPLIT-03**: Contribution progress bar shows funded percentage vs item price
+- [ ] **SPLIT-04**: Unclaiming an item with contributions warns and notifies contributors
+
+### Claim Enhancements
+
+- [ ] **CLMX-01**: Group members receive push notification when an item is claimed
+- [ ] **CLMX-02**: Celebration page shows claim count summary ("3 of 8 items claimed")
+- [ ] **CLMX-03**: Claim timestamp recorded and visible in item detail
+
+### Personal Details
+
+- [ ] **PROF-01**: User can fill in clothing sizes (shirt, shoe, pants, ring)
+- [ ] **PROF-02**: User can add favorite colors (multi-select tags)
+- [ ] **PROF-03**: User can add favorite brands and interests (free-text tags)
+- [ ] **PROF-04**: User can add a "dislikes / please avoid" section
+- [ ] **PROF-05**: User can add external wishlist links (Amazon, Pinterest, Etsy, etc.)
+- [ ] **PROF-06**: Personal details are global (shared across all groups user belongs to)
+- [ ] **PROF-07**: Group members can view another member's personal details
+- [ ] **PROF-08**: Profile shows completeness indicator ("60% complete")
+- [ ] **PROF-09**: Profile shows "last updated" timestamp for personal details
+
+### Secret Notes
+
+- [ ] **NOTE-01**: Group member can add a secret note about another member
+- [ ] **NOTE-02**: Secret notes are hidden from the profile owner (subject exclusion)
+- [ ] **NOTE-03**: Secret notes are visible to all other group members
+- [ ] **NOTE-04**: Secret notes are per-group (not shared across groups)
+- [ ] **NOTE-05**: Note author can edit or delete their own notes
+
 ## Future Requirements
 
 Deferred to later milestones. Tracked but not in current roadmap.
 
-### Notification Preferences (v1.3+)
+### Notification Preferences (v1.4+)
 
 - **NOTF-01**: User can configure notification preferences
 - **NOTF-02**: User can toggle reminder types (4w/2w/1w/day-of)
 
-### Chat Enhancements (v1.3+)
+### Chat Enhancements (v1.4+)
 
 - **CHAT-01**: User can see read receipts in chat
 - **CHAT-02**: User can add reactions to messages
 
-### Gift Leader Enhancements (v1.3+)
+### Gift Leader Enhancements (v1.4+)
 
 - **LEAD-01**: Gift Leader progress dashboard with visual coordination status
 - **LEAD-02**: Auto-fallback when Gift Leader is unavailable
 
-### Budget Enhancements (v1.3+)
+### Budget Enhancements (v1.4+)
 
 - **BUDG-06**: Budget alerts when approaching limit (push notification)
 - **BUDG-07**: Per-celebration budget allocation within yearly/monthly pool
@@ -81,56 +132,71 @@ Explicitly excluded. Documented to prevent scope creep.
 
 | Feature | Reason |
 |---------|--------|
-| In-app payment collection | Out of scope per PROJECT.md; legal/compliance complexity |
+| In-app payment processing | Legal/compliance complexity; track pledges only, payment external |
 | Automatic fund distribution | Not a payments app; Gift Leader tracks externally |
+| Anonymous claiming (hidden from all members) | Defeats coordination purpose; Gift Leader needs transparency |
+| Auto-purchase / buy-now integration | Massive scope creep; requires retailer API integrations |
+| Claim expiration / auto-release | Frustrating UX; use social pressure via chat instead |
+| Claiming Surprise Me / Mystery Box items | These are signals, not reservable items |
+| Per-group personal details | Violates global profile requirement; data maintenance burden |
+| AI gift suggestions from profile | Scope creep; human givers make better personalized decisions |
+| Privacy controls per profile field | Over-engineering; all-or-nothing visibility sufficient |
+| Social media profile links | Not gift-relevant; keep external links shopping-focused |
 | Public/discoverable groups | Privacy-first for friend groups; invite-only |
-| Member roles beyond admin | Keep simple: admin vs member sufficient |
-| Budget enforcement/blocking | Budgets are guidelines, not hard limits |
-| Group activity log | Adds complexity; defer to future |
-| Budget carryover between periods | Accounting complexity; periods stay independent |
-| Detailed spending analytics | Coordination app, not finance app |
 
 ## Traceability
 
 Which phases cover which requirements. Updated during roadmap creation.
 
+### v1.2 (Complete)
+
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CRGRP-01 | Phase 13 | Complete |
-| CRGRP-02 | Phase 13 | Complete |
-| CRGRP-03 | Phase 13 | Complete |
-| CRGRP-04 | Phase 13 | Complete |
-| CRGRP-05 | Phase 13 | Complete |
-| MODE-01 | Phase 16 | Complete |
-| MODE-02 | Phase 16 | Complete |
-| MODE-03 | Phase 16 | Complete |
-| MODE-04 | Phase 16 | Complete |
-| MODE-05 | Phase 16 | Complete |
-| BUDG-01 | Phase 17 | Complete |
-| BUDG-02 | Phase 17 | Complete |
-| BUDG-03 | Phase 17 | Complete |
-| BUDG-04 | Phase 17 | Complete |
-| BUDG-05 | Phase 17 | Complete |
-| GSET-01 | Phase 15 | Complete |
-| GSET-02 | Phase 15 | Complete |
-| GSET-03 | Phase 15 | Complete |
-| GSET-04 | Phase 15 | Complete |
-| GSET-05 | Phase 15 | Complete |
-| GSET-06 | Phase 15 | Complete |
-| GSET-07 | Phase 15 | Complete |
-| GVIEW-01 | Phase 14 | Complete |
-| GVIEW-02 | Phase 14 | Complete |
-| GVIEW-03 | Phase 14 | Complete |
-| GVIEW-04 | Phase 14 | Complete |
-| GVIEW-05 | Phase 14 | Complete |
-| GVIEW-06 | Phase 14 | Complete |
-| GVIEW-07 | Phase 14 | Complete |
+| CRGRP-01 through CRGRP-05 | Phase 13 | Complete |
+| MODE-01 through MODE-05 | Phase 16 | Complete |
+| BUDG-01 through BUDG-05 | Phase 17 | Complete |
+| GSET-01 through GSET-07 | Phase 15 | Complete |
+| GVIEW-01 through GVIEW-07 | Phase 14 | Complete |
+
+### v1.3 (Pending)
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| CLAIM-01 | — | Pending |
+| CLAIM-02 | — | Pending |
+| CLAIM-03 | — | Pending |
+| CLAIM-04 | — | Pending |
+| CLAIM-05 | — | Pending |
+| CLAIM-06 | — | Pending |
+| CLAIM-07 | — | Pending |
+| CLAIM-08 | — | Pending |
+| SPLIT-01 | — | Pending |
+| SPLIT-02 | — | Pending |
+| SPLIT-03 | — | Pending |
+| SPLIT-04 | — | Pending |
+| CLMX-01 | — | Pending |
+| CLMX-02 | — | Pending |
+| CLMX-03 | — | Pending |
+| PROF-01 | — | Pending |
+| PROF-02 | — | Pending |
+| PROF-03 | — | Pending |
+| PROF-04 | — | Pending |
+| PROF-05 | — | Pending |
+| PROF-06 | — | Pending |
+| PROF-07 | — | Pending |
+| PROF-08 | — | Pending |
+| PROF-09 | — | Pending |
+| NOTE-01 | — | Pending |
+| NOTE-02 | — | Pending |
+| NOTE-03 | — | Pending |
+| NOTE-04 | — | Pending |
+| NOTE-05 | — | Pending |
 
 **Coverage:**
-- v1.2 requirements: 25 total
-- Mapped to phases: 25
-- Unmapped: 0
+- v1.3 requirements: 30 total
+- Mapped to phases: 0 (pending roadmap creation)
+- Unmapped: 30
 
 ---
 *Requirements defined: 2026-02-04*
-*Last updated: 2026-02-05 after Phase 17 completion (v1.2 milestone complete)*
+*Last updated: 2026-02-05 after v1.3 milestone requirements definition*
