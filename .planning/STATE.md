@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-05)
 ## Current Position
 
 Phase: 18 of 22 (Schema & Atomic Functions)
-Plan: — (phase not yet planned)
-Status: Ready to plan
-Last activity: 2026-02-05 — Roadmap created for v1.3 (5 phases, 30 requirements)
+Plan: 01 of 2 complete
+Status: In progress
+Last activity: 2026-02-05 — Completed 18-01-PLAN.md (schema, RLS, RPC functions)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [......................] 0% v1.3
+Progress: [##########] 100% v1.0+v1.1+v1.2 | [#.........] 10% v1.3 (1/~10 plans)
 
 ## Milestone History
 
@@ -30,11 +30,18 @@ Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 
 **v1.3 Architectural Decisions:**
 - Separate `gift_claims` table (NOT columns on wishlist_items) — prevents RLS leaks
-- Atomic claiming via PostgreSQL RPC function (`UPDATE WHERE claimed_by IS NULL`)
+- Atomic claiming via PostgreSQL RPC function with SELECT FOR UPDATE SKIP LOCKED
 - SECURITY DEFINER function for celebrant partial visibility (sees "taken" not claimer)
 - `personal_details` table with JSONB for flexible storage (avoids schema bloat)
 - `member_notes` table with subject-exclusion RLS pattern (new pattern)
 - Three RLS patterns coexist: full exclusion (chat), partial visibility (claims), subject exclusion (notes)
+
+**Phase 18 Decisions (18-01):**
+- item_type guard in claim_item() blocks claiming surprise_me and mystery_box items
+- NULL group_id guard prevents claiming personal items without group context
+- Full/split mutual exclusion: full claims block splits, existing splits block full claims
+- EXCEPTION WHEN unique_violation as race-condition safety net
+- Omitted pg_jsonschema -- client-side validation sufficient
 
 ### Pending Todos (Manual Setup)
 
@@ -49,7 +56,7 @@ From v1.0/v1.1:
 
 - Pre-existing TypeScript errors (type exports for Group, WishlistItem) - non-blocking
 - npm peer dependency workaround (--legacy-peer-deps) for React 19 - acceptable
-- Split contribution integration approach TBD: extend `celebration_contributions` vs separate table
+- Split contribution integration approach: uses gift_claims.claim_type='split' with amount column (decided in 18-01)
 
 ### Quick Tasks Completed
 
@@ -61,7 +68,7 @@ From v1.0/v1.1:
 
 ## Session Continuity
 
-Last session: 2026-02-05
-Stopped at: Roadmap created for v1.3 — 5 phases (18-22), 30 requirements mapped
+Last session: 2026-02-05T19:36Z
+Stopped at: Completed 18-01-PLAN.md (schema, RLS, RPC functions)
 Resume file: None
-Next: `/gsd:plan-phase 18` to plan Schema & Atomic Functions
+Next: Execute 18-02-PLAN.md (integration tests for RLS and RPC functions)
