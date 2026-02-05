@@ -47,6 +47,12 @@ import { getFavoriteForGroup } from '../../../lib/favorites';
 import { getWishlistItemsByUserId, WishlistItem } from '../../../lib/wishlistItems';
 import LuxuryWishlistCard from '../../../components/wishlist/LuxuryWishlistCard';
 import { GroupModeBadge } from '../../../components/groups/GroupModeBadge';
+import {
+  getClaimsForItems,
+  claimItem,
+  unclaimItem,
+  type ClaimWithUser,
+} from '../../../lib/claims';
 import { getDaysUntilBirthday, getCountdownText } from '../../../utils/countdown';
 import { colors, spacing, borderRadius } from '../../../constants/theme';
 
@@ -106,6 +112,11 @@ export default function CelebrationDetailScreen() {
   const [celebrantItems, setCelebrantItems] = useState<WishlistItem[]>([]);
   const [celebrantFavoriteId, setCelebrantFavoriteId] = useState<string | null>(null);
   const [wishlistLoading, setWishlistLoading] = useState(true);
+
+  // Claims state
+  const [claims, setClaims] = useState<ClaimWithUser[]>([]);
+  const [claimsLoading, setClaimsLoading] = useState(false);
+  const [claimingItemId, setClaimingItemId] = useState<string | null>(null);
 
   // View mode: 'info' shows header/contributions, 'chat' shows full chat
   const [viewMode, setViewMode] = useState<'info' | 'chat'>('info');
@@ -187,6 +198,27 @@ export default function CelebrationDetailScreen() {
     }
   }, [celebration?.celebrant_id, celebration?.group_id]);
 
+  // Load claims for celebrant items
+  const loadClaims = useCallback(async () => {
+    if (!celebrantItems.length) return;
+
+    setClaimsLoading(true);
+    try {
+      const itemIds = celebrantItems.map(item => item.id);
+      const claimsData = await getClaimsForItems(itemIds);
+      setClaims(claimsData);
+    } catch (err) {
+      console.error('Failed to load claims:', err);
+    } finally {
+      setClaimsLoading(false);
+    }
+  }, [celebrantItems]);
+
+  // Helper to get claim for an item
+  const getClaimForItem = useCallback((itemId: string): ClaimWithUser | null => {
+    return claims.find(c => c.wishlist_item_id === itemId) || null;
+  }, [claims]);
+
   useEffect(() => {
     loadCelebration();
     loadContributions();
@@ -198,6 +230,13 @@ export default function CelebrationDetailScreen() {
       loadCelebrantWishlist();
     }
   }, [celebration, loadCelebrantWishlist]);
+
+  // Load claims when celebrant items are loaded
+  useEffect(() => {
+    if (celebrantItems.length > 0) {
+      loadClaims();
+    }
+  }, [celebrantItems, loadClaims]);
 
   // Handle Gift Leader reassignment
   const handleReassign = async (newLeaderId: string) => {
