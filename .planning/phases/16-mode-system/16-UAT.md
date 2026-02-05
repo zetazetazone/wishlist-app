@@ -1,9 +1,9 @@
 ---
-status: complete
+status: diagnosed
 phase: 16-mode-system
 source: [16-01-SUMMARY.md, 16-02-SUMMARY.md, 16-03-SUMMARY.md]
 started: 2026-02-05T13:30:00Z
-updated: 2026-02-05T13:38:00Z
+updated: 2026-02-05T13:40:00Z
 ---
 
 ## Current Test
@@ -62,7 +62,12 @@ skipped: 5
   reason: "User reported: badge should fit to contents - badge stretches wide across the card instead of being compact around icon+text"
   severity: cosmetic
   test: 1
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "GroupModeBadge View missing alignSelf: 'flex-start' — inherits full width from flex:1 parent in GroupCard"
+  artifacts:
+    - path: "components/groups/GroupModeBadge.tsx"
+      issue: "Line 31: View style missing alignSelf: 'flex-start'"
+    - path: "components/groups/GroupCard.tsx"
+      issue: "Line 42: Parent View has flex: 1 causing badge to stretch"
+  missing:
+    - "Add alignSelf: 'flex-start' to GroupModeBadge View style"
+  debug_session: ".planning/debug/group-mode-badge-stretch.md"
