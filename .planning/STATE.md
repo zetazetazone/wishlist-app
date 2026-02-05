@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-05)
 ## Current Position
 
 Phase: 19 of 22 (Gift Claims UI) — IN PROGRESS
-Plan: 2/5 complete (19-02)
+Plan: 4/5 complete (19-04)
 Status: In progress
-Last activity: 2026-02-05 — Completed 19-02 (extend card with claim props)
+Last activity: 2026-02-05 — Completed 19-04 (celebrant taken view)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [####......] 40% v1.3 (4/~10 plans)
+Progress: [##########] 100% v1.0+v1.1+v1.2 | [######....] 60% v1.3 (6/~10 plans)
 
 ## Milestone History
 
@@ -62,6 +62,11 @@ Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 - ClaimButton as separate section below View Product button
 - Dimmed opacity 0.6 for celebrant taken view
 
+**Phase 19 Decisions (19-04):**
+- TakenCounter positioned in header row alongside gift count text (horizontal layout)
+- Claim statuses stored in Map<string, boolean> for O(1) lookup
+- Items sorted via useMemo with taken items at bottom, preserving priority within status
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -88,6 +93,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 19-02-PLAN.md (extend card with claim props)
+Stopped at: Completed 19-04-PLAN.md (celebrant taken view)
 Resume file: None
-Next: `/gsd:execute-plan 19-03` — Wire up claim actions and celebration view integration
+Next: `/gsd:execute-plan 19-05` — Testing and polish
