@@ -33,13 +33,13 @@ Requirements for Group Experience milestone. Each maps to roadmap phases.
 
 ### Group Settings
 
-- [ ] **GSET-01**: Admin can edit group name
-- [ ] **GSET-02**: Admin can edit group description
-- [ ] **GSET-03**: Admin can change group photo
-- [ ] **GSET-04**: Admin can remove members from group
-- [ ] **GSET-05**: Admin can transfer admin role to another member
-- [ ] **GSET-06**: User can view and regenerate invite code
-- [ ] **GSET-07**: User can leave group (non-admin)
+- [x] **GSET-01**: Admin can edit group name
+- [x] **GSET-02**: Admin can edit group description
+- [x] **GSET-03**: Admin can change group photo
+- [x] **GSET-04**: Admin can remove members from group
+- [x] **GSET-05**: Admin can transfer admin role to another member
+- [x] **GSET-06**: User can view and regenerate invite code
+- [x] **GSET-07**: User can leave group (non-admin)
 
 ### Group View
 
@@ -111,13 +111,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BUDG-03 | Phase 17 | Pending |
 | BUDG-04 | Phase 17 | Pending |
 | BUDG-05 | Phase 17 | Pending |
-| GSET-01 | Phase 15 | Pending |
-| GSET-02 | Phase 15 | Pending |
-| GSET-03 | Phase 15 | Pending |
-| GSET-04 | Phase 15 | Pending |
-| GSET-05 | Phase 15 | Pending |
-| GSET-06 | Phase 15 | Pending |
-| GSET-07 | Phase 15 | Pending |
+| GSET-01 | Phase 15 | Complete |
+| GSET-02 | Phase 15 | Complete |
+| GSET-03 | Phase 15 | Complete |
+| GSET-04 | Phase 15 | Complete |
+| GSET-05 | Phase 15 | Complete |
+| GSET-06 | Phase 15 | Complete |
+| GSET-07 | Phase 15 | Complete |
 | GVIEW-01 | Phase 14 | Complete |
 | GVIEW-02 | Phase 14 | Complete |
 | GVIEW-03 | Phase 14 | Complete |
@@ -133,4 +133,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-04*
-*Last updated: 2026-02-04 after Phase 14 completion*
+*Last updated: 2026-02-05 after Phase 15 completion*

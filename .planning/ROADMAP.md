@@ -223,9 +223,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 15-01-PLAN.md — DB migration (invite_code, RLS policies, helper functions) + route restructure + settings skeleton
-- [ ] 15-02-PLAN.md — Group info editing (GSET-01,02,03) + invite code management (GSET-06)
-- [ ] 15-03-PLAN.md — Member management: remove, admin transfer, leave group (GSET-04,05,07)
+- [x] 15-01-PLAN.md — DB migration (invite_code, RLS policies, helper functions) + route restructure + settings skeleton
+- [x] 15-02-PLAN.md — Group info editing (GSET-01,02,03) + invite code management (GSET-06)
+- [x] 15-03-PLAN.md — Member management: remove, admin transfer, leave group (GSET-04,05,07)
 
 #### Phase 16: Mode System
 **Goal**: Group modes control feature visibility with smooth transitions
@@ -282,6 +282,6 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17
 | 12. Group Photo Storage | v1.2 | 1/1 | Complete | 2026-02-04 |
 | 13. Create Group Enhancement | v1.2 | 2/2 | Complete | 2026-02-04 |
 | 14. Group View Redesign | v1.2 | 4/4 | Complete | 2026-02-04 |
-| 15. Group Settings | v1.2 | 0/3 | Not started | - |
+| 15. Group Settings | v1.2 | 3/3 | Complete | 2026-02-05 |
 | 16. Mode System | v1.2 | 0/3 | Not started | - |
 | 17. Budget Tracking | v1.2 | 0/3 | Not started | - |
