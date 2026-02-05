@@ -255,12 +255,12 @@ Plans:
   3. Monthly pooled budget tracks all birthdays in a month against one pool
   4. Yearly budget tracks total annual spend against set amount
   5. Budget progress indicator shows spent vs available amounts
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 17-01: Budget settings UI with approach and amount configuration
-- [ ] 17-02: Budget calculation service (monthly/yearly tracking)
-- [ ] 17-03: Budget progress indicator component
+- [ ] 17-01-PLAN.md — Budget calculation service and updateGroupBudget data layer (TDD)
+- [ ] 17-02-PLAN.md — Budget settings UI with approach selector and amount configuration
+- [ ] 17-03-PLAN.md — Budget progress bar component and group view integration
 
 ## Progress
 
