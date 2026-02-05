@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-04)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.2 Group Experience - Phase 16 complete (Mode System + gap closure), ready for Phase 17
+**Current focus:** v1.2 Group Experience - Phase 17 in progress (Budget Tracking), plan 01 of 05 complete
 
 ## Current Position
 
-Phase: 16 of 17 (Mode System)
-Plan: 4 of 4 in current phase (gap closure complete)
-Status: Phase complete
-Last activity: 2026-02-05 - Completed 16-04-PLAN.md (GroupModeBadge width gap closure)
+Phase: 17 of 17 (Budget Tracking)
+Plan: 1 of 5 in current phase
+Status: In progress
+Last activity: 2026-02-05 - Completed 17-01-PLAN.md (Budget Calculation Service)
 
-Progress: [##########] 100% v1.0+v1.1 | [################] 88% v1.2 (15/17 plans)
+Progress: [##########] 100% v1.0+v1.1 | [################-] 94% v1.2 (16/17 plans)
 
 ## Milestone History
 
@@ -38,7 +38,7 @@ Progress: [##########] 100% v1.0+v1.1 | [################] 88% v1.2 (15/17 plans
 - Phase 14: Group View Redesign (GVIEW-01 through GVIEW-07) - COMPLETE (+ gap closure 14-04)
 - Phase 15: Group Settings (GSET-01 through GSET-07) - COMPLETE (plans 01-03)
 - Phase 16: Mode System (MODE-01 through MODE-05) - COMPLETE (plans 01-03 + gap closure 16-04)
-- Phase 17: Budget Tracking (BUDG-01 through BUDG-05)
+- Phase 17: Budget Tracking (BUDG-01 through BUDG-05) - IN PROGRESS (plan 01 complete)
 
 **Coverage:** 25/25 requirements mapped (100%)
 
@@ -93,6 +93,10 @@ Key decisions from v1.0/v1.1 archived in PROJECT.md Key Decisions table.
 - Phase 16-03: Greetings mode hard-hides Gift Leader, Contributions, Wishlist, History sections
 - Phase 16-03: Send a Greeting button is future feature hook with Coming Soon alert
 - Phase 16-04: alignSelf flex-start on GroupModeBadge (fix in component, not parent)
+- Phase 17-01: addMonths(startOfMonth, 1) for exclusive monthly end boundary (avoids midnight edge case)
+- Phase 17-01: getSpendingInRange returns 0 on error (graceful degradation for budget display)
+- Phase 17-01: isOverBudget at exactly 100% (>= comparison)
+- Phase 17-01: Jest with ts-jest for project test infrastructure
 
 ### Research Findings (v1.2)
 
@@ -102,6 +106,7 @@ Key decisions from v1.0/v1.1 archived in PROJECT.md Key Decisions table.
 - Group photos use same storage pattern as avatars
 - Critical pitfall: mode switching with existing data needs soft-archiving consideration
 - Critical pitfall: member removal cascades to Gift Leader reassignment
+- Jest, ts-jest, @types/jest added as devDependencies for TDD workflow
 
 ### Pending Todos (Manual Setup)
 
@@ -120,6 +125,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 16-04-PLAN.md (GroupModeBadge width gap closure)
+Stopped at: Completed 17-01-PLAN.md (Budget Calculation Service)
 Resume file: None
-Next: Phase 17 (Budget Tracking)
+Next: 17-02-PLAN.md (Budget Progress Bar component)
