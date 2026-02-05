@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-05)
 ## Current Position
 
 Phase: 19 of 22 (Gift Claims UI) — IN PROGRESS
-Plan: 1/3 complete (19-01)
+Plan: 2/5 complete (19-02)
 Status: In progress
-Last activity: 2026-02-05 — Completed 19-01 (core claim components)
+Last activity: 2026-02-05 — Completed 19-02 (extend card with claim props)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [###.......] 30% v1.3 (3/~10 plans)
+Progress: [##########] 100% v1.0+v1.1+v1.2 | [####......] 40% v1.3 (4/~10 plans)
 
 ## Milestone History
 
@@ -55,6 +55,13 @@ Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 - TakenBadge: Gift icon only, no text (per CONTEXT decision)
 - YourClaimIndicator: MostWantedBadge pattern with burgundy colors
 
+**Phase 19 Decisions (19-02):**
+- TakenBadge positioned in actions row (right of header) alongside favorite heart
+- ClaimerAvatar positioned before FavoriteHeart in actions row
+- YourClaimIndicator positioned below MostWantedBadge, above title
+- ClaimButton as separate section below View Product button
+- Dimmed opacity 0.6 for celebrant taken view
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -81,6 +88,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 19-01-PLAN.md (core claim components)
+Stopped at: Completed 19-02-PLAN.md (extend card with claim props)
 Resume file: None
-Next: `/gsd:execute-plan 19-02` — Extend LuxuryWishlistCard with claim props
+Next: `/gsd:execute-plan 19-03` — Wire up claim actions and celebration view integration
