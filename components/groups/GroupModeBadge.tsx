@@ -31,6 +31,7 @@ export function GroupModeBadge({ mode }: GroupModeBadgeProps) {
       style={{
         flexDirection: 'row',
         alignItems: 'center',
+        alignSelf: 'flex-start',
         backgroundColor: config.bgColor,
         paddingHorizontal: spacing.sm,
         paddingVertical: spacing.xs,
