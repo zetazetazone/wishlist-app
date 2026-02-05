@@ -20,6 +20,7 @@ import { uploadGroupPhotoFromUri } from '../../../lib/storage';
 import { updateGroupInfo, updateGroupMode, removeMember, transferAdmin, leaveGroup } from '../../../utils/groups';
 import { GroupAvatar } from '../../../components/groups/GroupAvatar';
 import { GroupModeBadge } from '../../../components/groups/GroupModeBadge';
+import { BudgetSettingsSection } from '../../../components/groups/BudgetSettingsSection';
 import { InviteCodeSection } from '../../../components/groups/InviteCodeSection';
 import { MemberListItem } from '../../../components/groups/MemberListItem';
 import { colors, spacing, borderRadius, shadows } from '../../../constants/theme';
@@ -30,6 +31,8 @@ interface GroupDetails {
   photo_url: string | null;
   mode: string | null;
   invite_code: string | null;
+  budget_approach: string | null;
+  budget_amount: number | null; // cents
 }
 
 interface MemberInfo {
@@ -84,7 +87,7 @@ export default function GroupSettingsScreen() {
       const [groupResult, membershipResult, membersResult] = await Promise.all([
         supabase
           .from('groups')
-          .select('name, description, photo_url, mode, invite_code')
+          .select('name, description, photo_url, mode, invite_code, budget_approach, budget_amount')
           .eq('id', id)
           .single(),
         supabase
@@ -607,11 +610,38 @@ export default function GroupSettingsScreen() {
             </MotiView>
           )}
 
+          {/* Budget Settings Section (admin only, gifts mode only) */}
+          {isAdmin && group && (group.mode || 'gifts') === 'gifts' && (
+            <MotiView
+              from={{ opacity: 0, translateY: 20 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              transition={{ type: 'spring', delay: 200 }}
+            >
+              <SettingsSection
+                title="Budget"
+                icon="cash-multiple"
+              >
+                <BudgetSettingsSection
+                  currentApproach={group.budget_approach as any}
+                  currentAmount={group.budget_amount}
+                  groupId={id!}
+                  onBudgetUpdated={(approach, amount) =>
+                    setGroup(prev =>
+                      prev
+                        ? { ...prev, budget_approach: approach, budget_amount: amount }
+                        : prev
+                    )
+                  }
+                />
+              </SettingsSection>
+            </MotiView>
+          )}
+
           {/* Members Section (visible to all) */}
           <MotiView
             from={{ opacity: 0, translateY: 20 }}
             animate={{ opacity: 1, translateY: 0 }}
-            transition={{ type: 'spring', delay: isAdmin ? 250 : 200 }}
+            transition={{ type: 'spring', delay: isAdmin ? 300 : 200 }}
           >
             <SettingsSection
               title={`Members (${members.length})`}
@@ -640,7 +670,7 @@ export default function GroupSettingsScreen() {
             <MotiView
               from={{ opacity: 0, translateY: 20 }}
               animate={{ opacity: 1, translateY: 0 }}
-              transition={{ type: 'spring', delay: isAdmin ? 350 : 300 }}
+              transition={{ type: 'spring', delay: isAdmin ? 400 : 300 }}
             >
               <SettingsSection
                 title="Invite Code"
@@ -662,7 +692,7 @@ export default function GroupSettingsScreen() {
           <MotiView
             from={{ opacity: 0, translateY: 20 }}
             animate={{ opacity: 1, translateY: 0 }}
-            transition={{ type: 'spring', delay: isAdmin ? 450 : 400 }}
+            transition={{ type: 'spring', delay: isAdmin ? 500 : 400 }}
           >
             <SettingsSection
               title="Danger Zone"
