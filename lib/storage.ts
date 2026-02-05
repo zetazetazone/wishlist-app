@@ -1,5 +1,4 @@
 import * as ImagePicker from 'expo-image-picker';
-import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { supabase } from './supabase';
 
 /**
@@ -80,7 +79,7 @@ export function getAvatarUrl(path: string | null): string | null {
 }
 
 /**
- * Upload group photo image to Supabase Storage with compression
+ * Upload group photo image to Supabase Storage
  * @param groupId - The group's ID to associate with the photo
  * @returns The storage path of the uploaded photo or null if failed/canceled
  */
@@ -107,28 +106,19 @@ export async function uploadGroupPhoto(groupId: string): Promise<string | null> 
 
     const uri = result.assets[0].uri;
 
-    // Compress image using expo-image-manipulator
-    const manipulated = await manipulateAsync(
-      uri,
-      [{ resize: { width: 800 } }],
-      { compress: 0.8, format: SaveFormat.JPEG }
-    );
-    const compressedUri = manipulated.uri;
-
-    // Convert compressed image to ArrayBuffer
-    const response = await fetch(compressedUri);
+    // Convert image to ArrayBuffer (image picker quality param handles compression)
+    const response = await fetch(uri);
     const arrayBuffer = await response.arrayBuffer();
 
     // Generate unique file name in groups folder
-    const fileExt = uri.split('.').pop() || 'jpg';
-    const fileName = `${Date.now()}.${fileExt}`;
+    const fileName = `${Date.now()}.jpg`;
     const filePath = `groups/${groupId}/${fileName}`;
 
     // Upload to Supabase Storage
     const { data, error } = await supabase.storage
       .from('avatars')
       .upload(filePath, arrayBuffer, {
-        contentType: `image/${fileExt}`,
+        contentType: 'image/jpeg',
         upsert: true,
       });
 
@@ -165,7 +155,7 @@ export function getGroupPhotoUrl(path: string | null): string | null {
 }
 
 /**
- * Upload group photo from a local URI to Supabase Storage with compression
+ * Upload group photo from a local URI to Supabase Storage
  * Use this when you already have a picked image URI (e.g., from a preview)
  * @param uri - The local image URI to upload
  * @param groupId - The group's ID to associate with the photo
@@ -173,16 +163,8 @@ export function getGroupPhotoUrl(path: string | null): string | null {
  */
 export async function uploadGroupPhotoFromUri(uri: string, groupId: string): Promise<string | null> {
   try {
-    // Compress image using expo-image-manipulator
-    const manipulated = await manipulateAsync(
-      uri,
-      [{ resize: { width: 800 } }],
-      { compress: 0.8, format: SaveFormat.JPEG }
-    );
-    const compressedUri = manipulated.uri;
-
-    // Convert compressed image to ArrayBuffer
-    const response = await fetch(compressedUri);
+    // Convert image to ArrayBuffer (compression deferred to dev build with expo-image-manipulator)
+    const response = await fetch(uri);
     const arrayBuffer = await response.arrayBuffer();
 
     // Generate unique file name in groups folder

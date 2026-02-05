@@ -9,7 +9,6 @@ import {
   StyleSheet,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import * as Clipboard from 'expo-clipboard';
 import { regenerateInviteCode } from '../../utils/groups';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 
@@ -34,11 +33,16 @@ export function InviteCodeSection({
 
   const handleCopy = async () => {
     try {
-      await Clipboard.setStringAsync(inviteCode);
+      const { setStringAsync } = await import('expo-clipboard');
+      await setStringAsync(inviteCode);
       Alert.alert('Copied!', 'Invite code copied to clipboard');
     } catch (error) {
-      console.error('Error copying invite code:', error);
-      Alert.alert('Error', 'Failed to copy invite code');
+      // Fallback: share the code instead if clipboard native module unavailable
+      try {
+        await Share.share({ message: inviteCode });
+      } catch {
+        Alert.alert('Invite Code', inviteCode);
+      }
     }
   };
 
