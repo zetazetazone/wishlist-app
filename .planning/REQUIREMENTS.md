@@ -6,7 +6,7 @@
 ## v1.2 Requirements (Complete)
 
 <details>
-<summary>25/25 requirements complete — shipped 2026-02-05</summary>
+<summary>25/25 requirements complete -- shipped 2026-02-05</summary>
 
 ### Create Group
 
@@ -158,45 +158,45 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GSET-01 through GSET-07 | Phase 15 | Complete |
 | GVIEW-01 through GVIEW-07 | Phase 14 | Complete |
 
-### v1.3 (Pending)
+### v1.3 (In Progress)
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CLAIM-01 | — | Pending |
-| CLAIM-02 | — | Pending |
-| CLAIM-03 | — | Pending |
-| CLAIM-04 | — | Pending |
-| CLAIM-05 | — | Pending |
-| CLAIM-06 | — | Pending |
-| CLAIM-07 | — | Pending |
-| CLAIM-08 | — | Pending |
-| SPLIT-01 | — | Pending |
-| SPLIT-02 | — | Pending |
-| SPLIT-03 | — | Pending |
-| SPLIT-04 | — | Pending |
-| CLMX-01 | — | Pending |
-| CLMX-02 | — | Pending |
-| CLMX-03 | — | Pending |
-| PROF-01 | — | Pending |
-| PROF-02 | — | Pending |
-| PROF-03 | — | Pending |
-| PROF-04 | — | Pending |
-| PROF-05 | — | Pending |
-| PROF-06 | — | Pending |
-| PROF-07 | — | Pending |
-| PROF-08 | — | Pending |
-| PROF-09 | — | Pending |
-| NOTE-01 | — | Pending |
-| NOTE-02 | — | Pending |
-| NOTE-03 | — | Pending |
-| NOTE-04 | — | Pending |
-| NOTE-05 | — | Pending |
+| CLAIM-01 | Phase 19 | Pending |
+| CLAIM-02 | Phase 19 | Pending |
+| CLAIM-03 | Phase 19 | Pending |
+| CLAIM-04 | Phase 19 | Pending |
+| CLAIM-05 | Phase 19 | Pending |
+| CLAIM-06 | Phase 19 | Pending |
+| CLAIM-07 | Phase 19 | Pending |
+| CLAIM-08 | Phase 19 | Pending |
+| SPLIT-01 | Phase 21 | Pending |
+| SPLIT-02 | Phase 21 | Pending |
+| SPLIT-03 | Phase 21 | Pending |
+| SPLIT-04 | Phase 21 | Pending |
+| CLMX-01 | Phase 21 | Pending |
+| CLMX-02 | Phase 21 | Pending |
+| CLMX-03 | Phase 21 | Pending |
+| PROF-01 | Phase 20 | Pending |
+| PROF-02 | Phase 20 | Pending |
+| PROF-03 | Phase 20 | Pending |
+| PROF-04 | Phase 20 | Pending |
+| PROF-05 | Phase 20 | Pending |
+| PROF-06 | Phase 20 | Pending |
+| PROF-07 | Phase 20 | Pending |
+| PROF-08 | Phase 20 | Pending |
+| PROF-09 | Phase 20 | Pending |
+| NOTE-01 | Phase 22 | Pending |
+| NOTE-02 | Phase 22 | Pending |
+| NOTE-03 | Phase 22 | Pending |
+| NOTE-04 | Phase 22 | Pending |
+| NOTE-05 | Phase 22 | Pending |
 
 **Coverage:**
 - v1.3 requirements: 30 total
-- Mapped to phases: 0 (pending roadmap creation)
-- Unmapped: 30
+- Mapped to phases: 30/30
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-04*
-*Last updated: 2026-02-05 after v1.3 milestone requirements definition*
+*Last updated: 2026-02-05 after v1.3 roadmap creation*

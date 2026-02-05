@@ -5,6 +5,7 @@
 - **v1.0 MVP** - Phases 1-5 (shipped 2026-02-02)
 - **v1.1 My Wishlist Polish + Profile Editing** - Phases 6-10 (shipped 2026-02-03)
 - **v1.2 Group Experience** - Phases 11-17 (shipped 2026-02-05)
+- **v1.3 Gift Claims & Personal Details** - Phases 18-22 (in progress)
 
 ## Phases
 
@@ -265,10 +266,103 @@ Plans:
 
 </details>
 
+### v1.3 Gift Claims & Personal Details (In Progress)
+
+**Milestone Goal:** Enable members to claim wishlist items for coordinated gift-buying, provide rich personal detail profiles for better gift selection, and allow group members to share secret notes about each other for collaborative gift intelligence.
+
+**Key architectural decisions:**
+- Separate `gift_claims` table (not columns on wishlist_items) to prevent RLS leaks
+- Atomic claiming via PostgreSQL RPC function (`UPDATE WHERE claimed_by IS NULL`)
+- SECURITY DEFINER function for celebrant partial visibility (sees "taken" not claimer)
+- `personal_details` table with JSONB for flexible storage
+- `member_notes` table with subject-exclusion RLS pattern
+- Three RLS patterns coexist: full exclusion (chat), partial visibility (claims), subject exclusion (notes)
+
+#### Phase 18: Schema & Atomic Functions
+**Goal**: Database foundation for claims, personal details, and secret notes with race-condition-safe atomic operations and three distinct RLS visibility patterns
+**Depends on**: Phase 17
+**Requirements**: None (foundation for CLAIM-*, SPLIT-*, PROF-*, NOTE-*)
+**Success Criteria** (what must be TRUE):
+  1. `gift_claims` table exists with celebration-scoped claims and partial unique index enforcing one full claim per item per celebration
+  2. Atomic claiming RPC function prevents race conditions (two simultaneous claims on the same item result in exactly one success)
+  3. Celebrant-safe status function returns only boolean is_claimed per item (claimer identity stripped)
+  4. `personal_details` table exists with JSONB columns for flexible preference storage and owner-only edit RLS
+  5. `member_notes` table exists with subject-exclusion RLS (user cannot query notes about themselves)
+**Plans**: TBD
+
+Plans:
+- [ ] 18-01: TBD
+- [ ] 18-02: TBD
+
+#### Phase 19: Gift Claims UI
+**Goal**: Members can claim and unclaim wishlist items with visual distinction, and celebrants see "taken" status without claimer identity
+**Depends on**: Phase 18
+**Requirements**: CLAIM-01, CLAIM-02, CLAIM-03, CLAIM-04, CLAIM-05, CLAIM-06, CLAIM-07, CLAIM-08
+**Success Criteria** (what must be TRUE):
+  1. Member can tap a wishlist item to claim it, and the claim is immediately reflected in the UI
+  2. Celebrant viewing their own wishlist sees claimed items marked as "taken" with no claimer name shown
+  3. All other group members can see who claimed which items on the celebration page
+  4. Member can unclaim an item they previously claimed, releasing it for others
+  5. Surprise Me and Mystery Box items do not show a claim button
+**Plans**: TBD
+
+Plans:
+- [ ] 19-01: TBD
+- [ ] 19-02: TBD
+
+#### Phase 20: Personal Details
+**Goal**: Users can fill in and share personal details (sizes, preferences, external links) across all their groups for better gift selection
+**Depends on**: Phase 18
+**Requirements**: PROF-01, PROF-02, PROF-03, PROF-04, PROF-05, PROF-06, PROF-07, PROF-08, PROF-09
+**Success Criteria** (what must be TRUE):
+  1. User can fill in clothing sizes (shirt, shoe, pants, ring) from profile settings
+  2. User can add favorite colors, brands, interests, and dislikes as tags
+  3. User can add external wishlist links (Amazon, Pinterest, Etsy URLs) that open in device browser
+  4. Group members can view another member's personal details on their profile page (read-only)
+  5. Profile shows completeness indicator and last-updated timestamp for personal details
+**Plans**: TBD
+
+Plans:
+- [ ] 20-01: TBD
+- [ ] 20-02: TBD
+
+#### Phase 21: Split Contributions & Claim Enhancements
+**Goal**: Claimers can open items for split funding from other members, and claim-related notifications and summaries complete the coordination experience
+**Depends on**: Phase 19
+**Requirements**: SPLIT-01, SPLIT-02, SPLIT-03, SPLIT-04, CLMX-01, CLMX-02, CLMX-03
+**Success Criteria** (what must be TRUE):
+  1. Claimer can toggle a claimed item to accept split contributions from other members
+  2. Other members can pledge amounts toward a split-contribution item, and the progress bar shows funded percentage
+  3. Unclaiming an item with existing contributions shows a warning and notifies contributors
+  4. Group members (except celebrant) receive a push notification when an item is claimed
+  5. Celebration page shows claim count summary (e.g., "3 of 8 items claimed") and individual claim timestamps
+**Plans**: TBD
+
+Plans:
+- [ ] 21-01: TBD
+- [ ] 21-02: TBD
+
+#### Phase 22: Secret Notes
+**Goal**: Group members can add hidden notes about each other for collaborative gift-giving intelligence, with subject-exclusion privacy enforcement
+**Depends on**: Phase 18
+**Requirements**: NOTE-01, NOTE-02, NOTE-03, NOTE-04, NOTE-05
+**Success Criteria** (what must be TRUE):
+  1. Group member can add a secret note about another member from the member's profile or celebration page
+  2. Notes are completely hidden from the profile owner (subject cannot see notes about themselves)
+  3. All other group members can read notes about a member for gift-giving context
+  4. Notes are scoped per-group (a note in Group A is not visible in Group B)
+  5. Note author can edit or delete their own notes
+**Plans**: TBD
+
+Plans:
+- [ ] 22-01: TBD
+- [ ] 22-02: TBD
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17
+Phases execute in numeric order: 18 -> 19 -> 20 -> 21 -> 22
+(Phases 19 and 20 can run in parallel after 18; Phase 21 depends on 19; Phase 22 depends on 18)
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -289,3 +383,8 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16 -> 17
 | 15. Group Settings | v1.2 | 3/3 | Complete | 2026-02-05 |
 | 16. Mode System | v1.2 | 4/4 | Complete | 2026-02-05 |
 | 17. Budget Tracking | v1.2 | 3/3 | Complete | 2026-02-05 |
+| 18. Schema & Atomic Functions | v1.3 | 0/TBD | Not started | - |
+| 19. Gift Claims UI | v1.3 | 0/TBD | Not started | - |
+| 20. Personal Details | v1.3 | 0/TBD | Not started | - |
+| 21. Split Contributions & Claim Enhancements | v1.3 | 0/TBD | Not started | - |
+| 22. Secret Notes | v1.3 | 0/TBD | Not started | - |

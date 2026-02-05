@@ -5,29 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.3 Gift Claims & Personal Details
+**Current focus:** v1.3 Phase 18 — Schema & Atomic Functions
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-02-05 — Milestone v1.3 started
+Phase: 18 of 22 (Schema & Atomic Functions)
+Plan: — (phase not yet planned)
+Status: Ready to plan
+Last activity: 2026-02-05 — Roadmap created for v1.3 (5 phases, 30 requirements)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [....................] 0% v1.3
+Progress: [##########] 100% v1.0+v1.1+v1.2 | [......................] 0% v1.3
 
 ## Milestone History
 
 - **v1.0 MVP** - Shipped 2026-02-02 (5 phases, 10 plans + 1 gap closure)
-  - Full birthday gift coordination with push notifications, secret chat, calendar, and smart reminders
-
 - **v1.1 Polish** - Shipped 2026-02-03 (5 phases, 13 plans including gap closures)
-  - Schema foundation, profile editing, special item types, favorite marking, wishlist display polish
-
 - **v1.2 Group Experience** - Shipped 2026-02-05 (7 phases, 18 plans including gap closures)
-  - Create group flow, group settings, group view redesign
-  - Group modes (greetings/gifts), budget approaches (per-gift/monthly/yearly)
-  - Budget tracking with progress indicators
 
 ## Accumulated Context
 
@@ -35,17 +28,13 @@ Progress: [##########] 100% v1.0+v1.1+v1.2 | [....................] 0% v1.3
 
 Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 
-**v1.2 Decisions (summary):**
-- CHECK constraints (not ENUMs) for mode/budget_approach
-- budget_amount in cents as INTEGER
-- Reuse avatars bucket with groups/ subfolder
-- 16:9 aspect ratio for group photos, compressed to 800px width
-- is_group_admin() SECURITY DEFINER STABLE helper function
-- Route restructured from [id].tsx to [id]/ folder with Stack navigator
-- Separate updateGroupInfo/updateGroupMode/updateGroupBudget service functions
-- Hard hide (not disabled) for mode-conditional UI elements
-- Jest with ts-jest for project test infrastructure
-- Traffic-light pattern for budget progress indicators
+**v1.3 Architectural Decisions:**
+- Separate `gift_claims` table (NOT columns on wishlist_items) — prevents RLS leaks
+- Atomic claiming via PostgreSQL RPC function (`UPDATE WHERE claimed_by IS NULL`)
+- SECURITY DEFINER function for celebrant partial visibility (sees "taken" not claimer)
+- `personal_details` table with JSONB for flexible storage (avoids schema bloat)
+- `member_notes` table with subject-exclusion RLS pattern (new pattern)
+- Three RLS patterns coexist: full exclusion (chat), partial visibility (claims), subject exclusion (notes)
 
 ### Pending Todos (Manual Setup)
 
@@ -60,6 +49,7 @@ From v1.0/v1.1:
 
 - Pre-existing TypeScript errors (type exports for Group, WishlistItem) - non-blocking
 - npm peer dependency workaround (--legacy-peer-deps) for React 19 - acceptable
+- Split contribution integration approach TBD: extend `celebration_contributions` vs separate table
 
 ### Quick Tasks Completed
 
@@ -72,6 +62,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Starting milestone v1.3 — Gift Claims & Personal Details
+Stopped at: Roadmap created for v1.3 — 5 phases (18-22), 30 requirements mapped
 Resume file: None
-Next: Define requirements and create roadmap for v1.3
+Next: `/gsd:plan-phase 18` to plan Schema & Atomic Functions
