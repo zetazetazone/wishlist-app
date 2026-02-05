@@ -285,6 +285,71 @@ export default function CelebrationDetailScreen() {
     loadCelebration(); // Refresh total
   };
 
+  // Handle claiming an item with confirmation dialog (per CONTEXT: "Modal confirmation before claiming")
+  const handleClaimItem = useCallback(async (item: WishlistItem) => {
+    Alert.alert(
+      'Claim this item?',
+      `You are about to claim "${item.title}". This lets others know you'll get this gift.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Claim',
+          onPress: async () => {
+            setClaimingItemId(item.id);
+            try {
+              const result = await claimItem(item.id, 'full');
+              if (!result.success) {
+                // Handle race condition gracefully
+                if (result.error?.includes('already claimed') || result.error?.includes('unique')) {
+                  Alert.alert('Already Claimed', 'Someone else just claimed this item. Refreshing list...');
+                } else {
+                  Alert.alert('Unable to Claim', result.error || 'Please try again.');
+                }
+              }
+              // Refresh claims regardless
+              await loadClaims();
+            } catch (error) {
+              Alert.alert('Error', 'Failed to claim item. Please try again.');
+            } finally {
+              setClaimingItemId(null);
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  }, [loadClaims]);
+
+  // Handle unclaiming an item with confirmation dialog
+  const handleUnclaimItem = useCallback(async (item: WishlistItem, claimId: string) => {
+    Alert.alert(
+      'Unclaim this item?',
+      `Release your claim on "${item.title}"? Someone else will be able to claim it.`,
+      [
+        { text: 'Keep Claim', style: 'cancel' },
+        {
+          text: 'Unclaim',
+          style: 'destructive',
+          onPress: async () => {
+            setClaimingItemId(item.id);
+            try {
+              const result = await unclaimItem(claimId);
+              if (!result.success) {
+                Alert.alert('Unable to Unclaim', result.error || 'Please try again.');
+              }
+              await loadClaims();
+            } catch (error) {
+              Alert.alert('Error', 'Failed to unclaim item. Please try again.');
+            } finally {
+              setClaimingItemId(null);
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  }, [loadClaims]);
+
   // Navigate to wishlist item (from linked item in chat)
   const handleLinkedItemPress = (itemId: string) => {
     // Navigate to wishlist item detail
