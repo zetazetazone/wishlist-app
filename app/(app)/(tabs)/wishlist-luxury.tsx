@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -13,10 +13,12 @@ import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../../../lib/supabase';
 import { WishlistItem } from '../../../types/database.types';
+import { getItemClaimStatus } from '../../../lib/claims';
 import LuxuryBottomSheet, {
   LuxuryBottomSheetRef,
 } from '../../../components/wishlist/LuxuryBottomSheet';
 import LuxuryWishlistCard from '../../../components/wishlist/LuxuryWishlistCard';
+import { TakenCounter } from '../../../components/wishlist/TakenCounter';
 import { colors, spacing, borderRadius, shadows } from '../../../constants/theme';
 
 export default function LuxuryWishlistScreen() {
@@ -24,6 +26,7 @@ export default function LuxuryWishlistScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [claimStatuses, setClaimStatuses] = useState<Map<string, boolean>>(new Map());
   const bottomSheetRef = useRef<LuxuryBottomSheetRef>(null);
 
   useEffect(() => {
@@ -36,11 +39,36 @@ export default function LuxuryWishlistScreen() {
     }
   }, [userId]);
 
+  // Fetch claim statuses when items change
+  useEffect(() => {
+    if (items.length > 0) {
+      fetchClaimStatuses(items.map((i) => i.id));
+    }
+  }, [items]);
+
   const getCurrentUser = async () => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
     setUserId(user?.id || null);
+  };
+
+  /**
+   * Fetch claim statuses for the celebrant's own items
+   * Uses getItemClaimStatus which only returns boolean is_claimed
+   * without leaking claimer identity to the item owner
+   */
+  const fetchClaimStatuses = async (itemIds: string[]) => {
+    if (itemIds.length === 0) return;
+
+    try {
+      const statuses = await getItemClaimStatus(itemIds);
+      const statusMap = new Map<string, boolean>();
+      statuses.forEach((s) => statusMap.set(s.wishlist_item_id, s.is_claimed));
+      setClaimStatuses(statusMap);
+    } catch (err) {
+      console.error('Failed to fetch claim statuses:', err);
+    }
   };
 
   const fetchWishlistItems = async () => {
@@ -120,6 +148,24 @@ export default function LuxuryWishlistScreen() {
       Alert.alert('Error', 'Failed to delete item');
     }
   };
+
+  // Calculate taken count for TakenCounter
+  const takenCount = Array.from(claimStatuses.values()).filter(Boolean).length;
+
+  // Sort items with taken at bottom (unclaimed items stay more visible)
+  const sortedItems = useMemo(() => {
+    return [...items].sort((a, b) => {
+      const aIsTaken = claimStatuses.get(a.id) || false;
+      const bIsTaken = claimStatuses.get(b.id) || false;
+
+      // Unclaimed items first
+      if (aIsTaken && !bIsTaken) return 1;
+      if (!aIsTaken && bIsTaken) return -1;
+
+      // Within same status, sort by priority (higher first)
+      return (b.priority || 0) - (a.priority || 0);
+    });
+  }, [items, claimStatuses]);
 
   return (
     <>
