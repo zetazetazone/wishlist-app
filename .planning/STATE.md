@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-04)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.2 Group Experience - Phase 16 complete (Mode System), ready for Phase 17
+**Current focus:** v1.2 Group Experience - Phase 16 complete (Mode System + gap closure), ready for Phase 17
 
 ## Current Position
 
 Phase: 16 of 17 (Mode System)
-Plan: 3 of 3 in current phase
+Plan: 4 of 4 in current phase (gap closure complete)
 Status: Phase complete
-Last activity: 2026-02-05 - Completed 16-03-PLAN.md (celebration page mode adaptation)
+Last activity: 2026-02-05 - Completed 16-04-PLAN.md (GroupModeBadge width gap closure)
 
-Progress: [##########] 100% v1.0+v1.1 | [###############] 82% v1.2 (14/17 plans)
+Progress: [##########] 100% v1.0+v1.1 | [################] 88% v1.2 (15/17 plans)
 
 ## Milestone History
 
@@ -37,7 +37,7 @@ Progress: [##########] 100% v1.0+v1.1 | [###############] 82% v1.2 (14/17 plans)
 - Phase 13: Create Group Enhancement (CRGRP-01 through CRGRP-05) - COMPLETE
 - Phase 14: Group View Redesign (GVIEW-01 through GVIEW-07) - COMPLETE (+ gap closure 14-04)
 - Phase 15: Group Settings (GSET-01 through GSET-07) - COMPLETE (plans 01-03)
-- Phase 16: Mode System (MODE-01 through MODE-05) - COMPLETE (plans 01-03)
+- Phase 16: Mode System (MODE-01 through MODE-05) - COMPLETE (plans 01-03 + gap closure 16-04)
 - Phase 17: Budget Tracking (BUDG-01 through BUDG-05)
 
 **Coverage:** 25/25 requirements mapped (100%)
@@ -92,6 +92,7 @@ Key decisions from v1.0/v1.1 archived in PROJECT.md Key Decisions table.
 - Phase 16-03: Chat remains accessible in both modes (greetings hides gift sections, not navigation)
 - Phase 16-03: Greetings mode hard-hides Gift Leader, Contributions, Wishlist, History sections
 - Phase 16-03: Send a Greeting button is future feature hook with Coming Soon alert
+- Phase 16-04: alignSelf flex-start on GroupModeBadge (fix in component, not parent)
 
 ### Research Findings (v1.2)
 
@@ -119,6 +120,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 16-03-PLAN.md (celebration page mode adaptation)
+Stopped at: Completed 16-04-PLAN.md (GroupModeBadge width gap closure)
 Resume file: None
 Next: Phase 17 (Budget Tracking)
