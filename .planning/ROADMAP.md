@@ -304,11 +304,14 @@ Plans:
   3. All other group members can see who claimed which items on the celebration page
   4. Member can unclaim an item they previously claimed, releasing it for others
   5. Surprise Me and Mystery Box items do not show a claim button
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 19-01: TBD
-- [ ] 19-02: TBD
+- [ ] 19-01-PLAN.md — Claim UI components (ClaimButton, ClaimerAvatar, TakenBadge, YourClaimIndicator)
+- [ ] 19-02-PLAN.md — Extend LuxuryWishlistCard with claim-related props
+- [ ] 19-03-PLAN.md — Celebration page claim integration (non-celebrant view)
+- [ ] 19-04-PLAN.md — My Wishlist taken integration and TakenCounter (celebrant view)
+- [ ] 19-05-PLAN.md — Visual verification checkpoint
 
 #### Phase 20: Personal Details
 **Goal**: Users can fill in and share personal details (sizes, preferences, external links) across all their groups for better gift selection
@@ -384,7 +387,7 @@ Phases execute in numeric order: 18 -> 19 -> 20 -> 21 -> 22
 | 16. Mode System | v1.2 | 4/4 | Complete | 2026-02-05 |
 | 17. Budget Tracking | v1.2 | 3/3 | Complete | 2026-02-05 |
 | 18. Schema & Atomic Functions | v1.3 | 2/2 | Complete | 2026-02-05 |
-| 19. Gift Claims UI | v1.3 | 0/TBD | Not started | - |
+| 19. Gift Claims UI | v1.3 | 0/5 | Not started | - |
 | 20. Personal Details | v1.3 | 0/TBD | Not started | - |
 | 21. Split Contributions & Claim Enhancements | v1.3 | 0/TBD | Not started | - |
 | 22. Secret Notes | v1.3 | 0/TBD | Not started | - |
