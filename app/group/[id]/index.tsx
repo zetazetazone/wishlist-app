@@ -262,6 +262,7 @@ export default function GroupDetailScreen() {
                   }}
                   daysUntilBirthday={member.daysUntil}
                   favoriteItem={group.favoritesByUser?.[member.users.id] as { title: string; image_url: string | null; item_type: 'standard' | 'surprise_me' | 'mystery_box' } | null}
+                  mode={group.mode || 'gifts'}
                   onPress={() => handleMemberPress(member.users.id)}
                   index={index}
                 />

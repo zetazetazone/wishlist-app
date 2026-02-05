@@ -20,6 +20,7 @@ interface MemberCardProps {
     image_url: string | null;
     item_type: 'standard' | 'surprise_me' | 'mystery_box';
   } | null;
+  mode?: 'greetings' | 'gifts';
   onPress: () => void;
   index?: number; // For staggered animation
 }
@@ -39,6 +40,7 @@ export function MemberCard({
   member,
   daysUntilBirthday,
   favoriteItem,
+  mode,
   onPress,
   index = 0,
 }: MemberCardProps) {
@@ -181,8 +183,8 @@ export function MemberCard({
           </View>
         </View>
 
-        {/* Favorite Item Preview (if available) */}
-        {favoriteItem && (
+        {/* Favorite Item Preview (if available, hidden in Greetings mode) */}
+        {mode !== 'greetings' && favoriteItem && (
           <View style={{ marginTop: spacing.sm }}>
             <FavoritePreview item={favoriteItem} />
           </View>
