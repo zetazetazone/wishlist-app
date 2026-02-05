@@ -1,16 +1,23 @@
 ---
 phase: 16-mode-system
-verified: 2026-02-05T22:45:00Z
+verified: 2026-02-05T14:00:00Z
 status: passed
-score: 6/6 must-haves verified
+score: 7/7 must-haves verified
+re_verification:
+  previous_status: passed
+  previous_score: 6/6
+  gaps_closed:
+    - "GroupModeBadge width constraint (alignSelf: flex-start)"
+  gaps_remaining: []
+  regressions: []
 ---
 
 # Phase 16: Mode System Verification Report
 
 **Phase Goal:** Group modes control feature visibility with smooth transitions
-**Verified:** 2026-02-05T22:45:00Z
+**Verified:** 2026-02-05T14:00:00Z
 **Status:** passed
-**Re-verification:** No — initial verification
+**Re-verification:** Yes — after gap closure from UAT
 
 ## Goal Achievement
 
@@ -18,43 +25,46 @@ score: 6/6 must-haves verified
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | GroupCard on home screen shows mode indicator badge (Greetings or Gifts) | ✓ VERIFIED | GroupCard.tsx:53 imports and renders GroupModeBadge with group.mode prop |
-| 2 | MemberCard hides favorite preview area when group is in Greetings mode | ✓ VERIFIED | MemberCard.tsx:187 conditionally hides favorite preview: `{mode !== 'greetings' && favoriteItem && ...}` |
-| 3 | Admin can change group mode between Greetings and Gifts in settings | ✓ VERIFIED | settings.tsx:304-349 handleModeSwitch function with admin mode toggle cards (lines 526-585) |
-| 4 | Mode change shows confirmation dialog listing specific hidden/shown features | ✓ VERIFIED | settings.tsx:311-320 Alert.alert with detailed feature lists for both directions |
-| 5 | Greetings mode celebration shows birthday card feel with large profile photo | ✓ VERIFIED | celebration/[id].tsx:361-444 greetings layout with 120px avatar, large text, countdown |
-| 6 | Greetings mode celebration hides Gift Leader, contributions, wishlists sections | ✓ VERIFIED | celebration/[id].tsx:361 conditional: `{isGreetingsMode ? (greetings layout) : (gifts layout)}` |
+| 1 | GroupCard on home screen shows mode indicator badge (Greetings or Gifts) | ✓ VERIFIED | GroupCard.tsx:6 imports, line 53 renders GroupModeBadge with group.mode prop |
+| 2 | GroupModeBadge is compact, fitting snugly around icon + text content | ✓ VERIFIED | GroupModeBadge.tsx:34 has `alignSelf: 'flex-start'` (16-04 gap closure) |
+| 3 | MemberCard hides favorite preview area when group is in Greetings mode | ✓ VERIFIED | MemberCard.tsx:187 conditionally hides: `{mode !== 'greetings' && favoriteItem && ...}` |
+| 4 | Admin can change group mode between Greetings and Gifts in settings | ✓ VERIFIED | settings.tsx:304-349 handleModeSwitch with admin toggle cards (lines 534, 564) |
+| 5 | Mode change shows confirmation dialog listing specific hidden/shown features | ✓ VERIFIED | settings.tsx:311-320 Alert.alert with detailed feature lists for both directions |
+| 6 | Greetings mode celebration shows birthday card feel with large profile photo | ✓ VERIFIED | celebration/[id].tsx:308 isGreetingsMode flag, lines 361+ dual layouts |
+| 7 | Greetings mode celebration hides Gift Leader, contributions, wishlists sections | ✓ VERIFIED | celebration/[id].tsx:361 conditional: `{isGreetingsMode ? (greetings layout) : (gifts layout)}` |
 
-**Score:** 6/6 truths verified
+**Score:** 7/7 truths verified (including gap closure from 16-04)
 
 ### Required Artifacts
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `components/groups/GroupCard.tsx` | GroupModeBadge integrated | ✓ VERIFIED | Line 6 imports GroupModeBadge, line 53 renders with mode prop |
-| `components/groups/MemberCard.tsx` | Mode-conditional favorite preview hiding | ✓ VERIFIED | Line 23 adds mode prop, line 187 conditionally hides based on mode !== 'greetings' |
-| `app/group/[id]/index.tsx` | Mode prop passed to MemberCard | ✓ VERIFIED | Line 265 passes `mode={group.mode \|\| 'gifts'}` to MemberCard |
-| `app/group/[id]/settings.tsx` | Mode switch section with confirmation dialog | ✓ VERIFIED | Lines 304-349 handleModeSwitch, lines 512-608 mode section with toggle cards |
-| `utils/groups.ts` | updateGroupMode function | ✓ VERIFIED | Lines 373-387 export updateGroupMode with mode update and error handling |
-| `app/(app)/celebration/[id].tsx` | Mode-adaptive celebration layouts | ✓ VERIFIED | Line 307 gets groupMode, line 308 isGreetingsMode flag, lines 361-444 dual layouts |
-| `lib/celebrations.ts` | Group mode in celebration query | ✓ VERIFIED | Lines 480-484 select includes `groups (id, name, mode)` |
+| `components/groups/GroupModeBadge.tsx` | Compact badge with alignSelf constraint | ✓ VERIFIED | Line 34: `alignSelf: 'flex-start'` (16-04 fix) |
+| `components/groups/GroupCard.tsx` | GroupModeBadge integrated | ✓ VERIFIED | Line 6 imports, line 53 renders with mode prop |
+| `components/groups/MemberCard.tsx` | Mode-conditional favorite preview hiding | ✓ VERIFIED | Line 187 conditionally hides based on `mode !== 'greetings'` |
+| `app/group/[id]/index.tsx` | Mode prop passed to MemberCard | ✓ VERIFIED | Passes `mode={group.mode \|\| 'gifts'}` to MemberCard |
+| `app/group/[id]/settings.tsx` | Mode switch section with confirmation dialog | ✓ VERIFIED | Lines 304-349 handleModeSwitch, lines 534/564 toggle cards |
+| `utils/groups.ts` | updateGroupMode function | ✓ VERIFIED | Export updateGroupMode with mode update and error handling |
+| `app/(app)/celebration/[id].tsx` | Mode-adaptive celebration layouts | ✓ VERIFIED | Line 308 isGreetingsMode, line 361+ dual layouts |
+| `lib/celebrations.ts` | Group mode in celebration query | ✓ VERIFIED | Select includes `groups (id, name, mode)` |
 
 ### Key Link Verification
 
 | From | To | Via | Status | Details |
 |------|----|----|--------|---------|
 | GroupCard | GroupModeBadge | import and render | ✓ WIRED | Import line 6, render line 53 with props |
-| Group view | MemberCard | mode prop | ✓ WIRED | Line 265 passes mode={group.mode \|\| 'gifts'} |
-| Settings | updateGroupMode | API call | ✓ WIRED | Line 329 calls updateGroupMode(id, newMode) |
-| Settings | Alert.alert | confirmation dialog | ✓ WIRED | Lines 311-320 Alert.alert with cautious messaging |
-| Celebration | getCelebration | group mode data | ✓ WIRED | Line 126 calls getCelebration which returns group.mode |
-| Celebration | GroupModeBadge | mode badge on gifts | ✓ WIRED | Line 49 imports, line 491 renders in gifts mode header |
+| GroupModeBadge | flex-start constraint | alignSelf style | ✓ WIRED | Line 34 prevents badge stretch (16-04 fix) |
+| Group view | MemberCard | mode prop | ✓ WIRED | Passes mode={group.mode \|\| 'gifts'} |
+| Settings | updateGroupMode | API call | ✓ WIRED | handleModeSwitch calls updateGroupMode(id, newMode) |
+| Settings | Alert.alert | confirmation dialog | ✓ WIRED | Lines 311-320 Alert with detailed messaging |
+| Celebration | getCelebration | group mode data | ✓ WIRED | getCelebration returns group.mode |
+| Celebration | GroupModeBadge | mode badge on gifts | ✓ WIRED | Imports and renders in gifts mode header |
 
 ### Requirements Coverage
 
 | Requirement | Status | Blocking Issue |
 |-------------|--------|----------------|
-| MODE-01: Group displays mode indicator badge | ✓ SATISFIED | GroupCard shows GroupModeBadge on home screen |
+| MODE-01: Group displays mode indicator badge | ✓ SATISFIED | GroupCard shows compact GroupModeBadge on home screen (16-04 fixed width) |
 | MODE-02: Greetings mode hides wishlists, Gift Leader, contributions, budget | ✓ SATISFIED | MemberCard hides favorite preview; celebration hides all gift sections |
 | MODE-03: Admin can change group mode in settings | ✓ SATISFIED | Settings has mode section with admin toggle cards |
 | MODE-04: Mode change shows confirmation dialog | ✓ SATISFIED | handleModeSwitch shows Alert with feature list |
@@ -64,21 +74,45 @@ score: 6/6 must-haves verified
 
 None. All implementations are substantive and production-ready.
 
+### Gap Closure Summary (16-04)
+
+**Gap:** GroupModeBadge stretched wide across GroupCard instead of being compact
+
+**Root Cause:** Badge inherited full width from parent View with `flex: 1` in GroupCard
+
+**Fix Applied:** Added `alignSelf: 'flex-start'` to GroupModeBadge View style (line 34)
+
+**Verification:** 
+- ✓ Style applied in GroupModeBadge.tsx:34
+- ✓ No regressions in other badge usage contexts (GroupViewHeader, celebration, settings)
+- ✓ Standard React Native layout pattern for content-sized elements
+
+### Re-Verification Results
+
+**Previous Gaps:** 1 cosmetic issue (badge width)
+**Gaps Closed:** 1/1 (100%)
+**Regressions:** 0
+**New Issues:** 0
+
+All original must-haves remain verified. Gap from UAT successfully closed in 16-04.
+
 ### Human Verification Required
 
-#### 1. Visual Mode Indicator Display
+#### 1. Visual Mode Indicator Display (Including Width Fix)
 
 **Test:** 
 1. Navigate to home screen groups tab
 2. Create or view groups in both Greetings and Gifts modes
 3. Verify badge appearance matches design (gold for Greetings, burgundy for Gifts)
+4. **NEW**: Confirm badge is compact around icon + text (not stretched wide)
 
 **Expected:** 
 - GroupModeBadge displays correctly with appropriate colors and icons
-- Badge is clearly visible but doesn't dominate the card
+- Badge is compact and fits snugly around its content (not full card width)
 - Mode is immediately recognizable
+- Badge positioning looks natural and polished
 
-**Why human:** Visual appearance, color accuracy, and UX feel require human judgment
+**Why human:** Visual appearance, color accuracy, width constraint effectiveness, and UX feel require human judgment
 
 #### 2. Mode Toggle Confirmation Flow
 
@@ -123,7 +157,7 @@ None. All implementations are substantive and production-ready.
 5. Verify it shows greetings layout (birthday card feel)
 
 **Expected:**
-- Gifts mode: all existing sections visible + GroupModeBadge in header
+- Gifts mode: all existing sections visible + compact GroupModeBadge in header
 - Greetings mode: birthday card layout with large avatar (120x120), warm message, "Send a Greeting" button
 - Chat remains accessible in both modes (tab toggle works)
 - Smooth transition between modes on reload
@@ -138,7 +172,7 @@ None. All implementations are substantive and production-ready.
 
 **Expected:**
 - Section shows "Current mode" label
-- GroupModeBadge displays (read-only)
+- GroupModeBadge displays (read-only, compact)
 - Info text: "Only the group admin can change the mode."
 - No toggle cards visible
 
@@ -146,5 +180,6 @@ None. All implementations are substantive and production-ready.
 
 ---
 
-_Verified: 2026-02-05T22:45:00Z_
+_Verified: 2026-02-05T14:00:00Z_
 _Verifier: Claude (gsd-verifier)_
+_Re-verification: Gap closure from 16-UAT.md (badge width) successfully verified_
