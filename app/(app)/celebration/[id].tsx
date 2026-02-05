@@ -9,7 +9,7 @@
  * 4. Chat Section - Real-time messages (takes remaining space)
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -368,12 +368,27 @@ export default function CelebrationDetailScreen() {
   // Calculate contribution totals
   const totalContributed = contributions.reduce((sum, c) => sum + c.amount, 0);
 
-  // Sort celebrant items with favorite pinned to top
-  const sortedCelebrantItems = [...celebrantItems].sort((a, b) => {
-    if (a.id === celebrantFavoriteId) return -1;
-    if (b.id === celebrantFavoriteId) return 1;
-    return (b.priority || 0) - (a.priority || 0);
-  });
+  // Sort celebrant items: favorite first, then unclaimed (non-celebrant), then by priority
+  const sortedCelebrantItems = useMemo(() => {
+    const isCelebrant = currentUserId === celebration?.celebrant_id;
+
+    return [...celebrantItems].sort((a, b) => {
+      // Favorite always first
+      if (a.id === celebrantFavoriteId) return -1;
+      if (b.id === celebrantFavoriteId) return 1;
+
+      // For non-celebrant: claimed items to bottom (per CONTEXT: "Claimed items move to bottom")
+      if (!isCelebrant) {
+        const aIsClaimed = claims.some(c => c.wishlist_item_id === a.id);
+        const bIsClaimed = claims.some(c => c.wishlist_item_id === b.id);
+        if (aIsClaimed && !bIsClaimed) return 1;
+        if (!aIsClaimed && bIsClaimed) return -1;
+      }
+
+      // Within same category, sort by priority
+      return (b.priority || 0) - (a.priority || 0);
+    });
+  }, [celebrantItems, celebrantFavoriteId, claims, currentUserId, celebration?.celebrant_id]);
 
   // Loading state
   if (loading) {
@@ -754,15 +769,29 @@ export default function CelebrationDetailScreen() {
                     </View>
                   ) : (
                     <View style={styles.wishlistContainer}>
-                      {sortedCelebrantItems.map((item, index) => (
-                        <LuxuryWishlistCard
-                          key={item.id}
-                          item={item}
-                          index={index}
-                          favoriteGroups={item.id === celebrantFavoriteId ? [{ groupId: celebration.group_id, groupName: '' }] : []}
-                          showFavoriteHeart={false}
-                        />
-                      ))}
+                      {sortedCelebrantItems.map((item, index) => {
+                        const claim = getClaimForItem(item.id);
+                        const isYourClaim = claim?.claimed_by === currentUserId;
+                        const isCelebrant = currentUserId === celebration?.celebrant_id;
+                        const isStandardItem = item.item_type === 'standard' || !item.item_type;
+
+                        return (
+                          <LuxuryWishlistCard
+                            key={item.id}
+                            item={item}
+                            index={index}
+                            favoriteGroups={item.id === celebrantFavoriteId ? [{ groupId: celebration.group_id, groupName: '' }] : []}
+                            showFavoriteHeart={false}
+                            // Claim props (only for non-celebrant view)
+                            claimable={!isCelebrant && !claim && isStandardItem}
+                            onClaim={() => handleClaimItem(item)}
+                            onUnclaim={() => claim && handleUnclaimItem(item, claim.id)}
+                            claiming={claimingItemId === item.id}
+                            claim={!isCelebrant ? claim : null}  // Don't pass claim to celebrant
+                            isYourClaim={isYourClaim}
+                          />
+                        );
+                      })}
                     </View>
                   )}
                 </View>
