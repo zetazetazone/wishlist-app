@@ -46,23 +46,34 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 - ✓ User can add a "Mystery Box" placeholder item (€50/€100 tiers) — v1.1
 - ✓ User can edit their profile (name, photo) after onboarding — v1.1
 
+- ✓ User can add group photo and description when creating a group — v1.2
+- ✓ User can select group mode: "Greetings only" or "Gifts" — v1.2
+- ✓ User can set budget approach: per-gift, monthly pooled, or yearly budget — v1.2
+- ✓ Admin can edit group details (name, description, photo) — v1.2
+- ✓ Admin can manage members (remove, change admin role) — v1.2
+- ✓ Admin can change group mode anytime — v1.2
+- ✓ Admin can adjust budget settings — v1.2
+- ✓ User sees group header with photo and description in group view — v1.2
+- ✓ User sees member cards sorted by closest birthday — v1.2
+- ✓ Member cards show profile pic, name, birthday countdown, favorite item preview — v1.2
+- ✓ User can tap member card to go to their celebration page — v1.2
+
 ### Active
 
-**v1.2 — Group Experience**
+**v1.3 — Gift Claims & Personal Details**
 
-- [ ] User can add group photo and description when creating a group
-- [ ] User can select group mode: "Greetings only" or "Gifts"
-- [ ] User can set budget approach: per-gift, monthly pooled, or yearly budget
-- [ ] Admin can edit group details (name, description, photo)
-- [ ] Admin can manage members (remove, change admin role)
-- [ ] Admin can change group mode anytime
-- [ ] Admin can adjust budget settings
-- [ ] User sees group header with photo and description in group view
-- [ ] User sees member cards sorted by closest birthday
-- [ ] Member cards show profile pic, name, birthday countdown, favorite item preview
-- [ ] User can tap member card to go to their celebration page
+- [ ] Member can claim a wishlist item (locked to one claimer at a time)
+- [ ] Claims visible to all group members except celebrant
+- [ ] Claimer can optionally open item for split contributions
+- [ ] Claimer can unclaim an item (releases it for others)
+- [ ] Celebrant sees claimed items as "taken" (no name shown)
+- [ ] Claiming works in both Gifts and Greetings modes
+- [ ] User can fill in personal details (sizes, preferences, external links)
+- [ ] Personal details are global (shared across all groups)
+- [ ] Group members can add secret notes about other members (hidden from profile owner)
+- [ ] Secret notes visible only to other group members for gift-giving context
 
-**Deferred to v1.3+**
+**Deferred to v1.4+**
 
 - [ ] User can configure notification preferences
 - [ ] User can see read receipts in chat
@@ -126,16 +137,15 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 | 15-minute cron for timezone coverage | Matches 9:00 AM local time targeting | ✓ Good - accurate delivery |
 | Nullable TIMESTAMPTZ for read_at | Richer info than boolean, same query pattern | ✓ Good - future-proof |
 
-## Current Milestone: v1.2 Group Experience
+## Current Milestone: v1.3 Gift Claims & Personal Details
 
-**Goal:** Improve the group creation flow, group settings, and group view to support different group types and provide better member visibility.
+**Goal:** Enable members to claim wishlist items for coordinated gift-buying and provide rich personal detail profiles for better gift selection.
 
 **Target features:**
-- Create Group: Add photo, description, group mode, budget approach
-- Group Settings: Edit details, manage members, change mode/budget
-- Group View: Header with identity, member cards sorted by birthday with favorite preview
-- Group Modes: "Greetings only" (no gifts) or "Gifts" (full coordination)
-- Budget Approaches: Per-gift, monthly pooled, or yearly budget
+- Gift Claims: Claim/unclaim items, split contributions, celebrant exclusion, "taken" indicator
+- Personal Details: Sizes (shirt, shoe, ring), preferences (colors, brands, hobbies), external wishlist links
+- Secret Notes: Group members can add hidden notes about each other for gift-giving context
+- Works across both Gifts and Greetings group modes
 
 ---
-*Last updated: 2026-02-04 after v1.2 milestone start*
+*Last updated: 2026-02-05 after v1.3 milestone start*
