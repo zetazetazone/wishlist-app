@@ -500,3 +500,43 @@ export async function transferAdmin(groupId: string, newAdminId: string) {
     return { error };
   }
 }
+
+/**
+ * Options for updating group budget configuration
+ */
+export interface UpdateGroupBudgetOptions {
+  approach: 'per_gift' | 'monthly' | 'yearly' | null;
+  amount: number | null;  // in cents, null for per_gift or when removing budget
+}
+
+/**
+ * Update a group's budget approach and amount
+ *
+ * Separate from updateGroupInfo/updateGroupMode -- budget changes
+ * have their own UX flow (confirmation dialog, approach selector cards).
+ *
+ * @param groupId - The group UUID
+ * @param options - Budget approach and amount (cents)
+ * @returns Updated group data or error
+ */
+export async function updateGroupBudget(
+  groupId: string,
+  options: UpdateGroupBudgetOptions
+) {
+  try {
+    const { data, error } = await supabase
+      .from('groups')
+      .update({
+        budget_approach: options.approach,
+        budget_amount: options.amount,
+      })
+      .eq('id', groupId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    return { data: null, error };
+  }
+}
