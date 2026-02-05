@@ -366,6 +366,27 @@ export async function leaveGroup(groupId: string) {
 }
 
 /**
+ * Update a group's mode (greetings or gifts)
+ * Separate from updateGroupInfo to keep concerns clean -- mode changes have
+ * different UX flow (confirmation dialog) from info edits (name/description).
+ */
+export async function updateGroupMode(groupId: string, mode: 'greetings' | 'gifts') {
+  try {
+    const { data, error } = await supabase
+      .from('groups')
+      .update({ mode })
+      .eq('id', groupId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    return { data: null, error };
+  }
+}
+
+/**
  * Update group settings
  */
 export async function updateGroup(groupId: string, updates: { name?: string; budget_limit_per_gift?: number }) {
