@@ -364,8 +364,8 @@ export default function LuxuryWishlistCard({
           </View>
         )}
 
-        {/* Claim Button - shown for claimable standard items in non-celebrant view */}
-        {claimable && !isSpecialItem && (
+        {/* Claim Button - shown for claimable items OR your own claims (to unclaim) */}
+        {(claimable || isYourClaim) && !isSpecialItem && (
           <View style={{ paddingHorizontal: spacing.md, paddingBottom: spacing.md }}>
             <ClaimButton
               onClaim={onClaim || (() => {})}
