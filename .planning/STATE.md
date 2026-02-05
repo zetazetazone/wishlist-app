@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-04)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.2 Group Experience - Phase 16 in progress (Mode System)
+**Current focus:** v1.2 Group Experience - Phase 16 complete (Mode System), ready for Phase 17
 
 ## Current Position
 
 Phase: 16 of 17 (Mode System)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-02-05 - Completed 16-02-PLAN.md (mode switch settings)
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-02-05 - Completed 16-03-PLAN.md (celebration page mode adaptation)
 
-Progress: [##########] 100% v1.0+v1.1 | [#############] 76% v1.2 (13/17 plans)
+Progress: [##########] 100% v1.0+v1.1 | [###############] 82% v1.2 (14/17 plans)
 
 ## Milestone History
 
@@ -37,7 +37,7 @@ Progress: [##########] 100% v1.0+v1.1 | [#############] 76% v1.2 (13/17 plans)
 - Phase 13: Create Group Enhancement (CRGRP-01 through CRGRP-05) - COMPLETE
 - Phase 14: Group View Redesign (GVIEW-01 through GVIEW-07) - COMPLETE (+ gap closure 14-04)
 - Phase 15: Group Settings (GSET-01 through GSET-07) - COMPLETE (plans 01-03)
-- Phase 16: Mode System (MODE-01 through MODE-05) - IN PROGRESS (plans 01-02 complete)
+- Phase 16: Mode System (MODE-01 through MODE-05) - COMPLETE (plans 01-03)
 - Phase 17: Budget Tracking (BUDG-01 through BUDG-05)
 
 **Coverage:** 25/25 requirements mapped (100%)
@@ -88,6 +88,10 @@ Key decisions from v1.0/v1.1 archived in PROJECT.md Key Decisions table.
 - Phase 16-02: Gold colors for Greetings card, burgundy for Gifts card (matches GroupModeBadge)
 - Phase 16-02: Destructive button for Greetings switch (hides features), default for Gifts
 - Phase 16-02: Cross-user mode change toast deferred -- GroupModeBadge visibility is self-evident
+- Phase 16-03: Default to gifts mode when group.mode is undefined (backward compatibility)
+- Phase 16-03: Chat remains accessible in both modes (greetings hides gift sections, not navigation)
+- Phase 16-03: Greetings mode hard-hides Gift Leader, Contributions, Wishlist, History sections
+- Phase 16-03: Send a Greeting button is future feature hook with Coming Soon alert
 
 ### Research Findings (v1.2)
 
@@ -115,6 +119,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 16-02-PLAN.md (mode switch settings)
+Stopped at: Completed 16-03-PLAN.md (celebration page mode adaptation)
 Resume file: None
-Next: Phase 16 Plan 03 (celebration page mode adaptation)
+Next: Phase 17 (Budget Tracking)
