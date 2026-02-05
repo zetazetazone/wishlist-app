@@ -288,11 +288,11 @@ Plans:
   3. Celebrant-safe status function returns only boolean is_claimed per item (claimer identity stripped)
   4. `personal_details` table exists with JSONB columns for flexible preference storage and owner-only edit RLS
   5. `member_notes` table exists with subject-exclusion RLS (user cannot query notes about themselves)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 18-01: TBD
-- [ ] 18-02: TBD
+- [ ] 18-01-PLAN.md — Migration: tables (gift_claims, personal_details, member_notes), RLS policies, indexes, triggers, and atomic RPC functions
+- [ ] 18-02-PLAN.md — TypeScript type definitions and service library modules (claims, personal details, notes)
 
 #### Phase 19: Gift Claims UI
 **Goal**: Members can claim and unclaim wishlist items with visual distinction, and celebrants see "taken" status without claimer identity
@@ -383,7 +383,7 @@ Phases execute in numeric order: 18 -> 19 -> 20 -> 21 -> 22
 | 15. Group Settings | v1.2 | 3/3 | Complete | 2026-02-05 |
 | 16. Mode System | v1.2 | 4/4 | Complete | 2026-02-05 |
 | 17. Budget Tracking | v1.2 | 3/3 | Complete | 2026-02-05 |
-| 18. Schema & Atomic Functions | v1.3 | 0/TBD | Not started | - |
+| 18. Schema & Atomic Functions | v1.3 | 0/2 | Not started | - |
 | 19. Gift Claims UI | v1.3 | 0/TBD | Not started | - |
 | 20. Personal Details | v1.3 | 0/TBD | Not started | - |
 | 21. Split Contributions & Claim Enhancements | v1.3 | 0/TBD | Not started | - |
