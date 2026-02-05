@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-04)
 Phase: 17 of 17 (Budget Tracking)
 Plan: 3 of 3 in current phase
 Status: Phase complete — Milestone v1.2 complete
-Last activity: 2026-02-05 - Completed Phase 17 (Budget Tracking)
+Last activity: 2026-02-05 - Quick task 001: Fix budget per_gift constraint violation
 
 Progress: [##########] 100% v1.0+v1.1 | [####################] 100% v1.2 (18/18 plans)
 
@@ -129,6 +129,12 @@ From v1.0/v1.1:
 
 - Pre-existing TypeScript errors (type exports for Group, WishlistItem) - non-blocking
 - npm peer dependency workaround (--legacy-peer-deps) for React 19 - acceptable
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 001 | Fix budget per_gift check constraint violation | 2026-02-05 | a9da654 | [001-fix-budget-per-gift-constraint](./quick/001-fix-budget-per-gift-constraint/) |
 
 ## Session Continuity
 
