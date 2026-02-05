@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useLocalSearchParams, useRouter, Stack, useFocusEffect } from 'expo-router';
 import { fetchGroupDetails } from '../../../utils/groups';
 import { Group, User } from '../../../types';
 import { colors, spacing, borderRadius, shadows } from '../../../constants/theme';
@@ -46,21 +46,22 @@ export default function GroupDetailScreen() {
     loadGroupDetails();
   }, [id]);
 
-  // Load budget status when group loads (gifts mode only)
-  useEffect(() => {
-    if (!group?.id) return;
-    // Only load budget in gifts mode
-    if ((group.mode || 'gifts') !== 'gifts') {
-      setBudgetStatus(null);
-      return;
-    }
-    getGroupBudgetStatus(group.id)
-      .then(setBudgetStatus)
-      .catch(err => {
-        console.error('Failed to load budget status:', err);
+  // Refresh budget status on screen focus (picks up changes from settings)
+  useFocusEffect(
+    useCallback(() => {
+      if (!group?.id) return;
+      if ((group.mode || 'gifts') !== 'gifts') {
         setBudgetStatus(null);
-      });
-  }, [group?.id, group?.mode]);
+        return;
+      }
+      getGroupBudgetStatus(group.id)
+        .then(setBudgetStatus)
+        .catch(err => {
+          console.error('Failed to load budget status:', err);
+          setBudgetStatus(null);
+        });
+    }, [group?.id, group?.mode])
+  );
 
   // Sort members by birthday when group data loads
   useEffect(() => {
