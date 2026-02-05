@@ -46,6 +46,9 @@ import { ChatInput } from '../../../components/chat/ChatInput';
 import { getFavoriteForGroup } from '../../../lib/favorites';
 import { getWishlistItemsByUserId, WishlistItem } from '../../../lib/wishlistItems';
 import LuxuryWishlistCard from '../../../components/wishlist/LuxuryWishlistCard';
+import { GroupModeBadge } from '../../../components/groups/GroupModeBadge';
+import { getDaysUntilBirthday, getCountdownText } from '../../../utils/countdown';
+import { colors, spacing, borderRadius } from '../../../constants/theme';
 
 /**
  * Format date as "Month Day, Year" (e.g., "March 15, 2026")
@@ -300,6 +303,14 @@ export default function CelebrationDetailScreen() {
     'Unassigned';
   const statusStyle = getStatusStyle(celebration.status);
 
+  // Mode-adaptive rendering
+  const groupMode = celebration?.group?.mode || 'gifts';
+  const isGreetingsMode = groupMode === 'greetings';
+
+  // Birthday countdown for greetings mode
+  const daysUntil = getDaysUntilBirthday(celebration.event_date);
+  const countdownText = getCountdownText(daysUntil);
+
   return (
     <View style={styles.container}>
       <Stack.Screen
@@ -345,269 +356,364 @@ export default function CelebrationDetailScreen() {
         </View>
 
         {viewMode === 'info' ? (
-          // INFO VIEW: Header, Gift Leader, Contributions
+          // INFO VIEW: Adapts based on group mode
           <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
-            {/* Header Card */}
-            <View style={styles.headerCard}>
-              {/* Celebrant Avatar */}
-              <View style={styles.avatarContainer}>
-                {celebration.celebrant?.avatar_url ? (
-                  <Image
-                    source={{ uri: celebration.celebrant.avatar_url }}
-                    style={styles.avatar}
-                  />
-                ) : (
-                  <View style={[styles.avatar, styles.avatarPlaceholder]}>
-                    <Text style={styles.avatarText}>
-                      {celebrantName.charAt(0).toUpperCase()}
+            {isGreetingsMode ? (
+              <>
+                {/* === GREETINGS MODE: Birthday Card Layout === */}
+
+                {/* Birthday Card Header */}
+                <View style={styles.greetingsCard}>
+                  {/* Large Celebrant Avatar */}
+                  <View style={styles.greetingsAvatarContainer}>
+                    {celebration.celebrant?.avatar_url ? (
+                      <Image
+                        source={{ uri: celebration.celebrant.avatar_url }}
+                        style={styles.greetingsAvatar}
+                      />
+                    ) : (
+                      <View style={[styles.greetingsAvatar, styles.greetingsAvatarPlaceholder]}>
+                        <Text style={styles.greetingsAvatarText}>
+                          {celebrantName.charAt(0).toUpperCase()}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+
+                  {/* Celebrant Name */}
+                  <Text style={styles.greetingsName}>{celebrantName}</Text>
+
+                  {/* Birthday Date */}
+                  <View style={styles.greetingsDateRow}>
+                    <MaterialCommunityIcons name="calendar-heart" size={20} color={colors.burgundy[400]} />
+                    <Text style={styles.greetingsDateText}>{formatEventDate(celebration.event_date)}</Text>
+                  </View>
+
+                  {/* Group Name */}
+                  <View style={styles.greetingsGroupRow}>
+                    <MaterialCommunityIcons name="account-group" size={18} color={colors.burgundy[300]} />
+                    <Text style={styles.greetingsGroupText}>{celebration.group?.name || 'Unknown Group'}</Text>
+                  </View>
+
+                  {/* Birthday Countdown */}
+                  <View style={styles.greetingsCountdown}>
+                    <MaterialCommunityIcons name="cake-variant" size={28} color={colors.gold[600]} />
+                    <Text style={styles.greetingsCountdownText}>
+                      {daysUntil === 0 ? "It's today!" : daysUntil === 1 ? 'Tomorrow!' : `${countdownText} away`}
                     </Text>
                   </View>
-                )}
-              </View>
 
-              {/* Celebrant Name */}
-              <Text style={styles.celebrantName}>{celebrantName}'s Birthday</Text>
+                  {/* Status Badge */}
+                  <View style={[styles.statusBadge, { backgroundColor: statusStyle.bg }]}>
+                    <Text style={[styles.statusText, { color: statusStyle.text }]}>
+                      {statusStyle.label}
+                    </Text>
+                  </View>
+                </View>
 
-              {/* Event Date */}
-              <View style={styles.dateRow}>
-                <MaterialCommunityIcons name="calendar" size={18} color="#6b7280" />
-                <Text style={styles.dateText}>{formatEventDate(celebration.event_date)}</Text>
-              </View>
+                {/* Birthday Message */}
+                <View style={styles.greetingsMessageArea}>
+                  <Text style={styles.greetingsMessage}>
+                    Wishing {celebrantName} a wonderful birthday!
+                  </Text>
+                </View>
 
-              {/* Group */}
-              <View style={styles.groupRow}>
-                <MaterialCommunityIcons name="account-group" size={18} color="#6b7280" />
-                <Text style={styles.groupText}>{celebration.group?.name || 'Unknown Group'}</Text>
-              </View>
+                {/* Send a Greeting Button */}
+                <Pressable
+                  style={styles.sendGreetingButton}
+                  onPress={() => Alert.alert('Coming Soon', 'Greeting messages will be available in a future update!')}
+                >
+                  <MaterialCommunityIcons name="party-popper" size={22} color={colors.white} />
+                  <Text style={styles.sendGreetingText}>Send a Greeting</Text>
+                </Pressable>
 
-              {/* Status Badge */}
-              <View style={[styles.statusBadge, { backgroundColor: statusStyle.bg }]}>
-                <Text style={[styles.statusText, { color: statusStyle.text }]}>
-                  {statusStyle.label}
-                </Text>
-              </View>
-            </View>
+                {/* Quick Chat Preview */}
+                <Pressable
+                  style={styles.chatPreviewCard}
+                  onPress={() => setViewMode('chat')}
+                >
+                  <MaterialCommunityIcons name="chat" size={24} color="#3b82f6" />
+                  <View style={styles.chatPreviewText}>
+                    <Text style={styles.chatPreviewTitle}>Group Chat</Text>
+                    <Text style={styles.chatPreviewSubtitle}>
+                      {chatRoomId ? 'Tap to join the conversation' : 'Chat not available'}
+                    </Text>
+                  </View>
+                  <MaterialCommunityIcons name="chevron-right" size={24} color="#9ca3af" />
+                </Pressable>
+              </>
+            ) : (
+              <>
+                {/* === GIFTS MODE: Existing Layout + Mode Badge === */}
 
-            {/* Gift Leader Section */}
-            <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <MaterialCommunityIcons name="crown" size={22} color="#8B1538" />
-                <Text style={styles.sectionTitle}>Gift Leader</Text>
-              </View>
-
-              <View style={styles.giftLeaderCard}>
-                {/* Gift Leader Info */}
-                <View style={styles.giftLeaderInfo}>
-                  {celebration.gift_leader?.avatar_url ? (
-                    <Image
-                      source={{ uri: celebration.gift_leader.avatar_url }}
-                      style={styles.leaderAvatar}
-                    />
-                  ) : (
-                    <View style={[styles.leaderAvatar, styles.leaderAvatarPlaceholder]}>
-                      <MaterialCommunityIcons name="account" size={24} color="#8B1538" />
-                    </View>
-                  )}
-                  <View style={styles.leaderDetails}>
-                    <Text style={styles.leaderName}>{giftLeaderName}</Text>
-                    {isCurrentUserGiftLeader ? (
-                      <GiftLeaderBadge isCurrentUser />
+                {/* Header Card */}
+                <View style={styles.headerCard}>
+                  {/* Celebrant Avatar */}
+                  <View style={styles.avatarContainer}>
+                    {celebration.celebrant?.avatar_url ? (
+                      <Image
+                        source={{ uri: celebration.celebrant.avatar_url }}
+                        style={styles.avatar}
+                      />
                     ) : (
-                      <GiftLeaderBadge />
+                      <View style={[styles.avatar, styles.avatarPlaceholder]}>
+                        <Text style={styles.avatarText}>
+                          {celebrantName.charAt(0).toUpperCase()}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+
+                  {/* Celebrant Name */}
+                  <Text style={styles.celebrantName}>{celebrantName}'s Birthday</Text>
+
+                  {/* Event Date */}
+                  <View style={styles.dateRow}>
+                    <MaterialCommunityIcons name="calendar" size={18} color="#6b7280" />
+                    <Text style={styles.dateText}>{formatEventDate(celebration.event_date)}</Text>
+                  </View>
+
+                  {/* Group */}
+                  <View style={styles.groupRow}>
+                    <MaterialCommunityIcons name="account-group" size={18} color="#6b7280" />
+                    <Text style={styles.groupText}>{celebration.group?.name || 'Unknown Group'}</Text>
+                  </View>
+
+                  {/* Status Badge */}
+                  <View style={[styles.statusBadge, { backgroundColor: statusStyle.bg }]}>
+                    <Text style={[styles.statusText, { color: statusStyle.text }]}>
+                      {statusStyle.label}
+                    </Text>
+                  </View>
+
+                  {/* Mode Badge */}
+                  <View style={{ marginTop: 8 }}>
+                    <GroupModeBadge mode="gifts" />
+                  </View>
+                </View>
+
+                {/* Gift Leader Section */}
+                <View style={styles.section}>
+                  <View style={styles.sectionHeader}>
+                    <MaterialCommunityIcons name="crown" size={22} color="#8B1538" />
+                    <Text style={styles.sectionTitle}>Gift Leader</Text>
+                  </View>
+
+                  <View style={styles.giftLeaderCard}>
+                    {/* Gift Leader Info */}
+                    <View style={styles.giftLeaderInfo}>
+                      {celebration.gift_leader?.avatar_url ? (
+                        <Image
+                          source={{ uri: celebration.gift_leader.avatar_url }}
+                          style={styles.leaderAvatar}
+                        />
+                      ) : (
+                        <View style={[styles.leaderAvatar, styles.leaderAvatarPlaceholder]}>
+                          <MaterialCommunityIcons name="account" size={24} color="#8B1538" />
+                        </View>
+                      )}
+                      <View style={styles.leaderDetails}>
+                        <Text style={styles.leaderName}>{giftLeaderName}</Text>
+                        {isCurrentUserGiftLeader ? (
+                          <GiftLeaderBadge isCurrentUser />
+                        ) : (
+                          <GiftLeaderBadge />
+                        )}
+                      </View>
+                    </View>
+
+                    {/* Message for Gift Leader */}
+                    {isCurrentUserGiftLeader && (
+                      <View style={styles.leaderMessage}>
+                        <MaterialCommunityIcons name="star" size={18} color="#8B1538" />
+                        <Text style={styles.leaderMessageText}>
+                          You are coordinating this gift! Organize the group, collect contributions,
+                          and make this celebration special.
+                        </Text>
+                      </View>
+                    )}
+
+                    {/* Reassign Button (Admin only) */}
+                    {isAdmin && celebration.status !== 'completed' && (
+                      <Pressable
+                        style={styles.reassignButton}
+                        onPress={() => setReassignModalVisible(true)}
+                      >
+                        <MaterialCommunityIcons name="account-switch" size={18} color="#8B1538" />
+                        <Text style={styles.reassignButtonText}>Reassign Gift Leader</Text>
+                      </Pressable>
                     )}
                   </View>
                 </View>
 
-                {/* Message for Gift Leader */}
-                {isCurrentUserGiftLeader && (
-                  <View style={styles.leaderMessage}>
-                    <MaterialCommunityIcons name="star" size={18} color="#8B1538" />
-                    <Text style={styles.leaderMessageText}>
-                      You are coordinating this gift! Organize the group, collect contributions,
-                      and make this celebration special.
-                    </Text>
+                {/* Contributions Section */}
+                <View style={styles.section}>
+                  <View style={styles.sectionHeader}>
+                    <MaterialCommunityIcons name="cash-multiple" size={22} color="#22c55e" />
+                    <Text style={styles.sectionTitle}>Contributions</Text>
+                  </View>
+
+                  {contributionsLoading ? (
+                    <View style={styles.loadingCard}>
+                      <ActivityIndicator size="small" color="#8B1538" />
+                    </View>
+                  ) : (
+                    <>
+                      <ContributionProgress
+                        totalContributed={totalContributed}
+                        targetAmount={celebration.target_amount}
+                        contributorCount={contributions.length}
+                      />
+
+                      {/* Your Contribution Card */}
+                      <Pressable
+                        style={styles.yourContributionCard}
+                        onPress={() => setContributionModalVisible(true)}
+                      >
+                        <View style={styles.yourContributionInfo}>
+                          <MaterialCommunityIcons
+                            name={userContribution ? 'check-circle' : 'plus-circle-outline'}
+                            size={24}
+                            color={userContribution ? '#22c55e' : '#8B1538'}
+                          />
+                          <View style={styles.yourContributionText}>
+                            <Text style={styles.yourContributionLabel}>
+                              {userContribution ? 'Your Contribution' : 'Add Your Contribution'}
+                            </Text>
+                            {userContribution && (
+                              <Text style={styles.yourContributionAmount}>
+                                ${userContribution.amount.toFixed(2)}
+                              </Text>
+                            )}
+                          </View>
+                        </View>
+                        <MaterialCommunityIcons name="chevron-right" size={24} color="#9ca3af" />
+                      </Pressable>
+
+                      {/* Contributors List */}
+                      {contributions.length > 0 && (
+                        <View style={styles.contributorsList}>
+                          <Text style={styles.contributorsTitle}>
+                            Contributors ({contributions.length})
+                          </Text>
+                          {contributions.slice(0, 5).map(contribution => {
+                            const name = contribution.contributor?.display_name || 'Unknown';
+                            const isYou = contribution.user_id === currentUserId;
+                            return (
+                              <View key={contribution.id} style={styles.contributorRow}>
+                                {contribution.contributor?.avatar_url ? (
+                                  <Image
+                                    source={{ uri: contribution.contributor.avatar_url }}
+                                    style={styles.contributorAvatar}
+                                  />
+                                ) : (
+                                  <View style={[styles.contributorAvatar, styles.contributorAvatarPlaceholder]}>
+                                    <Text style={styles.contributorInitial}>
+                                      {name.charAt(0).toUpperCase()}
+                                    </Text>
+                                  </View>
+                                )}
+                                <Text style={styles.contributorName}>
+                                  {isYou ? 'You' : name}
+                                </Text>
+                                <Text style={styles.contributorAmount}>
+                                  ${contribution.amount.toFixed(2)}
+                                </Text>
+                              </View>
+                            );
+                          })}
+                          {contributions.length > 5 && (
+                            <Text style={styles.moreContributors}>
+                              +{contributions.length - 5} more contributors
+                            </Text>
+                          )}
+                        </View>
+                      )}
+                    </>
+                  )}
+                </View>
+
+                {/* Celebrant's Wishlist Section */}
+                <View style={styles.section}>
+                  <View style={styles.sectionHeader}>
+                    <MaterialCommunityIcons name="gift" size={22} color="#8B1538" />
+                    <Text style={styles.sectionTitle}>{celebrantName}'s Wishlist</Text>
+                  </View>
+
+                  {wishlistLoading ? (
+                    <View style={styles.loadingCard}>
+                      <ActivityIndicator size="small" color="#8B1538" />
+                    </View>
+                  ) : sortedCelebrantItems.length === 0 ? (
+                    <View style={styles.emptyCard}>
+                      <Text style={styles.emptyText}>No wishlist items yet</Text>
+                    </View>
+                  ) : (
+                    <View style={styles.wishlistContainer}>
+                      {sortedCelebrantItems.map((item, index) => (
+                        <LuxuryWishlistCard
+                          key={item.id}
+                          item={item}
+                          index={index}
+                          favoriteGroups={item.id === celebrantFavoriteId ? [{ groupId: celebration.group_id, groupName: '' }] : []}
+                          showFavoriteHeart={false}
+                        />
+                      ))}
+                    </View>
+                  )}
+                </View>
+
+                {/* Gift Leader History (Collapsible) */}
+                {celebration.gift_leader_history && celebration.gift_leader_history.length > 0 && (
+                  <View style={styles.section}>
+                    <View style={styles.sectionHeader}>
+                      <MaterialCommunityIcons name="history" size={22} color="#6b7280" />
+                      <Text style={styles.sectionTitle}>Gift Leader History</Text>
+                    </View>
+
+                    <View style={styles.historyCard}>
+                      {celebration.gift_leader_history.slice(0, 3).map((entry) => (
+                        <View key={entry.id} style={styles.historyItem}>
+                          <View style={styles.historyDot} />
+                          <View style={styles.historyContent}>
+                            <Text style={styles.historyName}>
+                              {entry.assigned_to_user?.display_name ||
+                                entry.assigned_to_user?.full_name ||
+                                'Unknown'}
+                            </Text>
+                            <Text style={styles.historyReason}>
+                              {entry.reason === 'auto_rotation'
+                                ? 'Automatically assigned'
+                                : entry.reason === 'manual_reassign'
+                                  ? `Reassigned by ${entry.assigned_by_user?.display_name || 'admin'}`
+                                  : 'Member left group'}
+                            </Text>
+                            <Text style={styles.historyDate}>
+                              {new Date(entry.created_at).toLocaleDateString()}
+                            </Text>
+                          </View>
+                        </View>
+                      ))}
+                    </View>
                   </View>
                 )}
 
-                {/* Reassign Button (Admin only) */}
-                {isAdmin && celebration.status !== 'completed' && (
-                  <Pressable
-                    style={styles.reassignButton}
-                    onPress={() => setReassignModalVisible(true)}
-                  >
-                    <MaterialCommunityIcons name="account-switch" size={18} color="#8B1538" />
-                    <Text style={styles.reassignButtonText}>Reassign Gift Leader</Text>
-                  </Pressable>
-                )}
-              </View>
-            </View>
-
-            {/* Contributions Section */}
-            <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <MaterialCommunityIcons name="cash-multiple" size={22} color="#22c55e" />
-                <Text style={styles.sectionTitle}>Contributions</Text>
-              </View>
-
-              {contributionsLoading ? (
-                <View style={styles.loadingCard}>
-                  <ActivityIndicator size="small" color="#8B1538" />
-                </View>
-              ) : (
-                <>
-                  <ContributionProgress
-                    totalContributed={totalContributed}
-                    targetAmount={celebration.target_amount}
-                    contributorCount={contributions.length}
-                  />
-
-                  {/* Your Contribution Card */}
-                  <Pressable
-                    style={styles.yourContributionCard}
-                    onPress={() => setContributionModalVisible(true)}
-                  >
-                    <View style={styles.yourContributionInfo}>
-                      <MaterialCommunityIcons
-                        name={userContribution ? 'check-circle' : 'plus-circle-outline'}
-                        size={24}
-                        color={userContribution ? '#22c55e' : '#8B1538'}
-                      />
-                      <View style={styles.yourContributionText}>
-                        <Text style={styles.yourContributionLabel}>
-                          {userContribution ? 'Your Contribution' : 'Add Your Contribution'}
-                        </Text>
-                        {userContribution && (
-                          <Text style={styles.yourContributionAmount}>
-                            ${userContribution.amount.toFixed(2)}
-                          </Text>
-                        )}
-                      </View>
-                    </View>
-                    <MaterialCommunityIcons name="chevron-right" size={24} color="#9ca3af" />
-                  </Pressable>
-
-                  {/* Contributors List */}
-                  {contributions.length > 0 && (
-                    <View style={styles.contributorsList}>
-                      <Text style={styles.contributorsTitle}>
-                        Contributors ({contributions.length})
-                      </Text>
-                      {contributions.slice(0, 5).map(contribution => {
-                        const name = contribution.contributor?.display_name || 'Unknown';
-                        const isYou = contribution.user_id === currentUserId;
-                        return (
-                          <View key={contribution.id} style={styles.contributorRow}>
-                            {contribution.contributor?.avatar_url ? (
-                              <Image
-                                source={{ uri: contribution.contributor.avatar_url }}
-                                style={styles.contributorAvatar}
-                              />
-                            ) : (
-                              <View style={[styles.contributorAvatar, styles.contributorAvatarPlaceholder]}>
-                                <Text style={styles.contributorInitial}>
-                                  {name.charAt(0).toUpperCase()}
-                                </Text>
-                              </View>
-                            )}
-                            <Text style={styles.contributorName}>
-                              {isYou ? 'You' : name}
-                            </Text>
-                            <Text style={styles.contributorAmount}>
-                              ${contribution.amount.toFixed(2)}
-                            </Text>
-                          </View>
-                        );
-                      })}
-                      {contributions.length > 5 && (
-                        <Text style={styles.moreContributors}>
-                          +{contributions.length - 5} more contributors
-                        </Text>
-                      )}
-                    </View>
-                  )}
-                </>
-              )}
-            </View>
-
-            {/* Celebrant's Wishlist Section */}
-            <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <MaterialCommunityIcons name="gift" size={22} color="#8B1538" />
-                <Text style={styles.sectionTitle}>{celebrantName}'s Wishlist</Text>
-              </View>
-
-              {wishlistLoading ? (
-                <View style={styles.loadingCard}>
-                  <ActivityIndicator size="small" color="#8B1538" />
-                </View>
-              ) : sortedCelebrantItems.length === 0 ? (
-                <View style={styles.emptyCard}>
-                  <Text style={styles.emptyText}>No wishlist items yet</Text>
-                </View>
-              ) : (
-                <View style={styles.wishlistContainer}>
-                  {sortedCelebrantItems.map((item, index) => (
-                    <LuxuryWishlistCard
-                      key={item.id}
-                      item={item}
-                      index={index}
-                      favoriteGroups={item.id === celebrantFavoriteId ? [{ groupId: celebration.group_id, groupName: '' }] : []}
-                      showFavoriteHeart={false}
-                    />
-                  ))}
-                </View>
-              )}
-            </View>
-
-            {/* Gift Leader History (Collapsible) */}
-            {celebration.gift_leader_history && celebration.gift_leader_history.length > 0 && (
-              <View style={styles.section}>
-                <View style={styles.sectionHeader}>
-                  <MaterialCommunityIcons name="history" size={22} color="#6b7280" />
-                  <Text style={styles.sectionTitle}>Gift Leader History</Text>
-                </View>
-
-                <View style={styles.historyCard}>
-                  {celebration.gift_leader_history.slice(0, 3).map((entry) => (
-                    <View key={entry.id} style={styles.historyItem}>
-                      <View style={styles.historyDot} />
-                      <View style={styles.historyContent}>
-                        <Text style={styles.historyName}>
-                          {entry.assigned_to_user?.display_name ||
-                            entry.assigned_to_user?.full_name ||
-                            'Unknown'}
-                        </Text>
-                        <Text style={styles.historyReason}>
-                          {entry.reason === 'auto_rotation'
-                            ? 'Automatically assigned'
-                            : entry.reason === 'manual_reassign'
-                              ? `Reassigned by ${entry.assigned_by_user?.display_name || 'admin'}`
-                              : 'Member left group'}
-                        </Text>
-                        <Text style={styles.historyDate}>
-                          {new Date(entry.created_at).toLocaleDateString()}
-                        </Text>
-                      </View>
-                    </View>
-                  ))}
-                </View>
-              </View>
+                {/* Quick Chat Preview */}
+                <Pressable
+                  style={styles.chatPreviewCard}
+                  onPress={() => setViewMode('chat')}
+                >
+                  <MaterialCommunityIcons name="chat" size={24} color="#3b82f6" />
+                  <View style={styles.chatPreviewText}>
+                    <Text style={styles.chatPreviewTitle}>Group Chat</Text>
+                    <Text style={styles.chatPreviewSubtitle}>
+                      {chatRoomId ? 'Tap to join the conversation' : 'Chat not available'}
+                    </Text>
+                  </View>
+                  <MaterialCommunityIcons name="chevron-right" size={24} color="#9ca3af" />
+                </Pressable>
+              </>
             )}
-
-            {/* Quick Chat Preview */}
-            <Pressable
-              style={styles.chatPreviewCard}
-              onPress={() => setViewMode('chat')}
-            >
-              <MaterialCommunityIcons name="chat" size={24} color="#3b82f6" />
-              <View style={styles.chatPreviewText}>
-                <Text style={styles.chatPreviewTitle}>Group Chat</Text>
-                <Text style={styles.chatPreviewSubtitle}>
-                  {chatRoomId ? 'Tap to join the conversation' : 'Chat not available'}
-                </Text>
-              </View>
-              <MaterialCommunityIcons name="chevron-right" size={24} color="#9ca3af" />
-            </Pressable>
           </ScrollView>
         ) : (
           // CHAT VIEW: Full screen chat
@@ -1189,5 +1295,107 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#6b7280',
     marginTop: 2,
+  },
+
+  // === Greetings Mode Styles ===
+  greetingsCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    padding: 32,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  greetingsAvatarContainer: {
+    marginBottom: 20,
+  },
+  greetingsAvatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 3,
+    borderColor: '#D4AF37',
+  },
+  greetingsAvatarPlaceholder: {
+    backgroundColor: '#8B1538',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  greetingsAvatarText: {
+    color: '#ffffff',
+    fontSize: 48,
+    fontWeight: '600',
+  },
+  greetingsName: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#6B1229',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  greetingsDateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 6,
+  },
+  greetingsDateText: {
+    fontSize: 16,
+    color: '#E2708D',
+  },
+  greetingsGroupRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 20,
+  },
+  greetingsGroupText: {
+    fontSize: 14,
+    color: '#EDA1B3',
+  },
+  greetingsCountdown: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 16,
+    backgroundColor: '#FEFCE8',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 16,
+  },
+  greetingsCountdownText: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#B8860B',
+  },
+  greetingsMessageArea: {
+    marginTop: 24,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+  },
+  greetingsMessage: {
+    fontSize: 16,
+    fontStyle: 'italic',
+    color: '#E2708D',
+    textAlign: 'center',
+    lineHeight: 24,
+  },
+  sendGreetingButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    backgroundColor: '#B8860B',
+    marginTop: 24,
+    paddingVertical: 16,
+    borderRadius: 16,
+  },
+  sendGreetingText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#ffffff',
   },
 });
