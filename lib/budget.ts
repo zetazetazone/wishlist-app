@@ -20,7 +20,7 @@
 
 import { supabase } from './supabase';
 import {
-  startOfMonth, endOfMonth, addYears, differenceInYears,
+  startOfMonth, addYears, differenceInYears,
   parseISO, format, addMonths,
 } from 'date-fns';
 
