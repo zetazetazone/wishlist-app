@@ -3,6 +3,7 @@ import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Group } from '../../types';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
+import { GroupModeBadge } from './GroupModeBadge';
 
 interface GroupCardProps {
   group: Group & { member_count?: number };
@@ -49,23 +50,7 @@ export default function GroupCard({ group, onPress, index = 0 }: GroupCardProps)
             >
               {group.name}
             </Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialCommunityIcons
-                name="cash"
-                size={16}
-                color={colors.gold[600]}
-                style={{ marginRight: spacing.xs }}
-              />
-              <Text
-                style={{
-                  color: colors.burgundy[600],
-                  fontSize: 14,
-                  fontWeight: '500',
-                }}
-              >
-                ${group.budget_limit_per_gift} per gift
-              </Text>
-            </View>
+            <GroupModeBadge mode={group.mode || 'gifts'} />
           </View>
 
           <View
