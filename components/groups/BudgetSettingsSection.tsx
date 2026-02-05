@@ -121,10 +121,9 @@ export function BudgetSettingsSection({
   const handleSave = async () => {
     setIsSaving(true);
 
-    // Convert dollars to cents
-    // per_gift approach must have NULL budget_amount (DB constraint: budget_amount_requires_approach)
+    // Convert dollars to cents (all approaches can store an amount)
     const amountCents =
-      selectedApproach && selectedApproach !== 'per_gift' && amountText.trim()
+      selectedApproach && amountText.trim()
         ? Math.round(parseFloat(amountText) * 100)
         : null;
 
