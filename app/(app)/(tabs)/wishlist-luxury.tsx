@@ -205,15 +205,20 @@ export default function LuxuryWishlistScreen() {
                 >
                   My Wishlist
                 </Text>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: colors.gold[200],
-                    fontWeight: '400',
-                  }}
-                >
-                  {items.length} {items.length === 1 ? 'gift' : 'gifts'}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: colors.gold[200],
+                      fontWeight: '400',
+                    }}
+                  >
+                    {items.length} {items.length === 1 ? 'gift' : 'gifts'}
+                  </Text>
+                  {takenCount > 0 && (
+                    <TakenCounter takenCount={takenCount} totalCount={items.length} />
+                  )}
+                </View>
               </View>
 
               {/* FAB Add Button */}
@@ -329,14 +334,21 @@ export default function LuxuryWishlistScreen() {
               </View>
             </MotiView>
           ) : (
-            items.map((item, index) => (
-              <LuxuryWishlistCard
-                key={item.id}
-                item={item}
-                onDelete={handleDeleteItem}
-                index={index}
-              />
-            ))
+            sortedItems.map((item, index) => {
+              const isTaken = claimStatuses.get(item.id) || false;
+
+              return (
+                <LuxuryWishlistCard
+                  key={item.id}
+                  item={item}
+                  onDelete={handleDeleteItem}
+                  index={index}
+                  // Celebrant taken view props
+                  isTaken={isTaken}
+                  dimmed={isTaken}  // Per CONTEXT: "Taken items appear dimmed/faded"
+                />
+              );
+            })
           )}
         </ScrollView>
       </View>
