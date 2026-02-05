@@ -167,6 +167,7 @@ export default function LuxuryWishlistCard({
           overflow: 'hidden',
           borderWidth: isFavorite ? 2 : 1,
           borderColor: getCardBorderColor(),
+          opacity: dimmed ? 0.6 : 1, // Per CONTEXT: "Taken items appear dimmed/faded"
           ...shadows.md,
         }}
       >
@@ -226,6 +227,8 @@ export default function LuxuryWishlistCard({
                     ))
                   )
                 )}
+                {/* Your claim indicator - shows when user owns the claim */}
+                {isYourClaim && <YourClaimIndicator style={{ marginBottom: spacing.xs }} />}
                 <Text
                   numberOfLines={2}
                   style={{
@@ -253,8 +256,14 @@ export default function LuxuryWishlistCard({
                 )}
               </View>
 
-              {/* Actions: Favorite Heart and/or Delete Button */}
+              {/* Actions: Claim indicators, Favorite Heart, Delete Button */}
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
+                {/* TakenBadge - celebrant view: shows item is claimed (no claimer identity) */}
+                {isTaken && <TakenBadge />}
+                {/* ClaimerAvatar - non-celebrant view: shows who claimed (if not your claim) */}
+                {claim?.claimer && !isYourClaim && (
+                  <ClaimerAvatar claimer={claim.claimer} />
+                )}
                 {showFavoriteHeart && (
                   <FavoriteHeart
                     isFavorite={isFavorite || false}
@@ -352,6 +361,20 @@ export default function LuxuryWishlistCard({
                 View Product
               </Text>
             </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Claim Button - shown for claimable standard items in non-celebrant view */}
+        {claimable && !isSpecialItem && (
+          <View style={{ paddingHorizontal: spacing.md, paddingBottom: spacing.md }}>
+            <ClaimButton
+              onClaim={onClaim || (() => {})}
+              onUnclaim={onUnclaim || (() => {})}
+              isClaimed={!!claim}
+              isYourClaim={isYourClaim || false}
+              loading={claiming || false}
+              disabled={isSpecialItem}
+            />
           </View>
         )}
       </View>
