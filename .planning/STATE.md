@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-04)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.2 Group Experience - Phase 17 in progress (Budget Tracking), plan 01 of 05 complete
+**Current focus:** v1.2 Group Experience - Phase 17 in progress (Budget Tracking), plans 01-03 of 05 complete
 
 ## Current Position
 
 Phase: 17 of 17 (Budget Tracking)
-Plan: 1 of 5 in current phase
+Plan: 3 of 5 in current phase
 Status: In progress
-Last activity: 2026-02-05 - Completed 17-01-PLAN.md (Budget Calculation Service)
+Last activity: 2026-02-05 - Completed 17-03-PLAN.md (Budget Progress Bar & Group View Integration)
 
-Progress: [##########] 100% v1.0+v1.1 | [################-] 94% v1.2 (16/17 plans)
+Progress: [##########] 100% v1.0+v1.1 | [#################] 97% v1.2 (18/17+2 plans)
 
 ## Milestone History
 
@@ -38,7 +38,7 @@ Progress: [##########] 100% v1.0+v1.1 | [################-] 94% v1.2 (16/17 plan
 - Phase 14: Group View Redesign (GVIEW-01 through GVIEW-07) - COMPLETE (+ gap closure 14-04)
 - Phase 15: Group Settings (GSET-01 through GSET-07) - COMPLETE (plans 01-03)
 - Phase 16: Mode System (MODE-01 through MODE-05) - COMPLETE (plans 01-03 + gap closure 16-04)
-- Phase 17: Budget Tracking (BUDG-01 through BUDG-05) - IN PROGRESS (plan 01 complete)
+- Phase 17: Budget Tracking (BUDG-01 through BUDG-05) - IN PROGRESS (plans 01-03 complete)
 
 **Coverage:** 25/25 requirements mapped (100%)
 
@@ -97,6 +97,10 @@ Key decisions from v1.0/v1.1 archived in PROJECT.md Key Decisions table.
 - Phase 17-01: getSpendingInRange returns 0 on error (graceful degradation for budget display)
 - Phase 17-01: isOverBudget at exactly 100% (>= comparison)
 - Phase 17-01: Jest with ts-jest for project test infrastructure
+- Phase 17-03: formatBudgetAmount shows whole dollars without decimals, fractional with 2 decimals
+- Phase 17-03: Budget section between action buttons and members list (no header compact line)
+- Phase 17-03: No loading indicator for budget (fast async, shows nothing until ready)
+- Phase 17-03: Traffic-light pattern: normal=success, warning=warning, danger/over=error
 
 ### Research Findings (v1.2)
 
@@ -125,6 +129,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-05
-Stopped at: Completed 17-01-PLAN.md (Budget Calculation Service)
+Stopped at: Completed 17-03-PLAN.md (Budget Progress Bar & Group View Integration)
 Resume file: None
-Next: 17-02-PLAN.md (Budget Progress Bar component)
+Next: 17-04-PLAN.md or 17-05-PLAN.md (remaining budget tracking plans)
