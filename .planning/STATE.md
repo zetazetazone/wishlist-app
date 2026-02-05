@@ -97,6 +97,10 @@ Key decisions from v1.0/v1.1 archived in PROJECT.md Key Decisions table.
 - Phase 17-01: getSpendingInRange returns 0 on error (graceful degradation for budget display)
 - Phase 17-01: isOverBudget at exactly 100% (>= comparison)
 - Phase 17-01: Jest with ts-jest for project test infrastructure
+- Phase 17-02: Green highlighting (colors.success + 10% opacity) for budget cards matching Phase 13-02 convention
+- Phase 17-02: Save button conditional on state diff from props (only when changes exist)
+- Phase 17-02: Permissive amount validation (empty allowed for per_gift optional suggested limit)
+- Phase 17-02: Budget section at animation delay 200ms, subsequent sections shifted +50ms each
 - Phase 17-03: formatBudgetAmount shows whole dollars without decimals, fractional with 2 decimals
 - Phase 17-03: Budget section between action buttons and members list (no header compact line)
 - Phase 17-03: No loading indicator for budget (fast async, shows nothing until ready)
