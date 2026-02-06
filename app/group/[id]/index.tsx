@@ -119,7 +119,7 @@ export default function GroupDetailScreen() {
 
     try {
       await Share.share({
-        message: `Join "${group.name}" on Wishlist App!\n\nInvite Code: ${group.id}\n\nUse this code to join our gift-giving group.`,
+        message: `Join "${group.name}" on Wishlist App!\n\nInvite Code: ${group.invite_code}\n\nUse this code to join our gift-giving group.`,
         title: `Join ${group.name}`,
       });
     } catch (error) {
@@ -132,7 +132,7 @@ export default function GroupDetailScreen() {
     // Note: Clipboard API would be used here in a full implementation
     Alert.alert(
       'Invite Code',
-      group.id,
+      group.invite_code,
       [
         { text: 'Share', onPress: handleShare },
         { text: 'Close' },
