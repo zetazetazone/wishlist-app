@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.3 Phase 21 — Split Contributions & Claim Enhancements (ready to plan)
+**Current focus:** v1.3 Phase 21 — Split Contributions & Claim Enhancements (in progress)
 
 ## Current Position
 
-Phase: 21 of 22 (Split Contributions & Claim Enhancements) — READY TO PLAN
-Plan: N/A (needs planning)
-Status: Ready for Phase 21 planning
-Last activity: 2026-02-06 — Completed Phase 20 execution and verification
+Phase: 21 of 22 (Split Contributions & Claim Enhancements) — IN PROGRESS
+Plan: 1 of 4 complete
+Status: In progress
+Last activity: 2026-02-06 — Completed 21-01-PLAN.md (Split Contribution RPC Functions)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [#########.] 90% v1.3 (9/~10 plans, 19-05 deferred, phase 20 complete)
+Progress: [##########] 100% v1.0+v1.1+v1.2 | [##########] 92% v1.3 (10/~11 plans, 19-05 deferred)
 
 ## Milestone History
 
@@ -88,6 +88,11 @@ Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 - Dislikes displayed with warning-colored chips for visual distinction
 - Member profile screen uses Stack.Screen dynamic title from display_name
 
+**Phase 21 Decisions (21-01):**
+- Original claimer's amount set to 0 when opening split, covers remaining via close_split
+- Fully funded trigger fires on both INSERT and UPDATE (for close_split completion)
+- 6 trigger attachments for 5 trigger functions (notify_split_fully_funded has INSERT+UPDATE)
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -114,6 +119,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Phase 20 complete, verified
+Stopped at: Completed 21-01-PLAN.md
 Resume file: None
-Next: `/gsd:discuss-phase 21` — Split Contributions & Claim Enhancements
+Next: Execute 21-02-PLAN.md (TypeScript client functions)
