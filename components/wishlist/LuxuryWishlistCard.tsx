@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Linking, Alert } from 'react-native';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -11,7 +12,27 @@ import { ClaimButton } from './ClaimButton';
 import { ClaimerAvatar } from './ClaimerAvatar';
 import { TakenBadge } from './TakenBadge';
 import { YourClaimIndicator } from './YourClaimIndicator';
+import { SplitContributionProgress } from './SplitContributionProgress';
+import { ContributorsDisplay } from './ContributorsDisplay';
+import { SplitModal } from './SplitModal';
 import type { ClaimWithUser } from '../../lib/claims';
+
+/** Split status for an item */
+interface SplitStatusInfo {
+  itemPrice: number;
+  additionalCosts: number | null;
+  totalPledged: number;
+  isFullyFunded: boolean;
+  isOpen: boolean;
+}
+
+/** Contributor for split display */
+interface SplitContributorInfo {
+  id: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  amount: number;
+}
 
 interface LuxuryWishlistCardProps {
   item: WishlistItem;
@@ -32,6 +53,15 @@ interface LuxuryWishlistCardProps {
   isYourClaim?: boolean;         // Current user owns this claim
   isTaken?: boolean;             // Celebrant view: item is claimed (no claimer identity)
   dimmed?: boolean;              // Visual dim for taken items (celebrant view)
+  isCelebrant?: boolean;         // Is current user the celebrant
+  // Split contribution props
+  splitStatus?: SplitStatusInfo | null;
+  contributors?: SplitContributorInfo[];
+  userPledgeAmount?: number;     // Current user's pledge amount (if any)
+  suggestedShare?: number;       // Suggested equal-split amount
+  onOpenSplit?: (itemId: string, additionalCosts?: number) => void;
+  onPledge?: (itemId: string, amount: number) => void;
+  onCloseSplit?: (itemId: string) => void;
 }
 
 export default function LuxuryWishlistCard({
@@ -52,11 +82,26 @@ export default function LuxuryWishlistCard({
   isYourClaim,
   isTaken,
   dimmed,
+  isCelebrant,
+  splitStatus,
+  contributors,
+  userPledgeAmount,
+  suggestedShare,
+  onOpenSplit,
+  onPledge,
+  onCloseSplit,
 }: LuxuryWishlistCardProps) {
+  // State for split modal
+  const [showSplitModal, setShowSplitModal] = useState(false);
+  const [splitLoading, setSplitLoading] = useState(false);
+
   // Determine if this item is favorited (for any group or single group context)
   const isFavorite = (favoriteGroups && favoriteGroups.length > 0) || !!singleGroupName;
   // Detect special item types
   const isSpecialItem = item.item_type && item.item_type !== 'standard';
+
+  // Check if item is in split mode
+  const isSplitItem = claim?.claim_type === 'split' || splitStatus?.isOpen;
 
   // Get appropriate icon for item type
   const getCardIcon = (): 'help-circle' | 'gift' | 'gift-outline' => {
@@ -124,6 +169,61 @@ export default function LuxuryWishlistCard({
         onPress: () => onDelete?.(item.id),
       },
     ]);
+  };
+
+  // Handle opening a split
+  const handleOpenSplit = () => {
+    // Show prompt for additional costs
+    Alert.prompt(
+      'Open for Split',
+      'Add shipping or additional costs? (optional)',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Open Split',
+          onPress: (input?: string) => {
+            const additionalCosts = input ? parseFloat(input) : undefined;
+            const validCosts = additionalCosts && !isNaN(additionalCosts) && additionalCosts > 0
+              ? additionalCosts
+              : undefined;
+            onOpenSplit?.(item.id, validCosts);
+          },
+        },
+      ],
+      'plain-text',
+      '',
+      'decimal-pad'
+    );
+  };
+
+  // Handle pledging to a split
+  const handlePledgeConfirm = async (amount: number) => {
+    setSplitLoading(true);
+    try {
+      await onPledge?.(item.id, amount);
+      setShowSplitModal(false);
+    } finally {
+      setSplitLoading(false);
+    }
+  };
+
+  // Handle closing a split
+  const handleCloseSplit = () => {
+    const remaining = splitStatus
+      ? (splitStatus.itemPrice + (splitStatus.additionalCosts || 0)) - splitStatus.totalPledged
+      : 0;
+
+    Alert.alert(
+      'Cover Remaining Amount',
+      `You'll cover the remaining $${remaining.toFixed(2)} to complete this split.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Cover It',
+          onPress: () => onCloseSplit?.(item.id),
+        },
+      ]
+    );
   };
 
   const formatPrice = (price?: number | null) => {
@@ -365,7 +465,7 @@ export default function LuxuryWishlistCard({
         )}
 
         {/* Claim Button - shown for claimable items OR your own claims (to unclaim) */}
-        {(claimable || isYourClaim) && !isSpecialItem && (
+        {(claimable || isYourClaim) && !isSpecialItem && !isSplitItem && (
           <View style={{ paddingHorizontal: spacing.md, paddingBottom: spacing.md }}>
             <ClaimButton
               onClaim={onClaim || (() => {})}
@@ -377,6 +477,123 @@ export default function LuxuryWishlistCard({
             />
           </View>
         )}
+
+        {/* Split Contribution UI - role-based visibility */}
+        {!isSpecialItem && (
+          <>
+            {/* Claimer view: Open for Split or manage split */}
+            {isYourClaim && claim && !isCelebrant && (
+              <View style={{ paddingHorizontal: spacing.md, paddingBottom: spacing.md }}>
+                {!isSplitItem ? (
+                  // Not yet split - show "Open for Split" button
+                  <ClaimButton
+                    onClaim={() => {}}
+                    onUnclaim={() => {}}
+                    isClaimed={false}
+                    isYourClaim={false}
+                    loading={claiming || false}
+                    variant="openSplit"
+                    onOpenSplit={handleOpenSplit}
+                  />
+                ) : splitStatus && (
+                  // Already split - show progress and controls
+                  <View style={{ gap: spacing.md }}>
+                    <SplitContributionProgress
+                      itemPrice={splitStatus.itemPrice}
+                      additionalCosts={splitStatus.additionalCosts}
+                      totalPledged={splitStatus.totalPledged}
+                      isFullyFunded={splitStatus.isFullyFunded}
+                    />
+                    {contributors && contributors.length > 0 && (
+                      <ContributorsDisplay contributors={contributors} />
+                    )}
+                    {/* Close split button - disabled if fully funded */}
+                    {!splitStatus.isFullyFunded && (
+                      <ClaimButton
+                        onClaim={() => {}}
+                        onUnclaim={() => {}}
+                        isClaimed={false}
+                        isYourClaim={false}
+                        loading={claiming || false}
+                        variant="closeSplit"
+                        onCloseSplit={handleCloseSplit}
+                      />
+                    )}
+                  </View>
+                )}
+              </View>
+            )}
+
+            {/* Non-claimer non-celebrant view: See split progress and contribute */}
+            {!isYourClaim && !isCelebrant && isSplitItem && splitStatus && (
+              <View style={{ paddingHorizontal: spacing.md, paddingBottom: spacing.md }}>
+                <View style={{ gap: spacing.md }}>
+                  <SplitContributionProgress
+                    itemPrice={splitStatus.itemPrice}
+                    additionalCosts={splitStatus.additionalCosts}
+                    totalPledged={splitStatus.totalPledged}
+                    isFullyFunded={splitStatus.isFullyFunded}
+                  />
+                  {contributors && contributors.length > 0 && (
+                    <ContributorsDisplay contributors={contributors} />
+                  )}
+                  {/* Contribute button or your contribution badge */}
+                  {userPledgeAmount && userPledgeAmount > 0 ? (
+                    <View style={{
+                      backgroundColor: colors.success + '20',
+                      paddingHorizontal: spacing.md,
+                      paddingVertical: spacing.sm,
+                      borderRadius: borderRadius.md,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: spacing.sm,
+                    }}>
+                      <MaterialCommunityIcons name="check-circle" size={18} color={colors.success} />
+                      <Text style={{ color: colors.success, fontWeight: '600' }}>
+                        Your contribution: ${userPledgeAmount.toFixed(2)}
+                      </Text>
+                    </View>
+                  ) : !splitStatus.isFullyFunded && (
+                    <ClaimButton
+                      onClaim={() => {}}
+                      onUnclaim={() => {}}
+                      isClaimed={false}
+                      isYourClaim={false}
+                      loading={claiming || false}
+                      variant="contribute"
+                      onContribute={() => setShowSplitModal(true)}
+                    />
+                  )}
+                </View>
+              </View>
+            )}
+
+            {/* Celebrant view: Only show "Taken" - no split details */}
+            {isCelebrant && isSplitItem && splitStatus && (
+              <View style={{ paddingHorizontal: spacing.md, paddingBottom: spacing.md }}>
+                <SplitContributionProgress
+                  itemPrice={0}
+                  totalPledged={0}
+                  isFullyFunded={splitStatus.isFullyFunded}
+                  isCelebrant={true}
+                />
+              </View>
+            )}
+          </>
+        )}
+
+        {/* Split Modal for pledging */}
+        <SplitModal
+          visible={showSplitModal}
+          onClose={() => setShowSplitModal(false)}
+          onConfirm={handlePledgeConfirm}
+          itemTitle={item.title}
+          itemPrice={splitStatus?.itemPrice || item.price || 0}
+          additionalCosts={splitStatus?.additionalCosts}
+          totalPledged={splitStatus?.totalPledged || 0}
+          suggestedAmount={suggestedShare}
+          loading={splitLoading}
+        />
       </View>
     </MotiView>
   );

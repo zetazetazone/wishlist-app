@@ -1,5 +1,8 @@
 import { TouchableOpacity, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
+
+export type ClaimButtonVariant = 'claim' | 'openSplit' | 'contribute' | 'closeSplit';
 
 interface ClaimButtonProps {
   onClaim: () => void;
@@ -8,6 +11,11 @@ interface ClaimButtonProps {
   isYourClaim: boolean;
   loading: boolean;
   disabled?: boolean; // For surprise_me/mystery_box items
+  // Split variant props
+  variant?: ClaimButtonVariant;
+  onOpenSplit?: () => void;
+  onContribute?: () => void;
+  onCloseSplit?: () => void;
 }
 
 /**
@@ -27,10 +35,76 @@ export function ClaimButton({
   isYourClaim,
   loading,
   disabled,
+  variant,
+  onOpenSplit,
+  onContribute,
+  onCloseSplit,
 }: ClaimButtonProps) {
   // Don't render for surprise_me/mystery_box items
   if (disabled) return null;
 
+  // Handle split variants first
+  if (variant === 'openSplit' && onOpenSplit) {
+    return (
+      <TouchableOpacity
+        style={[styles.button, styles.openSplitButton, loading && styles.disabledButton]}
+        onPress={loading ? undefined : onOpenSplit}
+        disabled={loading}
+        activeOpacity={0.7}
+      >
+        {loading ? (
+          <ActivityIndicator size="small" color={colors.burgundy[600]} />
+        ) : (
+          <>
+            <MaterialCommunityIcons name="account-group" size={18} color={colors.burgundy[600]} />
+            <Text style={styles.openSplitText}>Open for Split</Text>
+          </>
+        )}
+      </TouchableOpacity>
+    );
+  }
+
+  if (variant === 'contribute' && onContribute) {
+    return (
+      <TouchableOpacity
+        style={[styles.button, styles.contributeButton, loading && styles.disabledButton]}
+        onPress={loading ? undefined : onContribute}
+        disabled={loading}
+        activeOpacity={0.7}
+      >
+        {loading ? (
+          <ActivityIndicator size="small" color={colors.white} />
+        ) : (
+          <>
+            <MaterialCommunityIcons name="hand-heart" size={18} color={colors.white} />
+            <Text style={styles.contributeText}>Contribute</Text>
+          </>
+        )}
+      </TouchableOpacity>
+    );
+  }
+
+  if (variant === 'closeSplit' && onCloseSplit) {
+    return (
+      <TouchableOpacity
+        style={[styles.button, styles.closeSplitButton, loading && styles.disabledButton]}
+        onPress={loading ? undefined : onCloseSplit}
+        disabled={loading}
+        activeOpacity={0.7}
+      >
+        {loading ? (
+          <ActivityIndicator size="small" color={colors.burgundy[600]} />
+        ) : (
+          <>
+            <MaterialCommunityIcons name="check-circle-outline" size={18} color={colors.burgundy[600]} />
+            <Text style={styles.closeSplitText}>Cover Remaining</Text>
+          </>
+        )}
+      </TouchableOpacity>
+    );
+  }
+
+  // Standard claim/unclaim logic
   const handlePress = () => {
     if (loading) return;
     if (isClaimed && isYourClaim) {
@@ -95,6 +169,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     minWidth: 80,
     minHeight: 40,
+    flexDirection: 'row',
+    gap: spacing.xs,
   },
   claimButton: {
     backgroundColor: colors.success,
@@ -117,6 +193,37 @@ const styles = StyleSheet.create({
   },
   unclaimText: {
     color: colors.burgundy[700],
+  },
+  // Split variant styles
+  openSplitButton: {
+    backgroundColor: colors.cream[100],
+    borderWidth: 2,
+    borderColor: colors.burgundy[300],
+  },
+  openSplitText: {
+    fontWeight: '600',
+    fontSize: 14,
+    color: colors.burgundy[600],
+  },
+  contributeButton: {
+    backgroundColor: colors.success,
+    ...shadows.sm,
+  },
+  contributeText: {
+    fontWeight: '600',
+    fontSize: 14,
+    color: colors.white,
+  },
+  closeSplitButton: {
+    backgroundColor: colors.cream[100],
+    borderWidth: 2,
+    borderColor: colors.burgundy[300],
+    borderStyle: 'dashed',
+  },
+  closeSplitText: {
+    fontWeight: '600',
+    fontSize: 14,
+    color: colors.burgundy[600],
   },
 });
 
