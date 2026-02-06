@@ -16,6 +16,7 @@ import { SplitContributionProgress } from './SplitContributionProgress';
 import { ContributorsDisplay } from './ContributorsDisplay';
 import { SplitModal } from './SplitModal';
 import { OpenSplitModal } from './OpenSplitModal';
+import { ClaimTimestamp } from './ClaimTimestamp';
 import type { ClaimWithUser } from '../../lib/claims';
 
 /** Split status for an item */
@@ -351,6 +352,10 @@ export default function LuxuryWishlistCard({
                 {/* ClaimerAvatar - non-celebrant view: shows who claimed (if not your claim) */}
                 {claim?.claimer && !isYourClaim && (
                   <ClaimerAvatar claimer={claim.claimer} />
+                )}
+                {/* ClaimTimestamp - shows clock icon when claim exists (non-celebrant only) */}
+                {claim?.created_at && !isCelebrant && (
+                  <ClaimTimestamp timestamp={claim.created_at} />
                 )}
                 {showFavoriteHeart && (
                   <FavoriteHeart

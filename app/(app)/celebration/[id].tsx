@@ -907,6 +907,8 @@ export default function CelebrationDetailScreen() {
                             claiming={claimingItemId === item.id}
                             claim={!isCelebrant ? claim : null}  // Don't pass claim to celebrant
                             isYourClaim={isYourClaim}
+                            isTaken={isCelebrant && !!claim}  // Celebrant sees "Taken" badge when claimed
+                            dimmed={isCelebrant && !!claim}   // Celebrant sees dimmed taken items
                             isCelebrant={isCelebrant}
                             // Split contribution props
                             splitStatus={splitStatus ? {
