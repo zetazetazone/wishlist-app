@@ -36,8 +36,19 @@ import { getChatRoomForCelebration, sendMessage } from '../../../lib/chat';
 import {
   getContributions,
   getCurrentUserContribution,
+  getClaimSummary,
+  getSplitStatus,
+  getContributors,
+  getSuggestedShare,
+  openSplit,
+  pledgeContribution,
+  closeSplit,
   type Contribution,
+  type ClaimSummary,
+  type SplitStatus,
+  type SplitContributor,
 } from '../../../lib/contributions';
+import { ClaimSummary as ClaimSummaryComponent } from '../../../components/celebrations/ClaimSummary';
 import { GiftLeaderBadge } from '../../../components/celebrations/GiftLeaderBadge';
 import { ContributionProgress } from '../../../components/celebrations/ContributionProgress';
 import { ContributionModal } from '../../../components/celebrations/ContributionModal';
@@ -117,6 +128,13 @@ export default function CelebrationDetailScreen() {
   const [claims, setClaims] = useState<ClaimWithUser[]>([]);
   const [claimsLoading, setClaimsLoading] = useState(false);
   const [claimingItemId, setClaimingItemId] = useState<string | null>(null);
+
+  // Split contribution state
+  const [claimSummary, setClaimSummary] = useState<ClaimSummary | null>(null);
+  const [splitStatusMap, setSplitStatusMap] = useState<Map<string, SplitStatus>>(new Map());
+  const [contributorsMap, setContributorsMap] = useState<Map<string, SplitContributor[]>>(new Map());
+  const [suggestedShareMap, setSuggestedShareMap] = useState<Map<string, number>>(new Map());
+  const [userPledgesMap, setUserPledgesMap] = useState<Map<string, number>>(new Map());
 
   // View mode: 'info' shows header/contributions, 'chat' shows full chat
   const [viewMode, setViewMode] = useState<'info' | 'chat'>('info');
@@ -207,12 +225,44 @@ export default function CelebrationDetailScreen() {
       const itemIds = celebrantItems.map(item => item.id);
       const claimsData = await getClaimsForItems(itemIds);
       setClaims(claimsData);
+
+      // Load split data for items with split claims
+      const splitItemIds = claimsData
+        .filter(c => c.claim_type === 'split')
+        .map(c => c.wishlist_item_id);
+
+      // Also load claim summary for header
+      if (celebration?.celebrant_id && celebration?.group_id) {
+        const summary = await getClaimSummary(celebration.celebrant_id, celebration.group_id);
+        setClaimSummary(summary);
+      }
+
+      // Batch load split data
+      for (const itemId of splitItemIds) {
+        const [status, contribs, suggested] = await Promise.all([
+          getSplitStatus(itemId),
+          getContributors(itemId),
+          getSuggestedShare(itemId),
+        ]);
+        if (status) {
+          setSplitStatusMap(prev => new Map(prev).set(itemId, status));
+        }
+        setContributorsMap(prev => new Map(prev).set(itemId, contribs));
+        if (suggested) {
+          setSuggestedShareMap(prev => new Map(prev).set(itemId, suggested.suggested_amount));
+        }
+        // Check if current user has pledged
+        const userContrib = contribs.find(c => c.id === currentUserId);
+        if (userContrib) {
+          setUserPledgesMap(prev => new Map(prev).set(itemId, userContrib.amount));
+        }
+      }
     } catch (err) {
       console.error('Failed to load claims:', err);
     } finally {
       setClaimsLoading(false);
     }
-  }, [celebrantItems]);
+  }, [celebrantItems, celebration?.celebrant_id, celebration?.group_id, currentUserId]);
 
   // Helper to get claim for an item
   const getClaimForItem = useCallback((itemId: string): ClaimWithUser | null => {
@@ -348,6 +398,57 @@ export default function CelebrationDetailScreen() {
       ],
       { cancelable: true }
     );
+  }, [loadClaims]);
+
+  // Handle opening a split contribution
+  const handleOpenSplit = useCallback(async (itemId: string, additionalCosts?: number) => {
+    setClaimingItemId(itemId);
+    try {
+      const result = await openSplit(itemId, additionalCosts);
+      if (result.success) {
+        await loadClaims();
+      } else {
+        Alert.alert('Error', result.error || 'Failed to open split');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to open split. Please try again.');
+    } finally {
+      setClaimingItemId(null);
+    }
+  }, [loadClaims]);
+
+  // Handle pledging to a split
+  const handlePledge = useCallback(async (itemId: string, amount: number) => {
+    setClaimingItemId(itemId);
+    try {
+      const result = await pledgeContribution(itemId, amount);
+      if (result.success) {
+        await loadClaims();
+      } else {
+        Alert.alert('Error', result.error || 'Failed to pledge');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to pledge. Please try again.');
+    } finally {
+      setClaimingItemId(null);
+    }
+  }, [loadClaims]);
+
+  // Handle closing a split (covering remaining)
+  const handleCloseSplit = useCallback(async (itemId: string) => {
+    setClaimingItemId(itemId);
+    try {
+      const result = await closeSplit(itemId);
+      if (result.success) {
+        await loadClaims();
+      } else {
+        Alert.alert('Error', result.error || 'Failed to close split');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to close split. Please try again.');
+    } finally {
+      setClaimingItemId(null);
+    }
   }, [loadClaims]);
 
   // Navigate to wishlist item (from linked item in chat)
@@ -609,6 +710,17 @@ export default function CelebrationDetailScreen() {
                   <View style={{ marginTop: 8 }}>
                     <GroupModeBadge mode="gifts" />
                   </View>
+
+                  {/* Claim Summary - only for non-celebrant */}
+                  {claimSummary && currentUserId !== celebration.celebrant_id && (
+                    <View style={{ marginTop: 12 }}>
+                      <ClaimSummaryComponent
+                        totalItems={claimSummary.total_items}
+                        claimedItems={claimSummary.claimed_items}
+                        splitItems={claimSummary.split_items}
+                      />
+                    </View>
+                  )}
                 </View>
 
                 {/* Gift Leader Section */}
@@ -775,6 +887,12 @@ export default function CelebrationDetailScreen() {
                         const isCelebrant = currentUserId === celebration?.celebrant_id;
                         const isStandardItem = item.item_type === 'standard' || !item.item_type;
 
+                        // Get split data for this item
+                        const splitStatus = splitStatusMap.get(item.id);
+                        const splitContributors = contributorsMap.get(item.id);
+                        const suggestedShare = suggestedShareMap.get(item.id);
+                        const userPledge = userPledgesMap.get(item.id);
+
                         return (
                           <LuxuryWishlistCard
                             key={item.id}
@@ -789,6 +907,21 @@ export default function CelebrationDetailScreen() {
                             claiming={claimingItemId === item.id}
                             claim={!isCelebrant ? claim : null}  // Don't pass claim to celebrant
                             isYourClaim={isYourClaim}
+                            isCelebrant={isCelebrant}
+                            // Split contribution props
+                            splitStatus={splitStatus ? {
+                              itemPrice: splitStatus.item_price,
+                              additionalCosts: splitStatus.additional_costs,
+                              totalPledged: splitStatus.total_pledged,
+                              isFullyFunded: splitStatus.is_fully_funded,
+                              isOpen: splitStatus.is_open,
+                            } : null}
+                            contributors={splitContributors}
+                            userPledgeAmount={userPledge}
+                            suggestedShare={suggestedShare}
+                            onOpenSplit={handleOpenSplit}
+                            onPledge={handlePledge}
+                            onCloseSplit={handleCloseSplit}
                           />
                         );
                       })}
