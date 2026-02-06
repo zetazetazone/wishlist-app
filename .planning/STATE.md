@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.3 Phase 20 — Personal Details (in progress)
+**Current focus:** v1.3 Phase 20 — Personal Details (COMPLETE)
 
 ## Current Position
 
-Phase: 20 of 22 (Personal Details) — IN PROGRESS
-Plan: 02 of 03 complete (Form Sections)
-Status: In progress
-Last activity: 2026-02-06 — Completed 20-02-PLAN.md (form sections)
+Phase: 20 of 22 (Personal Details) — COMPLETE
+Plan: 03 of 03 complete (Read-Only Member Profile)
+Status: Phase complete
+Last activity: 2026-02-06 — Completed 20-03-PLAN.md (read-only member profile)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [########..] 80% v1.3 (8/~10 plans, 19-05 deferred)
+Progress: [##########] 100% v1.0+v1.1+v1.2 | [#########.] 90% v1.3 (9/~10 plans, 19-05 deferred)
 
 ## Milestone History
 
@@ -83,6 +83,11 @@ Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 - Platform icons use generic alternatives (cart, heart, store, link) due to MaterialCommunityIcons limitations
 - URL validation uses new URL() constructor with http/https protocol check
 
+**Phase 20 Decisions (20-03):**
+- ExternalLinkRow reused in read-only mode with onRemove no-op
+- Dislikes displayed with warning-colored chips for visual distinction
+- Member profile screen uses Stack.Screen dynamic title from display_name
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -108,7 +113,7 @@ From v1.0/v1.1:
 
 ## Session Continuity
 
-Last session: 2026-02-06 10:01 UTC
-Stopped at: Completed 20-02-PLAN.md (form sections)
+Last session: 2026-02-06 10:04 UTC
+Stopped at: Completed 20-03-PLAN.md (read-only member profile)
 Resume file: None
-Next: Execute 20-03-PLAN.md (read-only member profile view)
+Next: Phase 21 (Member Notes) planning
