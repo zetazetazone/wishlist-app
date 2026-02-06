@@ -307,11 +307,11 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 19-01-PLAN.md — Claim UI components (ClaimButton, ClaimerAvatar, TakenBadge, YourClaimIndicator)
-- [ ] 19-02-PLAN.md — Extend LuxuryWishlistCard with claim-related props
-- [ ] 19-03-PLAN.md — Celebration page claim integration (non-celebrant view)
-- [ ] 19-04-PLAN.md — My Wishlist taken integration and TakenCounter (celebrant view)
-- [ ] 19-05-PLAN.md — Visual verification checkpoint
+- [x] 19-01-PLAN.md — Claim UI components (ClaimButton, ClaimerAvatar, TakenBadge, YourClaimIndicator)
+- [x] 19-02-PLAN.md — Extend LuxuryWishlistCard with claim-related props
+- [x] 19-03-PLAN.md — Celebration page claim integration (non-celebrant view)
+- [x] 19-04-PLAN.md — My Wishlist taken integration and TakenCounter (celebrant view)
+- [~] 19-05-PLAN.md — Visual verification checkpoint (deferred)
 
 #### Phase 20: Personal Details
 **Goal**: Users can fill in and share personal details (sizes, preferences, external links) across all their groups for better gift selection
@@ -323,11 +323,12 @@ Plans:
   3. User can add external wishlist links (Amazon, Pinterest, Etsy URLs) that open in device browser
   4. Group members can view another member's personal details on their profile page (read-only)
   5. Profile shows completeness indicator and last-updated timestamp for personal details
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 20-01: TBD
-- [ ] 20-02: TBD
+- [ ] 20-01-PLAN.md — Foundation components (TagChip, TagInput, CompletenessIndicator)
+- [ ] 20-02-PLAN.md — Form sections and personal details edit screen
+- [ ] 20-03-PLAN.md — Profile integration and read-only member view
 
 #### Phase 21: Split Contributions & Claim Enhancements
 **Goal**: Claimers can open items for split funding from other members, and claim-related notifications and summaries complete the coordination experience
@@ -387,7 +388,7 @@ Phases execute in numeric order: 18 -> 19 -> 20 -> 21 -> 22
 | 16. Mode System | v1.2 | 4/4 | Complete | 2026-02-05 |
 | 17. Budget Tracking | v1.2 | 3/3 | Complete | 2026-02-05 |
 | 18. Schema & Atomic Functions | v1.3 | 2/2 | Complete | 2026-02-05 |
-| 19. Gift Claims UI | v1.3 | 0/5 | Not started | - |
-| 20. Personal Details | v1.3 | 0/TBD | Not started | - |
+| 19. Gift Claims UI | v1.3 | 4/5 | Verification deferred | - |
+| 20. Personal Details | v1.3 | 0/3 | Planned | - |
 | 21. Split Contributions & Claim Enhancements | v1.3 | 0/TBD | Not started | - |
 | 22. Secret Notes | v1.3 | 0/TBD | Not started | - |
