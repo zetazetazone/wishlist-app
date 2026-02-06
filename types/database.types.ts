@@ -153,6 +153,7 @@ export interface Database {
           item_type: 'standard' | 'surprise_me' | 'mystery_box'
           mystery_box_tier: 50 | 100 | null
           surprise_me_budget: number | null
+          additional_costs: number | null
           created_at: string
           updated_at: string
         }
@@ -169,6 +170,7 @@ export interface Database {
           item_type?: 'standard' | 'surprise_me' | 'mystery_box'
           mystery_box_tier?: 50 | 100 | null
           surprise_me_budget?: number | null
+          additional_costs?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -185,6 +187,7 @@ export interface Database {
           item_type?: 'standard' | 'surprise_me' | 'mystery_box'
           mystery_box_tier?: 50 | 100 | null
           surprise_me_budget?: number | null
+          additional_costs?: number | null
           created_at?: string
           updated_at?: string
         }
@@ -550,6 +553,71 @@ export interface Database {
           created_at?: string
           updated_at?: string
         }
+      }
+    }
+    Functions: {
+      /** Claim a wishlist item (full or split) */
+      claim_item: {
+        Args: {
+          p_item_id: string
+          p_claim_type?: 'full' | 'split'
+          p_amount?: number | null
+        }
+        Returns: Json
+      }
+      /** Unclaim a previously claimed item */
+      unclaim_item: {
+        Args: {
+          p_claim_id: string
+        }
+        Returns: Json
+      }
+      /** Get claim status for items (celebrant-safe boolean view) */
+      get_item_claim_status: {
+        Args: {
+          p_item_ids: string[]
+        }
+        Returns: {
+          wishlist_item_id: string
+          is_claimed: boolean
+        }[]
+      }
+      /** Convert full claim to split-open state */
+      open_split: {
+        Args: {
+          p_item_id: string
+          p_additional_costs?: number | null
+        }
+        Returns: Json
+      }
+      /** Add a split contribution to an item */
+      pledge_contribution: {
+        Args: {
+          p_item_id: string
+          p_amount: number
+        }
+        Returns: Json
+      }
+      /** Claimer covers remaining amount to complete split */
+      close_split: {
+        Args: {
+          p_item_id: string
+        }
+        Returns: Json
+      }
+      /** Get split funding status for an item */
+      get_split_status: {
+        Args: {
+          p_item_id: string
+        }
+        Returns: Json
+      }
+      /** Get suggested equal-split amount for UI */
+      get_suggested_share: {
+        Args: {
+          p_item_id: string
+        }
+        Returns: Json
       }
     }
   }
