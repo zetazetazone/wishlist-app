@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-05)
 ## Current Position
 
 Phase: 20 of 22 (Personal Details) — IN PROGRESS
-Plan: 01 of 03 complete (Foundation Components)
+Plan: 02 of 03 complete (Form Sections)
 Status: In progress
-Last activity: 2026-02-06 — Completed 20-01-PLAN.md (foundation components)
+Last activity: 2026-02-06 — Completed 20-02-PLAN.md (form sections)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [#######...] 70% v1.3 (7/~10 plans, 19-05 deferred)
+Progress: [##########] 100% v1.0+v1.1+v1.2 | [########..] 80% v1.3 (8/~10 plans, 19-05 deferred)
 
 ## Milestone History
 
@@ -78,6 +78,11 @@ Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 - CompletenessIndicator uses linear progress bar (consistent with BudgetProgressBar)
 - 6 sections for completeness: sizes, colors, brands, interests, dislikes, external links
 
+**Phase 20 Decisions (20-02):**
+- Shirt uses Select dropdown (standardized sizes), pants/shoe/ring use text inputs (varied formats)
+- Platform icons use generic alternatives (cart, heart, store, link) due to MaterialCommunityIcons limitations
+- URL validation uses new URL() constructor with http/https protocol check
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -103,7 +108,7 @@ From v1.0/v1.1:
 
 ## Session Continuity
 
-Last session: 2026-02-06 09:53 UTC
-Stopped at: Completed 20-01-PLAN.md (foundation components)
+Last session: 2026-02-06 10:01 UTC
+Stopped at: Completed 20-02-PLAN.md (form sections)
 Resume file: None
-Next: Execute 20-02-PLAN.md (form sections) or 20-03-PLAN.md (read-only view)
+Next: Execute 20-03-PLAN.md (read-only member profile view)
