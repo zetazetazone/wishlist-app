@@ -93,6 +93,11 @@ Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 - Fully funded trigger fires on both INSERT and UPDATE (for close_split completion)
 - 6 trigger attachments for 5 trigger functions (notify_split_fully_funded has INSERT+UPDATE)
 
+**Phase 21 Decisions (21-02):**
+- Renamed Contributor to SplitContributor to avoid confusion with celebration Contribution type
+- Added getContributions as legacy alias for getCelebrationContributions (backwards compatibility)
+- Graceful degradation: read functions return null/empty on error, mutation functions return {success: false, error}
+
 **Phase 21 Decisions (21-03):**
 - SplitContributionProgress uses isCelebrant prop for celebrant-safe view (shows only "Taken"/"In Progress")
 - ContributorsDisplay modal shows "Name contributed $X" for full context when tapping avatar
