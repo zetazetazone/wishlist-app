@@ -1,9 +1,9 @@
 ---
-status: complete
+status: diagnosed
 phase: 21-split-contributions-claim-enhancements
 source: [21-01-SUMMARY.md, 21-02-SUMMARY.md, 21-03-SUMMARY.md, 21-04-SUMMARY.md, 21-05-SUMMARY.md]
 started: 2026-02-06T12:00:00Z
-updated: 2026-02-06T17:15:00Z
+updated: 2026-02-06T17:30:00Z
 ---
 
 ## Current Test
@@ -94,47 +94,68 @@ skipped: 7
   reason: "User reported: open for split button does nothing"
   severity: major
   test: 2
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "Alert.prompt() is iOS-only and not supported on Android, causing silent failure"
+  artifacts:
+    - path: "components/wishlist/LuxuryWishlistCard.tsx:177"
+      issue: "Uses Alert.prompt which is iOS-only"
+  missing:
+    - "Replace Alert.prompt with cross-platform modal input"
+  debug_session: ".planning/debug/open-split-button-not-working.md"
 
 - truth: "Invite code is consistent between group screen and group settings"
   status: failed
   reason: "User reported: invite code function not working, invite code from group screen differs from group settings"
   severity: major
   test: 4
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "fetchGroupDetails() doesn't select invite_code column, and group screen uses group.id instead"
+  artifacts:
+    - path: "utils/groups.ts:170"
+      issue: "fetchGroupDetails missing invite_code in SELECT"
+    - path: "app/(app)/group/[id]/index.tsx:122,135"
+      issue: "Uses group.id instead of group.invite_code"
+  missing:
+    - "Add invite_code to fetchGroupDetails SELECT query"
+    - "Update share message to use invite_code"
+  debug_session: ".planning/debug/invite-code-inconsistency.md"
 
 - truth: "Celebrant sees claimed items marked as Taken or In Progress"
   status: failed
   reason: "User reported: items don't show as claimed/taken/in progress"
   severity: major
   test: 9
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "isTaken prop is never passed to LuxuryWishlistCard in celebration page for celebrant view"
+  artifacts:
+    - path: "app/(app)/celebration/[id].tsx:910"
+      issue: "Missing isTaken prop despite having claim data"
+  missing:
+    - "Add isTaken={isCelebrant && !!claim} prop to LuxuryWishlistCard"
+  debug_session: ".planning/debug/resolved/celebrant-claim-status-invisible.md"
 
 - truth: "Clock icon appears on claimed items for tap-to-reveal timestamp"
   status: failed
   reason: "User reported: no clock icon shown on claimed items"
   severity: minor
   test: 11
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "ClaimTimestamp component exists but was never integrated into LuxuryWishlistCard"
+  artifacts:
+    - path: "components/wishlist/ClaimTimestamp.tsx"
+      issue: "Component correctly implemented but unused"
+    - path: "components/wishlist/LuxuryWishlistCard.tsx"
+      issue: "Missing import and rendering of ClaimTimestamp"
+  missing:
+    - "Import ClaimTimestamp in LuxuryWishlistCard"
+    - "Render ClaimTimestamp in Actions section when claim exists"
+  debug_session: ".planning/debug/clock-icon-missing.md"
 
 - truth: "My Wishlist tab shows taken count and claimed item indicators"
   status: failed
   reason: "User reported: no taken count in My Wishlist tab and claimed items not showing on cards"
   severity: major
   test: 13
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "Not a code bug - implementation correct but no gift_claims exist for user's items in database"
+  artifacts:
+    - path: "app/(app)/(tabs)/wishlist-luxury.tsx"
+      issue: "Implementation correct - TakenCounter only shows when takenCount > 0"
+  missing:
+    - "Test data with claims for user's items OR wait for real claims"
+  debug_session: ".planning/debug/resolved/no-taken-count-my-wishlist.md"
