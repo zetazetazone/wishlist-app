@@ -21,6 +21,12 @@ export default function SettingsLayout() {
           title: 'Edit Profile',
         }}
       />
+      <Stack.Screen
+        name="personal-details"
+        options={{
+          title: 'Personal Details',
+        }}
+      />
     </Stack>
   );
 }
