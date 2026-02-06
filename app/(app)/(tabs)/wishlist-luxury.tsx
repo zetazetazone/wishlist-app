@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useFocusEffect } from '@react-navigation/native';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../../../lib/supabase';
@@ -46,6 +47,24 @@ export default function LuxuryWishlistScreen() {
     }
   }, [items]);
 
+  // Refresh claim statuses when tab is focused (per CLMX-02 requirement)
+  useFocusEffect(
+    useCallback(() => {
+      if (items.length > 0) {
+        // Filter out special item types that cannot be claimed
+        const claimableItemIds = items
+          .filter(
+            (item) =>
+              item.item_type !== 'surprise_me' && item.item_type !== 'mystery_box'
+          )
+          .map((item) => item.id);
+        if (claimableItemIds.length > 0) {
+          fetchClaimStatuses(claimableItemIds);
+        }
+      }
+    }, [items])
+  );
+
   const getCurrentUser = async () => {
     const {
       data: { user },
@@ -61,13 +80,21 @@ export default function LuxuryWishlistScreen() {
   const fetchClaimStatuses = async (itemIds: string[]) => {
     if (itemIds.length === 0) return;
 
+    console.log('[Wishlist] Fetching claim statuses for', itemIds.length, 'items');
+
     try {
       const statuses = await getItemClaimStatus(itemIds);
+      console.log('[Wishlist] Received statuses:', statuses);
+
       const statusMap = new Map<string, boolean>();
       statuses.forEach((s) => statusMap.set(s.wishlist_item_id, s.is_claimed));
+
+      const takenItems = statuses.filter(s => s.is_claimed);
+      console.log('[Wishlist] Taken items count:', takenItems.length);
+
       setClaimStatuses(statusMap);
     } catch (err) {
-      console.error('Failed to fetch claim statuses:', err);
+      console.error('[Wishlist] Failed to fetch claim statuses:', err);
     }
   };
 
@@ -149,8 +176,12 @@ export default function LuxuryWishlistScreen() {
     }
   };
 
-  // Calculate taken count for TakenCounter
-  const takenCount = Array.from(claimStatuses.values()).filter(Boolean).length;
+  // Calculate taken count for TakenCounter (exclude special item types)
+  const standardItems = items.filter(
+    (item) => item.item_type !== 'surprise_me' && item.item_type !== 'mystery_box'
+  );
+  const takenCount = standardItems.filter((item) => claimStatuses.get(item.id)).length;
+  const standardItemCount = standardItems.length;
 
   // Sort items with taken at bottom (unclaimed items stay more visible)
   const sortedItems = useMemo(() => {
@@ -216,7 +247,7 @@ export default function LuxuryWishlistScreen() {
                     {items.length} {items.length === 1 ? 'gift' : 'gifts'}
                   </Text>
                   {takenCount > 0 && (
-                    <TakenCounter takenCount={takenCount} totalCount={items.length} />
+                    <TakenCounter takenCount={takenCount} totalCount={standardItemCount} />
                   )}
                 </View>
               </View>
