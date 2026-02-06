@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-05)
 ## Current Position
 
 Phase: 21 of 22 (Split Contributions & Claim Enhancements) — IN PROGRESS
-Plan: 1 of 4 complete
+Plan: 3 of 4 complete
 Status: In progress
-Last activity: 2026-02-06 — Completed 21-01-PLAN.md (Split Contribution RPC Functions)
+Last activity: 2026-02-06 — Completed 21-03-PLAN.md (Split Contribution UI Components)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [##########] 92% v1.3 (10/~11 plans, 19-05 deferred)
+Progress: [##########] 100% v1.0+v1.1+v1.2 | [##########] 96% v1.3 (12/~13 plans, 19-05 deferred)
 
 ## Milestone History
 
@@ -93,6 +93,12 @@ Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 - Fully funded trigger fires on both INSERT and UPDATE (for close_split completion)
 - 6 trigger attachments for 5 trigger functions (notify_split_fully_funded has INSERT+UPDATE)
 
+**Phase 21 Decisions (21-03):**
+- SplitContributionProgress uses isCelebrant prop for celebrant-safe view (shows only "Taken"/"In Progress")
+- ContributorsDisplay modal shows "Name contributed $X" for full context when tapping avatar
+- SplitModal validates amount > 0 AND amount <= remaining before enabling confirm
+- ClaimSummary icon color changes: success when all claimed, burgundy when partial, cream when none
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -119,6 +125,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 21-01-PLAN.md
+Stopped at: Completed 21-03-PLAN.md
 Resume file: None
-Next: Execute 21-02-PLAN.md (TypeScript client functions)
+Next: Execute 21-04-PLAN.md (Split Contribution Integration)
