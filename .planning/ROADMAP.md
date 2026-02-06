@@ -326,9 +326,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 20-01-PLAN.md — Foundation components (TagChip, TagInput, CompletenessIndicator)
-- [ ] 20-02-PLAN.md — Form sections and personal details edit screen
-- [ ] 20-03-PLAN.md — Profile integration and read-only member view
+- [x] 20-01-PLAN.md — Foundation components (TagChip, TagInput, CompletenessIndicator)
+- [x] 20-02-PLAN.md — Form sections and personal details edit screen
+- [x] 20-03-PLAN.md — Profile integration and read-only member view
 
 #### Phase 21: Split Contributions & Claim Enhancements
 **Goal**: Claimers can open items for split funding from other members, and claim-related notifications and summaries complete the coordination experience
@@ -389,6 +389,6 @@ Phases execute in numeric order: 18 -> 19 -> 20 -> 21 -> 22
 | 17. Budget Tracking | v1.2 | 3/3 | Complete | 2026-02-05 |
 | 18. Schema & Atomic Functions | v1.3 | 2/2 | Complete | 2026-02-05 |
 | 19. Gift Claims UI | v1.3 | 4/5 | Verification deferred | - |
-| 20. Personal Details | v1.3 | 0/3 | Planned | - |
+| 20. Personal Details | v1.3 | 3/3 | Complete | 2026-02-06 |
 | 21. Split Contributions & Claim Enhancements | v1.3 | 0/TBD | Not started | - |
 | 22. Secret Notes | v1.3 | 0/TBD | Not started | - |

@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.3 Phase 20 — Personal Details (COMPLETE)
+**Current focus:** v1.3 Phase 21 — Split Contributions & Claim Enhancements (ready to plan)
 
 ## Current Position
 
-Phase: 20 of 22 (Personal Details) — COMPLETE
-Plan: 03 of 03 complete (Read-Only Member Profile)
-Status: Phase complete
-Last activity: 2026-02-06 — Completed 20-03-PLAN.md (read-only member profile)
+Phase: 21 of 22 (Split Contributions & Claim Enhancements) — READY TO PLAN
+Plan: N/A (needs planning)
+Status: Ready for Phase 21 planning
+Last activity: 2026-02-06 — Completed Phase 20 execution and verification
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [#########.] 90% v1.3 (9/~10 plans, 19-05 deferred)
+Progress: [##########] 100% v1.0+v1.1+v1.2 | [#########.] 90% v1.3 (9/~10 plans, 19-05 deferred, phase 20 complete)
 
 ## Milestone History
 
@@ -113,7 +113,7 @@ From v1.0/v1.1:
 
 ## Session Continuity
 
-Last session: 2026-02-06 10:04 UTC
-Stopped at: Completed 20-03-PLAN.md (read-only member profile)
+Last session: 2026-02-06
+Stopped at: Phase 20 complete, verified
 Resume file: None
-Next: Phase 21 (Member Notes) planning
+Next: `/gsd:discuss-phase 21` — Split Contributions & Claim Enhancements

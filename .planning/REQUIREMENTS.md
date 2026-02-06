@@ -84,15 +84,15 @@ Requirements for Gift Claims & Personal Details milestone. Each maps to roadmap 
 
 ### Personal Details
 
-- [ ] **PROF-01**: User can fill in clothing sizes (shirt, shoe, pants, ring)
-- [ ] **PROF-02**: User can add favorite colors (multi-select tags)
-- [ ] **PROF-03**: User can add favorite brands and interests (free-text tags)
-- [ ] **PROF-04**: User can add a "dislikes / please avoid" section
-- [ ] **PROF-05**: User can add external wishlist links (Amazon, Pinterest, Etsy, etc.)
-- [ ] **PROF-06**: Personal details are global (shared across all groups user belongs to)
-- [ ] **PROF-07**: Group members can view another member's personal details
-- [ ] **PROF-08**: Profile shows completeness indicator ("60% complete")
-- [ ] **PROF-09**: Profile shows "last updated" timestamp for personal details
+- [x] **PROF-01**: User can fill in clothing sizes (shirt, shoe, pants, ring)
+- [x] **PROF-02**: User can add favorite colors (multi-select tags)
+- [x] **PROF-03**: User can add favorite brands and interests (free-text tags)
+- [x] **PROF-04**: User can add a "dislikes / please avoid" section
+- [x] **PROF-05**: User can add external wishlist links (Amazon, Pinterest, Etsy, etc.)
+- [x] **PROF-06**: Personal details are global (shared across all groups user belongs to)
+- [x] **PROF-07**: Group members can view another member's personal details
+- [x] **PROF-08**: Profile shows completeness indicator ("60% complete")
+- [x] **PROF-09**: Profile shows "last updated" timestamp for personal details
 
 ### Secret Notes
 
@@ -177,15 +177,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLMX-01 | Phase 21 | Pending |
 | CLMX-02 | Phase 21 | Pending |
 | CLMX-03 | Phase 21 | Pending |
-| PROF-01 | Phase 20 | Pending |
-| PROF-02 | Phase 20 | Pending |
-| PROF-03 | Phase 20 | Pending |
-| PROF-04 | Phase 20 | Pending |
-| PROF-05 | Phase 20 | Pending |
-| PROF-06 | Phase 20 | Pending |
-| PROF-07 | Phase 20 | Pending |
-| PROF-08 | Phase 20 | Pending |
-| PROF-09 | Phase 20 | Pending |
+| PROF-01 | Phase 20 | Complete |
+| PROF-02 | Phase 20 | Complete |
+| PROF-03 | Phase 20 | Complete |
+| PROF-04 | Phase 20 | Complete |
+| PROF-05 | Phase 20 | Complete |
+| PROF-06 | Phase 20 | Complete |
+| PROF-07 | Phase 20 | Complete |
+| PROF-08 | Phase 20 | Complete |
+| PROF-09 | Phase 20 | Complete |
 | NOTE-01 | Phase 22 | Pending |
 | NOTE-02 | Phase 22 | Pending |
 | NOTE-03 | Phase 22 | Pending |
