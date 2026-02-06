@@ -20,6 +20,8 @@ import {
 } from '@gluestack-ui/themed';
 import { supabase } from '@/lib/supabase';
 import { uploadAvatar, getAvatarUrl } from '@/lib/storage';
+import { getPersonalDetails } from '@/lib/personalDetails';
+import { calculateCompleteness, CompletenessResult } from '@/lib/profileCompleteness';
 
 interface UserProfile {
   id: string;
@@ -36,6 +38,7 @@ export default function ProfileSettingsScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [avatarTimestamp, setAvatarTimestamp] = useState(Date.now());
+  const [completeness, setCompleteness] = useState<CompletenessResult | null>(null);
 
   useEffect(() => {
     loadProfile();
@@ -64,6 +67,12 @@ export default function ProfileSettingsScreen() {
       setProfile(data);
       setDisplayName(data.display_name || '');
       setAvatarPath(data.avatar_url);
+
+      // Load personal details for completeness indicator
+      const details = await getPersonalDetails(user.id);
+      if (details) {
+        setCompleteness(calculateCompleteness(details.sizes, details.preferences, details.external_links));
+      }
     } catch (error) {
       console.error('Error in loadProfile:', error);
       Alert.alert('Error', 'Something went wrong');
@@ -211,6 +220,35 @@ export default function ProfileSettingsScreen() {
             Birthday cannot be changed after initial setup
           </Text>
         </VStack>
+
+        {/* Personal Details Link */}
+        <Pressable
+          onPress={() => router.push('/settings/personal-details')}
+        >
+          <Box
+            backgroundColor="$white"
+            borderRadius="$lg"
+            padding="$4"
+            borderWidth={1}
+            borderColor="$borderLight200"
+          >
+            <HStack justifyContent="space-between" alignItems="center">
+              <VStack>
+                <Text fontWeight="$semibold">Personal Details</Text>
+                <Text fontSize="$xs" color="$textLight500">
+                  Sizes, preferences & wishlists
+                </Text>
+              </VStack>
+              <HStack alignItems="center" space="sm">
+                {/* Show mini completeness badge */}
+                <Text fontSize="$sm" color="$textLight500">
+                  {completeness?.percentage ?? 0}%
+                </Text>
+                <MaterialCommunityIcons name="chevron-right" size={20} color="#9CA3AF" />
+              </HStack>
+            </HStack>
+          </Box>
+        </Pressable>
 
         {/* Save Button */}
         <Button

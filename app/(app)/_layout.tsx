@@ -33,6 +33,20 @@ export default function AppLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="member/[id]"
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: '#ffffff',
+          },
+          headerTintColor: '#8B1538',
+          headerTitleStyle: {
+            fontWeight: '600',
+          },
+          headerBackTitle: 'Back',
+        }}
+      />
     </Stack>
   );
 }
