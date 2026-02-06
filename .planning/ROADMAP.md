@@ -340,11 +340,14 @@ Plans:
   3. Unclaiming an item with existing contributions shows a warning and notifies contributors
   4. Group members (except celebrant) receive a push notification when an item is claimed
   5. Celebration page shows claim count summary (e.g., "3 of 8 items claimed") and individual claim timestamps
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 21-01: TBD
-- [ ] 21-02: TBD
+- [ ] 21-01-PLAN.md — Split contribution RPC functions and notification triggers (database layer)
+- [ ] 21-02-PLAN.md — TypeScript contributions service library
+- [ ] 21-03-PLAN.md — Split UI components (progress, contributors display, modal, summary)
+- [ ] 21-04-PLAN.md — Integration into wishlist card and celebration page
+- [ ] 21-05-PLAN.md — Claim timestamps and My Wishlist summary
 
 #### Phase 22: Secret Notes
 **Goal**: Group members can add hidden notes about each other for collaborative gift-giving intelligence, with subject-exclusion privacy enforcement
@@ -390,5 +393,5 @@ Phases execute in numeric order: 18 -> 19 -> 20 -> 21 -> 22
 | 18. Schema & Atomic Functions | v1.3 | 2/2 | Complete | 2026-02-05 |
 | 19. Gift Claims UI | v1.3 | 4/5 | Verification deferred | - |
 | 20. Personal Details | v1.3 | 3/3 | Complete | 2026-02-06 |
-| 21. Split Contributions & Claim Enhancements | v1.3 | 0/TBD | Not started | - |
+| 21. Split Contributions & Claim Enhancements | v1.3 | 0/5 | Planned | - |
 | 22. Secret Notes | v1.3 | 0/TBD | Not started | - |
