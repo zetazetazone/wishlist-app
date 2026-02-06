@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-05)
 
 ## Current Position
 
-Phase: 21 of 22 (Split Contributions & Claim Enhancements) — IN PROGRESS
-Plan: 3 of 4 complete
-Status: In progress
-Last activity: 2026-02-06 — Completed 21-03-PLAN.md (Split Contribution UI Components)
+Phase: 21 of 22 (Split Contributions & Claim Enhancements) — COMPLETE
+Plan: 4 of 4 complete
+Status: Phase complete
+Last activity: 2026-02-06 — Completed 21-05-PLAN.md (Claim Enhancement UI)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [##########] 96% v1.3 (12/~13 plans, 19-05 deferred)
+Progress: [##########] 100% v1.0+v1.1+v1.2 | [##########] 100% v1.3 (13/13 plans, 19-05 deferred)
 
 ## Milestone History
 
@@ -104,6 +104,11 @@ Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 - SplitModal validates amount > 0 AND amount <= remaining before enabling confirm
 - ClaimSummary icon color changes: success when all claimed, burgundy when partial, cream when none
 
+**Phase 21 Decisions (21-05):**
+- ClaimTimestamp shows clock icon by default, reveals timestamp on tap
+- YourClaimIndicator uses gift icon for full claims, gift-open for splits
+- TakenCounter excludes special item types (surprise_me, mystery_box) from counts
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -130,6 +135,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 21-03-PLAN.md
+Stopped at: Completed 21-05-PLAN.md (Phase 21 complete)
 Resume file: None
-Next: Execute 21-04-PLAN.md (Split Contribution Integration)
+Next: Phase 22 (v1.3 completion) or v1.3 release
