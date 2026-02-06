@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.3 Phase 21 — Split Contributions & Claim Enhancements (in progress)
+**Current focus:** v1.3 Phase 21 — Split Contributions & Claim Enhancements (complete with gap closure)
 
 ## Current Position
 
 Phase: 21 of 22 (Split Contributions & Claim Enhancements) — COMPLETE
-Plan: 4 of 4 complete
-Status: Phase complete
-Last activity: 2026-02-06 — Completed 21-04-PLAN.md (Split Contribution Integration)
+Plan: 6 of 6 complete (includes UAT + gap closure)
+Status: Phase complete with UAT verified
+Last activity: 2026-02-06 — Completed 21-06-PLAN.md (Gap Closure)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [##########] 100% v1.3 (13/13 plans, 19-05 deferred)
+Progress: [##########] 100% v1.0+v1.1+v1.2 | [##########] 100% v1.3 (15/15 plans, 19-05 deferred)
 
 ## Milestone History
 
@@ -110,6 +110,11 @@ Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 - Claim summary only shown to non-celebrants in header
 - Alert.prompt used for additional costs input when opening split
 
+**Phase 21 Decisions (21-06 Gap Closure):**
+- OpenSplitModal follows SplitModal pattern for consistency (BottomSheetModal with TextInput)
+- Use created_at field from GiftClaim for claim timestamp (not claimed_at which doesn't exist)
+- invite_code added to Group type to fix TypeScript errors
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -136,6 +141,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-06
-Stopped at: Completed 21-04-PLAN.md (Phase 21 complete)
+Stopped at: Completed 21-06-PLAN.md (Gap Closure - Phase 21 fully verified)
 Resume file: None
 Next: Phase 22 (v1.3 completion) or v1.3 release
