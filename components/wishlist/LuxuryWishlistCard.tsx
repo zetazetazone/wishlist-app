@@ -15,6 +15,7 @@ import { YourClaimIndicator } from './YourClaimIndicator';
 import { SplitContributionProgress } from './SplitContributionProgress';
 import { ContributorsDisplay } from './ContributorsDisplay';
 import { SplitModal } from './SplitModal';
+import { OpenSplitModal } from './OpenSplitModal';
 import type { ClaimWithUser } from '../../lib/claims';
 
 /** Split status for an item */
@@ -91,8 +92,9 @@ export default function LuxuryWishlistCard({
   onPledge,
   onCloseSplit,
 }: LuxuryWishlistCardProps) {
-  // State for split modal
+  // State for split modals
   const [showSplitModal, setShowSplitModal] = useState(false);
+  const [showOpenSplitModal, setShowOpenSplitModal] = useState(false);
   const [splitLoading, setSplitLoading] = useState(false);
 
   // Determine if this item is favorited (for any group or single group context)
@@ -171,29 +173,15 @@ export default function LuxuryWishlistCard({
     ]);
   };
 
-  // Handle opening a split
+  // Handle opening a split - show cross-platform modal
   const handleOpenSplit = () => {
-    // Show prompt for additional costs
-    Alert.prompt(
-      'Open for Split',
-      'Add shipping or additional costs? (optional)',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Open Split',
-          onPress: (input?: string) => {
-            const additionalCosts = input ? parseFloat(input) : undefined;
-            const validCosts = additionalCosts && !isNaN(additionalCosts) && additionalCosts > 0
-              ? additionalCosts
-              : undefined;
-            onOpenSplit?.(item.id, validCosts);
-          },
-        },
-      ],
-      'plain-text',
-      '',
-      'decimal-pad'
-    );
+    setShowOpenSplitModal(true);
+  };
+
+  // Callback when user confirms open split
+  const handleOpenSplitConfirm = (additionalCosts?: number) => {
+    onOpenSplit?.(item.id, additionalCosts);
+    setShowOpenSplitModal(false);
   };
 
   // Handle pledging to a split
@@ -593,6 +581,14 @@ export default function LuxuryWishlistCard({
           totalPledged={splitStatus?.totalPledged || 0}
           suggestedAmount={suggestedShare}
           loading={splitLoading}
+        />
+
+        {/* Open Split Modal - cross-platform replacement for Alert.prompt */}
+        <OpenSplitModal
+          visible={showOpenSplitModal}
+          onClose={() => setShowOpenSplitModal(false)}
+          onConfirm={handleOpenSplitConfirm}
+          itemTitle={item.title}
         />
       </View>
     </MotiView>
