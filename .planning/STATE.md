@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.3 Phase 19 — Gift Claims UI (in progress)
+**Current focus:** v1.3 Phase 20 — Personal Details (in progress)
 
 ## Current Position
 
-Phase: 19 of 22 (Gift Claims UI) — IN PROGRESS
-Plan: 4/5 complete (19-01, 19-02, 19-03, 19-04)
+Phase: 20 of 22 (Personal Details) — IN PROGRESS
+Plan: 01 of 03 complete (Foundation Components)
 Status: In progress
-Last activity: 2026-02-05 — Completed 19-03 (claim integration in celebration page)
+Last activity: 2026-02-06 — Completed 20-01-PLAN.md (foundation components)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [######....] 60% v1.3 (6/~10 plans)
+Progress: [##########] 100% v1.0+v1.1+v1.2 | [#######...] 70% v1.3 (7/~10 plans, 19-05 deferred)
 
 ## Milestone History
 
@@ -73,6 +73,11 @@ Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 - Claim statuses stored in Map<string, boolean> for O(1) lookup
 - Items sorted via useMemo with taken items at bottom, preserving priority within status
 
+**Phase 20 Decisions (20-01):**
+- Tag duplicate check uses case-insensitive comparison (prevents "Red" and "red" dupes)
+- CompletenessIndicator uses linear progress bar (consistent with BudgetProgressBar)
+- 6 sections for completeness: sizes, colors, brands, interests, dislikes, external links
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -98,7 +103,7 @@ From v1.0/v1.1:
 
 ## Session Continuity
 
-Last session: 2026-02-05
-Stopped at: Completed 19-03-PLAN.md (claim integration in celebration page)
+Last session: 2026-02-06 09:53 UTC
+Stopped at: Completed 20-01-PLAN.md (foundation components)
 Resume file: None
-Next: `/gsd:execute-plan 19-05` — Testing and polish
+Next: Execute 20-02-PLAN.md (form sections) or 20-03-PLAN.md (read-only view)
