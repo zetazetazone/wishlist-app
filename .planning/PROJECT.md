@@ -58,23 +58,36 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 - ✓ Member cards show profile pic, name, birthday countdown, favorite item preview — v1.2
 - ✓ User can tap member card to go to their celebration page — v1.2
 
+- ✓ Member can claim a wishlist item (locked to one claimer at a time) — v1.3
+- ✓ Claims visible to all group members except celebrant — v1.3
+- ✓ Claimer can optionally open item for split contributions — v1.3
+- ✓ Claimer can unclaim an item (releases it for others) — v1.3
+- ✓ Celebrant sees claimed items as "taken" (no name shown) — v1.3
+- ✓ Claiming works in both Gifts and Greetings modes — v1.3
+- ✓ User can fill in personal details (sizes, preferences, external links) — v1.3
+- ✓ Personal details are global (shared across all groups) — v1.3
+- ✓ Group members can add secret notes about other members (hidden from profile owner) — v1.3
+- ✓ Secret notes visible only to other group members for gift-giving context — v1.3
+
 ### Active
 
-**v1.3 — Gift Claims & Personal Details**
+**v1.4 — Friends System**
 
-- [ ] Member can claim a wishlist item (locked to one claimer at a time)
-- [ ] Claims visible to all group members except celebrant
-- [ ] Claimer can optionally open item for split contributions
-- [ ] Claimer can unclaim an item (releases it for others)
-- [ ] Celebrant sees claimed items as "taken" (no name shown)
-- [ ] Claiming works in both Gifts and Greetings modes
-- [ ] User can fill in personal details (sizes, preferences, external links)
-- [ ] Personal details are global (shared across all groups)
-- [ ] Group members can add secret notes about other members (hidden from profile owner)
-- [ ] Secret notes visible only to other group members for gift-giving context
+- [ ] User can import phone contacts to find friends who use the app
+- [ ] User can send friend requests to other users
+- [ ] User can accept or decline incoming friend requests
+- [ ] User can view pending friend requests in Requests tab
+- [ ] User can view suggested friends in Suggested tab (contacts + mutual friends/groups)
+- [ ] User can see friends list with their profiles
+- [ ] User can add custom public dates (anniversaries, events) to their profile
+- [ ] Friends can see each other's birthday and custom public dates
+- [ ] Adding a friend syncs their birthday + public dates to user's calendar
+- [ ] User can invite friends to groups
+- [ ] User can remove friends
 
-**Deferred to v1.4+**
+**Deferred to v1.5+**
 
+- [ ] Instagram integration for friend discovery
 - [ ] User can configure notification preferences
 - [ ] User can see read receipts in chat
 - [ ] User can add reactions to messages
@@ -137,15 +150,17 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 | 15-minute cron for timezone coverage | Matches 9:00 AM local time targeting | ✓ Good - accurate delivery |
 | Nullable TIMESTAMPTZ for read_at | Richer info than boolean, same query pattern | ✓ Good - future-proof |
 
-## Current Milestone: v1.3 Gift Claims & Personal Details
+## Current Milestone: v1.4 Friends System
 
-**Goal:** Enable members to claim wishlist items for coordinated gift-buying and provide rich personal detail profiles for better gift selection.
+**Goal:** Enable users to build a friends network outside of groups, discover friends via phone contacts, and see friends' birthdays and custom dates in their calendar.
 
 **Target features:**
-- Gift Claims: Claim/unclaim items, split contributions, celebrant exclusion, "taken" indicator
-- Personal Details: Sizes (shirt, shoe, ring), preferences (colors, brands, hobbies), external wishlist links
-- Secret Notes: Group members can add hidden notes about each other for gift-giving context
-- Works across both Gifts and Greetings group modes
+- Contact Import: Match phone contacts by number to find existing app users
+- Friend Requests: Send/accept/decline with Requests tab and Suggested tab
+- Suggestions: Based on phone contacts who use the app + mutual friends/groups
+- Custom Public Dates: Users can add anniversaries, events visible to all friends
+- Calendar Integration: Adding a friend syncs their birthday + public dates to your calendar
+- Friends ↔ Groups: Friends exist independently but can be invited to groups
 
 ---
-*Last updated: 2026-02-05 after v1.3 milestone start*
+*Last updated: 2026-02-09 after v1.4 milestone start*

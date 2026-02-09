@@ -2,25 +2,26 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-05)
+See: .planning/PROJECT.md (updated 2026-02-09)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.3 Phase 22 — Secret Notes (COMPLETE)
+**Current focus:** v1.4 Friends System — Defining requirements
 
 ## Current Position
 
-Phase: 22 of 22 (Secret Notes) — COMPLETE
-Plan: 3 of 3 complete
-Status: Phase complete, milestone ready for completion
-Last activity: 2026-02-09 — Completed quick task 004: Add delivery address and bank details to personal details
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-09 — Milestone v1.4 started
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [##########] 100% v1.3 Phases 18-22
+Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [          ] 0% v1.4
 
 ## Milestone History
 
 - **v1.0 MVP** - Shipped 2026-02-02 (5 phases, 10 plans + 1 gap closure)
 - **v1.1 Polish** - Shipped 2026-02-03 (5 phases, 13 plans including gap closures)
 - **v1.2 Group Experience** - Shipped 2026-02-05 (7 phases, 18 plans including gap closures)
+- **v1.3 Gift Claims & Personal Details** - Shipped 2026-02-09 (5 phases, 15 plans including gap closures)
 
 ## Accumulated Context
 
@@ -157,6 +158,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-09
-Stopped at: Quick task 004 complete (delivery address and bank details)
+Stopped at: v1.4 milestone initialization
 Resume file: None
-Next: /gsd:complete-milestone v1.3
+Next: /gsd:plan-phase 23 (after requirements defined)
