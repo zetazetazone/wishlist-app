@@ -427,8 +427,8 @@ export async function getRelationshipStatus(
 
   // Check if already friends using the are_friends RPC
   const { data: areFriends } = await supabase.rpc('are_friends', {
-    user_a: user.id,
-    user_b: otherUserId,
+    p_user_a: user.id,
+    p_user_b: otherUserId,
   });
 
   if (areFriends) {
