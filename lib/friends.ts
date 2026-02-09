@@ -140,3 +140,376 @@ export async function removeFriend(friendshipId: string): Promise<void> {
     throw new Error(`Failed to remove friend: ${error.message}`);
   }
 }
+
+// ============================================================================
+// Friend Request Types and Functions
+// ============================================================================
+
+/**
+ * Friend request with profile information for display
+ *
+ * For incoming requests, profile is the sender's info
+ * For outgoing requests, profile is the receiver's info
+ */
+export interface FriendRequestWithProfile {
+  id: string;
+  from_user_id: string;
+  to_user_id: string;
+  status: 'pending' | 'accepted' | 'rejected' | 'blocked';
+  created_at: string;
+  profile?: {
+    id: string;
+    display_name: string | null;
+    avatar_url: string | null;
+  };
+}
+
+/**
+ * Get pending friend requests for the current user
+ *
+ * Returns both:
+ * - incoming: requests where I am the receiver (to_user_id = me)
+ * - outgoing: requests where I am the sender (from_user_id = me)
+ *
+ * @returns Object with incoming and outgoing arrays of requests with profiles
+ */
+export async function getPendingRequests(): Promise<{
+  incoming: FriendRequestWithProfile[];
+  outgoing: FriendRequestWithProfile[];
+}> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    console.error('getPendingRequests: Not authenticated');
+    return { incoming: [], outgoing: [] };
+  }
+
+  // Query pending requests (both directions)
+  const { data: requests, error } = await supabase
+    .from('friend_requests')
+    .select('id, from_user_id, to_user_id, status, created_at')
+    .eq('status', 'pending')
+    .or(`from_user_id.eq.${user.id},to_user_id.eq.${user.id}`)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Failed to fetch pending requests:', error);
+    return { incoming: [], outgoing: [] };
+  }
+
+  if (!requests || requests.length === 0) {
+    return { incoming: [], outgoing: [] };
+  }
+
+  // Separate incoming and outgoing
+  const incoming = requests.filter((r) => r.to_user_id === user.id);
+  const outgoing = requests.filter((r) => r.from_user_id === user.id);
+
+  // Collect all user IDs we need profiles for
+  // For incoming: need sender profiles (from_user_id)
+  // For outgoing: need receiver profiles (to_user_id)
+  const incomingSenderIds = incoming.map((r) => r.from_user_id);
+  const outgoingReceiverIds = outgoing.map((r) => r.to_user_id);
+  const allProfileIds = Array.from(new Set([...incomingSenderIds, ...outgoingReceiverIds]));
+
+  if (allProfileIds.length === 0) {
+    return { incoming: [], outgoing: [] };
+  }
+
+  // Batch-fetch profiles
+  const { data: profiles, error: profileError } = await supabase
+    .from('user_profiles')
+    .select('id, display_name, avatar_url')
+    .in('id', allProfileIds);
+
+  if (profileError) {
+    console.error('Failed to fetch request profiles:', profileError);
+  }
+
+  // Build profile lookup map
+  const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
+
+  // Map incoming requests with sender profiles
+  const incomingWithProfiles: FriendRequestWithProfile[] = incoming.map((r) => {
+    const profile = profileMap.get(r.from_user_id);
+    return {
+      ...r,
+      profile: profile
+        ? {
+            id: profile.id,
+            display_name: profile.display_name,
+            avatar_url: getAvatarUrl(profile.avatar_url),
+          }
+        : undefined,
+    };
+  });
+
+  // Map outgoing requests with receiver profiles
+  const outgoingWithProfiles: FriendRequestWithProfile[] = outgoing.map((r) => {
+    const profile = profileMap.get(r.to_user_id);
+    return {
+      ...r,
+      profile: profile
+        ? {
+            id: profile.id,
+            display_name: profile.display_name,
+            avatar_url: getAvatarUrl(profile.avatar_url),
+          }
+        : undefined,
+    };
+  });
+
+  return {
+    incoming: incomingWithProfiles,
+    outgoing: outgoingWithProfiles,
+  };
+}
+
+/**
+ * Send a friend request to another user
+ *
+ * Validates:
+ * - Not sending to self
+ * - Not blocked by/blocking target user
+ * - Rate limit: max 20 requests per hour
+ * - No duplicate pending request
+ *
+ * @param toUserId - UUID of the user to send request to
+ * @throws Error if blocked, rate limited, or duplicate request
+ */
+export async function sendFriendRequest(toUserId: string): Promise<void> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error('Not authenticated');
+  }
+
+  if (user.id === toUserId) {
+    throw new Error('Cannot send friend request to yourself');
+  }
+
+  // Check if either user has blocked the other
+  const { data: blockedRecord } = await supabase
+    .from('friend_requests')
+    .select('id')
+    .or(
+      `and(from_user_id.eq.${user.id},to_user_id.eq.${toUserId}),and(from_user_id.eq.${toUserId},to_user_id.eq.${user.id})`
+    )
+    .eq('status', 'blocked')
+    .maybeSingle();
+
+  if (blockedRecord) {
+    throw new Error('Cannot send request to this user');
+  }
+
+  // Check rate limit: max 20 requests in last hour
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const { count } = await supabase
+    .from('friend_requests')
+    .select('id', { count: 'exact', head: true })
+    .eq('from_user_id', user.id)
+    .gte('created_at', oneHourAgo);
+
+  if (count !== null && count >= 20) {
+    throw new Error('Rate limit exceeded. Please try again later.');
+  }
+
+  // Insert friend request
+  const { error } = await supabase.from('friend_requests').insert({
+    from_user_id: user.id,
+    to_user_id: toUserId,
+    status: 'pending',
+  });
+
+  if (error) {
+    // Handle unique constraint violation (duplicate request)
+    if (error.code === '23505') {
+      throw new Error('Friend request already pending');
+    }
+    console.error('Failed to send friend request:', error);
+    throw new Error(`Failed to send friend request: ${error.message}`);
+  }
+}
+
+/**
+ * Accept a friend request
+ *
+ * Uses the accept_friend_request RPC which:
+ * 1. Updates request status to 'accepted'
+ * 2. Creates the friendship row in friends table
+ *
+ * @param requestId - UUID of the friend request to accept
+ * @returns The friendship ID of the newly created friendship
+ * @throws Error if request not found or not authorized
+ */
+export async function acceptFriendRequest(requestId: string): Promise<string> {
+  const { data, error } = await supabase.rpc('accept_friend_request', {
+    p_request_id: requestId,
+  });
+
+  if (error) {
+    console.error('Failed to accept friend request:', error);
+    throw new Error(`Failed to accept friend request: ${error.message}`);
+  }
+
+  return data as string;
+}
+
+/**
+ * Decline a friend request
+ *
+ * Updates request status to 'rejected'
+ * RLS policy allows receiver to update status
+ *
+ * @param requestId - UUID of the friend request to decline
+ * @throws Error if request not found or not authorized
+ */
+export async function declineFriendRequest(requestId: string): Promise<void> {
+  const { error } = await supabase
+    .from('friend_requests')
+    .update({ status: 'rejected' })
+    .eq('id', requestId);
+
+  if (error) {
+    console.error('Failed to decline friend request:', error);
+    throw new Error(`Failed to decline friend request: ${error.message}`);
+  }
+}
+
+/**
+ * Cancel an outgoing friend request
+ *
+ * Deletes the pending request
+ * RLS policy allows sender to delete their own pending requests
+ *
+ * @param requestId - UUID of the friend request to cancel
+ * @throws Error if request not found or not authorized
+ */
+export async function cancelFriendRequest(requestId: string): Promise<void> {
+  const { error } = await supabase
+    .from('friend_requests')
+    .delete()
+    .eq('id', requestId);
+
+  if (error) {
+    console.error('Failed to cancel friend request:', error);
+    throw new Error(`Failed to cancel friend request: ${error.message}`);
+  }
+}
+
+/**
+ * Get relationship status with another user
+ *
+ * Used to determine which button to show on profile:
+ * - 'friends': Already friends - show Remove Friend
+ * - 'pending_incoming': They sent me a request - show Accept/Decline
+ * - 'pending_outgoing': I sent them a request - show Cancel Request
+ * - 'blocked': One of us blocked the other - show nothing or Unblock
+ * - 'none': No relationship - show Add Friend
+ *
+ * @param otherUserId - UUID of the other user
+ * @returns Relationship status string
+ */
+export async function getRelationshipStatus(
+  otherUserId: string
+): Promise<'friends' | 'pending_incoming' | 'pending_outgoing' | 'blocked' | 'none'> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return 'none';
+  }
+
+  // Check if already friends using the are_friends RPC
+  const { data: areFriends } = await supabase.rpc('are_friends', {
+    user_a: user.id,
+    user_b: otherUserId,
+  });
+
+  if (areFriends) {
+    return 'friends';
+  }
+
+  // Check for pending or blocked requests
+  const { data: request } = await supabase
+    .from('friend_requests')
+    .select('from_user_id, to_user_id, status')
+    .or(
+      `and(from_user_id.eq.${user.id},to_user_id.eq.${otherUserId}),and(from_user_id.eq.${otherUserId},to_user_id.eq.${user.id})`
+    )
+    .in('status', ['pending', 'blocked'])
+    .maybeSingle();
+
+  if (!request) {
+    return 'none';
+  }
+
+  if (request.status === 'blocked') {
+    return 'blocked';
+  }
+
+  // Pending request
+  if (request.from_user_id === user.id) {
+    return 'pending_outgoing';
+  } else {
+    return 'pending_incoming';
+  }
+}
+
+/**
+ * Block a user
+ *
+ * If a pending request exists between users, updates it to blocked
+ * If no request exists, creates a new blocked request
+ *
+ * @param userId - UUID of the user to block
+ * @throws Error if block operation fails
+ */
+export async function blockUser(userId: string): Promise<void> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error('Not authenticated');
+  }
+
+  // Check for existing request in either direction
+  const { data: existingRequest } = await supabase
+    .from('friend_requests')
+    .select('id, from_user_id, to_user_id')
+    .or(
+      `and(from_user_id.eq.${user.id},to_user_id.eq.${userId}),and(from_user_id.eq.${userId},to_user_id.eq.${user.id})`
+    )
+    .maybeSingle();
+
+  if (existingRequest) {
+    // Update existing request to blocked
+    const { error } = await supabase
+      .from('friend_requests')
+      .update({ status: 'blocked' })
+      .eq('id', existingRequest.id);
+
+    if (error) {
+      console.error('Failed to block user:', error);
+      throw new Error(`Failed to block user: ${error.message}`);
+    }
+  } else {
+    // Create new blocked request
+    const { error } = await supabase.from('friend_requests').insert({
+      from_user_id: user.id,
+      to_user_id: userId,
+      status: 'blocked',
+    });
+
+    if (error) {
+      console.error('Failed to block user:', error);
+      throw new Error(`Failed to block user: ${error.message}`);
+    }
+  }
+}
