@@ -340,14 +340,15 @@ Plans:
   3. Unclaiming an item with existing contributions shows a warning and notifies contributors
   4. Group members (except celebrant) receive a push notification when an item is claimed
   5. Celebration page shows claim count summary (e.g., "3 of 8 items claimed") and individual claim timestamps
-**Plans**: 5 plans
+**Plans**: 6 plans
 
 Plans:
-- [ ] 21-01-PLAN.md — Split contribution RPC functions and notification triggers (database layer)
-- [ ] 21-02-PLAN.md — TypeScript contributions service library
-- [ ] 21-03-PLAN.md — Split UI components (progress, contributors display, modal, summary)
-- [ ] 21-04-PLAN.md — Integration into wishlist card and celebration page
-- [ ] 21-05-PLAN.md — Claim timestamps and My Wishlist summary
+- [x] 21-01-PLAN.md — Split contribution RPC functions and notification triggers (database layer)
+- [x] 21-02-PLAN.md — TypeScript contributions service library
+- [x] 21-03-PLAN.md — Split UI components (progress, contributors display, modal, summary)
+- [x] 21-04-PLAN.md — Integration into wishlist card and celebration page
+- [x] 21-05-PLAN.md — UAT verification checkpoint
+- [x] 21-06-PLAN.md — Gap closure for UAT issues
 
 #### Phase 22: Secret Notes
 **Goal**: Group members can add hidden notes about each other for collaborative gift-giving intelligence, with subject-exclusion privacy enforcement
@@ -359,11 +360,12 @@ Plans:
   3. All other group members can read notes about a member for gift-giving context
   4. Notes are scoped per-group (a note in Group A is not visible in Group B)
   5. Note author can edit or delete their own notes
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 22-01: TBD
-- [ ] 22-02: TBD
+- [ ] 22-01-PLAN.md — Schema migration (UPDATE policy, updated_at) and service layer updateNote function
+- [ ] 22-02-PLAN.md — UI components (NoteCard, AddNoteSheet, MemberNotesSection)
+- [ ] 22-03-PLAN.md — Screen integration (member profile, celebration page) with verification checkpoint
 
 ## Progress
 
@@ -393,5 +395,5 @@ Phases execute in numeric order: 18 -> 19 -> 20 -> 21 -> 22
 | 18. Schema & Atomic Functions | v1.3 | 2/2 | Complete | 2026-02-05 |
 | 19. Gift Claims UI | v1.3 | 4/5 | Verification deferred | - |
 | 20. Personal Details | v1.3 | 3/3 | Complete | 2026-02-06 |
-| 21. Split Contributions & Claim Enhancements | v1.3 | 0/5 | Planned | - |
-| 22. Secret Notes | v1.3 | 0/TBD | Not started | - |
+| 21. Split Contributions & Claim Enhancements | v1.3 | 6/6 | Complete | 2026-02-06 |
+| 22. Secret Notes | v1.3 | 0/3 | Planned | - |
