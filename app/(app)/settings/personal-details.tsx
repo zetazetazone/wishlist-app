@@ -7,6 +7,8 @@
  * - Favorite brands and interests (PROF-03)
  * - Dislikes (PROF-04)
  * - External wishlist links (PROF-05)
+ * - Delivery address (quick-004)
+ * - Bank details (quick-004)
  *
  * Data is saved atomically with a single "Save" button.
  */
@@ -28,10 +30,16 @@ import type {
   PersonalSizes,
   PersonalPreferences,
   ExternalLink,
+  DeliveryAddress,
+  BankDetails,
+  PersonalDetailsVisibility,
 } from '@/types/database.types';
 import { SizesSection } from '@/components/profile/SizesSection';
 import { PreferencesSection } from '@/components/profile/PreferencesSection';
 import { ExternalLinksSection } from '@/components/profile/ExternalLinksSection';
+import { DeliveryAddressSection } from '@/components/profile/DeliveryAddressSection';
+import { BankDetailsSection } from '@/components/profile/BankDetailsSection';
+import { VisibilityToggle } from '@/components/profile/VisibilityToggle';
 import { CompletenessIndicator } from '@/components/profile/CompletenessIndicator';
 import { colors, spacing } from '@/constants/theme';
 
@@ -46,6 +54,12 @@ export default function PersonalDetailsScreen() {
   const [sizes, setSizes] = useState<PersonalSizes>({});
   const [preferences, setPreferences] = useState<PersonalPreferences>({});
   const [externalLinks, setExternalLinks] = useState<ExternalLink[]>([]);
+  const [deliveryAddress, setDeliveryAddress] = useState<DeliveryAddress>({});
+  const [bankDetails, setBankDetails] = useState<BankDetails>({});
+  const [visibility, setVisibility] = useState<PersonalDetailsVisibility>({
+    delivery_address: 'friends_only',
+    bank_details: 'friends_only',
+  });
 
   // Load existing data on mount
   useEffect(() => {
@@ -67,6 +81,9 @@ export default function PersonalDetailsScreen() {
         setSizes(details.sizes || {});
         setPreferences(details.preferences || {});
         setExternalLinks(details.external_links || []);
+        setDeliveryAddress(details.delivery_address || {});
+        setBankDetails(details.bank_details || {});
+        setVisibility(details.visibility || { delivery_address: 'friends_only', bank_details: 'friends_only' });
       }
     } catch (error) {
       console.error('Error loading personal details:', error);
@@ -84,6 +101,9 @@ export default function PersonalDetailsScreen() {
         sizes,
         preferences,
         external_links: externalLinks,
+        delivery_address: deliveryAddress,
+        bank_details: bankDetails,
+        visibility,
       });
       Alert.alert('Success', 'Personal details saved', [
         { text: 'OK', onPress: () => router.back() },
@@ -98,8 +118,8 @@ export default function PersonalDetailsScreen() {
 
   // Calculate completeness for indicator
   const completeness = useMemo(
-    () => calculateCompleteness(sizes, preferences, externalLinks),
-    [sizes, preferences, externalLinks]
+    () => calculateCompleteness(sizes, preferences, externalLinks, deliveryAddress, bankDetails),
+    [sizes, preferences, externalLinks, deliveryAddress, bankDetails]
   );
 
   // Loading state
@@ -134,6 +154,32 @@ export default function PersonalDetailsScreen() {
 
         {/* External Links Section */}
         <ExternalLinksSection links={externalLinks} onChange={setExternalLinks} />
+
+        {/* Delivery Address Section */}
+        <VStack space="sm">
+          <VisibilityToggle
+            label="Delivery Address Visibility"
+            value={visibility.delivery_address || 'friends_only'}
+            onChange={(val) => setVisibility({ ...visibility, delivery_address: val })}
+          />
+          <DeliveryAddressSection
+            address={deliveryAddress}
+            onChange={setDeliveryAddress}
+          />
+        </VStack>
+
+        {/* Bank Details Section */}
+        <VStack space="sm">
+          <VisibilityToggle
+            label="Bank Details Visibility"
+            value={visibility.bank_details || 'friends_only'}
+            onChange={(val) => setVisibility({ ...visibility, bank_details: val })}
+          />
+          <BankDetailsSection
+            bankDetails={bankDetails}
+            onChange={setBankDetails}
+          />
+        </VStack>
 
         {/* Save Button */}
         <Box marginTop="$2" marginBottom="$6">

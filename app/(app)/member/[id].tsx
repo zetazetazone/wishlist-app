@@ -79,7 +79,9 @@ export default function MemberProfileScreen() {
         const result = calculateCompleteness(
           details.sizes,
           details.preferences,
-          details.external_links
+          details.external_links,
+          details.delivery_address,
+          details.bank_details
         );
         setCompleteness(result);
       }
@@ -169,7 +171,11 @@ export default function MemberProfileScreen() {
               sizes={personalDetails.sizes}
               preferences={personalDetails.preferences}
               externalLinks={personalDetails.external_links}
+              deliveryAddress={personalDetails.delivery_address}
+              bankDetails={personalDetails.bank_details}
+              visibility={personalDetails.visibility}
               updatedAt={personalDetails.updated_at}
+              isGroupMember={!!groupId}
             />
           </VStack>
         ) : (
