@@ -22,6 +22,7 @@ import { getPersonalDetails, TypedPersonalDetails } from '@/lib/personalDetails'
 import { getAvatarUrl } from '@/lib/storage';
 import { CompletenessIndicator } from '@/components/profile/CompletenessIndicator';
 import { PersonalDetailsReadOnly } from '@/components/profile/PersonalDetailsReadOnly';
+import { MemberNotesSection } from '@/components/notes/MemberNotesSection';
 import { calculateCompleteness, CompletenessResult } from '@/lib/profileCompleteness';
 import { colors, spacing, borderRadius, shadows } from '@/constants/theme';
 
@@ -32,11 +33,12 @@ interface MemberProfile {
 }
 
 export default function MemberProfileScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, groupId } = useLocalSearchParams<{ id: string; groupId?: string }>();
   const [isLoading, setIsLoading] = useState(true);
   const [memberProfile, setMemberProfile] = useState<MemberProfile | null>(null);
   const [personalDetails, setPersonalDetails] = useState<TypedPersonalDetails | null>(null);
   const [completeness, setCompleteness] = useState<CompletenessResult | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -47,6 +49,12 @@ export default function MemberProfileScreen() {
   const loadMemberData = async () => {
     try {
       setIsLoading(true);
+
+      // Get current user ID for isSubject check
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setCurrentUserId(user.id);
+      }
 
       // Fetch member's user_profile for name/avatar
       const { data: profile, error: profileError } = await supabase
@@ -171,6 +179,18 @@ export default function MemberProfileScreen() {
             </Text>
           </View>
         )}
+
+        {/* Notes Section - only shown when accessed with groupId context */}
+        {groupId && (
+          <View style={styles.notesContainer}>
+            <MemberNotesSection
+              groupId={groupId}
+              aboutUserId={id}
+              aboutUserName={memberProfile?.display_name || 'Member'}
+              isSubject={id === currentUserId}
+            />
+          </View>
+        )}
       </ScrollView>
     </>
   );
@@ -228,5 +248,8 @@ const styles = StyleSheet.create({
     color: colors.cream[600],
     fontStyle: 'italic',
     textAlign: 'center',
+  },
+  notesContainer: {
+    marginTop: spacing.lg,
   },
 });
