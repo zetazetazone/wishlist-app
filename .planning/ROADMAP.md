@@ -396,7 +396,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 23-01-PLAN.md -- Complete v1.4 database foundation (tables, RLS, helper functions, RPC)
+- [x] 23-01-PLAN.md -- Complete v1.4 database foundation (tables, RLS, helper functions, RPC)
 
 #### Phase 24: Friend Core Services & Tab
 **Goal**: Core friend CRUD operations and Friends tab navigation with friend list display
@@ -485,7 +485,7 @@ Phases execute in order: 23 -> 24 -> 25 -> 26 -> 27 -> 28
 | 20. Personal Details | v1.3 | 3/3 | Complete | 2026-02-06 |
 | 21. Split Contributions & Claim Enhancements | v1.3 | 6/6 | Complete | 2026-02-06 |
 | 22. Secret Notes | v1.3 | 3/3 | Complete | 2026-02-09 |
-| 23. Database Foundation | v1.4 | 0/1 | In progress | - |
+| 23. Database Foundation | v1.4 | 1/1 | Complete | 2026-02-09 |
 | 24. Friend Core Services & Tab | v1.4 | 0/? | Not started | - |
 | 25. Friend Requests Flow | v1.4 | 0/? | Not started | - |
 | 26. Contact Import & Discovery | v1.4 | 0/? | Not started | - |

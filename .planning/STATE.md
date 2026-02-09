@@ -9,18 +9,18 @@ See: .planning/PROJECT.md (updated 2026-02-09)
 
 ## Current Position
 
-Phase: 23 - Database Foundation
-Plan: Not started
-Status: Roadmap created, ready for planning
-Last activity: 2026-02-09 — v1.4 roadmap created
+Phase: 23 of 6 (Database Foundation)
+Plan: 1 of 1 complete
+Status: Phase complete
+Last activity: 2026-02-09 — Completed 23-01 Database Foundation
 
-Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [          ] 0% v1.4 (0/6 phases)
+Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [#         ] 17% v1.4 (1/6 phases)
 
 ## v1.4 Phase Overview
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
-| 23 | Database Foundation | Foundation for all | Not started |
+| 23 | Database Foundation | Foundation for all | Complete |
 | 24 | Friend Core Services & Tab | FRND-05,06 FTAB-01,02,05 | Not started |
 | 25 | Friend Requests Flow | FRND-01-04,07-09 FTAB-03 | Not started |
 | 26 | Contact Import & Discovery | DISC-01-06 FTAB-04 | Not started |
@@ -50,6 +50,10 @@ Key decisions from v1.0/v1.1/v1.2/v1.3 archived in PROJECT.md Key Decisions tabl
 - iOS 18 limited contact access handled via `accessPrivileges` property check
 - Rate limiting: max 20 friend requests per hour per user
 
+**Phase 23 Decisions:**
+- No direct INSERT on friends table - friendships created only via accept_friend_request RPC
+- Partial unique index on friend_requests uses LEAST/GREATEST for bidirectional dedup
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -59,11 +63,15 @@ From v1.0/v1.1:
 4. Enable pg_cron extension in Supabase Dashboard
 5. Build development client: `npx eas build --profile development`
 
+From v1.4 Phase 23:
+6. Start Docker Desktop and run `npx supabase db reset` to apply migration
+
 ### Blockers/Concerns
 
 - Pre-existing TypeScript errors (type exports for Group, WishlistItem) - non-blocking
 - npm peer dependency workaround (--legacy-peer-deps) for React 19 - acceptable
 - Phase 26 needs deeper research: `libphonenumber-js` integration, iOS 18 permission edge cases
+- Docker not running blocked local migration verification (Phase 23)
 
 ### Quick Tasks Completed
 
@@ -77,6 +85,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-09
-Stopped at: v1.4 roadmap creation
+Stopped at: Completed Phase 23 Plan 01
 Resume file: None
-Next: /gsd:plan-phase 23
+Next: /gsd:plan-phase 24
