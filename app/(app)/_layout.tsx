@@ -47,6 +47,20 @@ export default function AppLayout() {
           headerBackTitle: 'Back',
         }}
       />
+      <Stack.Screen
+        name="requests"
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: '#ffffff',
+          },
+          headerTintColor: '#8B1538',
+          headerTitleStyle: {
+            fontWeight: '600',
+          },
+          headerBackTitle: 'Back',
+        }}
+      />
     </Stack>
   );
 }
