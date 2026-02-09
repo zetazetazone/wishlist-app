@@ -50,14 +50,11 @@ export default function TabsLayout() {
           ),
         }}
       />
+      {/* Notifications is accessed via header icon, not as a tab */}
       <Tabs.Screen
         name="notifications"
         options={{
-          title: 'Notifications',
-          headerShown: false, // Notifications screen handles its own header
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="bell" size={size} color={color} />
-          ),
+          href: null, // Hide from tab bar - accessed via notification icon in header
         }}
       />
       {/* Hide backup/alternate versions */}

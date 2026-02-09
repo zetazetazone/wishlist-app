@@ -1,19 +1,19 @@
 /**
  * ContributionModal Component
  * Bottom sheet modal for adding/updating contributions
+ *
+ * KEYBOARD-AWARE: Uses keyboardBehavior="extend" to ensure the input
+ * field remains visible above the keyboard when it opens.
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
-  TextInput,
   Pressable,
   StyleSheet,
   ActivityIndicator,
   Image,
-  KeyboardAvoidingView,
-  Platform,
   ScrollView,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -21,6 +21,7 @@ import {
   BottomSheetModal,
   BottomSheetBackdrop,
   BottomSheetView,
+  BottomSheetTextInput,
 } from '@gorhom/bottom-sheet';
 import {
   getContributions,
@@ -57,7 +58,9 @@ export function ContributionModal({
   const [error, setError] = useState<string | null>(null);
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = ['70%'];
+
+  // Fixed snap point high enough to always show content above keyboard
+  const snapPoints = ['85%'];
 
   // Load contributions when modal opens
   useEffect(() => {
@@ -163,122 +166,118 @@ export function ContributionModal({
       enablePanDownToClose
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
+      android_keyboardInputMode="adjustResize"
     >
       <BottomSheetView style={styles.container}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.keyboardView}
-        >
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.title}>
-              {existingContribution ? 'Update Contribution' : 'Add Contribution'}
-            </Text>
-            <Pressable onPress={onClose} style={styles.closeButton}>
-              <MaterialCommunityIcons name="close" size={24} color="#6b7280" />
-            </Pressable>
-          </View>
-
-          {/* Amount Input */}
-          <View style={styles.inputSection}>
-            <Text style={styles.inputLabel}>Your Contribution</Text>
-            <View style={styles.inputWrapper}>
-              <Text style={styles.currencySymbol}>$</Text>
-              <TextInput
-                style={styles.input}
-                value={amount}
-                onChangeText={handleAmountChange}
-                placeholder="0.00"
-                placeholderTextColor="#9ca3af"
-                keyboardType="decimal-pad"
-                autoFocus
-              />
-            </View>
-            {error && <Text style={styles.errorText}>{error}</Text>}
-          </View>
-
-          {/* Contributors List */}
-          <View style={styles.contributorsSection}>
-            <Text style={styles.sectionTitle}>
-              Other Contributors ({otherContributions.length})
-            </Text>
-
-            {loading ? (
-              <ActivityIndicator size="small" color="#8B1538" />
-            ) : otherContributions.length === 0 ? (
-              <Text style={styles.noContributors}>
-                No other contributions yet. Be the first!
-              </Text>
-            ) : (
-              <ScrollView
-                style={styles.contributorsList}
-                showsVerticalScrollIndicator={false}
-              >
-                {otherContributions.map(contribution => {
-                  const name =
-                    contribution.contributor?.display_name || 'Unknown';
-                  const initial = name.charAt(0).toUpperCase();
-
-                  return (
-                    <View key={contribution.id} style={styles.contributorItem}>
-                      {contribution.contributor?.avatar_url ? (
-                        <Image
-                          source={{ uri: contribution.contributor.avatar_url }}
-                          style={styles.contributorAvatar}
-                        />
-                      ) : (
-                        <View
-                          style={[
-                            styles.contributorAvatar,
-                            styles.contributorAvatarPlaceholder,
-                          ]}
-                        >
-                          <Text style={styles.contributorInitial}>
-                            {initial}
-                          </Text>
-                        </View>
-                      )}
-                      <Text style={styles.contributorName}>{name}</Text>
-                      <Text style={styles.contributorAmount}>
-                        {formatCurrency(contribution.amount)}
-                      </Text>
-                    </View>
-                  );
-                })}
-              </ScrollView>
-            )}
-
-            {otherContributions.length > 0 && (
-              <View style={styles.totalRow}>
-                <Text style={styles.totalLabel}>Others' Total:</Text>
-                <Text style={styles.totalAmount}>
-                  {formatCurrency(othersTotal)}
-                </Text>
-              </View>
-            )}
-          </View>
-
-          {/* Save Button */}
-          <Pressable
-            style={[
-              styles.saveButton,
-              (!amount || saving) && styles.saveButtonDisabled,
-            ]}
-            onPress={handleSave}
-            disabled={!amount || saving}
-          >
-            {saving ? (
-              <ActivityIndicator size="small" color="#ffffff" />
-            ) : (
-              <>
-                <MaterialCommunityIcons name="check" size={20} color="#ffffff" />
-                <Text style={styles.saveButtonText}>
-                  {existingContribution ? 'Update' : 'Add'} Contribution
-                </Text>
-              </>
-            )}
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>
+            {existingContribution ? 'Update Contribution' : 'Add Contribution'}
+          </Text>
+          <Pressable onPress={onClose} style={styles.closeButton}>
+            <MaterialCommunityIcons name="close" size={24} color="#6b7280" />
           </Pressable>
-        </KeyboardAvoidingView>
+        </View>
+
+        {/* Amount Input - Using BottomSheetTextInput for proper keyboard handling */}
+        <View style={styles.inputSection}>
+          <Text style={styles.inputLabel}>Your Contribution</Text>
+          <View style={styles.inputWrapper}>
+            <Text style={styles.currencySymbol}>$</Text>
+            <BottomSheetTextInput
+              style={styles.input}
+              value={amount}
+              onChangeText={handleAmountChange}
+              placeholder="0.00"
+              placeholderTextColor="#9ca3af"
+              keyboardType="decimal-pad"
+              autoFocus
+            />
+          </View>
+          {error && <Text style={styles.errorText}>{error}</Text>}
+        </View>
+
+        {/* Contributors List */}
+        <View style={styles.contributorsSection}>
+          <Text style={styles.sectionTitle}>
+            Other Contributors ({otherContributions.length})
+          </Text>
+
+          {loading ? (
+            <ActivityIndicator size="small" color="#8B1538" />
+          ) : otherContributions.length === 0 ? (
+            <Text style={styles.noContributors}>
+              No other contributions yet. Be the first!
+            </Text>
+          ) : (
+            <ScrollView
+              style={styles.contributorsList}
+              showsVerticalScrollIndicator={false}
+            >
+              {otherContributions.map(contribution => {
+                const name =
+                  contribution.contributor?.display_name || 'Unknown';
+                const initial = name.charAt(0).toUpperCase();
+
+                return (
+                  <View key={contribution.id} style={styles.contributorItem}>
+                    {contribution.contributor?.avatar_url ? (
+                      <Image
+                        source={{ uri: contribution.contributor.avatar_url }}
+                        style={styles.contributorAvatar}
+                      />
+                    ) : (
+                      <View
+                        style={[
+                          styles.contributorAvatar,
+                          styles.contributorAvatarPlaceholder,
+                        ]}
+                      >
+                        <Text style={styles.contributorInitial}>
+                          {initial}
+                        </Text>
+                      </View>
+                    )}
+                    <Text style={styles.contributorName}>{name}</Text>
+                    <Text style={styles.contributorAmount}>
+                      {formatCurrency(contribution.amount)}
+                    </Text>
+                  </View>
+                );
+              })}
+            </ScrollView>
+          )}
+
+          {otherContributions.length > 0 && (
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>Others' Total:</Text>
+              <Text style={styles.totalAmount}>
+                {formatCurrency(othersTotal)}
+              </Text>
+            </View>
+          )}
+        </View>
+
+        {/* Save Button */}
+        <Pressable
+          style={[
+            styles.saveButton,
+            (!amount || saving) && styles.saveButtonDisabled,
+          ]}
+          onPress={handleSave}
+          disabled={!amount || saving}
+        >
+          {saving ? (
+            <ActivityIndicator size="small" color="#ffffff" />
+          ) : (
+            <>
+              <MaterialCommunityIcons name="check" size={20} color="#ffffff" />
+              <Text style={styles.saveButtonText}>
+                {existingContribution ? 'Update' : 'Add'} Contribution
+              </Text>
+            </>
+          )}
+        </Pressable>
       </BottomSheetView>
     </BottomSheetModal>
   );
@@ -288,9 +287,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-  },
-  keyboardView: {
-    flex: 1,
+    paddingBottom: 20,
   },
   header: {
     flexDirection: 'row',

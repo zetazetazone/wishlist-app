@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "185641423789",
+    "project_id": "ribbon-gifts-wishlist",
+    "storage_bucket": "ribbon-gifts-wishlist.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185641423789:android:71f410af3f5191b7db0724",
+        "android_client_info": {
+          "package_name": "com.wishlistapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnUFNU6sG_oRp5cO0Z1_uTPH8fRxkwqw0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

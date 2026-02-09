@@ -34,6 +34,7 @@ import {
   readdSpecialItem,
 } from '../../../lib/favorites';
 import { GroupPickerSheet } from '../../../components/wishlist/GroupPickerSheet';
+import NotificationIconButton from '../../../components/notifications/NotificationIconButton';
 
 type ItemType = 'standard' | 'surprise_me' | 'mystery_box';
 
@@ -446,73 +447,79 @@ export default function LuxuryWishlistScreen() {
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ type: 'timing', duration: 600 }}
           >
-            {/* Title Row with Profile Picture */}
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              {/* Profile Picture */}
-              <TouchableOpacity
-                onPress={() => router.push('/settings/profile')}
-                activeOpacity={0.8}
-                style={{ marginRight: spacing.md }}
-              >
-                {userProfile.avatar_url ? (
-                  <Image
-                    source={{ uri: getAvatarUrl(userProfile.avatar_url) || undefined }}
-                    style={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: 28,
-                      borderWidth: 2,
-                      borderColor: colors.white,
-                    }}
-                  />
-                ) : (
-                  <View
-                    style={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: 28,
-                      borderWidth: 2,
-                      borderColor: colors.white,
-                      backgroundColor: colors.gold[200],
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Text
+            {/* Title Row with Profile Picture and Notification Icon */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              {/* Left: Profile Picture and Title */}
+              <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+                {/* Profile Picture */}
+                <TouchableOpacity
+                  onPress={() => router.push('/settings/profile')}
+                  activeOpacity={0.8}
+                  style={{ marginRight: spacing.md }}
+                >
+                  {userProfile.avatar_url ? (
+                    <Image
+                      source={{ uri: getAvatarUrl(userProfile.avatar_url) || undefined }}
                       style={{
-                        fontSize: 22,
-                        fontWeight: '700',
-                        color: colors.burgundy[800],
+                        width: 56,
+                        height: 56,
+                        borderRadius: 28,
+                        borderWidth: 2,
+                        borderColor: colors.white,
+                      }}
+                    />
+                  ) : (
+                    <View
+                      style={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 28,
+                        borderWidth: 2,
+                        borderColor: colors.white,
+                        backgroundColor: colors.gold[200],
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       }}
                     >
-                      {userProfile.display_name?.[0]?.toUpperCase() || '?'}
-                    </Text>
-                  </View>
-                )}
-              </TouchableOpacity>
+                      <Text
+                        style={{
+                          fontSize: 22,
+                          fontWeight: '700',
+                          color: colors.burgundy[800],
+                        }}
+                      >
+                        {userProfile.display_name?.[0]?.toUpperCase() || '?'}
+                      </Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
 
-              {/* Title and Count */}
-              <View>
-                <Text
-                  style={{
-                    fontSize: 32,
-                    fontWeight: '700',
-                    color: colors.white,
-                    marginBottom: spacing.xs,
-                  }}
-                >
-                  My Wishlist
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 15,
-                    color: colors.gold[200],
-                    fontWeight: '400',
-                  }}
-                >
-                  {items.length} {items.length === 1 ? 'gift' : 'gifts'}
-                </Text>
+                {/* Title and Count */}
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 32,
+                      fontWeight: '700',
+                      color: colors.white,
+                      marginBottom: spacing.xs,
+                    }}
+                  >
+                    My Wishlist
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      color: colors.gold[200],
+                      fontWeight: '400',
+                    }}
+                  >
+                    {items.length} {items.length === 1 ? 'gift' : 'gifts'}
+                  </Text>
+                </View>
               </View>
+
+              {/* Right: Notification Icon */}
+              <NotificationIconButton size={28} />
             </View>
           </MotiView>
         </LinearGradient>

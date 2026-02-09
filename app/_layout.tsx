@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { GluestackUIProvider } from '@gluestack-ui/themed';
 import { config } from '../gluestack-ui.config';
 import './global.css';
@@ -85,14 +86,16 @@ export default function RootLayout() {
 
   return (
     <GluestackUIProvider config={config}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <BottomSheetModalProvider>
-          <SafeAreaProvider>
-            <StatusBar style="light" />
-            <Slot />
-          </SafeAreaProvider>
-        </BottomSheetModalProvider>
-      </GestureHandlerRootView>
+      <KeyboardProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <BottomSheetModalProvider>
+            <SafeAreaProvider>
+              <StatusBar style="light" />
+              <Slot />
+            </SafeAreaProvider>
+          </BottomSheetModalProvider>
+        </GestureHandlerRootView>
+      </KeyboardProvider>
     </GluestackUIProvider>
   );
 }

@@ -13,6 +13,7 @@
  */
 
 import { supabase } from './supabase';
+import { getAvatarUrl } from './storage';
 import type { Database, GiftClaim } from '../types/database.types';
 
 /** Claim with claimer profile info */
@@ -107,14 +108,18 @@ export async function getItemClaimStatus(
 ): Promise<ItemClaimStatus[]> {
   if (itemIds.length === 0) return [];
 
+  console.log('[getItemClaimStatus] Calling RPC with item IDs:', itemIds);
+
   const { data, error } = await supabase.rpc('get_item_claim_status', {
     p_item_ids: itemIds,
   });
 
   if (error) {
-    console.error('Failed to get item claim status:', error);
+    console.error('[getItemClaimStatus] RPC error:', error);
     return [];
   }
+
+  console.log('[getItemClaimStatus] RPC returned:', data);
 
   return (data as ItemClaimStatus[]) || [];
 }
@@ -163,7 +168,8 @@ export async function getClaimsForItems(
         ? {
             id: profile.id,
             display_name: profile.display_name,
-            avatar_url: profile.avatar_url,
+            // Convert storage path to public URL
+            avatar_url: getAvatarUrl(profile.avatar_url),
           }
         : undefined,
     };

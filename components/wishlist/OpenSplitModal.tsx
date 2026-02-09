@@ -5,24 +5,25 @@
  * Replaces Alert.prompt which is iOS-only.
  *
  * Allows optional entry of additional costs (shipping, taxes, etc.)
+ *
+ * KEYBOARD-AWARE: Uses keyboardBehavior="extend" to ensure the input
+ * field remains visible above the keyboard when it opens.
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
-  TextInput,
   Pressable,
   StyleSheet,
   ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   BottomSheetModal,
   BottomSheetBackdrop,
   BottomSheetView,
+  BottomSheetTextInput,
 } from '@gorhom/bottom-sheet';
 import { colors, spacing, borderRadius } from '../../constants/theme';
 
@@ -48,7 +49,9 @@ export function OpenSplitModal({
   const [error, setError] = useState<string | null>(null);
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = ['50%'];
+
+  // Fixed snap point high enough to always show content above keyboard
+  const snapPoints = ['75%'];
 
   // Reset state when modal opens
   useEffect(() => {
@@ -135,86 +138,82 @@ export function OpenSplitModal({
       enablePanDownToClose
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
+      android_keyboardInputMode="adjustResize"
     >
       <BottomSheetView style={styles.container}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.keyboardView}
-        >
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.title} numberOfLines={2}>
-              Open for Split
-            </Text>
-            <Pressable onPress={onClose} style={styles.closeButton}>
-              <MaterialCommunityIcons
-                name="close"
-                size={24}
-                color={colors.cream[600]}
-              />
-            </Pressable>
-          </View>
-
-          {/* Item Info */}
-          <Text style={styles.itemTitle} numberOfLines={1}>
-            {itemTitle}
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title} numberOfLines={2}>
+            Open for Split
           </Text>
+          <Pressable onPress={onClose} style={styles.closeButton}>
+            <MaterialCommunityIcons
+              name="close"
+              size={24}
+              color={colors.cream[600]}
+            />
+          </Pressable>
+        </View>
 
-          {/* Subtitle */}
-          <Text style={styles.subtitle}>
-            Add shipping or other costs? (optional)
-          </Text>
+        {/* Item Info */}
+        <Text style={styles.itemTitle} numberOfLines={1}>
+          {itemTitle}
+        </Text>
 
-          {/* Amount Input */}
-          <View style={styles.inputSection}>
-            <View style={styles.inputWrapper}>
-              <Text style={styles.currencySymbol}>$</Text>
-              <TextInput
-                style={styles.input}
-                value={amount}
-                onChangeText={handleAmountChange}
-                placeholder="0.00"
-                placeholderTextColor={colors.cream[400]}
-                keyboardType="decimal-pad"
-                editable={!loading}
-              />
-            </View>
-            {error && <Text style={styles.errorText}>{error}</Text>}
+        {/* Subtitle */}
+        <Text style={styles.subtitle}>
+          Add shipping or other costs? (optional)
+        </Text>
+
+        {/* Amount Input - Using BottomSheetTextInput for proper keyboard handling */}
+        <View style={styles.inputSection}>
+          <View style={styles.inputWrapper}>
+            <Text style={styles.currencySymbol}>$</Text>
+            <BottomSheetTextInput
+              style={styles.input}
+              value={amount}
+              onChangeText={handleAmountChange}
+              placeholder="0.00"
+              placeholderTextColor={colors.cream[400]}
+              keyboardType="decimal-pad"
+              editable={!loading}
+            />
           </View>
+          {error && <Text style={styles.errorText}>{error}</Text>}
+        </View>
 
-          {/* Action Buttons */}
-          <View style={styles.actionButtons}>
-            <Pressable
-              style={styles.cancelButton}
-              onPress={onClose}
-              disabled={loading}
-            >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </Pressable>
+        {/* Action Buttons */}
+        <View style={styles.actionButtons}>
+          <Pressable
+            style={styles.cancelButton}
+            onPress={onClose}
+            disabled={loading}
+          >
+            <Text style={styles.cancelButtonText}>Cancel</Text>
+          </Pressable>
 
-            <Pressable
-              style={[
-                styles.confirmButton,
-                loading && styles.confirmButtonDisabled,
-              ]}
-              onPress={handleConfirm}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator size="small" color={colors.white} />
-              ) : (
-                <>
-                  <MaterialCommunityIcons
-                    name="call-split"
-                    size={18}
-                    color={colors.white}
-                  />
-                  <Text style={styles.confirmButtonText}>Open Split</Text>
-                </>
-              )}
-            </Pressable>
-          </View>
-        </KeyboardAvoidingView>
+          <Pressable
+            style={[
+              styles.confirmButton,
+              loading && styles.confirmButtonDisabled,
+            ]}
+            onPress={handleConfirm}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator size="small" color={colors.white} />
+            ) : (
+              <>
+                <MaterialCommunityIcons
+                  name="call-split"
+                  size={18}
+                  color={colors.white}
+                />
+                <Text style={styles.confirmButtonText}>Open Split</Text>
+              </>
+            )}
+          </Pressable>
+        </View>
       </BottomSheetView>
     </BottomSheetModal>
   );
@@ -224,9 +223,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: spacing.lg,
-  },
-  keyboardView: {
-    flex: 1,
+    paddingBottom: spacing.lg,
   },
   header: {
     flexDirection: 'row',
@@ -287,8 +284,8 @@ const styles = StyleSheet.create({
   actionButtons: {
     flexDirection: 'row',
     gap: spacing.md,
-    marginTop: 'auto',
-    marginBottom: spacing.lg,
+    marginTop: spacing.lg,
+    marginBottom: spacing.md,
   },
   cancelButton: {
     flex: 1,

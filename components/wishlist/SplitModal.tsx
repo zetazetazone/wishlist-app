@@ -3,24 +3,25 @@
  *
  * Modal for entering a pledge amount toward a split contribution.
  * Shows progress info, validates amount, and handles keyboard properly.
+ *
+ * KEYBOARD-AWARE: Uses keyboardBehavior="extend" to ensure the input
+ * field remains visible above the keyboard when it opens.
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
-  TextInput,
   Pressable,
   StyleSheet,
   ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   BottomSheetModal,
   BottomSheetBackdrop,
   BottomSheetView,
+  BottomSheetTextInput,
 } from '@gorhom/bottom-sheet';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 
@@ -64,7 +65,9 @@ export function SplitModal({
   const [error, setError] = useState<string | null>(null);
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = ['60%'];
+
+  // Fixed snap point high enough to always show content above keyboard
+  const snapPoints = ['85%'];
 
   // Calculate remaining amount
   const additionalAmount = additionalCosts ?? 0;
@@ -163,108 +166,104 @@ export function SplitModal({
       enablePanDownToClose
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
+      android_keyboardInputMode="adjustResize"
     >
       <BottomSheetView style={styles.container}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.keyboardView}
-        >
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.title} numberOfLines={2}>
-              Contribute to {itemTitle}
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title} numberOfLines={2}>
+            Contribute to {itemTitle}
+          </Text>
+          <Pressable onPress={onClose} style={styles.closeButton}>
+            <MaterialCommunityIcons
+              name="close"
+              size={24}
+              color={colors.cream[600]}
+            />
+          </Pressable>
+        </View>
+
+        {/* Progress Info */}
+        <View style={styles.progressInfo}>
+          <Text style={styles.progressText}>
+            {formatCurrency(totalPledged)} of {formatCurrency(totalTarget)} funded
+          </Text>
+          <Text style={styles.remainingText}>
+            {formatCurrency(remaining)} remaining
+          </Text>
+        </View>
+
+        {/* Amount Input - Using BottomSheetTextInput for proper keyboard handling */}
+        <View style={styles.inputSection}>
+          <Text style={styles.inputLabel}>Your Pledge</Text>
+          <View style={styles.inputWrapper}>
+            <Text style={styles.currencySymbol}>$</Text>
+            <BottomSheetTextInput
+              style={styles.input}
+              value={amount}
+              onChangeText={handleAmountChange}
+              placeholder="0.00"
+              placeholderTextColor={colors.cream[400]}
+              keyboardType="decimal-pad"
+              autoFocus
+              editable={!loading}
+            />
+          </View>
+          {error && <Text style={styles.errorText}>{error}</Text>}
+        </View>
+
+        {/* Suggested Amount Button */}
+        {suggestedAmount && suggestedAmount > 0 && (
+          <Pressable
+            style={styles.suggestedButton}
+            onPress={handleUseSuggested}
+            disabled={loading}
+          >
+            <MaterialCommunityIcons
+              name="account-group"
+              size={18}
+              color={colors.burgundy[600]}
+            />
+            <Text style={styles.suggestedText}>
+              Split equally: {formatCurrency(Math.min(suggestedAmount, remaining))}
             </Text>
-            <Pressable onPress={onClose} style={styles.closeButton}>
-              <MaterialCommunityIcons
-                name="close"
-                size={24}
-                color={colors.cream[600]}
-              />
-            </Pressable>
-          </View>
+          </Pressable>
+        )}
 
-          {/* Progress Info */}
-          <View style={styles.progressInfo}>
-            <Text style={styles.progressText}>
-              {formatCurrency(totalPledged)} of {formatCurrency(totalTarget)} funded
-            </Text>
-            <Text style={styles.remainingText}>
-              {formatCurrency(remaining)} remaining
-            </Text>
-          </View>
+        {/* Action Buttons */}
+        <View style={styles.actionButtons}>
+          <Pressable
+            style={styles.cancelButton}
+            onPress={onClose}
+            disabled={loading}
+          >
+            <Text style={styles.cancelButtonText}>Cancel</Text>
+          </Pressable>
 
-          {/* Amount Input */}
-          <View style={styles.inputSection}>
-            <Text style={styles.inputLabel}>Your Pledge</Text>
-            <View style={styles.inputWrapper}>
-              <Text style={styles.currencySymbol}>$</Text>
-              <TextInput
-                style={styles.input}
-                value={amount}
-                onChangeText={handleAmountChange}
-                placeholder="0.00"
-                placeholderTextColor={colors.cream[400]}
-                keyboardType="decimal-pad"
-                autoFocus
-                editable={!loading}
-              />
-            </View>
-            {error && <Text style={styles.errorText}>{error}</Text>}
-          </View>
-
-          {/* Suggested Amount Button */}
-          {suggestedAmount && suggestedAmount > 0 && (
-            <Pressable
-              style={styles.suggestedButton}
-              onPress={handleUseSuggested}
-              disabled={loading}
-            >
-              <MaterialCommunityIcons
-                name="account-group"
-                size={18}
-                color={colors.burgundy[600]}
-              />
-              <Text style={styles.suggestedText}>
-                Split equally: {formatCurrency(Math.min(suggestedAmount, remaining))}
-              </Text>
-            </Pressable>
-          )}
-
-          {/* Action Buttons */}
-          <View style={styles.actionButtons}>
-            <Pressable
-              style={styles.cancelButton}
-              onPress={onClose}
-              disabled={loading}
-            >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </Pressable>
-
-            <Pressable
-              style={[
-                styles.confirmButton,
-                (!isValidAmount || loading) && styles.confirmButtonDisabled,
-              ]}
-              onPress={handleConfirm}
-              disabled={!isValidAmount || loading}
-            >
-              {loading ? (
-                <ActivityIndicator size="small" color={colors.white} />
-              ) : (
-                <>
-                  <MaterialCommunityIcons
-                    name="hand-heart"
-                    size={18}
-                    color={colors.white}
-                  />
-                  <Text style={styles.confirmButtonText}>
-                    Pledge {amount ? formatCurrency(parseFloat(amount) || 0) : '$0'}
-                  </Text>
-                </>
-              )}
-            </Pressable>
-          </View>
-        </KeyboardAvoidingView>
+          <Pressable
+            style={[
+              styles.confirmButton,
+              (!isValidAmount || loading) && styles.confirmButtonDisabled,
+            ]}
+            onPress={handleConfirm}
+            disabled={!isValidAmount || loading}
+          >
+            {loading ? (
+              <ActivityIndicator size="small" color={colors.white} />
+            ) : (
+              <>
+                <MaterialCommunityIcons
+                  name="hand-heart"
+                  size={18}
+                  color={colors.white}
+                />
+                <Text style={styles.confirmButtonText}>
+                  Pledge {amount ? formatCurrency(parseFloat(amount) || 0) : '$0'}
+                </Text>
+              </>
+            )}
+          </Pressable>
+        </View>
       </BottomSheetView>
     </BottomSheetModal>
   );
@@ -274,9 +273,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: spacing.lg,
-  },
-  keyboardView: {
-    flex: 1,
+    paddingBottom: spacing.lg,
   },
   header: {
     flexDirection: 'row',
@@ -366,8 +363,8 @@ const styles = StyleSheet.create({
   actionButtons: {
     flexDirection: 'row',
     gap: spacing.md,
-    marginTop: 'auto',
-    marginBottom: spacing.lg,
+    marginTop: spacing.lg,
+    marginBottom: spacing.md,
   },
   cancelButton: {
     flex: 1,

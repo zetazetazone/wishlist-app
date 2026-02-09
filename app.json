@@ -9,8 +9,9 @@
     "scheme": "wishlist-app",
     "newArchEnabled": true,
     "extra": {
+      "router": {},
       "eas": {
-        "projectId": "3a64eccc-d4fc-4e6c-9c1e-04c9f2f60c8d"
+        "projectId": "c1f96c50-0d88-4835-b3cc-3297e5b07fbe"
       }
     },
     "splash": {
@@ -33,7 +34,12 @@
       },
       "package": "com.wishlistapp",
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.READ_CALENDAR",
+        "android.permission.WRITE_CALENDAR"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -49,6 +55,7 @@
         }
       ],
       "expo-calendar"
-    ]
+    ],
+    "owner": "zetazeta"
   }
 }

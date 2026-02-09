@@ -14,6 +14,8 @@ START SERVER INSTRUCTIONS
 
 npx expo start --dev-client --clear
 
+npx expo start --host tunnel 
+
 ####################################
            TROUBLESHOOT
 ####################################
@@ -80,3 +82,50 @@ Feature Development Workflow:
 /sc:build --persona-frontend --validate --magic
 /sc:test --play --coverage
 /sc:document --persona-scribe --c7
+
+
+
+
+
+
+
+
+
+
+.........................................
+Test 2: Viewing Claims by Others (User B)
+  1. Have another user (or in another session) claim a different item
+  2. As User B, refresh the celebration page:
+    - Claimed items show small claimer avatar
+    - Tapping avatar shows popup with claimer's name
+    - You can still see who claimed what
+
+  Test 3: Unclaim Flow (User B)
+  1. As User B, find an item you claimed
+  2. Tap "Unclaim":
+    - Confirmation dialog appears
+    - After confirming, claim is released
+    - Item shows "Claim" button again
+
+  Test 4: Celebrant Taken View (User A)
+  1. Login as User A (the celebrant)
+  2. Navigate to My Wishlist screen:
+    - Claimed items show gift icon badge (TakenBadge)
+    - Claimed items appear dimmed/faded
+    - Claimed items are at bottom of list
+    - NO claim buttons visible anywhere
+    - NO claimer names or avatars visible
+    - Header shows "X of Y items taken" counter
+
+  Test 5: Celebrant Viewing Own Celebration (User A)
+  1. As User A, navigate to your own celebration page:
+    - NO claim buttons visible on your wishlist items
+    - NO claimer information visible
+
+  Test 6: Race Condition (Optional)
+  1. Have two users try to claim the same item simultaneously:
+    - One succeeds, one gets "Already Claimed" message
+    - Both see correct state after refresh
+
+
+    

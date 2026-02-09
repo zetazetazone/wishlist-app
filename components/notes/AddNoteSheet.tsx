@@ -3,24 +3,25 @@
  *
  * Bottom sheet modal for creating a new secret note about a member.
  * Includes character counter and validation.
+ *
+ * Uses @gorhom/bottom-sheet's built-in keyboard handling with
+ * dynamic sizing for optimal layout.
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
-  TextInput,
   Pressable,
   StyleSheet,
   ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   BottomSheetModal,
   BottomSheetBackdrop,
   BottomSheetView,
+  BottomSheetTextInput,
 } from '@gorhom/bottom-sheet';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 
@@ -46,7 +47,6 @@ export function AddNoteSheet({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const snapPoints = ['50%'];
 
   const charsRemaining = MAX_CHARS - content.length;
   const isOverLimit = charsRemaining < 0;
@@ -119,82 +119,78 @@ export function AddNoteSheet({
   return (
     <BottomSheetModal
       ref={bottomSheetRef}
-      snapPoints={snapPoints}
       onChange={handleSheetChanges}
       backdropComponent={renderBackdrop}
       enablePanDownToClose
+      enableDynamicSizing
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
+      android_keyboardInputMode="adjustResize"
     >
       <BottomSheetView style={styles.container}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.keyboardView}
-        >
-          {/* Header */}
-          <View style={styles.header}>
-            <View style={styles.headerText}>
-              <Text style={styles.title}>Add Note</Text>
-              <Text style={styles.subtitle}>About {memberName}</Text>
-            </View>
-            <Pressable onPress={onClose} style={styles.closeButton}>
-              <MaterialCommunityIcons
-                name="close"
-                size={24}
-                color={colors.cream[600]}
-              />
-            </Pressable>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.headerText}>
+            <Text style={styles.title}>Add Note</Text>
+            <Text style={styles.subtitle}>About {memberName}</Text>
           </View>
-
-          {/* Content Input */}
-          <View style={styles.inputSection}>
-            <TextInput
-              style={styles.input}
-              value={content}
-              onChangeText={handleContentChange}
-              placeholder="What would help others pick the perfect gift?"
-              placeholderTextColor={colors.cream[400]}
-              multiline
-              autoFocus
-              editable={!isSubmitting}
-              textAlignVertical="top"
+          <Pressable onPress={onClose} style={styles.closeButton}>
+            <MaterialCommunityIcons
+              name="close"
+              size={24}
+              color={colors.cream[600]}
             />
-            <View style={styles.inputFooter}>
-              <Text
-                style={[
-                  styles.charCounter,
-                  isNearLimit && styles.charCounterWarning,
-                  isOverLimit && styles.charCounterError,
-                ]}
-              >
-                {charsRemaining}
-              </Text>
-            </View>
-          </View>
-
-          {/* Submit Button */}
-          <Pressable
-            style={[
-              styles.submitButton,
-              (!isValid || isSubmitting) && styles.submitButtonDisabled,
-            ]}
-            onPress={handleSubmit}
-            disabled={!isValid || isSubmitting}
-          >
-            {isSubmitting ? (
-              <ActivityIndicator size="small" color={colors.white} />
-            ) : (
-              <>
-                <MaterialCommunityIcons
-                  name="note-plus"
-                  size={18}
-                  color={colors.white}
-                />
-                <Text style={styles.submitButtonText}>Add Note</Text>
-              </>
-            )}
           </Pressable>
-        </KeyboardAvoidingView>
+        </View>
+
+        {/* Content Input - Using BottomSheetTextInput for proper keyboard handling */}
+        <View style={styles.inputSection}>
+          <BottomSheetTextInput
+            style={styles.input}
+            value={content}
+            onChangeText={handleContentChange}
+            placeholder="What would help others pick the perfect gift?"
+            placeholderTextColor={colors.cream[400]}
+            multiline
+            autoFocus
+            editable={!isSubmitting}
+            textAlignVertical="top"
+          />
+          <View style={styles.inputFooter}>
+            <Text
+              style={[
+                styles.charCounter,
+                isNearLimit && styles.charCounterWarning,
+                isOverLimit && styles.charCounterError,
+              ]}
+            >
+              {charsRemaining}
+            </Text>
+          </View>
+        </View>
+
+        {/* Submit Button */}
+        <Pressable
+          style={[
+            styles.submitButton,
+            (!isValid || isSubmitting) && styles.submitButtonDisabled,
+          ]}
+          onPress={handleSubmit}
+          disabled={!isValid || isSubmitting}
+        >
+          {isSubmitting ? (
+            <ActivityIndicator size="small" color={colors.white} />
+          ) : (
+            <>
+              <MaterialCommunityIcons
+                name="note-plus"
+                size={18}
+                color={colors.white}
+              />
+              <Text style={styles.submitButtonText}>Add Note</Text>
+            </>
+          )}
+        </Pressable>
       </BottomSheetView>
     </BottomSheetModal>
   );
@@ -202,11 +198,8 @@ export function AddNoteSheet({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingHorizontal: spacing.lg,
-  },
-  keyboardView: {
-    flex: 1,
+    paddingBottom: spacing.lg,
   },
   header: {
     flexDirection: 'row',
@@ -233,11 +226,10 @@ const styles = StyleSheet.create({
     padding: spacing.xs,
   },
   inputSection: {
-    flex: 1,
     paddingVertical: spacing.md,
   },
   input: {
-    flex: 1,
+    minHeight: 120,
     fontSize: 16,
     lineHeight: 24,
     color: colors.cream[800],
@@ -271,7 +263,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.burgundy[700],
     paddingVertical: spacing.md,
     borderRadius: borderRadius.md,
-    marginBottom: spacing.lg,
+    marginTop: spacing.sm,
   },
   submitButtonDisabled: {
     backgroundColor: colors.cream[300],

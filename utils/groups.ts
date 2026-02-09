@@ -2,6 +2,7 @@ import { supabase } from '../lib/supabase';
 import { Group, GroupMember } from '../types';
 import { setDefaultFavorite } from '../lib/favorites';
 import { getNextGiftLeader } from '../lib/celebrations';
+import { getAvatarUrl } from '../lib/storage';
 
 /**
  * Generate a unique 6-character invite code
@@ -188,8 +189,17 @@ export async function fetchGroupDetails(groupId: string) {
 
     if (membersError) throw membersError;
 
+    // Convert storage paths to public URLs for member avatars
+    const membersWithAvatarUrls = (members || []).map(member => ({
+      ...member,
+      users: {
+        ...member.users,
+        avatar_url: getAvatarUrl(member.users.avatar_url),
+      },
+    }));
+
     // Fetch favorites for all members in this group (batch query to avoid N+1)
-    const memberIds = (members || []).map(m => m.users.id);
+    const memberIds = membersWithAvatarUrls.map(m => m.users.id);
     const { data: favorites, error: favoritesError } = await supabase
       .from('group_favorites')
       .select(`
@@ -219,7 +229,7 @@ export async function fetchGroupDetails(groupId: string) {
       }
     });
 
-    return { data: { ...group, members, favoritesByUser }, error: null };
+    return { data: { ...group, members: membersWithAvatarUrls, favoritesByUser }, error: null };
   } catch (error) {
     return { data: null, error };
   }
@@ -280,22 +290,44 @@ export async function joinGroup(codeOrId: string) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    let groupId = codeOrId;
-
-    // If it doesn't look like a UUID, treat as invite code
+    // If it doesn't look like a UUID, treat as invite code and use RPC
+    // (RLS prevents non-members from querying groups table directly)
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(codeOrId)) {
-      // invite_code column added via migration but not yet in generated types;
-      // cast to any to avoid TS2589 deep type instantiation error
-      const { data: foundGroup, error: findError } = await (supabase as any)
-        .from('groups')
-        .select('id')
-        .eq('invite_code', codeOrId.toUpperCase())
-        .single();
+      // Use SECURITY DEFINER function that handles the entire join flow atomically:
+      // 1. Looks up group by invite code (bypasses RLS)
+      // 2. Checks if already a member
+      // 3. Adds user as member if not
+      const { data: result, error: rpcError } = await supabase
+        .rpc('join_group_by_invite_code', { p_invite_code: codeOrId });
 
-      if (findError || !foundGroup) throw new Error('Invalid invite code');
-      groupId = (foundGroup as { id: string }).id;
+      if (rpcError) {
+        // Extract user-friendly error message from Postgres exception
+        const errorMsg = rpcError.message || 'Failed to join group';
+        throw new Error(errorMsg.includes('Invalid invite code') ? 'Invalid invite code' : errorMsg);
+      }
+
+      const joinResult = result?.[0];
+      if (!joinResult) throw new Error('Invalid invite code');
+
+      // Set default favorite (non-blocking)
+      if (!joinResult.already_member) {
+        try {
+          await setDefaultFavorite(user.id, joinResult.group_id);
+        } catch (error) {
+          console.error('Error setting default favorite:', error);
+        }
+      }
+
+      // Return result matching existing interface
+      return {
+        data: { id: joinResult.group_id, name: joinResult.group_name } as Group,
+        error: joinResult.already_member ? new Error('Already a member of this group') : null,
+      };
     }
+
+    // Direct UUID join flow (legacy support for deep links with group ID)
+    const groupId = codeOrId;
 
     // Check if group exists
     const { data: group, error: groupError } = await supabase
