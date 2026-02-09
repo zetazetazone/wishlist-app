@@ -411,7 +411,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 24-01-PLAN.md -- Friend service library, FriendCard component, Friends tab screen, navigation integration
+- [x] 24-01-PLAN.md -- Friend service library, FriendCard component, Friends tab screen, navigation integration
 
 #### Phase 25: Friend Requests Flow
 **Goal**: Complete friend request lifecycle with send/accept/decline, pending requests view, and real-time notifications
@@ -490,7 +490,7 @@ Phases execute in order: 23 -> 24 -> 25 -> 26 -> 27 -> 28
 | 21. Split Contributions & Claim Enhancements | v1.3 | 6/6 | Complete | 2026-02-06 |
 | 22. Secret Notes | v1.3 | 3/3 | Complete | 2026-02-09 |
 | 23. Database Foundation | v1.4 | 1/1 | Complete | 2026-02-09 |
-| 24. Friend Core Services & Tab | v1.4 | 0/1 | Not started | - |
+| 24. Friend Core Services & Tab | v1.4 | 1/1 | Complete | 2026-02-09 |
 | 25. Friend Requests Flow | v1.4 | 0/? | Not started | - |
 | 26. Contact Import & Discovery | v1.4 | 0/? | Not started | - |
 | 27. Public Dates Management | v1.4 | 0/? | Not started | - |
