@@ -424,6 +424,12 @@ Plans:
   4. User can view pending friend requests (both incoming and outgoing) in Requests screen
   5. User receives push notification when receiving a new friend request
   6. User receives push notification when their friend request is accepted
+**Plans**: 3 plans
+
+Plans:
+- [ ] 25-01-PLAN.md -- Database notification triggers and friend request service layer
+- [ ] 25-02-PLAN.md -- Pending requests screen with incoming/outgoing tabs
+- [ ] 25-03-PLAN.md -- Integration: Friends tab header link and member profile Add Friend button
 
 #### Phase 26: Contact Import & Discovery
 **Goal**: Import phone contacts to discover users who have the app, with proper permission handling for iOS and Android
@@ -491,7 +497,7 @@ Phases execute in order: 23 -> 24 -> 25 -> 26 -> 27 -> 28
 | 22. Secret Notes | v1.3 | 3/3 | Complete | 2026-02-09 |
 | 23. Database Foundation | v1.4 | 1/1 | Complete | 2026-02-09 |
 | 24. Friend Core Services & Tab | v1.4 | 1/1 | Complete | 2026-02-09 |
-| 25. Friend Requests Flow | v1.4 | 0/? | Not started | - |
+| 25. Friend Requests Flow | v1.4 | 0/3 | Not started | - |
 | 26. Contact Import & Discovery | v1.4 | 0/? | Not started | - |
 | 27. Public Dates Management | v1.4 | 0/? | Not started | - |
 | 28. Calendar Integration | v1.4 | 0/? | Not started | - |
