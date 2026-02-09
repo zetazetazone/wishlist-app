@@ -1,37 +1,41 @@
-# Architecture Research: v1.3 Gift Claims & Personal Details
+# Architecture Research: Friends System
 
-**Domain:** Gift claiming system, personal detail profiles, secret member notes
-**Researched:** 2026-02-05
+**Domain:** Social connections, contact import, friend-specific calendars
+**Researched:** 2026-02-09
 **Overall confidence:** HIGH
 
 ## Summary
 
-Gift claims and personal details introduce two independent but architecturally complementary features. Gift claims add a new `gift_claims` table with celebrant-exclusion RLS (proven pattern from chat/contributions), split contribution support, and claim/unclaim lifecycle. Personal details add a `personal_details` table at user-level (global, not per-group) with structured preference fields, plus a `member_notes` table for per-group secret notes hidden from the profile owner.
+The Friends System introduces direct user-to-user relationships independent of group membership. Unlike groups (which are implicit connections through shared group_members rows), friends are explicit bidirectional relationships with request/acceptance workflow. The system adds three new tables: `friends`, `friend_requests`, and `public_dates` -- all following established Supabase RLS patterns.
 
-Both features integrate cleanly with the existing architecture. Gift claims extend the celebration coordination flow (celebration detail screen, wishlist card components). Personal details extend the profile system (profile screen, member cards, settings screen). No existing tables need schema modifications -- all changes are additive new tables and new RLS policies following established patterns.
+**Key architectural decisions:**
 
-**Key architectural decision:** Gift claims are tied to `wishlist_item_id` + `celebration_id` (not just item_id), because the same wishlist item could be relevant across multiple celebrations in different groups. This prevents cross-celebration claim conflicts while allowing the same item to appear in multiple group contexts.
+1. **Bidirectional friendship via single row**: Store friendship as one row with `user_a_id < user_b_id` constraint to prevent duplicate/reversed pairs. Simpler than two symmetric rows.
+
+2. **Public dates are user-level, not friend-scoped**: Users define their public dates once (birthday, anniversary, etc.) and friends see them. No per-friend customization needed for MVP.
+
+3. **Contact import uses phone/email matching**: Match imported contacts against `users.email` and a new `users.phone` column. No separate contact storage -- only matched users matter.
+
+4. **Calendar integration extends existing `getGroupBirthdays` pattern**: Create parallel `getFriendDates()` service that returns friend public dates in the same `GroupBirthday`-compatible format for calendar display.
 
 ---
 
 ## Schema Design
 
-### Gift Claims
+### Friends (Bidirectional Relationship)
 
-**Table: `gift_claims`**
+**Table: `friends`**
 
 ```sql
-CREATE TABLE public.gift_claims (
+CREATE TABLE public.friends (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  wishlist_item_id UUID REFERENCES public.wishlist_items(id) ON DELETE CASCADE NOT NULL,
-  celebration_id UUID REFERENCES public.celebrations(id) ON DELETE CASCADE NOT NULL,
-  claimed_by UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
-  claim_type TEXT CHECK (claim_type IN ('full', 'split')) DEFAULT 'full',
-  amount NUMERIC CHECK (amount IS NULL OR amount > 0),  -- For split claims: dollar amount pledged
-  notes TEXT,  -- Optional private note (e.g., "ordering from Amazon, arrives March 5")
-  status TEXT CHECK (status IN ('claimed', 'purchased', 'delivered')) DEFAULT 'claimed',
+  user_a_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
+  user_b_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
+
+  -- Enforce ordering to prevent duplicate pairs (a,b) and (b,a)
+  CONSTRAINT friends_ordered CHECK (user_a_id < user_b_id),
+  CONSTRAINT friends_unique UNIQUE (user_a_id, user_b_id)
 );
 ```
 
@@ -39,196 +43,55 @@ CREATE TABLE public.gift_claims (
 
 | Decision | Rationale |
 |----------|-----------|
-| `celebration_id` required | Same wishlist item can be claimed in different celebrations (different groups). Scoping to celebration prevents conflicts. |
-| `claim_type` enum | Distinguishes full claims (one person buys it) from split claims (multiple people chip in). |
-| `amount` nullable | Only relevant for split claims. Full claims do not need amount. |
-| `notes` field | Gift Leader and claimers need to coordinate delivery, shipping status, etc. Hidden from celebrant. |
-| `status` lifecycle | `claimed` -> `purchased` -> `delivered` tracks progress without overloading `wishlist_items.status`. |
-| No UNIQUE on (item_id, celebration_id) | Split claims allow multiple rows per item per celebration. |
-
-**Uniqueness constraint for full claims:**
-
-```sql
--- Partial unique index: only one full claim per item per celebration
-CREATE UNIQUE INDEX idx_gift_claims_full_unique
-  ON public.gift_claims(wishlist_item_id, celebration_id)
-  WHERE claim_type = 'full';
-```
-
-This allows unlimited split claims but prevents duplicate full claims on the same item in the same celebration.
+| Single row per friendship | `user_a_id < user_b_id` constraint prevents duplicates. Query with `OR` condition. |
+| No `status` column | Accepted friendships only. Pending state lives in `friend_requests`. |
+| No `relationship_type` | YAGNI. One friendship type for MVP. Can add later if needed. |
+| `ON DELETE CASCADE` | Deleting a user removes all their friendships automatically. |
 
 **Indexes:**
 
 ```sql
-CREATE INDEX idx_gift_claims_item ON public.gift_claims(wishlist_item_id);
-CREATE INDEX idx_gift_claims_celebration ON public.gift_claims(celebration_id);
-CREATE INDEX idx_gift_claims_claimer ON public.gift_claims(claimed_by);
-CREATE INDEX idx_gift_claims_status ON public.gift_claims(status);
+CREATE INDEX idx_friends_user_a ON public.friends(user_a_id);
+CREATE INDEX idx_friends_user_b ON public.friends(user_b_id);
 ```
-
-**RLS Policies -- Celebrant Exclusion Pattern:**
-
-This follows the exact same proven pattern used for `chat_rooms`, `chat_messages`, and `celebration_contributions`:
-
-```sql
-ALTER TABLE public.gift_claims ENABLE ROW LEVEL SECURITY;
-
--- CRITICAL: Group members EXCEPT celebrant can view claims with full detail
--- (who claimed what, amounts, notes)
-CREATE POLICY "Group members except celebrant can view claims"
-  ON public.gift_claims FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM public.celebrations c
-      JOIN public.group_members gm ON gm.group_id = c.group_id
-      WHERE c.id = gift_claims.celebration_id
-        AND gm.user_id = auth.uid()
-        AND c.celebrant_id != auth.uid()  -- EXCLUDES CELEBRANT
-    )
-  );
-
--- Celebrant sees claims exist (for "taken" badge) but NOT who claimed
--- Implemented via a SEPARATE policy that returns limited data through a view or
--- by querying wishlist_items.status directly.
--- APPROACH: Use a database function (see below) rather than dual SELECT policies.
-
--- Group members except celebrant can create claims
-CREATE POLICY "Group members except celebrant can create claims"
-  ON public.gift_claims FOR INSERT WITH CHECK (
-    claimed_by = auth.uid()
-    AND EXISTS (
-      SELECT 1 FROM public.celebrations c
-      JOIN public.group_members gm ON gm.group_id = c.group_id
-      WHERE c.id = gift_claims.celebration_id
-        AND gm.user_id = auth.uid()
-        AND c.celebrant_id != auth.uid()  -- EXCLUDES CELEBRANT
-    )
-  );
-
--- Claimers can update their own claims (status progression, notes)
-CREATE POLICY "Claimers can update own claims"
-  ON public.gift_claims FOR UPDATE USING (
-    claimed_by = auth.uid()
-  );
-
--- Claimers can delete their own claims (unclaim)
-CREATE POLICY "Claimers can delete own claims"
-  ON public.gift_claims FOR DELETE USING (
-    claimed_by = auth.uid()
-  );
-```
-
-**Celebrant "Taken" View -- Function Approach:**
-
-The celebrant should see that an item is "taken" without seeing WHO took it. Rather than complex dual-policy RLS, use a database function:
-
-```sql
--- Returns claim status for celebrant's own items in a celebration
--- Only returns: item_id, is_claimed (boolean), claim_count (for split)
--- Does NOT return: claimed_by, notes, amount
-CREATE OR REPLACE FUNCTION public.get_item_claim_status(p_celebration_id UUID)
-RETURNS TABLE (
-  wishlist_item_id UUID,
-  is_claimed BOOLEAN,
-  claim_count INTEGER
-) AS $$
-BEGIN
-  RETURN QUERY
-    SELECT
-      gc.wishlist_item_id,
-      TRUE AS is_claimed,
-      COUNT(gc.id)::INTEGER AS claim_count
-    FROM public.gift_claims gc
-    WHERE gc.celebration_id = p_celebration_id
-    GROUP BY gc.wishlist_item_id;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
-```
-
-This function bypasses RLS (SECURITY DEFINER) but returns only non-identifying data. The celebrant's app calls this function to show "Taken" badges on their own items.
-
-### Personal Details
-
-**Table: `personal_details`**
-
-```sql
-CREATE TABLE public.personal_details (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL UNIQUE,
-  -- Clothing sizes
-  shirt_size TEXT CHECK (shirt_size IN ('XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL')),
-  pants_size TEXT,           -- Free text (e.g., "32x30", "M", "10")
-  shoe_size TEXT,            -- Free text (e.g., "10 US", "42 EU")
-  ring_size TEXT,            -- Free text (e.g., "7", "M")
-  dress_size TEXT,           -- Free text (e.g., "8", "M")
-  -- Preferences
-  favorite_colors JSONB DEFAULT '[]',     -- Array of color strings
-  favorite_brands JSONB DEFAULT '[]',     -- Array of brand strings
-  hobbies JSONB DEFAULT '[]',             -- Array of hobby strings
-  dislikes JSONB DEFAULT '[]',            -- Array of "do not gift" items
-  allergies TEXT,                          -- Free text for food/material allergies
-  -- External links
-  amazon_wishlist_url TEXT,
-  pinterest_board_url TEXT,
-  other_links JSONB DEFAULT '[]',         -- Array of {label, url} objects
-  -- Meta
-  bio TEXT,                                -- Short personal bio/about me
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
-
-**Design rationale:**
-
-| Decision | Rationale |
-|----------|-----------|
-| User-level (not per-group) | Sizes/preferences are global to the person, not group-specific. Avoids data duplication. |
-| UNIQUE on user_id | One row per user. Upsert pattern for updates. |
-| JSONB for arrays | `favorite_colors`, `favorite_brands`, `hobbies`, `dislikes`, `other_links` are variable-length lists. JSONB provides flexible storage without join tables. |
-| `shirt_size` as CHECK | Standardized sizes benefit from validation. Other sizes are too varied for CHECK constraints. |
-| `allergies` as TEXT | Free text is appropriate -- structured allergy tracking is over-engineering for a gift app. |
-| External links as typed fields | Amazon and Pinterest are the most common gift-relevant platforms. `other_links` JSONB handles the long tail. |
 
 **RLS Policies:**
 
 ```sql
-ALTER TABLE public.personal_details ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.friends ENABLE ROW LEVEL SECURITY;
 
--- Anyone authenticated can view personal details
--- (group membership not required -- profiles are public within the app)
-CREATE POLICY "Authenticated users can view personal details"
-  ON public.personal_details FOR SELECT USING (
-    auth.uid() IS NOT NULL
+-- Users can view friendships they're part of
+CREATE POLICY "Users can view own friendships"
+  ON public.friends FOR SELECT USING (
+    auth.uid() = user_a_id OR auth.uid() = user_b_id
   );
 
--- Users can insert their own details
-CREATE POLICY "Users can insert own personal details"
-  ON public.personal_details FOR INSERT WITH CHECK (
-    user_id = auth.uid()
+-- Users can delete friendships they're part of (unfriend)
+CREATE POLICY "Users can delete own friendships"
+  ON public.friends FOR DELETE USING (
+    auth.uid() = user_a_id OR auth.uid() = user_b_id
   );
 
--- Users can update their own details
-CREATE POLICY "Users can update own personal details"
-  ON public.personal_details FOR UPDATE USING (
-    user_id = auth.uid()
-  );
+-- INSERT handled by accept_friend_request() function (see below)
+-- No direct INSERT policy - friendships created via request acceptance only
 ```
 
-**Note:** Personal details are intentionally visible to all authenticated users (not scoped to group members). This mirrors how `users` and `user_profiles` work -- if someone is in your app, they can see your profile. This simplifies the query pattern and avoids N+1 group membership checks.
+### Friend Requests (Pending State)
 
-### Secret Member Notes
-
-**Table: `member_notes`**
+**Table: `friend_requests`**
 
 ```sql
-CREATE TABLE public.member_notes (
+CREATE TABLE public.friend_requests (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  group_id UUID REFERENCES public.groups(id) ON DELETE CASCADE NOT NULL,
-  about_user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
-  author_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
-  content TEXT NOT NULL,
+  from_user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
+  to_user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
+  status TEXT CHECK (status IN ('pending', 'accepted', 'rejected')) DEFAULT 'pending',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(group_id, about_user_id, author_id)  -- One note per author per subject per group
+
+  -- Prevent self-requests and duplicates
+  CONSTRAINT friend_requests_not_self CHECK (from_user_id != to_user_id),
+  CONSTRAINT friend_requests_unique UNIQUE (from_user_id, to_user_id)
 );
 ```
 
@@ -236,122 +99,344 @@ CREATE TABLE public.member_notes (
 
 | Decision | Rationale |
 |----------|-----------|
-| Per-group, per-author | Different group members can have different notes about the same person. "Mom says he wants a new wallet" vs "I noticed he's been eyeing that game." |
-| UNIQUE(group_id, about_user_id, author_id) | Each person writes one note per subject per group. Upsert for updates. |
-| Separate from personal_details | Notes are NOT self-authored. They are other people's observations. Different ownership, different RLS. |
-
-**RLS Policies -- Owner Exclusion Pattern:**
-
-```sql
-ALTER TABLE public.member_notes ENABLE ROW LEVEL SECURITY;
-
--- CRITICAL: Group members can view notes EXCEPT notes about themselves
-CREATE POLICY "Group members can view notes except about self"
-  ON public.member_notes FOR SELECT USING (
-    about_user_id != auth.uid()  -- HIDES notes about the current user
-    AND public.is_group_member(group_id, auth.uid())
-  );
-
--- Group members can create notes about others (not about themselves)
-CREATE POLICY "Group members can create notes about others"
-  ON public.member_notes FOR INSERT WITH CHECK (
-    author_id = auth.uid()
-    AND about_user_id != auth.uid()  -- Cannot write notes about yourself
-    AND public.is_group_member(group_id, auth.uid())
-  );
-
--- Authors can update their own notes
-CREATE POLICY "Authors can update own notes"
-  ON public.member_notes FOR UPDATE USING (
-    author_id = auth.uid()
-  );
-
--- Authors can delete their own notes
-CREATE POLICY "Authors can delete own notes"
-  ON public.member_notes FOR DELETE USING (
-    author_id = auth.uid()
-  );
-```
+| `status` enum | Track full lifecycle: pending -> accepted/rejected. |
+| Keep accepted/rejected rows | Audit trail + prevents re-requesting same user repeatedly. |
+| No reverse constraint | Alice can request Bob even if Bob already requested Alice (rare edge case, handle in app logic). |
 
 **Indexes:**
 
 ```sql
-CREATE INDEX idx_member_notes_group ON public.member_notes(group_id);
-CREATE INDEX idx_member_notes_about ON public.member_notes(about_user_id);
-CREATE INDEX idx_member_notes_author ON public.member_notes(author_id);
+CREATE INDEX idx_friend_requests_to ON public.friend_requests(to_user_id, status);
+CREATE INDEX idx_friend_requests_from ON public.friend_requests(from_user_id);
+```
+
+**RLS Policies:**
+
+```sql
+ALTER TABLE public.friend_requests ENABLE ROW LEVEL SECURITY;
+
+-- Users can view requests they sent or received
+CREATE POLICY "Users can view own friend requests"
+  ON public.friend_requests FOR SELECT USING (
+    auth.uid() = from_user_id OR auth.uid() = to_user_id
+  );
+
+-- Users can create requests (must be from themselves)
+CREATE POLICY "Users can send friend requests"
+  ON public.friend_requests FOR INSERT WITH CHECK (
+    from_user_id = auth.uid()
+  );
+
+-- Users can update requests sent TO them (accept/reject)
+CREATE POLICY "Users can respond to friend requests"
+  ON public.friend_requests FOR UPDATE USING (
+    to_user_id = auth.uid() AND status = 'pending'
+  );
+
+-- Users can delete/cancel their own pending outbound requests
+CREATE POLICY "Users can cancel own pending requests"
+  ON public.friend_requests FOR DELETE USING (
+    from_user_id = auth.uid() AND status = 'pending'
+  );
+```
+
+### Public Dates (User-Level Important Dates)
+
+**Table: `public_dates`**
+
+```sql
+CREATE TABLE public.public_dates (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
+  date_type TEXT CHECK (date_type IN ('birthday', 'anniversary', 'custom')) NOT NULL,
+  label TEXT NOT NULL,  -- e.g., "Wedding Anniversary", "Dog's Birthday"
+  month INTEGER CHECK (month BETWEEN 1 AND 12) NOT NULL,
+  day INTEGER CHECK (day BETWEEN 1 AND 31) NOT NULL,
+  year INTEGER,  -- Optional: year for age calculation, NULL for recurring-only dates
+  visibility TEXT CHECK (visibility IN ('friends_only', 'public')) DEFAULT 'friends_only',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+**Design rationale:**
+
+| Decision | Rationale |
+|----------|-----------|
+| `month` + `day` (not DATE) | Birthday/anniversary dates recur annually. Year is optional for age display. |
+| `date_type` enum | Distinguish birthday (syncs with user.birthday) vs other dates. |
+| `visibility` | Future-proofing for public profiles. Default to friends_only for privacy. |
+| No UNIQUE on (user_id, date_type) | Users can have multiple custom dates. |
+
+**Indexes:**
+
+```sql
+CREATE INDEX idx_public_dates_user ON public.public_dates(user_id);
+CREATE INDEX idx_public_dates_month_day ON public.public_dates(month, day);
+```
+
+**RLS Policies:**
+
+```sql
+ALTER TABLE public.public_dates ENABLE ROW LEVEL SECURITY;
+
+-- Users can view their own dates
+CREATE POLICY "Users can view own public dates"
+  ON public.public_dates FOR SELECT USING (
+    user_id = auth.uid()
+  );
+
+-- Friends can view dates with appropriate visibility
+CREATE POLICY "Friends can view friend public dates"
+  ON public.public_dates FOR SELECT USING (
+    visibility = 'public'
+    OR (
+      visibility = 'friends_only'
+      AND public.are_friends(user_id, auth.uid())
+    )
+  );
+
+-- Users can manage their own dates
+CREATE POLICY "Users can insert own public dates"
+  ON public.public_dates FOR INSERT WITH CHECK (
+    user_id = auth.uid()
+  );
+
+CREATE POLICY "Users can update own public dates"
+  ON public.public_dates FOR UPDATE USING (
+    user_id = auth.uid()
+  );
+
+CREATE POLICY "Users can delete own public dates"
+  ON public.public_dates FOR DELETE USING (
+    user_id = auth.uid()
+  );
+```
+
+### Users Table Extension
+
+**Add phone column for contact matching:**
+
+```sql
+-- Add phone column for contact import matching
+ALTER TABLE public.users
+ADD COLUMN phone TEXT UNIQUE;
+
+CREATE INDEX idx_users_phone ON public.users(phone);
+CREATE INDEX idx_users_email_lower ON public.users(LOWER(email));
+```
+
+---
+
+## Database Functions
+
+### Friend Check Helper
+
+```sql
+-- Helper function to check if two users are friends
+CREATE OR REPLACE FUNCTION public.are_friends(p_user_a UUID, p_user_b UUID)
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.friends
+    WHERE (user_a_id = LEAST(p_user_a, p_user_b) AND user_b_id = GREATEST(p_user_a, p_user_b))
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
+```
+
+### Accept Friend Request
+
+```sql
+-- Accept a friend request (creates friendship row)
+CREATE OR REPLACE FUNCTION public.accept_friend_request(p_request_id UUID)
+RETURNS JSON AS $$
+DECLARE
+  v_request friend_requests%ROWTYPE;
+  v_friend_id UUID;
+BEGIN
+  -- Get and validate request
+  SELECT * INTO v_request
+  FROM friend_requests
+  WHERE id = p_request_id
+    AND to_user_id = auth.uid()
+    AND status = 'pending';
+
+  IF NOT FOUND THEN
+    RETURN json_build_object('success', false, 'error', 'Request not found or already processed');
+  END IF;
+
+  -- Check if already friends (shouldn't happen but defensive)
+  IF public.are_friends(v_request.from_user_id, v_request.to_user_id) THEN
+    -- Update request status anyway
+    UPDATE friend_requests SET status = 'accepted', updated_at = NOW()
+    WHERE id = p_request_id;
+    RETURN json_build_object('success', true, 'message', 'Already friends');
+  END IF;
+
+  -- Create friendship (ordered)
+  INSERT INTO friends (user_a_id, user_b_id)
+  VALUES (
+    LEAST(v_request.from_user_id, v_request.to_user_id),
+    GREATEST(v_request.from_user_id, v_request.to_user_id)
+  )
+  RETURNING id INTO v_friend_id;
+
+  -- Update request status
+  UPDATE friend_requests SET status = 'accepted', updated_at = NOW()
+  WHERE id = p_request_id;
+
+  RETURN json_build_object(
+    'success', true,
+    'friend_id', v_friend_id,
+    'friend_user_id', v_request.from_user_id
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+### Get User Friends
+
+```sql
+-- Get all friends for the current user
+CREATE OR REPLACE FUNCTION public.get_my_friends()
+RETURNS TABLE (
+  friend_id UUID,
+  friend_user_id UUID,
+  created_at TIMESTAMPTZ
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    f.id,
+    CASE WHEN f.user_a_id = auth.uid() THEN f.user_b_id ELSE f.user_a_id END,
+    f.created_at
+  FROM friends f
+  WHERE f.user_a_id = auth.uid() OR f.user_b_id = auth.uid();
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
+```
+
+### Match Contacts by Email/Phone
+
+```sql
+-- Match contacts against existing users
+CREATE OR REPLACE FUNCTION public.match_contacts(
+  p_emails TEXT[],
+  p_phones TEXT[]
+)
+RETURNS TABLE (
+  user_id UUID,
+  email TEXT,
+  phone TEXT,
+  full_name TEXT,
+  avatar_url TEXT,
+  is_friend BOOLEAN,
+  has_pending_request BOOLEAN
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    u.id,
+    u.email,
+    u.phone,
+    u.full_name,
+    u.avatar_url,
+    public.are_friends(auth.uid(), u.id),
+    EXISTS (
+      SELECT 1 FROM friend_requests fr
+      WHERE (fr.from_user_id = auth.uid() AND fr.to_user_id = u.id)
+         OR (fr.from_user_id = u.id AND fr.to_user_id = auth.uid())
+        AND fr.status = 'pending'
+    )
+  FROM users u
+  WHERE u.id != auth.uid()
+    AND (
+      LOWER(u.email) = ANY(SELECT LOWER(unnest(p_emails)))
+      OR u.phone = ANY(p_phones)
+    );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 ```
 
 ---
 
 ## Integration Points
 
-### How Gift Claims Connect to Existing Architecture
+### Existing Calendar System
 
-**1. `wishlist_items` table (existing)**
+**Current flow (`lib/birthdays.ts`):**
+```
+getGroupBirthdays(userId)
+  -> Query group_members for user's groups
+  -> Query all members of those groups
+  -> Query user_profiles for birthdays
+  -> Return GroupBirthday[] with groupId, groupName, groupColor
+```
 
-- Gift claims reference `wishlist_items.id` via FK.
-- The existing `status` column on `wishlist_items` (`'active' | 'claimed' | 'purchased' | 'received' | 'archived'`) should NOT be used for claim tracking. Instead, claim status lives in `gift_claims.status`.
-- Rationale: A single wishlist item can be claimed in multiple celebrations (different groups). The `wishlist_items.status` would conflict if one celebration claims it and another does not.
-- The `wishlist_items.status` field can remain for the item owner's personal tracking (e.g., archiving items they no longer want).
+**New parallel flow (`lib/friendDates.ts`):**
+```
+getFriendDates(userId)
+  -> Call get_my_friends() for friend list
+  -> Query public_dates for those friend user_ids
+  -> Query user_profiles for names/avatars
+  -> Return FriendDate[] (compatible shape with GroupBirthday)
+```
 
-**2. `celebrations` table (existing)**
+**Calendar screen integration:**
+- `calendar.tsx` currently calls `getGroupBirthdays()`
+- Add parallel call to `getFriendDates()`
+- Merge both arrays for unified calendar display
+- Use distinct color for friend dates vs group birthday colors
 
-- Gift claims are scoped to a celebration via `celebration_id` FK.
-- The celebration detail screen (`app/(app)/celebration/[id].tsx`) already shows the celebrant's wishlist. Claims add an overlay showing claim status on each item.
+### Existing Notification System
 
-**3. `celebration_contributions` table (existing)**
+**Current tables:** `user_notifications`, `device_tokens`
+**Current pattern:** Insert rows to trigger notification, Realtime subscription for live updates
 
-- Gift claims and contributions are complementary but independent:
-  - Contributions track money pooled for the celebration fund.
-  - Claims track who is buying which specific item.
-- A group can use contributions, claims, or both.
-- No FK relationship between claims and contributions.
+**New notification types:**
+```typescript
+// Add to notification data JSONB schema
+type NotificationData = {
+  type: 'friend_request' | 'friend_request_accepted' | 'friend_date_reminder' | ...;
+  from_user_id?: string;
+  friend_id?: string;
+  date_id?: string;
+}
+```
 
-**4. `lib/celebrations.ts` (existing service)**
+**Triggers needed:**
+- On `friend_requests` INSERT: Notify `to_user_id` of new request
+- On `friend_requests` UPDATE (to 'accepted'): Notify `from_user_id` of acceptance
 
-- `getCelebration()` already fetches celebration details. Gift claims add a parallel fetch for claim data.
-- `getCelebrations()` list view could show claim counts per celebration.
+### Existing Profile System
 
-**5. `lib/wishlistItems.ts` (existing service)**
+**Current flow:**
+- `app/profile/[id].tsx` - View any user's public profile
+- `app/(app)/settings/profile.tsx` - Edit own profile
+- `app/(app)/settings/personal-details.tsx` - Edit sizes/preferences
 
-- `getWishlistItemsByUserId()` returns items for the celebrant. The celebration view currently shows these items via `LuxuryWishlistCard`. Claims add a "Claimed by X" or "Taken" badge to these cards.
+**New integration:**
+- Profile screen shows "Add Friend" / "Friends" / "Pending" button based on relationship
+- Settings adds "My Public Dates" section for managing anniversary/custom dates
+- Settings adds "Find Friends" option (contact import flow)
 
-**6. `lib/budget.ts` (existing service)**
+### Tab Navigation
 
-- Budget tracking currently uses `celebration_contributions.amount`. If gift claims include amounts (split claims), these could optionally feed into budget calculations. However, recommend keeping them separate initially -- contributions are the "official" budget tracker.
+**Current tabs:** My Wishlist, Groups, Celebrations, Calendar
 
-### How Personal Details Connect to Existing Architecture
+**Option A (Recommended):** Add "Friends" tab
+- **Pros:** Clear dedicated space for friend management
+- **Cons:** 5 tabs is maximum comfortable limit
 
-**1. `users` / `user_profiles` tables (existing)**
+**Option B:** Friends as sub-section of Profile/Settings
+- **Pros:** Fewer tabs, friends are "settings"-ish
+- **Cons:** Less discoverable, friend dates in calendar need nav to manage
 
-- Personal details are a separate table (not columns on users) because:
-  - The fields are numerous and optional (would bloat the users row).
-  - The data has different access patterns (rarely read, infrequently written).
-  - Cleaner separation of concerns.
-- Query pattern: Join or separate fetch from user_profiles.
-
-**2. Profile screen (`app/profile/[id].tsx`)**
-
-- Currently shows: avatar, display_name, birthday, member_since, email.
-- Personal details add new sections: sizes, preferences, external links.
-- Existing screen uses GlueStack UI components. New sections follow the same pattern.
-
-**3. Settings profile screen (`app/(app)/settings/profile.tsx`)**
-
-- Currently allows editing: display_name, avatar.
-- Personal details add new editable sections with structured inputs.
-- Use upsert pattern: check if `personal_details` row exists, create or update.
-
-**4. Member cards (`components/groups/MemberCard.tsx`)**
-
-- Currently shows: avatar, name, birthday countdown, favorite preview.
-- Member notes add a small icon/indicator if notes exist for this member.
-- Tapping a member card could navigate to an expanded profile view with personal details.
-
-**5. Celebration detail screen (`app/(app)/celebration/[id].tsx`)**
-
-- Currently shows celebrant's wishlist.
-- Personal details add a "Quick Reference" section showing the celebrant's sizes, preferences, and external links -- critical for gift selection.
+**Recommendation:** Option A - Add Friends tab at position 2:
+```
+My Wishlist | Friends | Groups | Celebrations | Calendar
+```
 
 ---
 
@@ -361,33 +446,32 @@ CREATE INDEX idx_member_notes_author ON public.member_notes(author_id);
 
 | File | Purpose | Key Functions |
 |------|---------|---------------|
-| `lib/claims.ts` | Gift claim CRUD operations | `claimItem()`, `unclaimItem()`, `getClaimsForCelebration()`, `getClaimStatusForCelebrant()`, `updateClaimStatus()` |
-| `lib/personalDetails.ts` | Personal details CRUD | `getPersonalDetails()`, `upsertPersonalDetails()` |
-| `lib/memberNotes.ts` | Secret member notes CRUD | `getNotesForMember()`, `upsertNote()`, `deleteNote()` |
+| `lib/friends.ts` | Friend relationship CRUD | `getFriends()`, `sendFriendRequest()`, `acceptFriendRequest()`, `rejectFriendRequest()`, `removeFriend()`, `areFriends()` |
+| `lib/friendDates.ts` | Friend public dates | `getFriendDates()`, `getPublicDatesForCalendar()` |
+| `lib/publicDates.ts` | User's own public dates | `getMyPublicDates()`, `addPublicDate()`, `updatePublicDate()`, `deletePublicDate()` |
+| `lib/contactImport.ts` | Contact matching | `importContacts()`, `matchContacts()`, `normalizePhone()` |
 
 ### UI Components
 
 | Component | Purpose | Location |
 |-----------|---------|----------|
-| `ClaimBadge` | Shows claim status on wishlist items ("Claimed by Alice", "Taken", "2 people splitting") | `components/claims/ClaimBadge.tsx` |
-| `ClaimButton` | "Claim This" / "Unclaim" action button on wishlist cards | `components/claims/ClaimButton.tsx` |
-| `ClaimModal` | Full claim form (claim type, amount for split, optional note) | `components/claims/ClaimModal.tsx` |
-| `ClaimList` | List of claims for a celebration (Gift Leader dashboard view) | `components/claims/ClaimList.tsx` |
-| `PersonalDetailsCard` | Read-only display of sizes/preferences/links | `components/profile/PersonalDetailsCard.tsx` |
-| `PersonalDetailsForm` | Edit form for personal details with structured inputs | `components/profile/PersonalDetailsForm.tsx` |
-| `SizeSelector` | Segmented control for shirt size, free text for others | `components/profile/SizeSelector.tsx` |
-| `TagInput` | Multi-value input for colors, brands, hobbies (chip/tag UI) | `components/profile/TagInput.tsx` |
-| `MemberNoteCard` | Displays a secret note about a member | `components/groups/MemberNoteCard.tsx` |
-| `MemberNoteInput` | Inline text input for adding/editing a note | `components/groups/MemberNoteInput.tsx` |
-| `QuickReferenceSection` | Celebrant's sizes/prefs shown in celebration detail view | `components/celebrations/QuickReferenceSection.tsx` |
+| `FriendCard` | Display friend with avatar, name, recent activity | `components/friends/FriendCard.tsx` |
+| `FriendRequestCard` | Incoming request with accept/reject buttons | `components/friends/FriendRequestCard.tsx` |
+| `AddFriendButton` | Context-aware button (profile view) | `components/friends/AddFriendButton.tsx` |
+| `FriendStatusBadge` | Shows relationship status on any profile | `components/friends/FriendStatusBadge.tsx` |
+| `ContactMatchList` | List of matched contacts from import | `components/friends/ContactMatchList.tsx` |
+| `PublicDateCard` | Display/edit a public date entry | `components/profile/PublicDateCard.tsx` |
+| `PublicDateForm` | Add/edit form for public dates | `components/profile/PublicDateForm.tsx` |
+| `FriendDateCard` | Calendar countdown card for friend dates | `components/calendar/FriendDateCard.tsx` |
 
 ### Routes
 
 | Route | Purpose | Type |
 |-------|---------|------|
-| `app/(app)/settings/personal-details.tsx` | Edit personal details screen | NEW |
-| No new routes for claims | Claims are inline within celebration detail | N/A |
-| No new routes for notes | Notes are inline within member/profile views | N/A |
+| `app/(app)/(tabs)/friends.tsx` | Friends tab main screen (friend list) | NEW |
+| `app/(app)/friends/requests.tsx` | Pending friend requests | NEW |
+| `app/(app)/friends/find.tsx` | Find friends (contact import, search) | NEW |
+| `app/(app)/settings/public-dates.tsx` | Manage own public dates | NEW |
 
 ---
 
@@ -397,273 +481,328 @@ CREATE INDEX idx_member_notes_author ON public.member_notes(author_id);
 
 | Screen | Changes |
 |--------|---------|
-| `app/(app)/celebration/[id].tsx` | Add claim badges on wishlist items, add ClaimButton actions, add QuickReferenceSection for celebrant's personal details, add member notes section |
-| `app/profile/[id].tsx` | Add PersonalDetailsCard section below existing profile info |
-| `app/(app)/settings/profile.tsx` | Add navigation link to personal-details edit screen |
-| `app/group/[id]/index.tsx` | Add note indicator on MemberCard, add route to expanded profile with notes |
+| `app/(app)/(tabs)/_layout.tsx` | Add Friends tab at position 2 |
+| `app/(app)/(tabs)/calendar.tsx` | Merge friend dates into calendar display, add section for "Friend Dates" alongside "Group Birthdays" |
+| `app/profile/[id].tsx` | Add `AddFriendButton` or `FriendStatusBadge` based on relationship |
+| `app/(app)/settings/profile.tsx` | Add link to "My Public Dates" settings |
 
 ### Components
 
 | Component | Changes |
 |-----------|---------|
-| `LuxuryWishlistCard.tsx` | Add optional `claimStatus` prop to show ClaimBadge and ClaimButton |
-| `MemberCard.tsx` | Add optional `hasNotes` indicator icon, optional notes count badge |
+| `BirthdayCalendar.tsx` | Accept combined `birthdays + friendDates` array, use different dot colors |
+| `CountdownCard.tsx` | Support `source: 'group' | 'friend'` prop for visual distinction |
 
 ### Services
 
 | Service | Changes |
 |---------|---------|
-| `lib/celebrations.ts` | `getCelebration()` optionally fetches claims alongside existing data |
-| `utils/groups.ts` | `fetchGroupDetails()` optionally fetches note counts per member |
+| `lib/birthdays.ts` | Export types for reuse by `friendDates.ts` |
+| `lib/notifications.ts` | No changes (handles any notification type) |
 
 ### Types
 
 | File | Changes |
 |------|---------|
-| `types/database.types.ts` | Add `gift_claims`, `personal_details`, `member_notes` table type definitions |
+| `types/database.types.ts` | Add `friends`, `friend_requests`, `public_dates` table definitions |
 
 ---
 
 ## Data Flow
 
-### Gift Claim Flow (Non-Celebrant)
+### Send Friend Request Flow
 
 ```
-User views celebration detail (gifts mode)
+User A views User B's profile
     |
     v
-Load celebrant's wishlist items [existing flow]
+Profile shows AddFriendButton (state: 'add')
     |
     v
-Load claims for this celebration [NEW: getClaimsForCelebration()]
+User A taps "Add Friend"
     |
     v
-Merge claim data onto wishlist items
-    - Each item gets: claimedBy[], claimType, totalClaimed
+sendFriendRequest(userBId)
+    - INSERT into friend_requests
+    - RLS validates from_user_id = auth.uid()
     |
     v
-Render LuxuryWishlistCard with ClaimBadge
-    - Unclaimed: "Claim This" button
-    - Fully claimed: "Claimed by Alice" badge (or "Claimed by You")
-    - Split claimed: "2/3 claimed ($45 of $60)" progress
+DB trigger creates notification for User B
+    - INSERT into user_notifications
+    - type: 'friend_request'
     |
     v
-User taps "Claim This"
+User B sees notification in-app (Realtime) or push
     |
     v
-ClaimModal opens
-    - Claim type: Full | Split
-    - If split: Amount input
-    - Optional note
+User B navigates to Requests screen
+    - getFriendRequests() returns pending requests
     |
     v
-claimItem(wishlistItemId, celebrationId, claimType, amount?, note?)
+User B taps "Accept"
     |
     v
-INSERT into gift_claims
-    - RLS validates: user is group member AND not celebrant
+acceptFriendRequest(requestId)
+    - Calls accept_friend_request() function
+    - Creates friends row
+    - Updates request status to 'accepted'
     |
     v
-Refresh claim data
+DB trigger creates notification for User A
+    - type: 'friend_request_accepted'
+    |
+    v
+Both users now see each other in Friends list
 ```
 
-### Gift Claim Flow (Celebrant View)
+### Contact Import Flow
 
 ```
-Celebrant views their own wishlist items in app
+User navigates to Find Friends
     |
     v
-App calls get_item_claim_status(celebrationId)
-    - SECURITY DEFINER function returns: item_id, is_claimed, claim_count
-    - Does NOT return: who claimed, notes, amounts
+App requests Contacts permission
+    - expo-contacts API
     |
     v
-Render wishlist items with "Taken" badge (no claimer info)
-    - Unclaimed items: normal display
-    - Claimed items: "Someone has this covered!" badge
+If granted: Load device contacts
+    - Extract emails[], phones[]
+    |
+    v
+importContacts(emails, phones)
+    - Calls match_contacts() function
+    - Returns matched users with friendship status
+    |
+    v
+Display ContactMatchList
+    - For each match: show name, avatar
+    - Button: "Add" / "Pending" / "Friends"
+    |
+    v
+User taps "Add" on matched contact
+    |
+    v
+sendFriendRequest(matchedUserId)
+    - Same flow as above
 ```
 
-### Personal Details Flow
+### Calendar Friend Dates Flow
 
 ```
-User navigates to Settings > Personal Details
+Calendar screen loads
     |
     v
-Load existing personal_details [getPersonalDetails(userId)]
-    - Returns null if no details saved yet
+Parallel fetch:
+    - getGroupBirthdays(userId)    [existing]
+    - getFriendDates(userId)       [NEW]
     |
     v
-PersonalDetailsForm renders with existing data or empty defaults
-    - Sizes section: shirt (dropdown), pants/shoe/ring/dress (free text)
-    - Preferences section: colors, brands, hobbies (TagInput)
-    - Dislikes/allergies section
-    - External links section
+Merge results into unified array
+    - GroupBirthday[] + FriendDate[]
+    - Assign distinct colors: group vs friend
     |
     v
-User edits and taps "Save"
+BirthdayCalendar renders with combined data
+    - Dots: multiple colors per date (group=varied, friend=teal)
     |
     v
-upsertPersonalDetails(userId, data)
-    - UPSERT on user_id (unique constraint)
-    |
-    v
-Success feedback, navigate back
-```
-
-### Secret Member Notes Flow
-
-```
-User views member in group context
-    - Could be: celebration detail, member card, expanded profile
-    |
-    v
-Load notes for this member in this group [getNotesForMember(groupId, aboutUserId)]
-    - RLS automatically excludes notes about the current user
-    |
-    v
-Display MemberNoteCards from other group members
-    |
-    v
-User taps "Add Note" or edits existing note
-    |
-    v
-MemberNoteInput renders inline
-    |
-    v
-upsertNote(groupId, aboutUserId, content)
-    - UPSERT on (group_id, about_user_id, author_id)
-    |
-    v
-Refresh notes list
+Upcoming section shows both sources
+    - CountdownCard with source indicator
 ```
 
 ---
 
 ## Suggested Build Order
 
-### Phase 1: Gift Claims Schema + Service (Foundation)
+### Phase 1: Database Foundation
 
-**Rationale:** Schema must exist before any UI can consume it. Gift claims are the higher-priority feature (directly improves gift coordination).
-
-Tasks:
-- Migration: Create `gift_claims` table with RLS policies
-- Migration: Create `get_item_claim_status()` function
-- Service: Create `lib/claims.ts` with CRUD functions
-- Types: Add `gift_claims` to `database.types.ts`
-
-**Dependencies:** None (standalone tables with FKs to existing tables).
-
-### Phase 2: Gift Claims UI (Celebration Integration)
-
-**Rationale:** Claims are useless without UI. This phase adds claim visualization and interaction to the existing celebration detail screen.
+**Rationale:** Schema must exist before any features. Friends table is the core relationship.
 
 Tasks:
-- Component: `ClaimBadge` (read-only claim status display)
-- Component: `ClaimButton` (claim/unclaim action)
-- Component: `ClaimModal` (full claim form with split support)
-- Modify: `LuxuryWishlistCard` to accept claim status props
-- Modify: `app/(app)/celebration/[id].tsx` to fetch and display claims
-- Component: `ClaimList` (Gift Leader view of all claims)
-
-**Dependencies:** Phase 1 (schema + service).
-
-### Phase 3: Personal Details Schema + Service
-
-**Rationale:** Independent of claims. Can start after or in parallel with Phase 2.
-
-Tasks:
-- Migration: Create `personal_details` table with RLS
-- Service: Create `lib/personalDetails.ts`
-- Types: Add `personal_details` to `database.types.ts`
+1. Migration: Add `phone` column to `users` table
+2. Migration: Create `friends` table with ordered constraint
+3. Migration: Create `friend_requests` table
+4. Migration: Create `public_dates` table
+5. Migration: Create helper functions (`are_friends`, `accept_friend_request`, `get_my_friends`, `match_contacts`)
+6. Types: Add all new tables to `database.types.ts`
 
 **Dependencies:** None.
 
-### Phase 4: Personal Details UI
+### Phase 2: Friend Core Services + Tab
 
-**Rationale:** Requires schema from Phase 3.
-
-Tasks:
-- Component: `PersonalDetailsForm` (edit form)
-- Component: `PersonalDetailsCard` (read-only display)
-- Component: `SizeSelector`, `TagInput` (input primitives)
-- Route: `app/(app)/settings/personal-details.tsx`
-- Modify: `app/(app)/settings/profile.tsx` (add link to personal details)
-- Modify: `app/profile/[id].tsx` (show personal details card)
-- Component: `QuickReferenceSection` for celebration detail screen
-- Modify: `app/(app)/celebration/[id].tsx` (add quick reference)
-
-**Dependencies:** Phase 3.
-
-### Phase 5: Member Notes Schema + UI
-
-**Rationale:** Lower priority than claims and personal details. Depends on established patterns from earlier phases.
+**Rationale:** Core friend CRUD enables all other features. Tab provides navigation home.
 
 Tasks:
-- Migration: Create `member_notes` table with owner-exclusion RLS
-- Service: Create `lib/memberNotes.ts`
-- Types: Add `member_notes` to `database.types.ts`
-- Component: `MemberNoteCard`, `MemberNoteInput`
-- Modify: `MemberCard` (add notes indicator)
-- Modify: Celebration detail or member profile view (show/add notes)
+1. Service: Create `lib/friends.ts` with all friend operations
+2. Route: Create `app/(app)/(tabs)/friends.tsx` (friend list screen)
+3. Component: Create `FriendCard.tsx`
+4. Modify: `app/(app)/(tabs)/_layout.tsx` to add Friends tab
 
-**Dependencies:** Phases 1-4 establish patterns; Notes follow the same architecture.
+**Dependencies:** Phase 1.
 
-### Phase ordering rationale:
+### Phase 3: Friend Requests Flow
 
-1. **Claims first** because they directly enhance the core celebration coordination workflow. Members can immediately start claiming items, making gift buying less chaotic.
-2. **Personal details second** because they help gift-givers make better choices (sizes, preferences).
-3. **Member notes last** because they are an enhancement on top of personal details -- "what I've observed about this person" supplements "what this person told me about themselves."
+**Rationale:** Need requests to actually make friends.
+
+Tasks:
+1. Route: Create `app/(app)/friends/requests.tsx` (pending requests screen)
+2. Component: Create `FriendRequestCard.tsx` with accept/reject
+3. Service: Add request-specific functions to `lib/friends.ts`
+4. Component: Create `AddFriendButton.tsx`
+5. Component: Create `FriendStatusBadge.tsx`
+6. Modify: `app/profile/[id].tsx` to show friend status/button
+7. Notification triggers: Create DB triggers for request notifications
+
+**Dependencies:** Phase 2.
+
+### Phase 4: Contact Import
+
+**Rationale:** Major friend discovery mechanism. Requires expo-contacts.
+
+Tasks:
+1. Install: Add `expo-contacts` dependency
+2. Service: Create `lib/contactImport.ts`
+3. Route: Create `app/(app)/friends/find.tsx`
+4. Component: Create `ContactMatchList.tsx`
+5. Link: Add "Find Friends" button to friends tab
+
+**Dependencies:** Phase 3 (uses sendFriendRequest).
+
+### Phase 5: Public Dates
+
+**Rationale:** User-defined dates for friends to see.
+
+Tasks:
+1. Service: Create `lib/publicDates.ts`
+2. Route: Create `app/(app)/settings/public-dates.tsx`
+3. Component: Create `PublicDateCard.tsx` and `PublicDateForm.tsx`
+4. Modify: `app/(app)/settings/profile.tsx` to link to public dates
+
+**Dependencies:** Phase 1 (schema only).
+
+### Phase 6: Calendar Integration
+
+**Rationale:** Final integration - friend dates appear in calendar.
+
+Tasks:
+1. Service: Create `lib/friendDates.ts`
+2. Modify: `lib/birthdays.ts` to export types
+3. Modify: `app/(app)/(tabs)/calendar.tsx` to fetch and merge friend dates
+4. Modify: `BirthdayCalendar.tsx` to support friend date colors
+5. Component: Create or adapt `CountdownCard` for friend dates
+6. Calendar sync: Update `deviceCalendar.ts` to support friend dates
+
+**Dependencies:** Phases 1, 2, 5.
+
+### Phase Ordering Rationale
+
+1. **Database first** - Everything depends on schema
+2. **Friends tab + core** - Establishes navigation and basic viewing
+3. **Requests** - Enables creating friendships
+4. **Contact import** - Major discoverability feature, uses request flow
+5. **Public dates** - Can be done in parallel after Phase 1
+6. **Calendar integration** - Requires friends + public dates to exist
 
 ---
 
 ## Performance Considerations
 
-### Gift Claims Query Pattern
-
-Claims should be fetched in a single batch alongside wishlist items in the celebration detail screen:
+### Friend List Query
 
 ```typescript
-// Fetch claims for all items in one query (not N+1)
-const { data: claims } = await supabase
-  .from('gift_claims')
+// Efficient friend list with profiles in single query
+const { data: friends } = await supabase
+  .rpc('get_my_friends')
+  .then(async (res) => {
+    if (!res.data) return res;
+    const friendIds = res.data.map(f => f.friend_user_id);
+    const { data: profiles } = await supabase
+      .from('user_profiles')
+      .select('id, display_name, avatar_url, birthday')
+      .in('id', friendIds);
+    // Merge profiles with friend data
+    return {
+      ...res,
+      data: res.data.map(f => ({
+        ...f,
+        profile: profiles?.find(p => p.id === f.friend_user_id)
+      }))
+    };
+  });
+```
+
+### Friend Dates for Calendar
+
+```typescript
+// Batch fetch friend dates
+const { data: dates } = await supabase
+  .from('public_dates')
   .select(`
     *,
-    claimer:users!claimed_by (
+    user:users!user_id (
       id, full_name, avatar_url
     )
   `)
-  .eq('celebration_id', celebrationId);
-
-// Build lookup map: itemId -> claims[]
-const claimsByItem = new Map<string, GiftClaim[]>();
-claims?.forEach(c => {
-  const existing = claimsByItem.get(c.wishlist_item_id) || [];
-  existing.push(c);
-  claimsByItem.set(c.wishlist_item_id, existing);
-});
+  .in('user_id', friendIds)
+  .eq('visibility', 'friends_only'); // RLS handles friend check
 ```
 
-### Personal Details Query
+### Contact Matching
 
-One row per user, fetched with profile data. Add to existing profile fetch:
+- Limit contact import to 1000 contacts to prevent slow queries
+- Use batch insert for multiple friend requests
+- Normalize phone numbers server-side for consistent matching
+
+---
+
+## Realtime Subscriptions
+
+### Friend Requests
 
 ```typescript
-const [profile, details] = await Promise.all([
-  supabase.from('user_profiles').select('*').eq('id', userId).single(),
-  supabase.from('personal_details').select('*').eq('user_id', userId).maybeSingle(),
-]);
+// Subscribe to new friend requests
+const channel = supabase
+  .channel('friend_requests')
+  .on(
+    'postgres_changes',
+    {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'friend_requests',
+      filter: `to_user_id=eq.${userId}`,
+    },
+    handleNewRequest
+  )
+  .subscribe();
 ```
 
-### Member Notes Query
-
-Batch fetch for all members in a celebration, not per-member:
+### Friend Status Changes
 
 ```typescript
-const { data: notes } = await supabase
-  .from('member_notes')
-  .select('*, author:users!author_id(id, full_name, avatar_url)')
-  .eq('group_id', groupId)
-  .eq('about_user_id', celebrantId);
+// Subscribe to friendship changes (for profile view)
+const channel = supabase
+  .channel('friends')
+  .on(
+    'postgres_changes',
+    {
+      event: '*',
+      schema: 'public',
+      table: 'friends',
+      filter: `user_a_id=eq.${userId}`,
+    },
+    handleFriendChange
+  )
+  .on(
+    'postgres_changes',
+    {
+      event: '*',
+      schema: 'public',
+      table: 'friends',
+      filter: `user_b_id=eq.${userId}`,
+    },
+    handleFriendChange
+  )
+  .subscribe();
 ```
 
 ---
@@ -672,47 +811,54 @@ const { data: notes } = await supabase
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Gift claims schema | HIGH | Follows proven celebrant-exclusion pattern from chat/contributions |
-| Gift claims RLS | HIGH | Identical pattern to `celebration_contributions` RLS |
-| Celebrant "Taken" view | HIGH | SECURITY DEFINER function is a clean solution, follows `is_group_member()` pattern |
-| Split claims design | MEDIUM | Multiple claims per item works in schema, but UI for split coordination may need iteration |
-| Personal details schema | HIGH | Straightforward JSONB + text fields, standard upsert pattern |
-| Personal details RLS | HIGH | Simple owner-based access, mirrors `users` table pattern |
-| Member notes schema | HIGH | Clean per-group, per-author model with owner-exclusion RLS |
-| Member notes RLS | HIGH | `about_user_id != auth.uid()` is simple and effective |
-| UI integration | MEDIUM | Celebration detail screen is already complex (1400 lines). Adding claims and quick reference requires careful layout |
-| Performance | HIGH | Batch queries, no N+1 patterns, indexed FKs |
+| Friends schema (single-row bidirectional) | HIGH | Standard pattern, ordered constraint prevents duplicates cleanly |
+| Friend requests flow | HIGH | Simple state machine (pending -> accepted/rejected) |
+| Public dates schema | HIGH | Straightforward month/day storage for recurring dates |
+| RLS for friends visibility | HIGH | `are_friends()` helper makes policies clean |
+| Contact import matching | MEDIUM | Phone normalization varies by region (E.164 format recommended) |
+| Calendar integration | HIGH | Follows established `getGroupBirthdays` pattern exactly |
+| Tab navigation (5 tabs) | MEDIUM | 5 tabs is UI limit; may need redesign if more features added |
+| Notification triggers | HIGH | Same pattern as celebration notifications |
 
 ## Risk Areas
 
-### Celebration Detail Screen Complexity
+### Phone Number Normalization
 
-The `app/(app)/celebration/[id].tsx` screen is already 1400 lines with info/chat toggle, greetings/gifts mode branching, contributions, wishlist display, and Gift Leader management. Adding claims UI, quick reference, and notes will increase complexity.
+Contact phone numbers come in various formats. Matching requires normalization.
 
-**Mitigation:** Extract claim-related logic into a custom hook (`useClaimData`). Extract the wishlist section with claims into a standalone component (`ClaimableWishlistSection`). Consider splitting the info view into sub-tabs (Gifts, Details, Notes) if the scroll gets too long.
+**Mitigation:**
+- Store phones in E.164 format (`+1234567890`)
+- Normalize on input (both user registration and contact import)
+- Consider using a library like `libphonenumber-js` for robust parsing
 
-### Split Claims UI/UX
+### Friend Ordering Constraint
 
-Split claims are conceptually more complex than full claims. Users need to:
-1. See how much is already covered
-2. Pledge their portion
-3. See remaining amount needed
+The `user_a_id < user_b_id` constraint requires consistent ordering in all queries.
 
-**Mitigation:** Start with full claims only in Phase 2. Add split claim support as an enhancement after the basic claim flow is proven. The schema supports both from day one.
+**Mitigation:**
+- Always use `LEAST/GREATEST` in functions
+- Service layer normalizes before queries
+- Single `are_friends()` helper function used everywhere
 
-### Claim Status vs Item Status
+### Tab Overflow
 
-The existing `wishlist_items.status` field includes `'claimed'` and `'purchased'` values. The new `gift_claims.status` also has these values. This creates potential confusion.
+Adding Friends tab makes 5 tabs. Future features may need different navigation.
 
-**Mitigation:** Document clearly that `wishlist_items.status` is for the item owner's personal tracking and `gift_claims.status` is for the claim lifecycle within a celebration. Do NOT sync them automatically. If needed later, add a view or computed field.
+**Mitigation:**
+- Consider combining Celebrations into Calendar as a "Events" tab
+- Or move Friends to Settings/Profile area if usage is low
+- Monitor analytics for tab usage patterns
 
-### Notes Privacy Expectations
+### Contact Permission Denial
 
-Users may not immediately understand that their notes about someone are visible to other group members but NOT to the person themselves.
+Users may deny contact access.
 
-**Mitigation:** Add clear UI labels: "Only visible to other [Group Name] members" on the notes section. Add a confirmation dialog on first note creation explaining the privacy model.
+**Mitigation:**
+- Provide alternative: manual username/email search
+- Clear explanation of why contacts are needed
+- Graceful fallback UI when permission denied
 
 ---
 
-*Research completed: 2026-02-05*
-*Source: Existing codebase analysis (23 files read), established RLS patterns from celebrations/chat schema*
+*Research completed: 2026-02-09*
+*Source: Existing codebase analysis, Supabase RLS patterns from celebrations/claims schemas, expo-contacts and expo-calendar documentation*
