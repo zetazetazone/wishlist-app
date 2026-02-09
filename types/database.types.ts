@@ -482,6 +482,7 @@ export interface Database {
           author_id: string
           content: string
           created_at: string
+          updated_at: string
         }
         Insert: {
           id?: string
@@ -490,6 +491,7 @@ export interface Database {
           author_id: string
           content: string
           created_at?: string
+          updated_at?: string
         }
         Update: {
           id?: string
@@ -498,6 +500,7 @@ export interface Database {
           author_id?: string
           content?: string
           created_at?: string
+          updated_at?: string
         }
       }
       personal_details: {

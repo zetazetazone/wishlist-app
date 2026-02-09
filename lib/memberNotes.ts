@@ -4,8 +4,7 @@
  *
  * SECURITY: RLS Pattern: Subject Exclusion
  * - Group members can view notes EXCEPT notes about themselves
- * - Only authors can delete their own notes
- * - No UPDATE policy (delete-only by design -- no editing)
+ * - Only authors can update or delete their own notes
  *
  * Constraints:
  * - Content max 280 characters (enforced by CHECK constraint at DB level)
@@ -149,10 +148,69 @@ export async function createNote(
 }
 
 /**
- * Delete a note (author only, no editing)
+ * Update an existing note (author only)
  *
- * RLS enforces author-only delete. Notes are delete-only by design --
- * there is no UPDATE policy on member_notes.
+ * RLS enforces author-only update. Content max 280 characters.
+ *
+ * @param noteId - UUID of the note to update
+ * @param content - New note text (max 280 characters)
+ */
+export async function updateNote(
+  noteId: string,
+  content: string
+): Promise<NoteWithAuthor> {
+  // Get current user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    throw new Error('Not authenticated');
+  }
+
+  // Client-side validation
+  const trimmedContent = content.trim();
+  if (!trimmedContent) {
+    throw new Error('Note content cannot be empty');
+  }
+  if (trimmedContent.length > 280) {
+    throw new Error('Note content cannot exceed 280 characters');
+  }
+
+  const { data: note, error } = await supabase
+    .from('member_notes')
+    .update({ content: trimmedContent })
+    .eq('id', noteId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Failed to update member note:', error);
+    throw new Error(`Failed to update note: ${error.message}`);
+  }
+
+  // Fetch author profile for return type
+  const { data: profile } = await supabase
+    .from('user_profiles')
+    .select('id, display_name, avatar_url')
+    .eq('id', user.id)
+    .single();
+
+  return {
+    ...note,
+    author: profile
+      ? {
+          id: profile.id,
+          display_name: profile.display_name,
+          avatar_url: profile.avatar_url,
+        }
+      : undefined,
+  };
+}
+
+/**
+ * Delete a note (author only)
+ *
+ * RLS enforces author-only delete.
  *
  * @param noteId - UUID of the note to delete
  */
