@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.3 Phase 21 — Split Contributions & Claim Enhancements (complete with gap closure)
+**Current focus:** v1.3 Phase 22 — Secret Notes (in progress)
 
 ## Current Position
 
-Phase: 21 of 22 (Split Contributions & Claim Enhancements) — COMPLETE
-Plan: 6 of 6 complete (includes UAT + gap closure)
-Status: Phase complete with UAT verified
-Last activity: 2026-02-06 — Completed 21-06-PLAN.md (Gap Closure)
+Phase: 22 of 22 (Secret Notes) — IN PROGRESS
+Plan: 1 of 3 complete
+Status: In progress
+Last activity: 2026-02-09 — Completed 22-01-PLAN.md (UPDATE Policy & Service)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [##########] 100% v1.3 (15/15 plans, 19-05 deferred)
+Progress: [##########] 100% v1.0+v1.1+v1.2 | [##########] 100% v1.3 Phase 18-21 | [#.........] 10% Phase 22 (1/3 plans)
 
 ## Milestone History
 
@@ -115,6 +115,11 @@ Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 - Use created_at field from GiftClaim for claim timestamp (not claimed_at which doesn't exist)
 - invite_code added to Group type to fix TypeScript errors
 
+**Phase 22 Decisions (22-01):**
+- Reused existing handle_updated_at() trigger function for updated_at maintenance
+- Backfilled existing rows with updated_at = created_at for data consistency
+- UPDATE policy pattern: USING + WITH CHECK both validate author_id = auth.uid()
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -140,7 +145,7 @@ From v1.0/v1.1:
 
 ## Session Continuity
 
-Last session: 2026-02-06
-Stopped at: Completed 21-06-PLAN.md (Gap Closure - Phase 21 fully verified)
-Resume file: None
-Next: Phase 22 (v1.3 completion) or v1.3 release
+Last session: 2026-02-09
+Stopped at: Completed 22-01-PLAN.md (UPDATE Policy & Service)
+Resume file: .planning/phases/22-secret-notes/22-02-PLAN.md
+Next: 22-02 (UI Components) then 22-03 (Integration)
