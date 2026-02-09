@@ -65,6 +65,7 @@ import {
   type ClaimWithUser,
 } from '../../../lib/claims';
 import { getDaysUntilBirthday, getCountdownText } from '../../../utils/countdown';
+import { MemberNotesSection } from '../../../components/notes/MemberNotesSection';
 import { colors, spacing, borderRadius } from '../../../constants/theme';
 
 /**
@@ -864,6 +865,18 @@ export default function CelebrationDetailScreen() {
                   )}
                 </View>
 
+                {/* Notes Section - only for non-celebrant viewers */}
+                {celebration.group_id && (
+                  <View style={styles.notesSection}>
+                    <MemberNotesSection
+                      groupId={celebration.group_id}
+                      aboutUserId={celebration.celebrant_id}
+                      aboutUserName={celebrantName}
+                      isSubject={currentUserId === celebration.celebrant_id}
+                    />
+                  </View>
+                )}
+
                 {/* Celebrant's Wishlist Section */}
                 <View style={styles.section}>
                   <View style={styles.sectionHeader}>
@@ -1234,6 +1247,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   section: {
+    marginTop: 24,
+  },
+  notesSection: {
     marginTop: 24,
   },
   sectionHeader: {
