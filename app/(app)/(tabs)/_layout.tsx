@@ -31,6 +31,16 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="friends"
+        options={{
+          title: 'Friends',
+          headerShown: false, // Friends has its own custom gradient header
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="account-heart" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="celebrations"
         options={{
           title: 'Celebrations',
