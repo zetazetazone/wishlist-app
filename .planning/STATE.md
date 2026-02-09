@@ -152,10 +152,11 @@ From v1.0/v1.1:
 | 001 | Fix budget per_gift check constraint violation | 2026-02-05 | a9da654 | [001-fix-budget-per-gift-constraint](./quick/001-fix-budget-per-gift-constraint/) |
 | 002 | Fix per-gift budget amount not persisted | 2026-02-05 | 84bb2fa | [002-fix-per-gift-budget-not-persisted](./quick/002-fix-per-gift-budget-not-persisted/) |
 | 003 | Fix budget display stale after settings save | 2026-02-05 | 6809669 | [003-fix-budget-display-stale-on-nav](./quick/003-fix-budget-display-stale-on-nav/) |
+| 004 | Add delivery address and bank details to personal details | 2026-02-09 | 2bfe625 | [004-add-delivery-address-and-bank-details-to](./quick/004-add-delivery-address-and-bank-details-to/) |
 
 ## Session Continuity
 
 Last session: 2026-02-09
-Stopped at: Phase 22 complete, v1.3 milestone ready for completion
+Stopped at: Quick task 004 complete (delivery address and bank details)
 Resume file: None
 Next: /gsd:complete-milestone v1.3
