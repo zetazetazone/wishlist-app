@@ -3,6 +3,57 @@
 **Defined:** 2026-02-04
 **Core Value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
 
+## v1.3 Requirements (Complete)
+
+<details>
+<summary>30/30 requirements complete -- shipped 2026-02-09</summary>
+
+### Gift Claims
+
+- [x] **CLAIM-01**: Member can claim a standard wishlist item (one claimer at a time, atomic operation)
+- [x] **CLAIM-02**: Claims are hidden from celebrant (celebrant cannot see who claimed what)
+- [x] **CLAIM-03**: Celebrant sees claimed items as "taken" (no claimer identity shown)
+- [x] **CLAIM-04**: Member can unclaim an item they previously claimed
+- [x] **CLAIM-05**: All group members (except celebrant) can see who claimed which items
+- [x] **CLAIM-06**: Claimed items display visual distinction (badge/dimmed) on wishlist cards
+- [x] **CLAIM-07**: Surprise Me and Mystery Box items are not claimable
+- [x] **CLAIM-08**: Claiming works in both Gifts and Greetings group modes
+
+### Split Contributions
+
+- [x] **SPLIT-01**: Claimer can optionally open a claimed item for split contributions
+- [x] **SPLIT-02**: Other members can pledge amounts toward a split-contribution item
+- [x] **SPLIT-03**: Contribution progress bar shows funded percentage vs item price
+- [x] **SPLIT-04**: Unclaiming an item with contributions warns and notifies contributors
+
+### Claim Enhancements
+
+- [x] **CLMX-01**: Group members receive push notification when an item is claimed
+- [x] **CLMX-02**: Celebration page shows claim count summary ("3 of 8 items claimed")
+- [x] **CLMX-03**: Claim timestamp recorded and visible in item detail
+
+### Personal Details
+
+- [x] **PROF-01**: User can fill in clothing sizes (shirt, shoe, pants, ring)
+- [x] **PROF-02**: User can add favorite colors (multi-select tags)
+- [x] **PROF-03**: User can add favorite brands and interests (free-text tags)
+- [x] **PROF-04**: User can add a "dislikes / please avoid" section
+- [x] **PROF-05**: User can add external wishlist links (Amazon, Pinterest, Etsy, etc.)
+- [x] **PROF-06**: Personal details are global (shared across all groups user belongs to)
+- [x] **PROF-07**: Group members can view another member's personal details
+- [x] **PROF-08**: Profile shows completeness indicator ("60% complete")
+- [x] **PROF-09**: Profile shows "last updated" timestamp for personal details
+
+### Secret Notes
+
+- [x] **NOTE-01**: Group member can add a secret note about another member
+- [x] **NOTE-02**: Secret notes are hidden from the profile owner (subject exclusion)
+- [x] **NOTE-03**: Secret notes are visible to all other group members
+- [x] **NOTE-04**: Secret notes are per-group (not shared across groups)
+- [x] **NOTE-05**: Note author can edit or delete their own notes
+
+</details>
+
 ## v1.2 Requirements (Complete)
 
 <details>
@@ -54,74 +105,83 @@
 
 </details>
 
-## v1.3 Requirements
+## v1.4 Requirements
 
-Requirements for Gift Claims & Personal Details milestone. Each maps to roadmap phases.
+Requirements for Friends System milestone. Each maps to roadmap phases.
 
-### Gift Claims
+### Friend Relationships
 
-- [ ] **CLAIM-01**: Member can claim a standard wishlist item (one claimer at a time, atomic operation)
-- [ ] **CLAIM-02**: Claims are hidden from celebrant (celebrant cannot see who claimed what)
-- [ ] **CLAIM-03**: Celebrant sees claimed items as "taken" (no claimer identity shown)
-- [ ] **CLAIM-04**: Member can unclaim an item they previously claimed
-- [ ] **CLAIM-05**: All group members (except celebrant) can see who claimed which items
-- [ ] **CLAIM-06**: Claimed items display visual distinction (badge/dimmed) on wishlist cards
-- [ ] **CLAIM-07**: Surprise Me and Mystery Box items are not claimable
-- [ ] **CLAIM-08**: Claiming works in both Gifts and Greetings group modes
+- [ ] **FRND-01**: User can send a friend request to another user
+- [ ] **FRND-02**: User can accept an incoming friend request
+- [ ] **FRND-03**: User can decline an incoming friend request
+- [ ] **FRND-04**: User can view pending friend requests (incoming and outgoing)
+- [ ] **FRND-05**: User can view their friends list
+- [ ] **FRND-06**: User can remove an existing friend
+- [ ] **FRND-07**: User can block another user (prevents future friend requests)
+- [ ] **FRND-08**: User receives push notification for new friend requests
+- [ ] **FRND-09**: User receives push notification when friend request is accepted
 
-### Split Contributions
+### Friend Discovery
 
-- [ ] **SPLIT-01**: Claimer can optionally open a claimed item for split contributions
-- [ ] **SPLIT-02**: Other members can pledge amounts toward a split-contribution item
-- [ ] **SPLIT-03**: Contribution progress bar shows funded percentage vs item price
-- [ ] **SPLIT-04**: Unclaiming an item with contributions warns and notifies contributors
+- [ ] **DISC-01**: User can import phone contacts to find users who have the app
+- [ ] **DISC-02**: Contact matching uses phone number normalization (E.164 format)
+- [ ] **DISC-03**: Matched contacts show friendship status (Add/Pending/Friends)
+- [ ] **DISC-04**: User can search for other users by name or email
+- [ ] **DISC-05**: App handles iOS contact permission gracefully (including limited access)
+- [ ] **DISC-06**: App handles Android contact permission gracefully
 
-### Claim Enhancements
+### Public Dates
 
-- [ ] **CLMX-01**: Group members receive push notification when an item is claimed
-- [ ] **CLMX-02**: Celebration page shows claim count summary ("3 of 8 items claimed")
-- [ ] **CLMX-03**: Claim timestamp recorded and visible in item detail
+- [ ] **DATE-01**: User can add a custom public date (anniversary, event, etc.)
+- [ ] **DATE-02**: User can edit their own public dates
+- [ ] **DATE-03**: User can delete their own public dates
+- [ ] **DATE-04**: Public dates are visible to all user's friends
+- [ ] **DATE-05**: Public dates use month/day format for annual recurrence
 
-### Personal Details
+### Friends Calendar
 
-- [x] **PROF-01**: User can fill in clothing sizes (shirt, shoe, pants, ring)
-- [x] **PROF-02**: User can add favorite colors (multi-select tags)
-- [x] **PROF-03**: User can add favorite brands and interests (free-text tags)
-- [x] **PROF-04**: User can add a "dislikes / please avoid" section
-- [x] **PROF-05**: User can add external wishlist links (Amazon, Pinterest, Etsy, etc.)
-- [x] **PROF-06**: Personal details are global (shared across all groups user belongs to)
-- [x] **PROF-07**: Group members can view another member's personal details
-- [x] **PROF-08**: Profile shows completeness indicator ("60% complete")
-- [x] **PROF-09**: Profile shows "last updated" timestamp for personal details
+- [ ] **FCAL-01**: Friend birthdays appear in in-app calendar
+- [ ] **FCAL-02**: Friend custom public dates appear in in-app calendar
+- [ ] **FCAL-03**: Friend dates display with distinct color (teal) from group dates
+- [ ] **FCAL-04**: Calendar shows source indicator ("Friend" vs "Group") on events
+- [ ] **FCAL-05**: User can sync friend dates to device calendar (Google/Apple)
 
-### Secret Notes
+### Friends Tab
 
-- [ ] **NOTE-01**: Group member can add a secret note about another member
-- [ ] **NOTE-02**: Secret notes are hidden from the profile owner (subject exclusion)
-- [ ] **NOTE-03**: Secret notes are visible to all other group members
-- [ ] **NOTE-04**: Secret notes are per-group (not shared across groups)
-- [ ] **NOTE-05**: Note author can edit or delete their own notes
+- [ ] **FTAB-01**: Friends tab appears in main navigation
+- [ ] **FTAB-02**: Friends tab shows friends list with profile info
+- [ ] **FTAB-03**: Friends tab has link to pending requests
+- [ ] **FTAB-04**: Friends tab has link to find friends (contact import)
+- [ ] **FTAB-05**: User can tap friend to view their profile
 
 ## Future Requirements
 
 Deferred to later milestones. Tracked but not in current roadmap.
 
-### Notification Preferences (v1.4+)
+### Friends Enhancements (v1.5+)
+
+- **FRNDX-01**: Suggested friends based on mutual friends/groups
+- **FRNDX-02**: Mutual friend display ("You and Sarah have 3 mutual friends")
+- **FRNDX-03**: Friend birthday reminders (separate from calendar events)
+- **FRNDX-04**: Friend-based group suggestions when creating groups
+- **FRNDX-05**: Instagram integration for friend discovery
+
+### Notification Preferences (v1.5+)
 
 - **NOTF-01**: User can configure notification preferences
 - **NOTF-02**: User can toggle reminder types (4w/2w/1w/day-of)
 
-### Chat Enhancements (v1.4+)
+### Chat Enhancements (v1.5+)
 
 - **CHAT-01**: User can see read receipts in chat
 - **CHAT-02**: User can add reactions to messages
 
-### Gift Leader Enhancements (v1.4+)
+### Gift Leader Enhancements (v1.5+)
 
 - **LEAD-01**: Gift Leader progress dashboard with visual coordination status
 - **LEAD-02**: Auto-fallback when Gift Leader is unavailable
 
-### Budget Enhancements (v1.4+)
+### Budget Enhancements (v1.5+)
 
 - **BUDG-06**: Budget alerts when approaching limit (push notification)
 - **BUDG-07**: Per-celebration budget allocation within yearly/monthly pool
@@ -143,6 +203,10 @@ Explicitly excluded. Documented to prevent scope creep.
 | Privacy controls per profile field | Over-engineering; all-or-nothing visibility sufficient |
 | Social media profile links | Not gift-relevant; keep external links shopping-focused |
 | Public/discoverable groups | Privacy-first for friend groups; invite-only |
+| Instagram friend discovery (v1.4) | OAuth complexity; focus on phone contacts first, add later |
+| Friend wishlists visibility | v1.4 focuses on dates; wishlist sharing is separate feature |
+| Auto-friend via group membership | Explicit friend requests preferred; user controls relationships |
+| Per-date visibility controls | Over-engineering; all dates public to friends is sufficient |
 
 ## Traceability
 
@@ -158,45 +222,56 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GSET-01 through GSET-07 | Phase 15 | Complete |
 | GVIEW-01 through GVIEW-07 | Phase 14 | Complete |
 
-### v1.3 (In Progress)
+### v1.3 (Complete)
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CLAIM-01 | Phase 19 | Pending |
-| CLAIM-02 | Phase 19 | Pending |
-| CLAIM-03 | Phase 19 | Pending |
-| CLAIM-04 | Phase 19 | Pending |
-| CLAIM-05 | Phase 19 | Pending |
-| CLAIM-06 | Phase 19 | Pending |
-| CLAIM-07 | Phase 19 | Pending |
-| CLAIM-08 | Phase 19 | Pending |
-| SPLIT-01 | Phase 21 | Pending |
-| SPLIT-02 | Phase 21 | Pending |
-| SPLIT-03 | Phase 21 | Pending |
-| SPLIT-04 | Phase 21 | Pending |
-| CLMX-01 | Phase 21 | Pending |
-| CLMX-02 | Phase 21 | Pending |
-| CLMX-03 | Phase 21 | Pending |
-| PROF-01 | Phase 20 | Complete |
-| PROF-02 | Phase 20 | Complete |
-| PROF-03 | Phase 20 | Complete |
-| PROF-04 | Phase 20 | Complete |
-| PROF-05 | Phase 20 | Complete |
-| PROF-06 | Phase 20 | Complete |
-| PROF-07 | Phase 20 | Complete |
-| PROF-08 | Phase 20 | Complete |
-| PROF-09 | Phase 20 | Complete |
-| NOTE-01 | Phase 22 | Pending |
-| NOTE-02 | Phase 22 | Pending |
-| NOTE-03 | Phase 22 | Pending |
-| NOTE-04 | Phase 22 | Pending |
-| NOTE-05 | Phase 22 | Pending |
+| CLAIM-01 through CLAIM-08 | Phase 18-19 | Complete |
+| SPLIT-01 through SPLIT-04 | Phase 21 | Complete |
+| CLMX-01 through CLMX-03 | Phase 21 | Complete |
+| PROF-01 through PROF-09 | Phase 20 | Complete |
+| NOTE-01 through NOTE-05 | Phase 22 | Complete |
+
+### v1.4 (In Progress)
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| FRND-01 | Phase TBD | Pending |
+| FRND-02 | Phase TBD | Pending |
+| FRND-03 | Phase TBD | Pending |
+| FRND-04 | Phase TBD | Pending |
+| FRND-05 | Phase TBD | Pending |
+| FRND-06 | Phase TBD | Pending |
+| FRND-07 | Phase TBD | Pending |
+| FRND-08 | Phase TBD | Pending |
+| FRND-09 | Phase TBD | Pending |
+| DISC-01 | Phase TBD | Pending |
+| DISC-02 | Phase TBD | Pending |
+| DISC-03 | Phase TBD | Pending |
+| DISC-04 | Phase TBD | Pending |
+| DISC-05 | Phase TBD | Pending |
+| DISC-06 | Phase TBD | Pending |
+| DATE-01 | Phase TBD | Pending |
+| DATE-02 | Phase TBD | Pending |
+| DATE-03 | Phase TBD | Pending |
+| DATE-04 | Phase TBD | Pending |
+| DATE-05 | Phase TBD | Pending |
+| FCAL-01 | Phase TBD | Pending |
+| FCAL-02 | Phase TBD | Pending |
+| FCAL-03 | Phase TBD | Pending |
+| FCAL-04 | Phase TBD | Pending |
+| FCAL-05 | Phase TBD | Pending |
+| FTAB-01 | Phase TBD | Pending |
+| FTAB-02 | Phase TBD | Pending |
+| FTAB-03 | Phase TBD | Pending |
+| FTAB-04 | Phase TBD | Pending |
+| FTAB-05 | Phase TBD | Pending |
 
 **Coverage:**
-- v1.3 requirements: 30 total
-- Mapped to phases: 30/30
-- Unmapped: 0
+- v1.4 requirements: 30 total
+- Mapped to phases: 0/30 (pending roadmap)
+- Unmapped: 30 ⚠️
 
 ---
 *Requirements defined: 2026-02-04*
-*Last updated: 2026-02-05 after v1.3 roadmap creation*
+*Last updated: 2026-02-09 after v1.4 requirements definition*
