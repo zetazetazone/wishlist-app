@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-02-09)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.4 Friends System — Phase 23: Database Foundation
+**Current focus:** v1.4 Friends System — Phase 24: Friend Core Services & Tab
 
 ## Current Position
 
-Phase: 23 of 6 (Database Foundation)
+Phase: 24 of 6 (Friend Core Services & Tab)
 Plan: 1 of 1 complete
 Status: Phase complete
-Last activity: 2026-02-09 — Completed 23-01 Database Foundation
+Last activity: 2026-02-09 — Completed 24-01 Friend Core Services & Tab
 
-Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [#         ] 17% v1.4 (1/6 phases)
+Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [##        ] 33% v1.4 (2/6 phases)
 
 ## v1.4 Phase Overview
 
 | Phase | Name | Requirements | Status |
 |-------|------|--------------|--------|
 | 23 | Database Foundation | Foundation for all | Complete |
-| 24 | Friend Core Services & Tab | FRND-05,06 FTAB-01,02,05 | Not started |
+| 24 | Friend Core Services & Tab | FRND-05,06 FTAB-01,02,05 | Complete |
 | 25 | Friend Requests Flow | FRND-01-04,07-09 FTAB-03 | Not started |
 | 26 | Contact Import & Discovery | DISC-01-06 FTAB-04 | Not started |
 | 27 | Public Dates Management | DATE-01-05 | Not started |
@@ -54,6 +54,11 @@ Key decisions from v1.0/v1.1/v1.2/v1.3 archived in PROJECT.md Key Decisions tabl
 - No direct INSERT on friends table - friendships created only via accept_friend_request RPC
 - Partial unique index on friend_requests uses LEAST/GREATEST for bidirectional dedup
 
+**Phase 24 Decisions:**
+- Bidirectional OR query via `.or()` for friends lookup (more efficient than two separate queries)
+- Avatar URLs converted at fetch time in getFriends() for display readiness
+- Three-dot menu triggers remove directly (dropdown deferred to Phase 25 if more actions needed)
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -85,6 +90,6 @@ From v1.4 Phase 23:
 ## Session Continuity
 
 Last session: 2026-02-09
-Stopped at: Completed Phase 23 Plan 01
+Stopped at: Completed Phase 24 Plan 01
 Resume file: None
-Next: /gsd:plan-phase 24
+Next: /gsd:plan-phase 25
