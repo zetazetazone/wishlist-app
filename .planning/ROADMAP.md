@@ -5,7 +5,8 @@
 - **v1.0 MVP** - Phases 1-5 (shipped 2026-02-02)
 - **v1.1 My Wishlist Polish + Profile Editing** - Phases 6-10 (shipped 2026-02-03)
 - **v1.2 Group Experience** - Phases 11-17 (shipped 2026-02-05)
-- **v1.3 Gift Claims & Personal Details** - Phases 18-22 (in progress)
+- **v1.3 Gift Claims & Personal Details** - Phases 18-22 (shipped 2026-02-09)
+- **v1.4 Friends System** - Phases 23-28 (in progress)
 
 ## Phases
 
@@ -70,7 +71,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [x] 06-01-PLAN.md — Schema migration for group_favorites table and item_type column
+- [x] 06-01-PLAN.md -- Schema migration for group_favorites table and item_type column
 
 ### Phase 7: Profile Editing
 **Goal**: Users can edit their profile information post-onboarding
@@ -135,8 +136,8 @@ Plans:
 **Plans**: 2 plans (1 + 1 gap closure)
 
 Plans:
-- [x] 10-01-PLAN.md — Profile header with avatar and horizontal star ratings
-- [x] 10-02-PLAN.md — Gap closure: Interactive star ratings with priority persistence
+- [x] 10-01-PLAN.md -- Profile header with avatar and horizontal star ratings
+- [x] 10-02-PLAN.md -- Gap closure: Interactive star ratings with priority persistence
 
 </details>
 
@@ -158,7 +159,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [x] 11-01-PLAN.md — Schema migration for groups table (mode, budget, description, photo_url)
+- [x] 11-01-PLAN.md -- Schema migration for groups table (mode, budget, description, photo_url)
 
 #### Phase 12: Group Photo Storage
 **Goal**: Enable group photo upload following avatar infrastructure pattern
@@ -172,7 +173,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [x] 12-01-PLAN.md — RLS policies, upload service with compression, GroupAvatar component
+- [x] 12-01-PLAN.md -- RLS policies, upload service with compression, GroupAvatar component
 
 #### Phase 13: Create Group Enhancement
 **Goal**: Rich group creation with photo, description, mode, and budget selectors
@@ -187,8 +188,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [x] 13-01-PLAN.md — Photo upload section, description textarea, extend createGroup
-- [x] 13-02-PLAN.md — Mode selector (Greetings/Gifts) and conditional budget configuration
+- [x] 13-01-PLAN.md -- Photo upload section, description textarea, extend createGroup
+- [x] 13-02-PLAN.md -- Mode selector (Greetings/Gifts) and conditional budget configuration
 
 #### Phase 14: Group View Redesign
 **Goal**: Redesigned group screen with header, member cards, birthday sorting, and favorite previews
@@ -205,10 +206,10 @@ Plans:
 **Plans**: 4 plans (3 + 1 gap closure)
 
 Plans:
-- [x] 14-01-PLAN.md — GroupModeBadge and GroupViewHeader components (GVIEW-01, GVIEW-02)
-- [x] 14-02-PLAN.md — FavoritePreview and MemberCard components (GVIEW-03, GVIEW-05)
-- [x] 14-03-PLAN.md — Integration with birthday sorting and favorites fetch (GVIEW-04, GVIEW-06, GVIEW-07)
-- [x] 14-04-PLAN.md — Gap closure: fix member card celebration navigation (GVIEW-07)
+- [x] 14-01-PLAN.md -- GroupModeBadge and GroupViewHeader components (GVIEW-01, GVIEW-02)
+- [x] 14-02-PLAN.md -- FavoritePreview and MemberCard components (GVIEW-03, GVIEW-05)
+- [x] 14-03-PLAN.md -- Integration with birthday sorting and favorites fetch (GVIEW-04, GVIEW-06, GVIEW-07)
+- [x] 14-04-PLAN.md -- Gap closure: fix member card celebration navigation (GVIEW-07)
 
 #### Phase 15: Group Settings
 **Goal**: Comprehensive group settings for admin editing and member management
@@ -225,9 +226,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [x] 15-01-PLAN.md — DB migration (invite_code, RLS policies, helper functions) + route restructure + settings skeleton
-- [x] 15-02-PLAN.md — Group info editing (GSET-01,02,03) + invite code management (GSET-06)
-- [x] 15-03-PLAN.md — Member management: remove, admin transfer, leave group (GSET-04,05,07)
+- [x] 15-01-PLAN.md -- DB migration (invite_code, RLS policies, helper functions) + route restructure + settings skeleton
+- [x] 15-02-PLAN.md -- Group info editing (GSET-01,02,03) + invite code management (GSET-06)
+- [x] 15-03-PLAN.md -- Member management: remove, admin transfer, leave group (GSET-04,05,07)
 
 #### Phase 16: Mode System
 **Goal**: Group modes control feature visibility with smooth transitions
@@ -242,10 +243,10 @@ Plans:
 **Plans**: 4 plans (3 + 1 gap closure)
 
 Plans:
-- [x] 16-01-PLAN.md — Mode badge on GroupCard + mode-conditional MemberCard favorite hiding (MODE-01, MODE-02)
-- [x] 16-02-PLAN.md — Mode switch in settings with confirmation dialog (MODE-03, MODE-04)
-- [x] 16-03-PLAN.md — Celebration page dual-mode rendering (MODE-05)
-- [x] 16-04-PLAN.md — Gap closure: fix GroupModeBadge width (from UAT)
+- [x] 16-01-PLAN.md -- Mode badge on GroupCard + mode-conditional MemberCard favorite hiding (MODE-01, MODE-02)
+- [x] 16-02-PLAN.md -- Mode switch in settings with confirmation dialog (MODE-03, MODE-04)
+- [x] 16-03-PLAN.md -- Celebration page dual-mode rendering (MODE-05)
+- [x] 16-04-PLAN.md -- Gap closure: fix GroupModeBadge width (from UAT)
 
 #### Phase 17: Budget Tracking
 **Goal**: Track group spending against budget with visual progress indicators
@@ -260,13 +261,14 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [x] 17-01-PLAN.md — Budget calculation service and updateGroupBudget data layer (TDD)
-- [x] 17-02-PLAN.md — Budget settings UI with approach selector and amount configuration
-- [x] 17-03-PLAN.md — Budget progress bar component and group view integration
+- [x] 17-01-PLAN.md -- Budget calculation service and updateGroupBudget data layer (TDD)
+- [x] 17-02-PLAN.md -- Budget settings UI with approach selector and amount configuration
+- [x] 17-03-PLAN.md -- Budget progress bar component and group view integration
 
 </details>
 
-### v1.3 Gift Claims & Personal Details (In Progress)
+<details>
+<summary>v1.3 Gift Claims & Personal Details (Phases 18-22) - SHIPPED 2026-02-09</summary>
 
 **Milestone Goal:** Enable members to claim wishlist items for coordinated gift-buying, provide rich personal detail profiles for better gift selection, and allow group members to share secret notes about each other for collaborative gift intelligence.
 
@@ -291,8 +293,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [x] 18-01-PLAN.md — Migration: tables (gift_claims, personal_details, member_notes), RLS policies, indexes, triggers, and atomic RPC functions
-- [x] 18-02-PLAN.md — TypeScript type definitions and service library modules (claims, personal details, notes)
+- [x] 18-01-PLAN.md -- Migration: tables (gift_claims, personal_details, member_notes), RLS policies, indexes, triggers, and atomic RPC functions
+- [x] 18-02-PLAN.md -- TypeScript type definitions and service library modules (claims, personal details, notes)
 
 #### Phase 19: Gift Claims UI
 **Goal**: Members can claim and unclaim wishlist items with visual distinction, and celebrants see "taken" status without claimer identity
@@ -307,11 +309,11 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [x] 19-01-PLAN.md — Claim UI components (ClaimButton, ClaimerAvatar, TakenBadge, YourClaimIndicator)
-- [x] 19-02-PLAN.md — Extend LuxuryWishlistCard with claim-related props
-- [x] 19-03-PLAN.md — Celebration page claim integration (non-celebrant view)
-- [x] 19-04-PLAN.md — My Wishlist taken integration and TakenCounter (celebrant view)
-- [~] 19-05-PLAN.md — Visual verification checkpoint (deferred)
+- [x] 19-01-PLAN.md -- Claim UI components (ClaimButton, ClaimerAvatar, TakenBadge, YourClaimIndicator)
+- [x] 19-02-PLAN.md -- Extend LuxuryWishlistCard with claim-related props
+- [x] 19-03-PLAN.md -- Celebration page claim integration (non-celebrant view)
+- [x] 19-04-PLAN.md -- My Wishlist taken integration and TakenCounter (celebrant view)
+- [~] 19-05-PLAN.md -- Visual verification checkpoint (deferred)
 
 #### Phase 20: Personal Details
 **Goal**: Users can fill in and share personal details (sizes, preferences, external links) across all their groups for better gift selection
@@ -326,9 +328,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [x] 20-01-PLAN.md — Foundation components (TagChip, TagInput, CompletenessIndicator)
-- [x] 20-02-PLAN.md — Form sections and personal details edit screen
-- [x] 20-03-PLAN.md — Profile integration and read-only member view
+- [x] 20-01-PLAN.md -- Foundation components (TagChip, TagInput, CompletenessIndicator)
+- [x] 20-02-PLAN.md -- Form sections and personal details edit screen
+- [x] 20-03-PLAN.md -- Profile integration and read-only member view
 
 #### Phase 21: Split Contributions & Claim Enhancements
 **Goal**: Claimers can open items for split funding from other members, and claim-related notifications and summaries complete the coordination experience
@@ -343,12 +345,12 @@ Plans:
 **Plans**: 6 plans
 
 Plans:
-- [x] 21-01-PLAN.md — Split contribution RPC functions and notification triggers (database layer)
-- [x] 21-02-PLAN.md — TypeScript contributions service library
-- [x] 21-03-PLAN.md — Split UI components (progress, contributors display, modal, summary)
-- [x] 21-04-PLAN.md — Integration into wishlist card and celebration page
-- [x] 21-05-PLAN.md — UAT verification checkpoint
-- [x] 21-06-PLAN.md — Gap closure for UAT issues
+- [x] 21-01-PLAN.md -- Split contribution RPC functions and notification triggers (database layer)
+- [x] 21-02-PLAN.md -- TypeScript contributions service library
+- [x] 21-03-PLAN.md -- Split UI components (progress, contributors display, modal, summary)
+- [x] 21-04-PLAN.md -- Integration into wishlist card and celebration page
+- [x] 21-05-PLAN.md -- UAT verification checkpoint
+- [x] 21-06-PLAN.md -- Gap closure for UAT issues
 
 #### Phase 22: Secret Notes
 **Goal**: Group members can add hidden notes about each other for collaborative gift-giving intelligence, with subject-exclusion privacy enforcement
@@ -363,15 +365,97 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [x] 22-01-PLAN.md — Schema migration (UPDATE policy, updated_at) and service layer updateNote function
-- [x] 22-02-PLAN.md — UI components (NoteCard, AddNoteSheet, MemberNotesSection)
-- [x] 22-03-PLAN.md — Screen integration (member profile, celebration page) with verification checkpoint
+- [x] 22-01-PLAN.md -- Schema migration (UPDATE policy, updated_at) and service layer updateNote function
+- [x] 22-02-PLAN.md -- UI components (NoteCard, AddNoteSheet, MemberNotesSection)
+- [x] 22-03-PLAN.md -- Screen integration (member profile, celebration page) with verification checkpoint
+
+</details>
+
+### v1.4 Friends System (In Progress)
+
+**Milestone Goal:** Enable users to build a friends network outside of groups, discover friends via phone contacts, and see friends' birthdays and custom dates in their calendar.
+
+**Key architectural decisions:**
+- `friends` table with ordered bidirectional constraint (`user_a_id < user_b_id`) prevents duplicates
+- `friend_requests` table with status enum (pending/accepted/rejected/blocked) manages request state
+- `public_dates` table with month/day storage for annual recurrence
+- `are_friends()` helper function centralizes bidirectional query logic for RLS policies
+- Phone number normalization to E.164 format for cross-platform contact matching
+- Friend dates use distinct teal color in calendar (group dates use varied colors)
+
+#### Phase 23: Database Foundation
+**Goal**: Database schema for friends, friend requests, and public dates with bidirectional relationship handling and friend-visibility RLS patterns
+**Depends on**: Phase 22
+**Requirements**: None (foundation for all v1.4 features)
+**Success Criteria** (what must be TRUE):
+  1. `friends` table exists with ordered bidirectional constraint enforcing single-row per friendship
+  2. `friend_requests` table exists with status enum supporting pending/accepted/rejected/blocked states
+  3. `public_dates` table exists with month/day columns for annual recurrence and friends-only visibility
+  4. `are_friends()` helper function enables clean RLS policies without OR-condition complexity
+  5. Phone column added to users table with E.164 normalization for contact matching
+
+#### Phase 24: Friend Core Services & Tab
+**Goal**: Core friend CRUD operations and Friends tab navigation with friend list display
+**Depends on**: Phase 23
+**Requirements**: FRND-05, FRND-06, FTAB-01, FTAB-02, FTAB-05
+**Success Criteria** (what must be TRUE):
+  1. User can view their friends list in the Friends tab
+  2. Friends tab appears in main navigation at appropriate position
+  3. Friend list displays profile photo, name, and basic info for each friend
+  4. User can tap a friend to view their profile
+  5. User can remove an existing friend from their friends list
+
+#### Phase 25: Friend Requests Flow
+**Goal**: Complete friend request lifecycle with send/accept/decline, pending requests view, and real-time notifications
+**Depends on**: Phase 24
+**Requirements**: FRND-01, FRND-02, FRND-03, FRND-04, FRND-07, FRND-08, FRND-09, FTAB-03
+**Success Criteria** (what must be TRUE):
+  1. User can send a friend request to another user from their profile
+  2. User can accept an incoming friend request (creates friendship)
+  3. User can decline an incoming friend request
+  4. User can view pending friend requests (both incoming and outgoing) in Requests screen
+  5. User receives push notification when receiving a new friend request
+  6. User receives push notification when their friend request is accepted
+
+#### Phase 26: Contact Import & Discovery
+**Goal**: Import phone contacts to discover users who have the app, with proper permission handling for iOS and Android
+**Depends on**: Phase 25
+**Requirements**: DISC-01, DISC-02, DISC-03, DISC-04, DISC-05, DISC-06, FTAB-04
+**Success Criteria** (what must be TRUE):
+  1. User can import phone contacts to find friends who already use the app
+  2. Contact matching uses normalized E.164 phone numbers for reliable cross-platform matching
+  3. Matched contacts show correct friendship status (Add Friend / Request Pending / Already Friends)
+  4. User can search for other users by name or email
+  5. App handles iOS contact permission gracefully including limited access mode
+  6. App handles Android contact permission with proper permission request flow
+
+#### Phase 27: Public Dates Management
+**Goal**: Users can create, edit, and delete custom public dates that friends can see (anniversaries, special events)
+**Depends on**: Phase 23
+**Requirements**: DATE-01, DATE-02, DATE-03, DATE-04, DATE-05
+**Success Criteria** (what must be TRUE):
+  1. User can add a custom public date (anniversary, event) from profile settings
+  2. User can edit their own public dates (title, date, description)
+  3. User can delete their own public dates
+  4. Public dates are visible to all user's friends (friends-only visibility enforced)
+  5. Public dates use month/day format for annual recurrence with optional year
+
+#### Phase 28: Calendar Integration
+**Goal**: Friend birthdays and public dates appear in in-app calendar with device sync support
+**Depends on**: Phases 24, 27
+**Requirements**: FCAL-01, FCAL-02, FCAL-03, FCAL-04, FCAL-05
+**Success Criteria** (what must be TRUE):
+  1. Friend birthdays appear in the in-app calendar view
+  2. Friend custom public dates appear in the in-app calendar view
+  3. Friend dates display with distinct teal color from group dates
+  4. Calendar events show source indicator distinguishing "Friend" from "Group" events
+  5. User can sync friend dates to device calendar (Google/Apple) alongside group birthdays
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 18 -> 19 -> 20 -> 21 -> 22
-(Phases 19 and 20 can run in parallel after 18; Phase 21 depends on 19; Phase 22 depends on 18)
+Phases execute in order: 23 -> 24 -> 25 -> 26 -> 27 -> 28
+(Phase 27 can run in parallel with 25-26 after 23 completes; Phase 28 depends on 24 and 27)
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -397,3 +481,9 @@ Phases execute in numeric order: 18 -> 19 -> 20 -> 21 -> 22
 | 20. Personal Details | v1.3 | 3/3 | Complete | 2026-02-06 |
 | 21. Split Contributions & Claim Enhancements | v1.3 | 6/6 | Complete | 2026-02-06 |
 | 22. Secret Notes | v1.3 | 3/3 | Complete | 2026-02-09 |
+| 23. Database Foundation | v1.4 | 0/? | Not started | - |
+| 24. Friend Core Services & Tab | v1.4 | 0/? | Not started | - |
+| 25. Friend Requests Flow | v1.4 | 0/? | Not started | - |
+| 26. Contact Import & Discovery | v1.4 | 0/? | Not started | - |
+| 27. Public Dates Management | v1.4 | 0/? | Not started | - |
+| 28. Calendar Integration | v1.4 | 0/? | Not started | - |

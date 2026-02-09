@@ -236,42 +236,42 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FRND-01 | Phase TBD | Pending |
-| FRND-02 | Phase TBD | Pending |
-| FRND-03 | Phase TBD | Pending |
-| FRND-04 | Phase TBD | Pending |
-| FRND-05 | Phase TBD | Pending |
-| FRND-06 | Phase TBD | Pending |
-| FRND-07 | Phase TBD | Pending |
-| FRND-08 | Phase TBD | Pending |
-| FRND-09 | Phase TBD | Pending |
-| DISC-01 | Phase TBD | Pending |
-| DISC-02 | Phase TBD | Pending |
-| DISC-03 | Phase TBD | Pending |
-| DISC-04 | Phase TBD | Pending |
-| DISC-05 | Phase TBD | Pending |
-| DISC-06 | Phase TBD | Pending |
-| DATE-01 | Phase TBD | Pending |
-| DATE-02 | Phase TBD | Pending |
-| DATE-03 | Phase TBD | Pending |
-| DATE-04 | Phase TBD | Pending |
-| DATE-05 | Phase TBD | Pending |
-| FCAL-01 | Phase TBD | Pending |
-| FCAL-02 | Phase TBD | Pending |
-| FCAL-03 | Phase TBD | Pending |
-| FCAL-04 | Phase TBD | Pending |
-| FCAL-05 | Phase TBD | Pending |
-| FTAB-01 | Phase TBD | Pending |
-| FTAB-02 | Phase TBD | Pending |
-| FTAB-03 | Phase TBD | Pending |
-| FTAB-04 | Phase TBD | Pending |
-| FTAB-05 | Phase TBD | Pending |
+| FRND-01 | Phase 25 | Pending |
+| FRND-02 | Phase 25 | Pending |
+| FRND-03 | Phase 25 | Pending |
+| FRND-04 | Phase 25 | Pending |
+| FRND-05 | Phase 24 | Pending |
+| FRND-06 | Phase 24 | Pending |
+| FRND-07 | Phase 25 | Pending |
+| FRND-08 | Phase 25 | Pending |
+| FRND-09 | Phase 25 | Pending |
+| DISC-01 | Phase 26 | Pending |
+| DISC-02 | Phase 26 | Pending |
+| DISC-03 | Phase 26 | Pending |
+| DISC-04 | Phase 26 | Pending |
+| DISC-05 | Phase 26 | Pending |
+| DISC-06 | Phase 26 | Pending |
+| DATE-01 | Phase 27 | Pending |
+| DATE-02 | Phase 27 | Pending |
+| DATE-03 | Phase 27 | Pending |
+| DATE-04 | Phase 27 | Pending |
+| DATE-05 | Phase 27 | Pending |
+| FCAL-01 | Phase 28 | Pending |
+| FCAL-02 | Phase 28 | Pending |
+| FCAL-03 | Phase 28 | Pending |
+| FCAL-04 | Phase 28 | Pending |
+| FCAL-05 | Phase 28 | Pending |
+| FTAB-01 | Phase 24 | Pending |
+| FTAB-02 | Phase 24 | Pending |
+| FTAB-03 | Phase 25 | Pending |
+| FTAB-04 | Phase 26 | Pending |
+| FTAB-05 | Phase 24 | Pending |
 
 **Coverage:**
 - v1.4 requirements: 30 total
-- Mapped to phases: 0/30 (pending roadmap)
-- Unmapped: 30 ⚠️
+- Mapped to phases: 30/30
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-04*
-*Last updated: 2026-02-09 after v1.4 requirements definition*
+*Last updated: 2026-02-09 after v1.4 roadmap creation*
