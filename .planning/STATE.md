@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-09)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.4 Friends System — Phase 25: Friend Requests Flow
+**Current focus:** v1.4 Friends System — Phase 25 Complete, ready for Phase 26
 
 ## Current Position
 
-Phase: 25 of 6 (Friend Requests Flow)
-Plan: 2 of 3 complete
-Status: In progress
-Last activity: 2026-02-09 — Completed 25-02 Pending Requests Screen
+Phase: 25 of 6 (Friend Requests Flow) - COMPLETE
+Plan: 3 of 3 complete
+Status: Phase complete
+Last activity: 2026-02-10 — Completed 25-03 Integration (Friends tab header link, member profile friend button)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [###░      ] 45% v1.4 (2/6 phases + 2/3 plans)
+Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [#####     ] 50% v1.4 (3/6 phases complete)
 
 ## v1.4 Phase Overview
 
@@ -22,7 +22,7 @@ Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [###░      ] 45% v1.4 (2/6 p
 |-------|------|--------------|--------|
 | 23 | Database Foundation | Foundation for all | Complete |
 | 24 | Friend Core Services & Tab | FRND-05,06 FTAB-01,02,05 | Complete |
-| 25 | Friend Requests Flow | FRND-01-04,07-09 FTAB-03 | In progress (2/3) |
+| 25 | Friend Requests Flow | FRND-01-04,07-09 FTAB-03 | Complete |
 | 26 | Contact Import & Discovery | DISC-01-06 FTAB-04 | Not started |
 | 27 | Public Dates Management | DATE-01-05 | Not started |
 | 28 | Calendar Integration | FCAL-01-05 | Not started |
@@ -65,6 +65,9 @@ Key decisions from v1.0/v1.1/v1.2/v1.3 archived in PROJECT.md Key Decisions tabl
 - Block check queries bidirectionally before INSERT to prevent blocked user circumvention
 - Segment control uses white fill for active tab on semi-transparent burgundy background
 - Block option presented as third Alert button in decline flow (Decline vs Block & Decline)
+- Badge count refreshes on tab focus via useFocusEffect (not real-time push)
+- Inline getIncomingRequestId helper in member profile (profile-specific use case)
+- Relationship status loaded in loadMemberData for single-fetch efficiency
 
 ### Pending Todos (Manual Setup)
 
@@ -96,7 +99,7 @@ From v1.4 Phase 23:
 
 ## Session Continuity
 
-Last session: 2026-02-09
-Stopped at: Completed Phase 25 Plan 02
-Resume file: .planning/phases/25-friend-requests-flow/25-03-PLAN.md
-Next: /gsd:execute-plan 25-03
+Last session: 2026-02-10
+Stopped at: Completed Phase 25 (all 3 plans)
+Resume file: N/A - phase complete
+Next: /gsd:plan-phase 26 (Contact Import & Discovery)
