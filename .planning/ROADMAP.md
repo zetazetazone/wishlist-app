@@ -363,9 +363,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 22-01-PLAN.md — Schema migration (UPDATE policy, updated_at) and service layer updateNote function
-- [ ] 22-02-PLAN.md — UI components (NoteCard, AddNoteSheet, MemberNotesSection)
-- [ ] 22-03-PLAN.md — Screen integration (member profile, celebration page) with verification checkpoint
+- [x] 22-01-PLAN.md — Schema migration (UPDATE policy, updated_at) and service layer updateNote function
+- [x] 22-02-PLAN.md — UI components (NoteCard, AddNoteSheet, MemberNotesSection)
+- [x] 22-03-PLAN.md — Screen integration (member profile, celebration page) with verification checkpoint
 
 ## Progress
 
@@ -396,4 +396,4 @@ Phases execute in numeric order: 18 -> 19 -> 20 -> 21 -> 22
 | 19. Gift Claims UI | v1.3 | 4/5 | Verification deferred | - |
 | 20. Personal Details | v1.3 | 3/3 | Complete | 2026-02-06 |
 | 21. Split Contributions & Claim Enhancements | v1.3 | 6/6 | Complete | 2026-02-06 |
-| 22. Secret Notes | v1.3 | 0/3 | Planned | - |
+| 22. Secret Notes | v1.3 | 3/3 | Complete | 2026-02-09 |

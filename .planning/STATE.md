@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-05)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.3 Phase 22 — Secret Notes (in progress)
+**Current focus:** v1.3 Phase 22 — Secret Notes (COMPLETE)
 
 ## Current Position
 
-Phase: 22 of 22 (Secret Notes) — IN PROGRESS
-Plan: 2 of 3 complete
-Status: In progress
-Last activity: 2026-02-09 — Completed 22-02-PLAN.md (UI Components)
+Phase: 22 of 22 (Secret Notes) — COMPLETE
+Plan: 3 of 3 complete
+Status: Phase complete, milestone ready for completion
+Last activity: 2026-02-09 — Completed 22-03-PLAN.md (Integration) + verification passed
 
-Progress: [##########] 100% v1.0+v1.1+v1.2 | [##########] 100% v1.3 Phase 18-21 | [##........] 67% Phase 22 (2/3 plans)
+Progress: [##########] 100% v1.0+v1.1+v1.2 | [##########] 100% v1.3 Phases 18-22
 
 ## Milestone History
 
@@ -125,6 +125,11 @@ Key decisions from v1.0/v1.1/v1.2 archived in PROJECT.md Key Decisions table.
 - MemberNotesSection returns null for isSubject (no empty section shown to subject)
 - Optimistic updates with full rollback on error for responsive UX
 
+**Phase 22 Decisions (22-03):**
+- Member profile receives groupId via route params (optional) - notes only shown when group context available
+- Celebration page notes section positioned in Gifts mode section, below header card
+- isSubject calculated by comparing aboutUserId (member/celebrant) with currentUserId
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -151,6 +156,6 @@ From v1.0/v1.1:
 ## Session Continuity
 
 Last session: 2026-02-09
-Stopped at: Completed 22-02-PLAN.md (UI Components)
-Resume file: .planning/phases/22-secret-notes/22-03-PLAN.md
-Next: 22-03 (Integration)
+Stopped at: Phase 22 complete, v1.3 milestone ready for completion
+Resume file: None
+Next: /gsd:complete-milestone v1.3
