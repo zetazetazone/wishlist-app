@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { View, Text, ScrollView, RefreshControl, ActivityIndicator, StatusBar, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useState, useEffect, useCallback } from 'react';
+import { View, Text, ScrollView, RefreshControl, ActivityIndicator, StatusBar, Alert, TouchableOpacity, StyleSheet } from 'react-native';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { getFriends, removeFriend, FriendWithProfile } from '../../../lib/friends';
+import { getFriends, removeFriend, getPendingRequests, FriendWithProfile } from '../../../lib/friends';
 import { FriendCard } from '../../../components/friends/FriendCard';
 import { colors, spacing, borderRadius } from '../../../constants/theme';
 
@@ -13,6 +13,7 @@ export default function FriendsScreen() {
   const [friends, setFriends] = useState<FriendWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
 
   const loadFriends = async () => {
     const data = await getFriends();
@@ -24,6 +25,21 @@ export default function FriendsScreen() {
   useEffect(() => {
     loadFriends();
   }, []);
+
+  // Refresh pending count when tab focuses
+  useFocusEffect(
+    useCallback(() => {
+      const loadPendingCount = async () => {
+        try {
+          const { incoming } = await getPendingRequests();
+          setPendingCount(incoming.length);
+        } catch (error) {
+          console.error('Failed to load pending count:', error);
+        }
+      };
+      loadPendingCount();
+    }, [])
+  );
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -84,6 +100,19 @@ export default function FriendsScreen() {
             paddingHorizontal: spacing.lg,
           }}
         >
+          {/* Requests Link */}
+          <TouchableOpacity
+            style={styles.requestsLink}
+            onPress={() => router.push('/requests')}
+          >
+            <MaterialCommunityIcons name="account-clock" size={24} color={colors.white} />
+            {pendingCount > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{pendingCount}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+
           <MotiView
             from={{ opacity: 0, translateY: -20 }}
             animate={{ opacity: 1, translateY: 0 }}
@@ -210,3 +239,30 @@ export default function FriendsScreen() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  requestsLink: {
+    position: 'absolute',
+    right: spacing.lg,
+    top: 60,
+    padding: spacing.sm,
+    zIndex: 1,
+  },
+  badge: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: colors.error,
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+  },
+  badgeText: {
+    color: colors.white,
+    fontSize: 10,
+    fontWeight: '700',
+  },
+});
