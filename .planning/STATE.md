@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-09)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.4 Friends System — Phase 24: Friend Core Services & Tab
+**Current focus:** v1.4 Friends System — Phase 25: Friend Requests Flow
 
 ## Current Position
 
-Phase: 24 of 6 (Friend Core Services & Tab)
-Plan: 1 of 1 complete
-Status: Phase complete
-Last activity: 2026-02-09 — Completed 24-01 Friend Core Services & Tab
+Phase: 25 of 6 (Friend Requests Flow)
+Plan: 1 of 3 complete
+Status: In progress
+Last activity: 2026-02-09 — Completed 25-01 Friend Request Notifications & Service Layer
 
-Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [##        ] 33% v1.4 (2/6 phases)
+Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [##░       ] 40% v1.4 (2/6 phases + 1/3 plans)
 
 ## v1.4 Phase Overview
 
@@ -22,7 +22,7 @@ Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [##        ] 33% v1.4 (2/6 pha
 |-------|------|--------------|--------|
 | 23 | Database Foundation | Foundation for all | Complete |
 | 24 | Friend Core Services & Tab | FRND-05,06 FTAB-01,02,05 | Complete |
-| 25 | Friend Requests Flow | FRND-01-04,07-09 FTAB-03 | Not started |
+| 25 | Friend Requests Flow | FRND-01-04,07-09 FTAB-03 | In progress (1/3) |
 | 26 | Contact Import & Discovery | DISC-01-06 FTAB-04 | Not started |
 | 27 | Public Dates Management | DATE-01-05 | Not started |
 | 28 | Calendar Integration | FCAL-01-05 | Not started |
@@ -59,6 +59,11 @@ Key decisions from v1.0/v1.1/v1.2/v1.3 archived in PROJECT.md Key Decisions tabl
 - Avatar URLs converted at fetch time in getFriends() for display readiness
 - Three-dot menu triggers remove directly (dropdown deferred to Phase 25 if more actions needed)
 
+**Phase 25 Decisions:**
+- Notification triggers use WHEN clause for efficiency (only fire when conditions met)
+- Rate limit of 20 requests/hour enforced in TypeScript (not DB constraint) for better UX feedback
+- Block check queries bidirectionally before INSERT to prevent blocked user circumvention
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -90,6 +95,6 @@ From v1.4 Phase 23:
 ## Session Continuity
 
 Last session: 2026-02-09
-Stopped at: Completed Phase 24 Plan 01
-Resume file: None
-Next: /gsd:plan-phase 25
+Stopped at: Completed Phase 25 Plan 01
+Resume file: .planning/phases/25-friend-requests-flow/25-02-PLAN.md
+Next: /gsd:execute-plan 25-02
