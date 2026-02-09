@@ -4,19 +4,23 @@
  * Calculates how complete a user's personal details profile is.
  * Used by CompletenessIndicator component for PROF-08.
  *
- * Sections evaluated:
+ * Sections evaluated (8 total):
  * - Clothing sizes (at least one filled)
  * - Favorite colors (at least one)
  * - Favorite brands (at least one)
  * - Interests (at least one)
  * - Dislikes (at least one)
  * - External wishlists (at least one link)
+ * - Delivery address (street OR city filled)
+ * - Bank details (IBAN OR account number filled)
  */
 
 import type {
   PersonalSizes,
   PersonalPreferences,
   ExternalLink,
+  DeliveryAddress,
+  BankDetails,
 } from '../types/database.types';
 
 export interface CompletenessResult {
@@ -32,12 +36,16 @@ export interface CompletenessResult {
  * @param sizes - Clothing sizes object
  * @param preferences - Preferences with colors, brands, interests, dislikes arrays
  * @param externalLinks - Array of external wishlist links
+ * @param deliveryAddress - Optional delivery address object
+ * @param bankDetails - Optional bank details object
  * @returns Completeness result with percentage and missing sections
  */
 export function calculateCompleteness(
   sizes: PersonalSizes,
   preferences: PersonalPreferences,
-  externalLinks: ExternalLink[]
+  externalLinks: ExternalLink[],
+  deliveryAddress?: DeliveryAddress,
+  bankDetails?: BankDetails
 ): CompletenessResult {
   const sections = [
     {
@@ -63,6 +71,14 @@ export function calculateCompleteness(
     {
       name: 'External wishlists',
       filled: externalLinks.length > 0,
+    },
+    {
+      name: 'Delivery address',
+      filled: !!(deliveryAddress?.street?.trim() || deliveryAddress?.city?.trim()),
+    },
+    {
+      name: 'Bank details',
+      filled: !!(bankDetails?.iban?.trim() || bankDetails?.account_number?.trim()),
     },
   ];
 

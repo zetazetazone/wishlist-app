@@ -664,3 +664,25 @@ export interface ExternalLink {
   label?: string;
   platform?: string;
 }
+
+// Delivery and payment details for gift coordination
+export interface DeliveryAddress {
+  street?: string;
+  city?: string;
+  postal_code?: string;
+  country?: string;
+}
+
+export interface BankDetails {
+  account_holder?: string;
+  iban?: string;  // European IBAN
+  account_number?: string;  // Alternative for non-IBAN regions
+  bank_name?: string;  // Optional for clarity
+}
+
+export type VisibilitySetting = 'friends_only' | 'public';
+
+export interface PersonalDetailsVisibility {
+  delivery_address?: VisibilitySetting;
+  bank_details?: VisibilitySetting;
+}
