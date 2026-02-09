@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-09)
 ## Current Position
 
 Phase: 25 of 6 (Friend Requests Flow)
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: In progress
-Last activity: 2026-02-09 — Completed 25-01 Friend Request Notifications & Service Layer
+Last activity: 2026-02-09 — Completed 25-02 Pending Requests Screen
 
-Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [##░       ] 40% v1.4 (2/6 phases + 1/3 plans)
+Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [###░      ] 45% v1.4 (2/6 phases + 2/3 plans)
 
 ## v1.4 Phase Overview
 
@@ -22,7 +22,7 @@ Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [##░       ] 40% v1.4 (2/6 p
 |-------|------|--------------|--------|
 | 23 | Database Foundation | Foundation for all | Complete |
 | 24 | Friend Core Services & Tab | FRND-05,06 FTAB-01,02,05 | Complete |
-| 25 | Friend Requests Flow | FRND-01-04,07-09 FTAB-03 | In progress (1/3) |
+| 25 | Friend Requests Flow | FRND-01-04,07-09 FTAB-03 | In progress (2/3) |
 | 26 | Contact Import & Discovery | DISC-01-06 FTAB-04 | Not started |
 | 27 | Public Dates Management | DATE-01-05 | Not started |
 | 28 | Calendar Integration | FCAL-01-05 | Not started |
@@ -63,6 +63,8 @@ Key decisions from v1.0/v1.1/v1.2/v1.3 archived in PROJECT.md Key Decisions tabl
 - Notification triggers use WHEN clause for efficiency (only fire when conditions met)
 - Rate limit of 20 requests/hour enforced in TypeScript (not DB constraint) for better UX feedback
 - Block check queries bidirectionally before INSERT to prevent blocked user circumvention
+- Segment control uses white fill for active tab on semi-transparent burgundy background
+- Block option presented as third Alert button in decline flow (Decline vs Block & Decline)
 
 ### Pending Todos (Manual Setup)
 
@@ -95,6 +97,6 @@ From v1.4 Phase 23:
 ## Session Continuity
 
 Last session: 2026-02-09
-Stopped at: Completed Phase 25 Plan 01
-Resume file: .planning/phases/25-friend-requests-flow/25-02-PLAN.md
-Next: /gsd:execute-plan 25-02
+Stopped at: Completed Phase 25 Plan 02
+Resume file: .planning/phases/25-friend-requests-flow/25-03-PLAN.md
+Next: /gsd:execute-plan 25-03
