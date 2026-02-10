@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-09)
 
 ## Current Position
 
-Phase: 26 of 6 (Contact Import & Discovery)
-Plan: 3 of 3 complete
-Status: Phase complete
-Last activity: 2026-02-10 — Completed 26-03 Discovery Screen (MatchedContactCard, discover.tsx, Friends tab button)
+Phase: 27 of 6 (Public Dates Management)
+Plan: 1 of 2 complete
+Status: In progress
+Last activity: 2026-02-10 — Completed 27-01 Public Dates Service & Card Component (lib/publicDates.ts, PublicDateCard.tsx)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [#######░  ] 67% v1.4 (4/6 phases complete)
+Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [#######░  ] 67% v1.4 (4/6 phases complete, 27 in progress)
 
 ## v1.4 Phase Overview
 
@@ -24,7 +24,7 @@ Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [#######░  ] 67% v1.4 (4/6 p
 | 24 | Friend Core Services & Tab | FRND-05,06 FTAB-01,02,05 | Complete |
 | 25 | Friend Requests Flow | FRND-01-04,07-09 FTAB-03 | Complete |
 | 26 | Contact Import & Discovery | DISC-01-06 FTAB-04 | Complete |
-| 27 | Public Dates Management | DATE-01-05 | Not started |
+| 27 | Public Dates Management | DATE-01-05 | Plan 1/2 complete |
 | 28 | Calendar Integration | FCAL-01-05 | Not started |
 
 ## Milestone History
@@ -86,6 +86,11 @@ Key decisions from v1.0/v1.1/v1.2/v1.3 archived in PROJECT.md Key Decisions tabl
 - Search debounced at 300ms to prevent excessive API calls
 - MatchedContactCard supports both MatchedUser and SearchResult types via union
 
+**Phase 27 Plan 01 Decisions:**
+- Use month - 1 when constructing Date objects for formatting (database 1-12, Date constructor 0-11)
+- Calendar heart icon for public dates to distinguish from friend cards
+- Separate onEdit and onDelete handlers to prevent accidental deletions
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -116,6 +121,6 @@ From v1.4 Phase 23:
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Phase 26 complete
-Resume file: N/A - phase complete
-Next: Phase 27 (Public Dates Management)
+Stopped at: Phase 27 Plan 01 complete
+Resume file: .planning/phases/27-public-dates-management/27-02-PLAN.md
+Next: Phase 27 Plan 02 (Public Dates Screen)
