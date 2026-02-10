@@ -100,7 +100,15 @@ export default function FriendsScreen() {
             paddingHorizontal: spacing.lg,
           }}
         >
-          {/* Requests Link */}
+          {/* Find Friends Link (left side) */}
+          <TouchableOpacity
+            style={styles.findFriendsLink}
+            onPress={() => router.push('/discover')}
+          >
+            <MaterialCommunityIcons name="account-search" size={24} color={colors.white} />
+          </TouchableOpacity>
+
+          {/* Requests Link (right side) */}
           <TouchableOpacity
             style={styles.requestsLink}
             onPress={() => router.push('/requests')}
@@ -241,6 +249,13 @@ export default function FriendsScreen() {
 }
 
 const styles = StyleSheet.create({
+  findFriendsLink: {
+    position: 'absolute',
+    left: spacing.lg,
+    top: 60,
+    padding: spacing.sm,
+    zIndex: 1,
+  },
   requestsLink: {
     position: 'absolute',
     right: spacing.lg,
