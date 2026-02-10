@@ -442,6 +442,12 @@ Plans:
   4. User can search for other users by name or email
   5. App handles iOS contact permission gracefully including limited access mode
   6. App handles Android contact permission with proper permission request flow
+**Plans**: 3 plans
+
+Plans:
+- [ ] 26-01-PLAN.md -- Dependencies (expo-contacts, libphonenumber-js) and RPC functions (match_phones, search_users)
+- [ ] 26-02-PLAN.md -- Service libraries (lib/contacts.ts, lib/discovery.ts) with permission handling and matching
+- [ ] 26-03-PLAN.md -- UI: MatchedContactCard component, discover.tsx screen, Friends tab Find Friends button
 
 #### Phase 27: Public Dates Management
 **Goal**: Users can create, edit, and delete custom public dates that friends can see (anniversaries, special events)
@@ -498,6 +504,6 @@ Phases execute in order: 23 -> 24 -> 25 -> 26 -> 27 -> 28
 | 23. Database Foundation | v1.4 | 1/1 | Complete | 2026-02-09 |
 | 24. Friend Core Services & Tab | v1.4 | 1/1 | Complete | 2026-02-09 |
 | 25. Friend Requests Flow | v1.4 | 3/3 | Complete | 2026-02-10 |
-| 26. Contact Import & Discovery | v1.4 | 0/? | Not started | - |
+| 26. Contact Import & Discovery | v1.4 | 0/3 | Not started | - |
 | 27. Public Dates Management | v1.4 | 0/? | Not started | - |
 | 28. Calendar Integration | v1.4 | 0/? | Not started | - |
