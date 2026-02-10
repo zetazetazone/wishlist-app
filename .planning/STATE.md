@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-09)
 
 ## Current Position
 
-Phase: 27 of 6 (Public Dates Management)
-Plan: 2 of 2 complete
-Status: Phase complete
-Last activity: 2026-02-10 — Completed 27-02 Public Dates Screen (add/edit/delete, DateTimePicker, navigation)
+Phase: 28 of 6 (Calendar Integration)
+Plan: 1 of 2 complete
+Status: In progress
+Last activity: 2026-02-10 — Completed 28-01 Friend Dates Service (teal calendar dots for friend birthdays/public dates)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [########░ ] 83% v1.4 (5/6 phases complete)
+Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [#########░] 92% v1.4 (5.5/6 phases complete)
 
 ## v1.4 Phase Overview
 
@@ -25,7 +25,7 @@ Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [########░ ] 83% v1.4 (5/6 p
 | 25 | Friend Requests Flow | FRND-01-04,07-09 FTAB-03 | Complete |
 | 26 | Contact Import & Discovery | DISC-01-06 FTAB-04 | Complete |
 | 27 | Public Dates Management | DATE-01-05 | Complete |
-| 28 | Calendar Integration | FCAL-01-05 | Not started |
+| 28 | Calendar Integration | FCAL-01-05 | In progress (1/2 plans) |
 
 ## Milestone History
 
@@ -96,6 +96,11 @@ Key decisions from v1.0/v1.1/v1.2/v1.3 archived in PROJECT.md Key Decisions tabl
 - Guard clause `if (saving) return;` to prevent double-tap duplicate entries
 - Platform-specific DateTimePicker (iOS inline spinner, Android modal)
 
+**Phase 28 Plan 01 Decisions:**
+- Teal color (#0D9488) for all friend dates to distinguish from group birthday colors
+- Parallel loading of group birthdays and friend dates with Promise.all (2x faster)
+- Month-day matching for selected date filtering (handles recurring dates correctly)
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -126,6 +131,6 @@ From v1.4 Phase 23:
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Phase 27 complete
-Resume file: N/A - phase complete
-Next: Phase 28 (Calendar Integration)
+Stopped at: 28-01 complete (friend dates service and calendar integration)
+Resume file: .planning/phases/28-calendar-integration/28-02-PLAN.md
+Next: Phase 28 Plan 02 (Calendar Export & Sync)
