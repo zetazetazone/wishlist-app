@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -30,13 +30,16 @@ interface MatchedContactCardProps {
 export function MatchedContactCard({ user, onStatusChange, index = 0 }: MatchedContactCardProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  // Optimistic UI: locally override status after successful action
+  const [localStatus, setLocalStatus] = useState<string | null>(null);
 
   // Check if this is a MatchedUser (has contactName) or SearchResult (has email)
   const isMatchedUser = 'contactName' in user;
   const contactName = isMatchedUser ? (user as MatchedUser).contactName : null;
   const displayName = user.displayName;
   const avatarUrl = user.avatarUrl;
-  const relationshipStatus = user.relationshipStatus;
+  // Use local status if set (optimistic), otherwise use server status
+  const relationshipStatus = localStatus || user.relationshipStatus;
 
   // Get initials for avatar fallback
   const getInitials = (name: string) => {
@@ -52,6 +55,9 @@ export function MatchedContactCard({ user, onStatusChange, index = 0 }: MatchedC
     setLoading(true);
     try {
       await sendFriendRequest(user.userId);
+      // Optimistic UI: immediately show "Sent" without waiting for refresh
+      setLocalStatus('pending_outgoing');
+      // Still trigger refresh for consistency
       onStatusChange();
     } catch (error) {
       Alert.alert(
@@ -93,12 +99,18 @@ export function MatchedContactCard({ user, onStatusChange, index = 0 }: MatchedC
               paddingHorizontal: spacing.md,
               paddingVertical: spacing.sm,
               borderRadius: borderRadius.md,
-              opacity: loading ? 0.6 : 1,
+              opacity: loading ? 0.7 : 1,
+              minWidth: 60,
+              alignItems: 'center',
             }}
           >
-            <Text style={{ color: colors.white, fontWeight: '600', fontSize: 14 }}>
-              {loading ? '...' : 'Add'}
-            </Text>
+            {loading ? (
+              <ActivityIndicator size="small" color={colors.white} />
+            ) : (
+              <Text style={{ color: colors.white, fontWeight: '600', fontSize: 14 }}>
+                Add
+              </Text>
+            )}
           </TouchableOpacity>
         );
 
