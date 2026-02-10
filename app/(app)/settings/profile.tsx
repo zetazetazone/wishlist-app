@@ -250,6 +250,32 @@ export default function ProfileSettingsScreen() {
           </Box>
         </Pressable>
 
+        {/* Important Dates Link */}
+        <Pressable
+          onPress={() => router.push('/settings/public-dates')}
+        >
+          <Box
+            backgroundColor="$white"
+            borderRadius="$lg"
+            padding="$4"
+            borderWidth={1}
+            borderColor="$borderLight200"
+          >
+            <HStack justifyContent="space-between" alignItems="center">
+              <VStack>
+                <Text fontWeight="$semibold">Important Dates</Text>
+                <Text fontSize="$xs" color="$textLight500">
+                  Anniversaries & special events
+                </Text>
+              </VStack>
+              <HStack alignItems="center" space="sm">
+                <MaterialCommunityIcons name="calendar-heart" size={20} color="#8B1538" />
+                <MaterialCommunityIcons name="chevron-right" size={20} color="#9CA3AF" />
+              </HStack>
+            </HStack>
+          </Box>
+        </Pressable>
+
         {/* Save Button */}
         <Button
           size="lg"

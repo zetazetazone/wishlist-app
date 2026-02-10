@@ -27,6 +27,12 @@ export default function SettingsLayout() {
           title: 'Personal Details',
         }}
       />
+      <Stack.Screen
+        name="public-dates"
+        options={{
+          title: 'Important Dates',
+        }}
+      />
     </Stack>
   );
 }
