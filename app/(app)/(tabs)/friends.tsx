@@ -100,27 +100,6 @@ export default function FriendsScreen() {
             paddingHorizontal: spacing.lg,
           }}
         >
-          {/* Find Friends Link (left side) */}
-          <TouchableOpacity
-            style={styles.findFriendsLink}
-            onPress={() => router.push('/discover')}
-          >
-            <MaterialCommunityIcons name="account-search" size={24} color={colors.white} />
-          </TouchableOpacity>
-
-          {/* Requests Link (right side) */}
-          <TouchableOpacity
-            style={styles.requestsLink}
-            onPress={() => router.push('/requests')}
-          >
-            <MaterialCommunityIcons name="account-clock" size={24} color={colors.white} />
-            {pendingCount > 0 && (
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>{pendingCount}</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-
           <MotiView
             from={{ opacity: 0, translateY: -20 }}
             animate={{ opacity: 1, translateY: 0 }}
@@ -148,6 +127,27 @@ export default function FriendsScreen() {
               </Text>
             </View>
           </MotiView>
+
+          {/* Find Friends Link (left side) - rendered after title for z-order */}
+          <TouchableOpacity
+            style={styles.findFriendsLink}
+            onPress={() => router.push('/discover')}
+          >
+            <MaterialCommunityIcons name="account-search" size={24} color={colors.white} />
+          </TouchableOpacity>
+
+          {/* Requests Link (right side) */}
+          <TouchableOpacity
+            style={styles.requestsLink}
+            onPress={() => router.push('/requests')}
+          >
+            <MaterialCommunityIcons name="account-clock" size={24} color={colors.white} />
+            {pendingCount > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{pendingCount}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
         </LinearGradient>
 
         <ScrollView
@@ -254,14 +254,14 @@ const styles = StyleSheet.create({
     left: spacing.lg,
     top: 60,
     padding: spacing.sm,
-    zIndex: 1,
+    zIndex: 10,
   },
   requestsLink: {
     position: 'absolute',
     right: spacing.lg,
     top: 60,
     padding: spacing.sm,
-    zIndex: 1,
+    zIndex: 10,
   },
   badge: {
     position: 'absolute',
