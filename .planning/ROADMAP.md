@@ -6,7 +6,7 @@
 - **v1.1 My Wishlist Polish + Profile Editing** - Phases 6-10 (shipped 2026-02-03)
 - **v1.2 Group Experience** - Phases 11-17 (shipped 2026-02-05)
 - **v1.3 Gift Claims & Personal Details** - Phases 18-22 (shipped 2026-02-09)
-- **v1.4 Friends System** - Phases 23-28 (in progress)
+- **v1.4 Friends System** - Phases 23-28 (shipped 2026-02-10) — [archive](milestones/v1.4-ROADMAP.md)
 
 ## Phases
 
@@ -371,121 +371,48 @@ Plans:
 
 </details>
 
-### v1.4 Friends System (In Progress)
+<details>
+<summary>v1.4 Friends System (Phases 23-28) - SHIPPED 2026-02-10</summary>
 
-**Milestone Goal:** Enable users to build a friends network outside of groups, discover friends via phone contacts, and see friends' birthdays and custom dates in their calendar.
-
-**Key architectural decisions:**
-- `friends` table with ordered bidirectional constraint (`user_a_id < user_b_id`) prevents duplicates
-- `friend_requests` table with status enum (pending/accepted/rejected/blocked) manages request state
-- `public_dates` table with month/day storage for annual recurrence
-- `are_friends()` helper function centralizes bidirectional query logic for RLS policies
-- Phone number normalization to E.164 format for cross-platform contact matching
-- Friend dates use distinct teal color in calendar (group dates use varied colors)
-
-#### Phase 23: Database Foundation
-**Goal**: Database schema for friends, friend requests, and public dates with bidirectional relationship handling and friend-visibility RLS patterns
-**Depends on**: Phase 22
-**Requirements**: None (foundation for all v1.4 features)
-**Success Criteria** (what must be TRUE):
-  1. `friends` table exists with ordered bidirectional constraint enforcing single-row per friendship
-  2. `friend_requests` table exists with status enum supporting pending/accepted/rejected/blocked states
-  3. `public_dates` table exists with month/day columns for annual recurrence and friends-only visibility
-  4. `are_friends()` helper function enables clean RLS policies without OR-condition complexity
-  5. Phone column added to users table with E.164 normalization for contact matching
+### Phase 23: Database Foundation
+**Goal**: Database schema for friends, friend requests, and public dates
 **Plans**: 1 plan
+- [x] 23-01-PLAN.md -- Complete v1.4 database foundation
 
-Plans:
-- [x] 23-01-PLAN.md -- Complete v1.4 database foundation (tables, RLS, helper functions, RPC)
-
-#### Phase 24: Friend Core Services & Tab
-**Goal**: Core friend CRUD operations and Friends tab navigation with friend list display
-**Depends on**: Phase 23
-**Requirements**: FRND-05, FRND-06, FTAB-01, FTAB-02, FTAB-05
-**Success Criteria** (what must be TRUE):
-  1. User can view their friends list in the Friends tab
-  2. Friends tab appears in main navigation at appropriate position
-  3. Friend list displays profile photo, name, and basic info for each friend
-  4. User can tap a friend to view their profile
-  5. User can remove an existing friend from their friends list
+### Phase 24: Friend Core Services & Tab
+**Goal**: Core friend CRUD operations and Friends tab navigation
 **Plans**: 1 plan
+- [x] 24-01-PLAN.md -- Friend service library and Friends tab
 
-Plans:
-- [x] 24-01-PLAN.md -- Friend service library, FriendCard component, Friends tab screen, navigation integration
-
-#### Phase 25: Friend Requests Flow
-**Goal**: Complete friend request lifecycle with send/accept/decline, pending requests view, and real-time notifications
-**Depends on**: Phase 24
-**Requirements**: FRND-01, FRND-02, FRND-03, FRND-04, FRND-07, FRND-08, FRND-09, FTAB-03
-**Success Criteria** (what must be TRUE):
-  1. User can send a friend request to another user from their profile
-  2. User can accept an incoming friend request (creates friendship)
-  3. User can decline an incoming friend request
-  4. User can view pending friend requests (both incoming and outgoing) in Requests screen
-  5. User receives push notification when receiving a new friend request
-  6. User receives push notification when their friend request is accepted
+### Phase 25: Friend Requests Flow
+**Goal**: Complete friend request lifecycle with notifications
 **Plans**: 3 plans
+- [x] 25-01-PLAN.md -- Notification triggers and service layer
+- [x] 25-02-PLAN.md -- Pending requests screen
+- [x] 25-03-PLAN.md -- Integration with Friends tab and member profile
 
-Plans:
-- [x] 25-01-PLAN.md -- Database notification triggers and friend request service layer
-- [x] 25-02-PLAN.md -- Pending requests screen with incoming/outgoing tabs
-- [x] 25-03-PLAN.md -- Integration: Friends tab header link and member profile Add Friend button
-
-#### Phase 26: Contact Import & Discovery
-**Goal**: Import phone contacts to discover users who have the app, with proper permission handling for iOS and Android
-**Depends on**: Phase 25
-**Requirements**: DISC-01, DISC-02, DISC-03, DISC-04, DISC-05, DISC-06, FTAB-04
-**Success Criteria** (what must be TRUE):
-  1. User can import phone contacts to find friends who already use the app
-  2. Contact matching uses normalized E.164 phone numbers for reliable cross-platform matching
-  3. Matched contacts show correct friendship status (Add Friend / Request Pending / Already Friends)
-  4. User can search for other users by name or email
-  5. App handles iOS contact permission gracefully including limited access mode
-  6. App handles Android contact permission with proper permission request flow
+### Phase 26: Contact Import & Discovery
+**Goal**: Import phone contacts to discover app users
 **Plans**: 3 plans
+- [x] 26-01-PLAN.md -- Dependencies and RPC functions
+- [x] 26-02-PLAN.md -- Contact and discovery service libraries
+- [x] 26-03-PLAN.md -- Find Friends UI
 
-Plans:
-- [x] 26-01-PLAN.md -- Dependencies (expo-contacts, libphonenumber-js) and RPC functions (match_phones, search_users)
-- [x] 26-02-PLAN.md -- Service libraries (lib/contacts.ts, lib/discovery.ts) with permission handling and matching
-- [x] 26-03-PLAN.md -- UI: MatchedContactCard component, discover.tsx screen, Friends tab Find Friends button
-
-#### Phase 27: Public Dates Management
-**Goal**: Users can create, edit, and delete custom public dates that friends can see (anniversaries, special events)
-**Depends on**: Phase 23
-**Requirements**: DATE-01, DATE-02, DATE-03, DATE-04, DATE-05
-**Success Criteria** (what must be TRUE):
-  1. User can add a custom public date (anniversary, event) from profile settings
-  2. User can edit their own public dates (title, date, description)
-  3. User can delete their own public dates
-  4. Public dates are visible to all user's friends (friends-only visibility enforced)
-  5. Public dates use month/day format for annual recurrence with optional year
+### Phase 27: Public Dates Management
+**Goal**: Users can manage custom public dates
 **Plans**: 2 plans
+- [x] 27-01-PLAN.md -- Service layer and PublicDateCard
+- [x] 27-02-PLAN.md -- Public dates screen
 
-Plans:
-- [x] 27-01-PLAN.md -- Service layer (lib/publicDates.ts) and PublicDateCard component
-- [x] 27-02-PLAN.md -- Public dates screen, navigation integration, and verification
-
-#### Phase 28: Calendar Integration
-**Goal**: Friend birthdays and public dates appear in in-app calendar with device sync support
-**Depends on**: Phases 24, 27
-**Requirements**: FCAL-01, FCAL-02, FCAL-03, FCAL-04, FCAL-05
-**Success Criteria** (what must be TRUE):
-  1. Friend birthdays appear in the in-app calendar view
-  2. Friend custom public dates appear in the in-app calendar view
-  3. Friend dates display with distinct teal color from group dates
-  4. Calendar events show source indicator distinguishing "Friend" from "Group" events
-  5. User can sync friend dates to device calendar (Google/Apple) alongside group birthdays
+### Phase 28: Calendar Integration
+**Goal**: Friend dates in calendar with device sync
 **Plans**: 2 plans
+- [x] 28-01-PLAN.md -- Friend dates service and calendar integration
+- [x] 28-02-PLAN.md -- Source indicator and device sync
 
-Plans:
-- [ ] 28-01-PLAN.md -- Friend dates service and calendar integration (FCAL-01, FCAL-02, FCAL-03)
-- [ ] 28-02-PLAN.md -- Source indicator UI and device sync extension (FCAL-04, FCAL-05)
+</details>
 
 ## Progress
-
-**Execution Order:**
-Phases execute in order: 23 -> 24 -> 25 -> 26 -> 27 -> 28
-(Phase 27 can run in parallel with 25-26 after 23 completes; Phase 28 depends on 24 and 27)
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -516,4 +443,4 @@ Phases execute in order: 23 -> 24 -> 25 -> 26 -> 27 -> 28
 | 25. Friend Requests Flow | v1.4 | 3/3 | Complete | 2026-02-10 |
 | 26. Contact Import & Discovery | v1.4 | 3/3 | Complete | 2026-02-10 |
 | 27. Public Dates Management | v1.4 | 2/2 | Complete | 2026-02-10 |
-| 28. Calendar Integration | v1.4 | 0/2 | Not started | - |
+| 28. Calendar Integration | v1.4 | 2/2 | Complete | 2026-02-10 |

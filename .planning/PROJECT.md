@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for birthdays and celebrations. Members share Amazon wishlists, claim items secretly, and the app automatically assigns a "Gift Leader" for each celebration based on birthday rotation. Features push notifications, secret chat rooms (excluding celebrant), in-app birthday calendar with device sync, and smart reminder sequences. Built with React Native/Expo and Supabase.
+A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for birthdays and celebrations. Members share wishlists, claim items secretly, and the app automatically assigns a "Gift Leader" for each celebration based on birthday rotation. Features push notifications, secret chat rooms (excluding celebrant), in-app birthday calendar with device sync, smart reminder sequences, and a friends network for discovering contacts and seeing friend dates. Built with React Native/Expo and Supabase.
 
 ## Core Value
 
@@ -69,23 +69,21 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 - ✓ Group members can add secret notes about other members (hidden from profile owner) — v1.3
 - ✓ Secret notes visible only to other group members for gift-giving context — v1.3
 
+- ✓ User can import phone contacts to find friends who use the app — v1.4
+- ✓ User can send friend requests to other users — v1.4
+- ✓ User can accept or decline incoming friend requests — v1.4
+- ✓ User can view pending friend requests in Requests screen — v1.4
+- ✓ User can see friends list with their profiles — v1.4
+- ✓ User can add custom public dates (anniversaries, events) to their profile — v1.4
+- ✓ Friends can see each other's birthday and custom public dates in calendar — v1.4
+- ✓ User can sync friend dates to device calendar (Google/Apple) — v1.4
+- ✓ User can remove friends — v1.4
+- ✓ User can block another user (prevents future friend requests) — v1.4
+- ✓ User can search for other users by name or email — v1.4
+
 ### Active
 
-**v1.4 — Friends System**
-
-- [ ] User can import phone contacts to find friends who use the app
-- [ ] User can send friend requests to other users
-- [ ] User can accept or decline incoming friend requests
-- [ ] User can view pending friend requests in Requests tab
-- [ ] User can view suggested friends in Suggested tab (contacts + mutual friends/groups)
-- [ ] User can see friends list with their profiles
-- [ ] User can add custom public dates (anniversaries, events) to their profile
-- [ ] Friends can see each other's birthday and custom public dates
-- [ ] Adding a friend syncs their birthday + public dates to user's calendar
-- [ ] User can invite friends to groups
-- [ ] User can remove friends
-
-**Deferred to v1.5+**
+**v1.5+ — Future Enhancements**
 
 - [ ] Instagram integration for friend discovery
 - [ ] User can configure notification preferences
@@ -93,6 +91,10 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 - [ ] User can add reactions to messages
 - [ ] Gift Leader progress dashboard with visual coordination status
 - [ ] Auto-fallback when Gift Leader is unavailable
+- [ ] Suggested friends based on mutual friends/groups
+- [ ] Mutual friend display ("You and Sarah have 3 mutual friends")
+- [ ] Friend birthday reminders (separate from calendar events)
+- [ ] User can invite friends to groups from friend list
 
 ### Out of Scope
 
@@ -104,21 +106,28 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 - Location-based reminders — privacy concerns, requires continuous tracking
 - Multiple calendars per group — one birthday calendar per group is sufficient
 - Mystery Box purchasing — v1.1 adds placeholder only, actual purchasing deferred
+- Instagram friend discovery — OAuth complexity, phone contacts sufficient for now
+- Auto-friend via group membership — explicit friend requests preferred
+- Per-date visibility controls — all dates public to friends is sufficient
+- Friend wishlists visibility — v1.4 focuses on dates, wishlist sharing separate feature
 
 ## Context
 
-**Shipped v1.0 with:**
-- 12,432 lines of TypeScript across 77 files
+**Shipped v1.4 with:**
+- ~30,000 lines of TypeScript across 140+ files
 - React Native 0.81.5 with Expo 54
 - Supabase for auth, database, realtime, edge functions, and storage
-- 10 database migrations, 2 pg_cron jobs, 1 Edge Function
-- Comprehensive RLS security with celebrant exclusion enforcement
+- 14 database migrations, 2 pg_cron jobs, 1 Edge Function
+- Friends system with bidirectional relationships and contact matching
+- Comprehensive RLS security with celebrant exclusion, subject exclusion, and friends-only patterns
 
 **Tech stack:**
 - React Native + Expo 54 (managed workflow)
 - Supabase (Auth, Database, Realtime, Edge Functions, Storage)
 - expo-notifications for push delivery
 - expo-calendar for device sync
+- expo-contacts for contact import (v1.4)
+- libphonenumber-js for E.164 phone normalization (v1.4)
 - react-native-calendars for in-app calendar
 - @shopify/flash-list for performant lists
 
@@ -127,6 +136,7 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 2. Configure webhook following `docs/WEBHOOK-SETUP.md`
 3. Create `avatars` storage bucket (public)
 4. Enable pg_cron extension in Supabase Dashboard
+5. Run `npx supabase db reset` to apply all migrations
 
 ## Constraints
 
@@ -149,18 +159,29 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 | Celebrant exclusion at RLS level | Security-critical - prevents API-level data leakage | ✓ Good - secure by default |
 | 15-minute cron for timezone coverage | Matches 9:00 AM local time targeting | ✓ Good - accurate delivery |
 | Nullable TIMESTAMPTZ for read_at | Richer info than boolean, same query pattern | ✓ Good - future-proof |
+| Ordered bidirectional friends constraint | `user_a_id < user_b_id` prevents duplicate rows | ✓ Good - clean data model |
+| are_friends() SECURITY DEFINER helper | Enables RLS policies without recursion issues | ✓ Good - secure and reusable |
+| E.164 phone normalization | Cross-platform contact matching works reliably | ✓ Good - consistent matching |
+| Friend dates in teal (#0D9488) | Visual distinction from group birthday colors | ✓ Good - clear differentiation |
+| Month/day storage for public dates | Enables efficient annual recurrence queries | ✓ Good - flexible design |
 
-## Current Milestone: v1.4 Friends System
+## Current State
 
-**Goal:** Enable users to build a friends network outside of groups, discover friends via phone contacts, and see friends' birthdays and custom dates in their calendar.
+**v1.4 Friends System — SHIPPED 2026-02-10**
 
-**Target features:**
-- Contact Import: Match phone contacts by number to find existing app users
-- Friend Requests: Send/accept/decline with Requests tab and Suggested tab
-- Suggestions: Based on phone contacts who use the app + mutual friends/groups
-- Custom Public Dates: Users can add anniversaries, events visible to all friends
-- Calendar Integration: Adding a friend syncs their birthday + public dates to your calendar
-- Friends ↔ Groups: Friends exist independently but can be invited to groups
+Delivered complete friends network:
+- Contact import with iOS 18 limited access and E.164 phone normalization
+- Friend requests (send/accept/decline/block) with push notifications
+- Friends tab with friend list and pending requests badge
+- Public dates management for anniversaries and special events
+- Calendar integration with friend dates in teal and device sync
+
+**Next Milestone Goals (v1.5+)**
+- Instagram friend discovery
+- Notification preferences
+- Chat read receipts and reactions
+- Gift Leader dashboard
+- Suggested friends based on mutual connections
 
 ---
-*Last updated: 2026-02-09 after v1.4 milestone start*
+*Last updated: 2026-02-10 after v1.4 milestone*

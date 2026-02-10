@@ -2,104 +2,35 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-09)
+See: .planning/PROJECT.md (updated 2026-02-10)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.4 Friends System — Phase 27 complete
+**Current focus:** Planning next milestone (v1.5+)
 
 ## Current Position
 
-Phase: 28 of 6 (Calendar Integration)
-Plan: 1 of 2 complete
-Status: In progress
-Last activity: 2026-02-10 — Completed 28-01 Friend Dates Service (teal calendar dots for friend birthdays/public dates)
+Phase: N/A (between milestones)
+Plan: N/A
+Status: Ready to plan next milestone
+Last activity: 2026-02-10 — v1.4 Friends System milestone complete
 
-Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [#########░] 92% v1.4 (5.5/6 phases complete)
-
-## v1.4 Phase Overview
-
-| Phase | Name | Requirements | Status |
-|-------|------|--------------|--------|
-| 23 | Database Foundation | Foundation for all | Complete |
-| 24 | Friend Core Services & Tab | FRND-05,06 FTAB-01,02,05 | Complete |
-| 25 | Friend Requests Flow | FRND-01-04,07-09 FTAB-03 | Complete |
-| 26 | Contact Import & Discovery | DISC-01-06 FTAB-04 | Complete |
-| 27 | Public Dates Management | DATE-01-05 | Complete |
-| 28 | Calendar Integration | FCAL-01-05 | In progress (1/2 plans) |
+Progress: [##########] 100% v1.0-v1.4 complete (28 phases shipped)
 
 ## Milestone History
 
-- **v1.0 MVP** - Shipped 2026-02-02 (5 phases, 10 plans + 1 gap closure)
-- **v1.1 Polish** - Shipped 2026-02-03 (5 phases, 13 plans including gap closures)
-- **v1.2 Group Experience** - Shipped 2026-02-05 (7 phases, 18 plans including gap closures)
-- **v1.3 Gift Claims & Personal Details** - Shipped 2026-02-09 (5 phases, 15 plans including gap closures)
+- **v1.0 MVP** - Shipped 2026-02-02 (5 phases, 10 plans)
+- **v1.1 Polish** - Shipped 2026-02-03 (5 phases, 13 plans)
+- **v1.2 Group Experience** - Shipped 2026-02-05 (7 phases, 18 plans)
+- **v1.3 Gift Claims & Personal Details** - Shipped 2026-02-09 (5 phases, 15 plans)
+- **v1.4 Friends System** - Shipped 2026-02-10 (6 phases, 12 plans)
 
 ## Accumulated Context
 
 ### Decisions
 
-Key decisions from v1.0/v1.1/v1.2/v1.3 archived in PROJECT.md Key Decisions table and previous STATE.md versions.
+Key decisions from all milestones archived in PROJECT.md Key Decisions table.
 
-**v1.4 Architectural Decisions (from research):**
-- `friends` table with ordered bidirectional constraint (`user_a_id < user_b_id`) prevents duplicate rows
-- `friend_requests` table with status enum (pending/accepted/rejected/blocked)
-- `public_dates` table with month/day storage for annual recurrence
-- `are_friends()` helper function centralizes bidirectional query logic for RLS policies
-- Phone number normalization to E.164 format via `libphonenumber-js`
-- Friend dates use teal color in calendar, group dates use varied colors
-- iOS 18 limited contact access handled via `accessPrivileges` property check
-- Rate limiting: max 20 friend requests per hour per user
-
-**Phase 23 Decisions:**
-- No direct INSERT on friends table - friendships created only via accept_friend_request RPC
-- Partial unique index on friend_requests uses LEAST/GREATEST for bidirectional dedup
-
-**Phase 24 Decisions:**
-- Bidirectional OR query via `.or()` for friends lookup (more efficient than two separate queries)
-- Avatar URLs converted at fetch time in getFriends() for display readiness
-- Three-dot menu triggers remove directly (dropdown deferred to Phase 25 if more actions needed)
-
-**Phase 25 Decisions:**
-- Notification triggers use WHEN clause for efficiency (only fire when conditions met)
-- Rate limit of 20 requests/hour enforced in TypeScript (not DB constraint) for better UX feedback
-- Block check queries bidirectionally before INSERT to prevent blocked user circumvention
-- Segment control uses white fill for active tab on semi-transparent burgundy background
-- Block option presented as third Alert button in decline flow (Decline vs Block & Decline)
-- Badge count refreshes on tab focus via useFocusEffect (not real-time push)
-- Inline getIncomingRequestId helper in member profile (profile-specific use case)
-- Relationship status loaded in loadMemberData for single-fetch efficiency
-
-**Phase 26 Plan 01 Decisions:**
-- Permission strings explain WHY (find friends) not just WHAT (access contacts)
-- search_users escapes ILIKE special chars (%, _, \) via regexp_replace for security
-- search_users orders by match quality: exact match first, starts-with second, contains third
-- Both RPC functions use same bidirectional blocked user check pattern from accept_friend_request
-
-**Phase 26 Plan 02 Decisions:**
-- Import CountryCode type directly from libphonenumber-js/mobile (types module path doesn't exist)
-- Batch size of 100 phones per RPC call for API performance
-- Skip blocked users defensively even though RPC filters them (TypeScript type safety)
-
-**Phase 26 Plan 03 Decisions:**
-- Accept button navigates to /requests screen (MatchedUser doesn't include requestId)
-- Find Friends button placed on left side of header to balance requests icon on right
-- Search debounced at 300ms to prevent excessive API calls
-- MatchedContactCard supports both MatchedUser and SearchResult types via union
-
-**Phase 27 Plan 01 Decisions:**
-- Use month - 1 when constructing Date objects for formatting (database 1-12, Date constructor 0-11)
-- Calendar heart icon for public dates to distinguish from friend cards
-- Separate onEdit and onDelete handlers to prevent accidental deletions
-
-**Phase 27 Plan 02 Decisions:**
-- Inline collapsible form instead of separate modal/screen (simpler UX)
-- Guard clause `if (saving) return;` to prevent double-tap duplicate entries
-- Platform-specific DateTimePicker (iOS inline spinner, Android modal)
-
-**Phase 28 Plan 01 Decisions:**
-- Teal color (#0D9488) for all friend dates to distinguish from group birthday colors
-- Parallel loading of group birthdays and friend dates with Promise.all (2x faster)
-- Month-day matching for selected date filtering (handles recurring dates correctly)
+v1.4 decisions archived in `.planning/milestones/v1.4-ROADMAP.md`.
 
 ### Pending Todos (Manual Setup)
 
@@ -110,14 +41,13 @@ From v1.0/v1.1:
 4. Enable pg_cron extension in Supabase Dashboard
 5. Build development client: `npx eas build --profile development`
 
-From v1.4 Phase 23:
-6. Start Docker Desktop and run `npx supabase db reset` to apply migration
+From v1.4:
+6. Run `npx supabase db reset` to apply all migrations
 
 ### Blockers/Concerns
 
 - Pre-existing TypeScript errors (type exports for Group, WishlistItem) - non-blocking
 - npm peer dependency workaround (--legacy-peer-deps) for React 19 - acceptable
-- Docker not running blocked local migration verification (Phase 23)
 
 ### Quick Tasks Completed
 
@@ -131,6 +61,6 @@ From v1.4 Phase 23:
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: 28-01 complete (friend dates service and calendar integration)
-Resume file: .planning/phases/28-calendar-integration/28-02-PLAN.md
-Next: Phase 28 Plan 02 (Calendar Export & Sync)
+Stopped at: v1.4 milestone archived
+Resume file: N/A (between milestones)
+Next: /gsd:new-milestone to start v1.5
