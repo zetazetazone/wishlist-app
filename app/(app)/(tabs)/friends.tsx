@@ -100,6 +100,30 @@ export default function FriendsScreen() {
             paddingHorizontal: spacing.lg,
           }}
         >
+          {/* Header Row with icons */}
+          <View style={styles.headerRow}>
+            <TouchableOpacity
+              style={styles.headerButton}
+              onPress={() => router.push('/discover')}
+            >
+              <MaterialCommunityIcons name="account-search" size={24} color={colors.white} />
+            </TouchableOpacity>
+
+            <View style={{ flex: 1 }} />
+
+            <TouchableOpacity
+              style={styles.headerButton}
+              onPress={() => router.push('/requests')}
+            >
+              <MaterialCommunityIcons name="account-clock" size={24} color={colors.white} />
+              {pendingCount > 0 && (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>{pendingCount}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
+
           <MotiView
             from={{ opacity: 0, translateY: -20 }}
             animate={{ opacity: 1, translateY: 0 }}
@@ -127,27 +151,6 @@ export default function FriendsScreen() {
               </Text>
             </View>
           </MotiView>
-
-          {/* Find Friends Link (left side) - rendered after title for z-order */}
-          <TouchableOpacity
-            style={styles.findFriendsLink}
-            onPress={() => router.push('/discover')}
-          >
-            <MaterialCommunityIcons name="account-search" size={24} color={colors.white} />
-          </TouchableOpacity>
-
-          {/* Requests Link (right side) */}
-          <TouchableOpacity
-            style={styles.requestsLink}
-            onPress={() => router.push('/requests')}
-          >
-            <MaterialCommunityIcons name="account-clock" size={24} color={colors.white} />
-            {pendingCount > 0 && (
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>{pendingCount}</Text>
-              </View>
-            )}
-          </TouchableOpacity>
         </LinearGradient>
 
         <ScrollView
@@ -249,19 +252,13 @@ export default function FriendsScreen() {
 }
 
 const styles = StyleSheet.create({
-  findFriendsLink: {
-    position: 'absolute',
-    left: spacing.lg,
-    top: 60,
-    padding: spacing.sm,
-    zIndex: 10,
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.md,
   },
-  requestsLink: {
-    position: 'absolute',
-    right: spacing.lg,
-    top: 60,
+  headerButton: {
     padding: spacing.sm,
-    zIndex: 10,
   },
   badge: {
     position: 'absolute',
