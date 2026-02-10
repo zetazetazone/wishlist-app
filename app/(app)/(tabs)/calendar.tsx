@@ -369,11 +369,13 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '700',
     color: '#1f2937',
+    flex: 1,
   },
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    flexShrink: 0,
   },
   headerBadge: {
     flexDirection: 'row',
