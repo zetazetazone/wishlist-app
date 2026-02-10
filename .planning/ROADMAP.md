@@ -462,8 +462,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 27-01-PLAN.md -- Service layer (lib/publicDates.ts) and PublicDateCard component
-- [ ] 27-02-PLAN.md -- Public dates screen, navigation integration, and verification
+- [x] 27-01-PLAN.md -- Service layer (lib/publicDates.ts) and PublicDateCard component
+- [x] 27-02-PLAN.md -- Public dates screen, navigation integration, and verification
 
 #### Phase 28: Calendar Integration
 **Goal**: Friend birthdays and public dates appear in in-app calendar with device sync support
@@ -510,5 +510,5 @@ Phases execute in order: 23 -> 24 -> 25 -> 26 -> 27 -> 28
 | 24. Friend Core Services & Tab | v1.4 | 1/1 | Complete | 2026-02-09 |
 | 25. Friend Requests Flow | v1.4 | 3/3 | Complete | 2026-02-10 |
 | 26. Contact Import & Discovery | v1.4 | 3/3 | Complete | 2026-02-10 |
-| 27. Public Dates Management | v1.4 | 0/2 | Planned | - |
+| 27. Public Dates Management | v1.4 | 2/2 | Complete | 2026-02-10 |
 | 28. Calendar Integration | v1.4 | 0/? | Not started | - |
