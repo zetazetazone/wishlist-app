@@ -24,7 +24,8 @@
       "bundleIdentifier": "com.wishlistapp",
       "infoPlist": {
         "NSCalendarsUsageDescription": "We need calendar access to sync birthday reminders to your calendar",
-        "NSCalendarsFullAccessUsageDescription": "We need full calendar access to create and manage birthday events"
+        "NSCalendarsFullAccessUsageDescription": "We need full calendar access to create and manage birthday events",
+        "NSContactsUsageDescription": "Allow Wishlist to find friends who already use the app"
       }
     },
     "android": {
@@ -38,7 +39,8 @@
       "googleServicesFile": "./google-services.json",
       "permissions": [
         "android.permission.READ_CALENDAR",
-        "android.permission.WRITE_CALENDAR"
+        "android.permission.WRITE_CALENDAR",
+        "android.permission.READ_CONTACTS"
       ]
     },
     "web": {
@@ -54,7 +56,13 @@
           "sounds": []
         }
       ],
-      "expo-calendar"
+      "expo-calendar",
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Allow Wishlist to find friends who already use the app"
+        }
+      ]
     ],
     "owner": "zetazeta"
   }
