@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-09)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.4 Friends System — Phase 25 Complete, ready for Phase 26
+**Current focus:** v1.4 Friends System — Phase 26 in progress
 
 ## Current Position
 
-Phase: 25 of 6 (Friend Requests Flow) - COMPLETE
-Plan: 3 of 3 complete
-Status: Phase complete
-Last activity: 2026-02-10 — Completed 25-03 Integration (Friends tab header link, member profile friend button)
+Phase: 26 of 6 (Contact Import & Discovery)
+Plan: 1 of 3 complete
+Status: In progress
+Last activity: 2026-02-10 — Completed 26-01 Foundation (dependencies, RPC functions)
 
-Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [#####     ] 50% v1.4 (3/6 phases complete)
+Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [######    ] 58% v1.4 (3/6 phases + 1/3 plans)
 
 ## v1.4 Phase Overview
 
@@ -23,7 +23,7 @@ Progress: [##########] 100% v1.0+v1.1+v1.2+v1.3 | [#####     ] 50% v1.4 (3/6 pha
 | 23 | Database Foundation | Foundation for all | Complete |
 | 24 | Friend Core Services & Tab | FRND-05,06 FTAB-01,02,05 | Complete |
 | 25 | Friend Requests Flow | FRND-01-04,07-09 FTAB-03 | Complete |
-| 26 | Contact Import & Discovery | DISC-01-06 FTAB-04 | Not started |
+| 26 | Contact Import & Discovery | DISC-01-06 FTAB-04 | In progress (1/3) |
 | 27 | Public Dates Management | DATE-01-05 | Not started |
 | 28 | Calendar Integration | FCAL-01-05 | Not started |
 
@@ -69,6 +69,12 @@ Key decisions from v1.0/v1.1/v1.2/v1.3 archived in PROJECT.md Key Decisions tabl
 - Inline getIncomingRequestId helper in member profile (profile-specific use case)
 - Relationship status loaded in loadMemberData for single-fetch efficiency
 
+**Phase 26 Plan 01 Decisions:**
+- Permission strings explain WHY (find friends) not just WHAT (access contacts)
+- search_users escapes ILIKE special chars (%, _, \) via regexp_replace for security
+- search_users orders by match quality: exact match first, starts-with second, contains third
+- Both RPC functions use same bidirectional blocked user check pattern from accept_friend_request
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -85,7 +91,6 @@ From v1.4 Phase 23:
 
 - Pre-existing TypeScript errors (type exports for Group, WishlistItem) - non-blocking
 - npm peer dependency workaround (--legacy-peer-deps) for React 19 - acceptable
-- Phase 26 needs deeper research: `libphonenumber-js` integration, iOS 18 permission edge cases
 - Docker not running blocked local migration verification (Phase 23)
 
 ### Quick Tasks Completed
@@ -100,6 +105,6 @@ From v1.4 Phase 23:
 ## Session Continuity
 
 Last session: 2026-02-10
-Stopped at: Completed Phase 25 (all 3 plans)
-Resume file: N/A - phase complete
-Next: /gsd:plan-phase 26 (Contact Import & Discovery)
+Stopped at: Completed 26-01 Foundation
+Resume file: .planning/phases/26-contact-import-discovery/26-02-PLAN.md
+Next: Continue with 26-02 (Contact Service)
