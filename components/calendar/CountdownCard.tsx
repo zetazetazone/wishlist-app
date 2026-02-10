@@ -7,10 +7,13 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { GroupBirthday } from '../../lib/birthdays';
+import { type FriendDate, FRIEND_DATE_COLOR } from '../../lib/friendDates';
 import { getPlanningStatus, getCountdownText, getStatusColor, type PlanningStatus } from '../../utils/countdown';
 
+type CalendarEvent = GroupBirthday | FriendDate;
+
 interface CountdownCardProps {
-  birthday: GroupBirthday;
+  birthday: CalendarEvent;
   daysUntil: number;
   onPress?: () => void;
 }
@@ -32,6 +35,34 @@ export default function CountdownCard({
   const status = getPlanningStatus(daysUntil);
   const countdownText = getCountdownText(daysUntil);
   const statusColor = getStatusColor(status);
+
+  // Type guard to check if event is a friend date
+  const isFriendDate = (event: CalendarEvent): event is FriendDate => {
+    return 'source' in event && event.source === 'friend';
+  };
+
+  // Derive display values based on type
+  const isFromFriend = isFriendDate(birthday);
+
+  // Get display name (person's name)
+  const displayName = isFromFriend
+    ? birthday.title
+    : birthday.userName;
+
+  // Get source label for badge
+  const sourceLabel = isFromFriend
+    ? (birthday.type === 'birthday' ? 'Friend' : birthday.friendName)
+    : birthday.groupName;
+
+  // Get color for source indicator
+  const sourceColor = isFromFriend
+    ? FRIEND_DATE_COLOR
+    : birthday.groupColor;
+
+  // Get icon for type
+  const typeIcon = isFromFriend && birthday.type === 'public_date'
+    ? 'calendar-heart'  // Special icon for friend public dates
+    : undefined;        // Default icons from status
 
   // Get icon based on status
   const getStatusIcon = (s: PlanningStatus): string => {
@@ -75,13 +106,20 @@ export default function CountdownCard({
 
       <View style={styles.middleSection}>
         <Text style={styles.userName} numberOfLines={1}>
-          {birthday.userName}
+          {displayName}
         </Text>
         <View style={styles.groupRow}>
-          <View style={[styles.groupDot, { backgroundColor: birthday.groupColor }]} />
+          <View style={[styles.groupDot, { backgroundColor: sourceColor }]} />
           <Text style={styles.groupName} numberOfLines={1}>
-            {birthday.groupName}
+            {sourceLabel}
           </Text>
+          {isFromFriend && (
+            <View style={[styles.sourceBadge, { backgroundColor: `${FRIEND_DATE_COLOR}15` }]}>
+              <Text style={[styles.sourceBadgeText, { color: FRIEND_DATE_COLOR }]}>
+                {birthday.type === 'birthday' ? 'Birthday' : 'Date'}
+              </Text>
+            </View>
+          )}
         </View>
         <Text style={[styles.statusLabel, { color: statusColor }]}>
           {getStatusLabel(status)}
@@ -187,6 +225,16 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#6b7280',
     flex: 1,
+  },
+  sourceBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginLeft: 8,
+  },
+  sourceBadgeText: {
+    fontSize: 10,
+    fontWeight: '600',
   },
   statusLabel: {
     fontSize: 12,
