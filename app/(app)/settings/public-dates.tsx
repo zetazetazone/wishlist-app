@@ -82,6 +82,9 @@ export default function PublicDatesScreen() {
   };
 
   const handleSave = async () => {
+    // Prevent double-tap race condition
+    if (saving) return;
+
     // Validate title
     if (!title.trim()) {
       Alert.alert('Required', 'Please enter a title');
