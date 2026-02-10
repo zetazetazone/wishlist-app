@@ -8,6 +8,7 @@ import { View, StyleSheet } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import { format, setYear, getYear } from 'date-fns';
 import type { GroupBirthday } from '../../lib/birthdays';
+import type { FriendDate } from '../../lib/friendDates';
 
 // react-native-calendars marking types
 interface DotMarking {
@@ -25,6 +26,7 @@ interface MarkedDates {
 
 interface BirthdayCalendarProps {
   birthdays: GroupBirthday[];
+  friendDates?: FriendDate[];
   onDateSelect: (date: string) => void;
   selectedDate: string | null;
 }
@@ -35,21 +37,24 @@ interface BirthdayCalendarProps {
  * Features:
  * - Multi-dot marking for multiple birthdays on same date
  * - Each group gets a unique color
+ * - Friend dates shown with teal dots
  * - Swipe between months
  * - Monday start
  * - Burgundy theme matching app
  */
 export default function BirthdayCalendar({
   birthdays,
+  friendDates = [],
   onDateSelect,
   selectedDate,
 }: BirthdayCalendarProps) {
-  // Transform birthdays to markedDates format
+  // Transform birthdays and friend dates to markedDates format
   // Critical: useMemo for performance (react-native-calendars compares by reference)
   const markedDates = useMemo<MarkedDates>(() => {
     const marks: MarkedDates = {};
     const currentYear = getYear(new Date());
 
+    // Process group birthdays
     birthdays.forEach(birthday => {
       // Parse the birthday date and set to current year for display
       const birthdayDate = new Date(birthday.birthday);
@@ -73,12 +78,32 @@ export default function BirthdayCalendar({
       }
     });
 
-    // Highlight selected date if it has birthdays
+    // Process friend dates (birthdays and public dates)
+    friendDates.forEach(friendDate => {
+      // Normalize to current year for calendar display
+      const dateKey = `${currentYear}-${String(friendDate.month).padStart(2, '0')}-${String(friendDate.day).padStart(2, '0')}`;
+
+      // Initialize date entry if needed
+      if (!marks[dateKey]) {
+        marks[dateKey] = { dots: [] };
+      }
+
+      // Add dot for this friend date if not already present
+      const existingDot = marks[dateKey].dots?.find(d => d.key === friendDate.id);
+      if (!existingDot) {
+        marks[dateKey].dots!.push({
+          key: friendDate.id,
+          color: friendDate.color, // Teal (#0D9488)
+        });
+      }
+    });
+
+    // Highlight selected date if it has birthdays or friend dates
     if (selectedDate && marks[selectedDate]) {
       marks[selectedDate].selected = true;
       marks[selectedDate].selectedColor = '#8B1538';
     } else if (selectedDate) {
-      // Add selected date even without birthdays
+      // Add selected date even without birthdays/dates
       marks[selectedDate] = {
         selected: true,
         selectedColor: '#f3e5e8',
@@ -86,7 +111,7 @@ export default function BirthdayCalendar({
     }
 
     return marks;
-  }, [birthdays, selectedDate]);
+  }, [birthdays, friendDates, selectedDate]);
 
   // Handle day press
   const handleDayPress = (day: DateData) => {
