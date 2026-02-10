@@ -6,9 +6,11 @@
 import * as Calendar from 'expo-calendar';
 import { Platform } from 'react-native';
 
-// Re-export the GroupBirthday type from lib/birthdays for consistency
+// Re-export types for consistency
 export type { GroupBirthday } from '../lib/birthdays';
+export type { FriendDate } from '../lib/friendDates';
 import type { GroupBirthday } from '../lib/birthdays';
+import type { FriendDate } from '../lib/friendDates';
 
 // Result type for sync operations
 export interface SyncResult {
@@ -176,6 +178,48 @@ function getNextBirthdayOccurrence(birthday: Date | string): Date {
 }
 
 /**
+ * Calculate the next occurrence of a date from month/day
+ * Handles Feb 29 leap year edge case
+ */
+function getNextOccurrence(month: number, day: number): Date {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const currentYear = today.getFullYear();
+
+  // Handle Feb 29 (leap year)
+  let nextDate: Date;
+  if (month === 2 && day === 29) {
+    const isLeapYear = (currentYear % 4 === 0 && currentYear % 100 !== 0) || currentYear % 400 === 0;
+    if (isLeapYear) {
+      nextDate = new Date(currentYear, 1, 29); // Feb is month 1 (0-indexed)
+    } else {
+      nextDate = new Date(currentYear, 1, 28);
+    }
+  } else {
+    // month is 1-12 in database, Date constructor uses 0-11
+    nextDate = new Date(currentYear, month - 1, day);
+  }
+
+  nextDate.setHours(0, 0, 0, 0);
+
+  // If date already passed this year, set to next year
+  if (nextDate < today) {
+    const nextYear = currentYear + 1;
+    if (month === 2 && day === 29) {
+      const isNextLeapYear = (nextYear % 4 === 0 && nextYear % 100 !== 0) || nextYear % 400 === 0;
+      nextDate = isNextLeapYear
+        ? new Date(nextYear, 1, 29)
+        : new Date(nextYear, 1, 28);
+    } else {
+      nextDate = new Date(nextYear, month - 1, day);
+    }
+  }
+
+  return nextDate;
+}
+
+/**
  * Sync a single birthday event to the device calendar
  * Creates a yearly recurring event with reminders
  */
@@ -217,6 +261,54 @@ export async function syncBirthdayEvent(
 }
 
 /**
+ * Sync a friend date event to the device calendar
+ * Creates a yearly recurring event with reminders
+ */
+export async function syncFriendDateEvent(
+  friendDate: FriendDate
+): Promise<SyncResult> {
+  try {
+    const calendarId = await getOrCreateWishlistCalendar();
+
+    // Construct date from month/day using current year
+    const eventDate = getNextOccurrence(friendDate.month, friendDate.day);
+
+    // Format title based on type
+    const title = friendDate.type === 'birthday'
+      ? `${friendDate.title}'s Birthday`
+      : friendDate.title;
+
+    // Format notes with friend context
+    const notes = friendDate.type === 'birthday'
+      ? `Friend birthday - ${friendDate.friendName} - Wishlist App`
+      : `${friendDate.friendName}'s special date - Wishlist App`;
+
+    const eventId = await Calendar.createEventAsync(calendarId, {
+      title,
+      notes,
+      startDate: eventDate,
+      endDate: eventDate,
+      allDay: true,
+      alarms: [
+        { relativeOffset: -10080 }, // 1 week before
+        { relativeOffset: -1440 },  // 1 day before
+      ],
+      recurrenceRule: {
+        frequency: Calendar.Frequency.YEARLY,
+      },
+    });
+
+    return { success: true, eventId };
+  } catch (error) {
+    console.error('Friend date sync failed:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+    };
+  }
+}
+
+/**
  * Sync all birthdays to the device calendar
  * Returns results for each sync attempt
  */
@@ -245,6 +337,50 @@ export async function syncAllBirthdays(birthdays: GroupBirthday[]): Promise<Sync
       birthday.birthday,
       birthday.groupName
     );
+    results.push(result);
+  }
+
+  return results;
+}
+
+/**
+ * Sync all calendar events (group birthdays + friend dates) to device calendar
+ * Returns results for each sync attempt
+ */
+export async function syncAllCalendarEvents(
+  birthdays: GroupBirthday[],
+  friendDates: FriendDate[]
+): Promise<SyncResult[]> {
+  const totalEvents = birthdays.length + friendDates.length;
+  if (totalEvents === 0) {
+    return [];
+  }
+
+  const results: SyncResult[] = [];
+
+  // Ensure we have the calendar
+  try {
+    await getOrCreateWishlistCalendar();
+  } catch (error) {
+    return Array(totalEvents).fill({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to access calendar',
+    });
+  }
+
+  // Sync group birthdays
+  for (const birthday of birthdays) {
+    const result = await syncBirthdayEvent(
+      birthday.userName,
+      birthday.birthday,
+      birthday.groupName
+    );
+    results.push(result);
+  }
+
+  // Sync friend dates
+  for (const friendDate of friendDates) {
+    const result = await syncFriendDateEvent(friendDate);
     results.push(result);
   }
 
