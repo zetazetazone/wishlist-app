@@ -16,20 +16,23 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   checkCalendarPermission,
   requestCalendarPermission,
-  syncAllBirthdays,
+  syncAllCalendarEvents,
   getSyncSummary,
   type GroupBirthday,
+  type FriendDate,
   type SyncResult,
 } from '../../utils/deviceCalendar';
 
 interface CalendarSyncButtonProps {
   birthdays: GroupBirthday[];
+  friendDates?: FriendDate[];
   onSyncComplete?: (results: SyncResult[]) => void;
   style?: object;
 }
 
 export function CalendarSyncButton({
   birthdays,
+  friendDates = [],
   onSyncComplete,
   style,
 }: CalendarSyncButtonProps) {
@@ -37,10 +40,10 @@ export function CalendarSyncButton({
   const [syncComplete, setSyncComplete] = useState(false);
 
   const handleSync = useCallback(async () => {
-    if (birthdays.length === 0) {
+    if (birthdays.length === 0 && friendDates.length === 0) {
       Alert.alert(
-        'No Birthdays to Sync',
-        'There are no birthdays in your groups to sync to your calendar.',
+        'No Events to Sync',
+        'There are no calendar events to sync.',
         [{ text: 'OK' }]
       );
       return;
@@ -67,28 +70,28 @@ export function CalendarSyncButton({
         }
       }
 
-      // Sync all birthdays (dates can be strings, deviceCalendar handles conversion)
-      const results = await syncAllBirthdays(birthdays);
+      // Sync all calendar events (group birthdays + friend dates)
+      const results = await syncAllCalendarEvents(birthdays, friendDates);
 
       const summary = getSyncSummary(results);
 
       if (summary.failed === 0) {
         Alert.alert(
           'Sync Complete',
-          `Successfully synced ${summary.success} birthday${summary.success > 1 ? 's' : ''} to your calendar.`,
+          `Successfully synced ${summary.success} event${summary.success > 1 ? 's' : ''} to your calendar.`,
           [{ text: 'OK' }]
         );
         setSyncComplete(true);
       } else if (summary.success === 0) {
         Alert.alert(
           'Sync Failed',
-          'Failed to sync birthdays to your calendar. Please try again.',
+          'Failed to sync events to your calendar. Please try again.',
           [{ text: 'OK' }]
         );
       } else {
         Alert.alert(
           'Partial Sync',
-          `Synced ${summary.success} of ${summary.total} birthdays. ${summary.failed} failed.`,
+          `Synced ${summary.success} of ${summary.total} events. ${summary.failed} failed.`,
           [{ text: 'OK' }]
         );
         setSyncComplete(true);
@@ -106,7 +109,7 @@ export function CalendarSyncButton({
     } finally {
       setSyncing(false);
     }
-  }, [birthdays, onSyncComplete]);
+  }, [birthdays, friendDates, onSyncComplete]);
 
   return (
     <TouchableOpacity
@@ -144,6 +147,7 @@ export function CalendarSyncButton({
 // Compact version for header placement
 export function CalendarSyncIconButton({
   birthdays,
+  friendDates = [],
   onSyncComplete,
   style,
 }: CalendarSyncButtonProps) {
@@ -151,10 +155,10 @@ export function CalendarSyncIconButton({
   const [syncComplete, setSyncComplete] = useState(false);
 
   const handleSync = useCallback(async () => {
-    if (birthdays.length === 0) {
+    if (birthdays.length === 0 && friendDates.length === 0) {
       Alert.alert(
-        'No Birthdays',
-        'There are no birthdays in your groups to sync.',
+        'No Events',
+        'There are no calendar events to sync.',
         [{ text: 'OK' }]
       );
       return;
@@ -178,20 +182,20 @@ export function CalendarSyncIconButton({
         }
       }
 
-      // Sync all birthdays (dates can be strings, deviceCalendar handles conversion)
-      const results = await syncAllBirthdays(birthdays);
+      // Sync all calendar events (group birthdays + friend dates)
+      const results = await syncAllCalendarEvents(birthdays, friendDates);
 
       const summary = getSyncSummary(results);
 
       if (summary.failed === 0) {
-        Alert.alert('Success', `Synced ${summary.success} birthdays!`, [{ text: 'OK' }]);
+        Alert.alert('Success', `Synced ${summary.success} event${summary.success > 1 ? 's' : ''}!`, [{ text: 'OK' }]);
         setSyncComplete(true);
       } else {
         Alert.alert(
           summary.success > 0 ? 'Partial Sync' : 'Failed',
           summary.success > 0
             ? `${summary.success}/${summary.total} synced`
-            : 'Could not sync birthdays',
+            : 'Could not sync events',
           [{ text: 'OK' }]
         );
       }
@@ -203,7 +207,7 @@ export function CalendarSyncIconButton({
     } finally {
       setSyncing(false);
     }
-  }, [birthdays, onSyncComplete]);
+  }, [birthdays, friendDates, onSyncComplete]);
 
   return (
     <TouchableOpacity

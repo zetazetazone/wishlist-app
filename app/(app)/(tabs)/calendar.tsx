@@ -211,6 +211,7 @@ export default function CalendarScreen() {
           {birthdays.length > 0 && (
             <CalendarSyncIconButton
               birthdays={birthdays}
+              friendDates={friendDates}
               onSyncComplete={(results) => {
                 console.log('Calendar sync complete:', results);
               }}
