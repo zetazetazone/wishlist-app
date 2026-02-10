@@ -475,6 +475,11 @@ Plans:
   3. Friend dates display with distinct teal color from group dates
   4. Calendar events show source indicator distinguishing "Friend" from "Group" events
   5. User can sync friend dates to device calendar (Google/Apple) alongside group birthdays
+**Plans**: 2 plans
+
+Plans:
+- [ ] 28-01-PLAN.md -- Friend dates service and calendar integration (FCAL-01, FCAL-02, FCAL-03)
+- [ ] 28-02-PLAN.md -- Source indicator UI and device sync extension (FCAL-04, FCAL-05)
 
 ## Progress
 
@@ -511,4 +516,4 @@ Phases execute in order: 23 -> 24 -> 25 -> 26 -> 27 -> 28
 | 25. Friend Requests Flow | v1.4 | 3/3 | Complete | 2026-02-10 |
 | 26. Contact Import & Discovery | v1.4 | 3/3 | Complete | 2026-02-10 |
 | 27. Public Dates Management | v1.4 | 2/2 | Complete | 2026-02-10 |
-| 28. Calendar Integration | v1.4 | 0/? | Not started | - |
+| 28. Calendar Integration | v1.4 | 0/2 | Not started | - |
