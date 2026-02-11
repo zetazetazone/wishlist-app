@@ -7,6 +7,7 @@
 - **v1.2 Group Experience** - Phases 11-17 (shipped 2026-02-05)
 - **v1.3 Gift Claims & Personal Details** - Phases 18-22 (shipped 2026-02-09)
 - **v1.4 Friends System** - Phases 23-28 (shipped 2026-02-10) — [archive](milestones/v1.4-ROADMAP.md)
+- **v1.5 Localization** - Phases 29-32 (active)
 
 ## Phases
 
@@ -412,6 +413,70 @@ Plans:
 
 </details>
 
+<details open>
+<summary>v1.5 Localization (Phases 29-32) - ACTIVE</summary>
+
+**Milestone Goal:** Enable users to use the app in their preferred language, starting with English and Spanish. Auto-detect device language, persist preference server-side for cross-device sync and push notification localization, and provide instant language switching without app restart.
+
+**Key architectural decisions:**
+- i18next + react-i18next + expo-localization stack (Expo official recommendation, 25M+ weekly downloads)
+- Three-tier language preference hierarchy: Server (Supabase) > Local (AsyncStorage) > Device (expo-localization)
+- Server-side language storage enables Edge Function push notification localization
+- `notification_translations` table for all notification type templates in en/es
+- TypeScript-safe translation keys via automated tooling (i18next-parser, eslint-plugin)
+- Neutral Latin American Spanish for initial release
+
+#### Phase 29: Foundation & Tooling
+**Goal**: Database schema, i18n configuration, automated tooling, and local persistence infrastructure
+**Depends on**: Phase 28
+**Requirements**: INFRA-01, INFRA-02, INFRA-03, PERS-01
+**Success Criteria** (what must be TRUE):
+  1. App detects device language on first launch using expo-localization
+  2. App falls back to English when device language is not supported
+  3. Translation keys have TypeScript autocomplete and compile-time validation
+  4. User's language preference persists locally across app restarts via AsyncStorage
+  5. i18next configured with proper fallback, error logging, and instant re-rendering on language change
+**Plans**: TBD
+
+#### Phase 30: Server Integration & Translation Files
+**Goal**: Server-side language preference, notification translations, and complete English/Spanish translation files
+**Depends on**: Phase 29
+**Requirements**: PERS-02, PERS-03, NOTIF-01, NOTIF-02, TRANS-04, TRANS-05
+**Success Criteria** (what must be TRUE):
+  1. User's language preference syncs to Supabase profiles table
+  2. Language preference syncs across user's devices (login on new device loads server preference)
+  3. Push notifications are sent in user's preferred language via Edge Function
+  4. All notification types have English and Spanish templates in database
+  5. English translation file contains all ~400 app strings with proper namespacing
+  6. Spanish translation file contains all ~400 app strings with professional translations
+**Plans**: TBD
+
+#### Phase 31: Root Integration & Settings UI
+**Goal**: I18nProvider wrapping app, language selector in profile settings with instant switching
+**Depends on**: Phase 30
+**Requirements**: SETT-01, SETT-02
+**Success Criteria** (what must be TRUE):
+  1. User can navigate to language settings from profile settings screen
+  2. User can select English or Spanish from language picker
+  3. Language change takes effect instantly without app restart
+  4. Selected language displays correctly in settings UI
+  5. Language change syncs to both AsyncStorage and Supabase
+**Plans**: TBD
+
+#### Phase 32: UI Component Migration
+**Goal**: All UI strings translated across 140+ files with localized date/time formatting
+**Depends on**: Phase 31
+**Requirements**: TRANS-01, TRANS-02, TRANS-03
+**Success Criteria** (what must be TRUE):
+  1. All UI text (buttons, labels, headings, placeholders) displays in selected language
+  2. All system messages (alerts, toasts, errors) display in selected language
+  3. Date and time displays are localized (e.g., "11 de febrero" in Spanish)
+  4. Tab labels, navigation titles, and screen headers update on language change
+  5. No hardcoded strings remain in JSX (verified via eslint-plugin-i18next)
+**Plans**: TBD
+
+</details>
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -444,3 +509,7 @@ Plans:
 | 26. Contact Import & Discovery | v1.4 | 3/3 | Complete | 2026-02-10 |
 | 27. Public Dates Management | v1.4 | 2/2 | Complete | 2026-02-10 |
 | 28. Calendar Integration | v1.4 | 2/2 | Complete | 2026-02-10 |
+| 29. Foundation & Tooling | v1.5 | 0/? | Pending | - |
+| 30. Server Integration & Translation Files | v1.5 | 0/? | Pending | - |
+| 31. Root Integration & Settings UI | v1.5 | 0/? | Pending | - |
+| 32. UI Component Migration | v1.5 | 0/? | Pending | - |

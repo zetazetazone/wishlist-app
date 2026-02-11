@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-02-11 — Milestone v1.5 started
+Phase: 29 - Foundation & Tooling
+Plan: --
+Status: Roadmap created, ready for planning
+Last activity: 2026-02-11 -- Roadmap created for v1.5 Localization
 
-Progress: [##########] 100% v1.0-v1.4 complete (28 phases shipped)
+Progress: [----------] 0% v1.5 in progress (4 phases: 29-32)
 
 ## Milestone History
 
@@ -24,6 +24,15 @@ Progress: [##########] 100% v1.0-v1.4 complete (28 phases shipped)
 - **v1.3 Gift Claims & Personal Details** - Shipped 2026-02-09 (5 phases, 15 plans)
 - **v1.4 Friends System** - Shipped 2026-02-10 (6 phases, 12 plans)
 
+## v1.5 Phase Summary
+
+| Phase | Goal | Requirements | Status |
+|-------|------|--------------|--------|
+| 29 | Foundation & Tooling | INFRA-01, INFRA-02, INFRA-03, PERS-01 | Pending |
+| 30 | Server Integration & Translation Files | PERS-02, PERS-03, NOTIF-01, NOTIF-02, TRANS-04, TRANS-05 | Pending |
+| 31 | Root Integration & Settings UI | SETT-01, SETT-02 | Pending |
+| 32 | UI Component Migration | TRANS-01, TRANS-02, TRANS-03 | Pending |
+
 ## Accumulated Context
 
 ### Decisions
@@ -31,6 +40,14 @@ Progress: [##########] 100% v1.0-v1.4 complete (28 phases shipped)
 Key decisions from all milestones archived in PROJECT.md Key Decisions table.
 
 v1.4 decisions archived in `.planning/milestones/v1.4-ROADMAP.md`.
+
+v1.5 key architectural decisions:
+- i18next + react-i18next + expo-localization stack (Expo official recommendation)
+- Three-tier language preference hierarchy: Server > Local > Device
+- Server-side language storage enables Edge Function push notification localization
+- `notification_translations` table for all notification type templates
+- TypeScript-safe translation keys via automated tooling
+- Neutral Latin American Spanish for initial release
 
 ### Pending Todos (Manual Setup)
 
@@ -61,6 +78,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-11
-Stopped at: v1.5 milestone requirements definition
+Stopped at: v1.5 roadmap created
 Resume file: N/A
-Next: Complete requirements → roadmap → /gsd:plan-phase
+Next: `/gsd:plan-phase 29`
