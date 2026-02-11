@@ -440,7 +440,7 @@ Plans:
 
 Plans:
 - [x] 29-01-PLAN.md -- Install i18n dependencies, create i18next config with device detection and TypeScript types
-- [ ] 29-02-PLAN.md -- Language service layer and useLanguage hook for local persistence
+- [x] 29-02-PLAN.md -- Language service layer and useLanguage hook for local persistence
 
 #### Phase 30: Server Integration & Translation Files
 **Goal**: Server-side language preference, notification translations, and complete English/Spanish translation files
@@ -513,7 +513,7 @@ Plans:
 | 26. Contact Import & Discovery | v1.4 | 3/3 | Complete | 2026-02-10 |
 | 27. Public Dates Management | v1.4 | 2/2 | Complete | 2026-02-10 |
 | 28. Calendar Integration | v1.4 | 2/2 | Complete | 2026-02-10 |
-| 29. Foundation & Tooling | v1.5 | 1/2 | In progress | - |
+| 29. Foundation & Tooling | v1.5 | 2/2 | Complete | 2026-02-11 |
 | 30. Server Integration & Translation Files | v1.5 | 0/? | Pending | - |
 | 31. Root Integration & Settings UI | v1.5 | 0/? | Pending | - |
 | 32. UI Component Migration | v1.5 | 0/? | Pending | - |

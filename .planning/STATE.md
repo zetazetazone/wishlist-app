@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 
 ## Current Position
 
-Phase: 29 - Foundation & Tooling (1 of 4)
-Plan: 01 of 02
-Status: In progress
-Last activity: 2026-02-11 - Completed 29-01-PLAN.md (i18n foundation)
+Phase: 29 - Foundation & Tooling (1 of 4) - COMPLETE
+Plan: 02 of 02
+Status: Phase complete
+Last activity: 2026-02-11 - Completed 29-02-PLAN.md (language service & hook)
 
-Progress: [#---------] 12% v1.5 in progress (1/8 plans complete)
+Progress: [##--------] 25% v1.5 in progress (2/8 plans complete)
 
 ## Milestone History
 
@@ -28,7 +28,7 @@ Progress: [#---------] 12% v1.5 in progress (1/8 plans complete)
 
 | Phase | Goal | Requirements | Status |
 |-------|------|--------------|--------|
-| 29 | Foundation & Tooling | INFRA-01, INFRA-02, INFRA-03, PERS-01 | In Progress (1/2) |
+| 29 | Foundation & Tooling | INFRA-01, INFRA-02, INFRA-03, PERS-01 | Complete (2/2) |
 | 30 | Server Integration & Translation Files | PERS-02, PERS-03, NOTIF-01, NOTIF-02, TRANS-04, TRANS-05 | Pending |
 | 31 | Root Integration & Settings UI | SETT-01, SETT-02 | Pending |
 | 32 | UI Component Migration | TRANS-01, TRANS-02, TRANS-03 | Pending |
@@ -78,6 +78,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-11
-Stopped at: Completed 29-01-PLAN.md (i18n foundation)
-Resume file: .planning/phases/29-foundation-tooling/29-02-PLAN.md
-Next: `/gsd:execute-phase 29` (plan 02)
+Stopped at: Completed Phase 29 (Foundation & Tooling)
+Resume file: None
+Next: `/gsd:plan-phase 30` or `/gsd:execute-phase 30`
