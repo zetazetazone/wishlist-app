@@ -453,7 +453,13 @@ Plans:
   4. All notification types have English and Spanish templates in database
   5. English translation file contains all ~400 app strings with proper namespacing
   6. Spanish translation file contains all ~400 app strings with professional translations
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 30-01-PLAN.md -- Database migration: users.preferred_language column and notification_translations table with seed data
+- [ ] 30-02-PLAN.md -- Language service server sync: extend lib/language.ts with Supabase sync
+- [ ] 30-03-PLAN.md -- Edge Function localization: enhance push/index.ts for localized notifications
+- [ ] 30-04-PLAN.md -- Complete translation files: EN/ES ~400 keys organized by namespace
 
 #### Phase 31: Root Integration & Settings UI
 **Goal**: I18nProvider wrapping app, language selector in profile settings with instant switching
@@ -514,6 +520,6 @@ Plans:
 | 27. Public Dates Management | v1.4 | 2/2 | Complete | 2026-02-10 |
 | 28. Calendar Integration | v1.4 | 2/2 | Complete | 2026-02-10 |
 | 29. Foundation & Tooling | v1.5 | 2/2 | Complete | 2026-02-11 |
-| 30. Server Integration & Translation Files | v1.5 | 0/? | Pending | - |
+| 30. Server Integration & Translation Files | v1.5 | 0/4 | Pending | - |
 | 31. Root Integration & Settings UI | v1.5 | 0/? | Pending | - |
 | 32. UI Component Migration | v1.5 | 0/? | Pending | - |
