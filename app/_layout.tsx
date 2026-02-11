@@ -9,16 +9,37 @@ import { GluestackUIProvider } from '@gluestack-ui/themed';
 import { config } from '../gluestack-ui.config';
 import './global.css';
 import { supabase } from '../lib/supabase';
+import { useLanguage } from '../hooks/useLanguage';
+import { initI18n } from '../src/i18n';
 
 export default function RootLayout() {
   const router = useRouter();
   const segments = useSegments();
   const [initialCheckDone, setInitialCheckDone] = useState(false);
+  const [i18nReady, setI18nReady] = useState(false);
+  const [userId, setUserId] = useState<string | undefined>(undefined);
+
+  // Initialize useLanguage hook with userId from auth session
+  const { syncFromServer } = useLanguage(userId);
+
+  // Initialize i18n before rendering app
+  useEffect(() => {
+    initI18n().then(() => setI18nReady(true));
+  }, []);
+
+  // Sync language preference from server when userId becomes available
+  useEffect(() => {
+    if (userId && i18nReady) {
+      syncFromServer();
+    }
+  }, [userId, i18nReady, syncFromServer]);
 
   useEffect(() => {
     // Check initial session only once
     if (!initialCheckDone) {
       supabase.auth.getSession().then(async ({ data: { session } }) => {
+        // Extract userId for language sync
+        setUserId(session?.user?.id);
         const inAuthGroup = segments[0] === 'auth';
         const inOnboardingGroup = segments[0] === '(onboarding)';
 
@@ -51,6 +72,9 @@ export default function RootLayout() {
 
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      // Extract userId for language sync on auth state change
+      setUserId(session?.user?.id);
+
       if (!initialCheckDone) return; // Wait for initial check
 
       const inAuthGroup = segments[0] === 'auth';
@@ -83,6 +107,9 @@ export default function RootLayout() {
       subscription.unsubscribe();
     };
   }, [segments, initialCheckDone]);
+
+  // Wait for i18n initialization before rendering
+  if (!i18nReady) return null;
 
   return (
     <GluestackUIProvider config={config}>
