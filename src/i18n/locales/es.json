@@ -2,13 +2,13 @@
   "common": {
     "loading": "Cargando...",
     "error": "Error",
-    "success": "Éxito",
+    "success": "Exito",
     "cancel": "Cancelar",
     "save": "Guardar",
     "delete": "Eliminar",
     "confirm": "Confirmar",
     "close": "Cerrar",
-    "back": "Atrás",
+    "back": "Atras",
     "next": "Siguiente",
     "done": "Listo",
     "edit": "Editar",
@@ -17,13 +17,13 @@
     "retry": "Reintentar",
     "search": "Buscar",
     "ok": "OK",
-    "yes": "Sí",
+    "yes": "Si",
     "no": "No",
     "errors": {
-      "generic": "Algo salió mal",
-      "network": "Error de red. Por favor revisa tu conexión.",
+      "generic": "Algo salio mal",
+      "network": "Error de red. Por favor revisa tu conexion.",
       "notFound": "No encontrado",
-      "unauthorized": "No tienes autorización para realizar esta acción"
+      "unauthorized": "No tienes autorizacion para realizar esta accion"
     },
     "empty": {
       "noResults": "No se encontraron resultados",
@@ -35,37 +35,37 @@
       "minutesAgo_plural": "hace {{count}} minutos",
       "hoursAgo": "hace {{count}} hora",
       "hoursAgo_plural": "hace {{count}} horas",
-      "daysAgo": "hace {{count}} día",
-      "daysAgo_plural": "hace {{count}} días",
+      "daysAgo": "hace {{count}} dia",
+      "daysAgo_plural": "hace {{count}} dias",
       "today": "Hoy",
-      "tomorrow": "Mañana",
+      "tomorrow": "Manana",
       "yesterday": "Ayer"
     }
   },
   "auth": {
-    "login": "Iniciar sesión",
+    "login": "Iniciar sesion",
     "signup": "Registrarse",
-    "logout": "Cerrar sesión",
-    "email": "Correo electrónico",
-    "password": "Contraseña",
-    "confirmPassword": "Confirmar contraseña",
-    "forgotPassword": "¿Olvidaste tu contraseña?",
-    "resetPassword": "Restablecer contraseña",
+    "logout": "Cerrar sesion",
+    "email": "Correo electronico",
+    "password": "Contrasena",
+    "confirmPassword": "Confirmar contrasena",
+    "forgotPassword": "Olvidaste tu contrasena?",
+    "resetPassword": "Restablecer contrasena",
     "createAccount": "Crear cuenta",
-    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
-    "dontHaveAccount": "¿No tienes una cuenta?",
+    "alreadyHaveAccount": "Ya tienes una cuenta?",
+    "dontHaveAccount": "No tienes una cuenta?",
     "welcomeBack": "Bienvenido de nuevo",
-    "signInToAccount": "Inicia sesión en tu cuenta",
+    "signInToAccount": "Inicia sesion en tu cuenta",
     "enterEmail": "tu@correo.com",
-    "enterPassword": "Ingresa tu contraseña",
+    "enterPassword": "Ingresa tu contrasena",
     "fillAllFields": "Por favor completa todos los campos",
-    "loginFailed": "Error al iniciar sesión",
+    "loginFailed": "Error al iniciar sesion",
     "errors": {
-      "invalidEmail": "Por favor ingresa un correo electrónico válido",
-      "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
-      "passwordsDoNotMatch": "Las contraseñas no coinciden",
-      "invalidCredentials": "Correo o contraseña incorrectos",
-      "emailInUse": "Este correo electrónico ya está en uso"
+      "invalidEmail": "Por favor ingresa un correo electronico valido",
+      "passwordTooShort": "La contrasena debe tener al menos 6 caracteres",
+      "passwordsDoNotMatch": "Las contrasenas no coinciden",
+      "invalidCredentials": "Correo o contrasena incorrectos",
+      "emailInUse": "Este correo electronico ya esta en uso"
     }
   },
   "groups": {
@@ -74,17 +74,17 @@
     "createGroup": "Crear grupo",
     "joinGroup": "Unirse al grupo",
     "groupName": "Nombre del grupo",
-    "groupDescription": "Descripción del grupo",
+    "groupDescription": "Descripcion del grupo",
     "groupPhoto": "Foto del grupo",
-    "inviteCode": "Código de invitación",
-    "copyInviteCode": "Copiar código",
-    "codeCopied": "Código copiado al portapapeles",
-    "enterInviteCode": "Ingresa el código de invitación",
+    "inviteCode": "Codigo de invitacion",
+    "copyInviteCode": "Copiar codigo",
+    "codeCopied": "Codigo copiado al portapapeles",
+    "enterInviteCode": "Ingresa el codigo de invitacion",
     "members": "Miembros",
     "member": "miembro",
     "member_plural": "miembros",
     "admin": "Admin",
-    "settings": "Configuración",
+    "settings": "Configuracion",
     "leaveGroup": "Salir del grupo",
     "deleteGroup": "Eliminar grupo",
     "group": "grupo",
@@ -92,8 +92,8 @@
     "mode": {
       "gifts": "Regalos",
       "greetings": "Saludos",
-      "giftsDescription": "Intercambio de regalos físicos con seguimiento y presupuestos",
-      "greetingsDescription": "Envía buenos deseos de cumpleaños y saludos virtuales"
+      "giftsDescription": "Intercambio de regalos fisicos con seguimiento y presupuestos",
+      "greetingsDescription": "Envia buenos deseos de cumpleanos y saludos virtuales"
     },
     "budget": {
       "title": "Presupuesto",
@@ -105,39 +105,39 @@
       "remaining": "Restante"
     },
     "empty": {
-      "noGroups": "Aún no tienes grupos",
-      "noGroupsDescription": "Crea un grupo nuevo o únete a uno\ncon un código de invitación",
-      "noMembers": "Aún no hay miembros"
+      "noGroups": "Aun no tienes grupos",
+      "noGroupsDescription": "Crea un grupo nuevo o unete a uno\ncon un codigo de invitacion",
+      "noMembers": "Aun no hay miembros"
     },
-    "confirmLeave": "¿Estás seguro de que quieres salir de este grupo?",
-    "confirmDelete": "¿Estás seguro de que quieres eliminar este grupo? Esta acción no se puede deshacer."
+    "confirmLeave": "Estas seguro de que quieres salir de este grupo?",
+    "confirmDelete": "Estas seguro de que quieres eliminar este grupo? Esta accion no se puede deshacer."
   },
   "wishlist": {
     "title": "Mi lista de deseos",
-    "addItem": "Agregar artículo",
-    "editItem": "Editar artículo",
-    "itemTitle": "Título del artículo",
-    "itemUrl": "URL del artículo",
+    "addItem": "Agregar articulo",
+    "editItem": "Editar articulo",
+    "itemTitle": "Titulo del articulo",
+    "itemUrl": "URL del articulo",
     "itemPrice": "Precio",
     "itemPriority": "Prioridad",
-    "itemImage": "Imagen del artículo",
+    "itemImage": "Imagen del articulo",
     "startYourWishlist": "Empieza tu lista de deseos",
-    "tapToAddItems": "Toca el botón + arriba para agregar artículos de Amazon",
-    "itemAddedSuccess": "¡Artículo agregado a tu lista de deseos!",
-    "itemRemovedSuccess": "Artículo eliminado de la lista",
-    "failedToLoad": "Error al cargar los artículos de la lista",
-    "failedToDelete": "Error al eliminar el artículo",
-    "mustBeLoggedIn": "Debes iniciar sesión para agregar artículos",
+    "tapToAddItems": "Toca el boton + arriba para agregar articulos de Amazon",
+    "itemAddedSuccess": "Articulo agregado a tu lista de deseos!",
+    "itemRemovedSuccess": "Articulo eliminado de la lista",
+    "failedToLoad": "Error al cargar los articulos de la lista",
+    "failedToDelete": "Error al eliminar el articulo",
+    "mustBeLoggedIn": "Debes iniciar sesion para agregar articulos",
     "itemType": {
       "gift": "Regalo",
-      "surpriseMe": "Sorpréndeme",
+      "surpriseMe": "Sorprendeme",
       "mysteryBox": "Caja misteriosa"
     },
     "priority": {
       "low": "Baja",
       "medium": "Media",
       "high": "Alta",
-      "highest": "Máxima"
+      "highest": "Maxima"
     },
     "claim": {
       "claim": "Reclamar",
@@ -146,134 +146,134 @@
       "claimedBy": "Reclamado por {{name}}",
       "taken": "Tomado",
       "youClaimed": "Lo reclamaste",
-      "confirmUnclaim": "¿Estás seguro de que quieres liberar este artículo?"
+      "confirmUnclaim": "Estas seguro de que quieres liberar este articulo?"
     },
     "split": {
       "title": "Pago dividido",
-      "openSplit": "Abrir división",
-      "closeSplit": "Cerrar división",
+      "openSplit": "Abrir division",
+      "closeSplit": "Cerrar division",
       "contribute": "Contribuir",
       "pledged": "Comprometido",
       "funded": "Financiado",
       "fullyFunded": "Totalmente financiado",
       "contributors": "Contribuyentes",
-      "yourContribution": "Tu contribución",
+      "yourContribution": "Tu contribucion",
       "enterAmount": "Ingresa la cantidad"
     },
     "favorite": {
       "markFavorite": "Marcar como favorito",
       "removeFavorite": "Quitar favorito",
-      "mostWanted": "Más deseado"
+      "mostWanted": "Mas deseado"
     },
     "empty": {
-      "noItems": "Aún no hay artículos",
-      "noItemsDescription": "¡Agrega algo que te gustaría recibir!",
-      "noItemsOther": "{{name}} aún no ha agregado nada"
+      "noItems": "Aun no hay articulos",
+      "noItemsDescription": "Agrega algo que te gustaria recibir!",
+      "noItemsOther": "{{name}} aun no ha agregado nada"
     },
     "errors": {
-      "titleRequired": "El título del artículo es obligatorio",
-      "invalidUrl": "Por favor ingresa una URL válida",
-      "invalidPrice": "Por favor ingresa un precio válido"
+      "titleRequired": "El titulo del articulo es obligatorio",
+      "invalidUrl": "Por favor ingresa una URL valida",
+      "invalidPrice": "Por favor ingresa un precio valido"
     }
   },
   "notifications": {
     "title": "Notificaciones",
-    "markAllRead": "Marcar todas como leídas",
+    "markAllRead": "Marcar todas como leidas",
     "empty": {
       "noNotifications": "No hay notificaciones",
-      "noNotificationsDescription": "¡Estás al día!"
+      "noNotificationsDescription": "Estas al dia!"
     },
     "types": {
-      "friendRequest": "te envió una solicitud de amistad",
-      "friendAccepted": "aceptó tu solicitud de amistad",
-      "birthdayReminder": "El cumpleaños de {{name}} es {{when}}",
-      "giftLeader": "Eres el líder de regalos para el cumpleaños de {{name}}",
-      "itemClaimed": "reclamó un artículo de tu lista",
-      "splitInvite": "te invitó a contribuir a una división",
-      "splitFunded": "El pago dividido está totalmente financiado",
-      "contribution": "contribuyó {{amount}} a la división"
+      "friendRequest": "te envio una solicitud de amistad",
+      "friendAccepted": "acepto tu solicitud de amistad",
+      "birthdayReminder": "El cumpleanos de {{name}} es {{when}}",
+      "giftLeader": "Eres el lider de regalos para el cumpleanos de {{name}}",
+      "itemClaimed": "reclamo un articulo de tu lista",
+      "splitInvite": "te invito a contribuir a una division",
+      "splitFunded": "El pago dividido esta totalmente financiado",
+      "contribution": "contribuyo {{amount}} a la division"
     }
   },
   "profile": {
     "title": "Perfil",
     "editProfile": "Editar perfil",
     "displayName": "Nombre para mostrar",
-    "birthday": "Cumpleaños",
-    "birthdayLocked": "La fecha de cumpleaños no se puede cambiar después de la configuración",
+    "birthday": "Cumpleanos",
+    "birthdayLocked": "La fecha de cumpleanos no se puede cambiar despues de la configuracion",
     "profilePhoto": "Foto de perfil",
     "changePhoto": "Cambiar foto",
     "removePhoto": "Eliminar foto",
     "personalDetails": {
       "title": "Detalles personales",
-      "subtitle": "Ayuda a tus amigos a saber qué te gusta",
+      "subtitle": "Ayuda a tus amigos a saber que te gusta",
       "sizes": "Tallas",
       "shirtSize": "Talla de camisa",
       "shoeSize": "Talla de zapato",
-      "pantSize": "Talla de pantalón",
+      "pantSize": "Talla de pantalon",
       "ringSize": "Talla de anillo",
       "preferences": "Preferencias",
       "favoriteColors": "Colores favoritos",
       "favoriteBrands": "Marcas favoritas",
       "interests": "Intereses",
       "dislikes": "No me gusta",
-      "deliveryAddress": "Dirección de entrega",
+      "deliveryAddress": "Direccion de entrega",
       "bankDetails": "Datos bancarios",
       "externalLinks": "Enlaces externos",
       "addLink": "Agregar enlace",
       "completeness": "{{percent}}% completo",
-      "lastUpdated": "Última actualización {{date}}"
+      "lastUpdated": "Ultima actualizacion {{date}}"
     },
     "secretNotes": {
       "title": "Notas secretas",
-      "subtitle": "Notas privadas sobre esta persona que solo tú puedes ver",
+      "subtitle": "Notas privadas sobre esta persona que solo tu puedes ver",
       "addNote": "Agregar nota",
       "editNote": "Editar nota",
       "deleteNote": "Eliminar nota",
-      "placeholder": "Escribe algo útil para recordar...",
-      "empty": "Aún no hay notas"
+      "placeholder": "Escribe algo util para recordar...",
+      "empty": "Aun no hay notas"
     }
   },
   "calendar": {
     "title": "Calendario",
     "today": "Hoy",
-    "upcoming": "Próximos",
-    "birthdays": "Cumpleaños",
+    "upcoming": "Proximos",
+    "birthdays": "Cumpleanos",
     "friendDates": "Fechas de amigos",
     "syncToDevice": "Sincronizar con dispositivo",
     "synced": "Sincronizado",
     "countdown": {
-      "today": "¡Hoy!",
-      "tomorrow": "Mañana",
-      "daysLeft": "falta {{count}} día",
-      "daysLeft_plural": "faltan {{count}} días",
+      "today": "Hoy!",
+      "tomorrow": "Manana",
+      "daysLeft": "falta {{count}} dia",
+      "daysLeft_plural": "faltan {{count}} dias",
       "weeksLeft": "falta {{count}} semana",
       "weeksLeft_plural": "faltan {{count}} semanas",
       "monthsLeft": "falta {{count}} mes",
       "monthsLeft_plural": "faltan {{count}} meses"
     },
     "publicDates": {
-      "title": "Fechas públicas",
+      "title": "Fechas publicas",
       "add": "Agregar fecha",
       "edit": "Editar fecha",
-      "dateTitle": "Título de la fecha",
+      "dateTitle": "Titulo de la fecha",
       "dateMonth": "Mes",
-      "dateDay": "Día",
-      "empty": "No se han agregado fechas públicas"
+      "dateDay": "Dia",
+      "empty": "No se han agregado fechas publicas"
     }
   },
   "celebrations": {
     "title": "Celebraciones",
     "giftLeader": {
-      "title": "Líder de regalos",
-      "youAre": "Eres el líder de regalos",
-      "assignedTo": "Líder de regalos: {{name}}",
+      "title": "Lider de regalos",
+      "youAre": "Eres el lider de regalos",
+      "assignedTo": "Lider de regalos: {{name}}",
       "responsibilities": "Coordinar la compra y entrega del regalo",
       "reassign": "Reasignar"
     },
     "contributions": {
       "title": "Contribuciones",
       "contribute": "Contribuir",
-      "yourContribution": "Tu contribución",
+      "yourContribution": "Tu contribucion",
       "totalCollected": "Total recaudado",
       "target": "Meta",
       "markPaid": "Marcar como pagado",
@@ -284,17 +284,17 @@
       "title": "Chat del grupo",
       "placeholder": "Escribe un mensaje...",
       "send": "Enviar",
-      "linkToItem": "Enlazar artículo",
-      "empty": "Aún no hay mensajes"
+      "linkToItem": "Enlazar articulo",
+      "empty": "Aun no hay mensajes"
     },
     "status": {
-      "upcoming": "Próximo",
+      "upcoming": "Proximo",
       "inProgress": "En progreso",
       "completed": "Completado"
     }
   },
   "settings": {
-    "title": "Configuración",
+    "title": "Configuracion",
     "language": "Idioma",
     "languageDescription": "Elige tu idioma preferido",
     "notifications": "Notificaciones",
@@ -302,11 +302,11 @@
     "privacy": "Privacidad",
     "help": "Ayuda y soporte",
     "about": "Acerca de",
-    "version": "Versión"
+    "version": "Version"
   },
   "languages": {
-    "en": "Inglés",
-    "es": "Español"
+    "en": "Ingles",
+    "es": "Espanol"
   },
   "friends": {
     "title": "Amigos",
@@ -328,22 +328,22 @@
     "friend": "amigo",
     "friend_plural": "amigos",
     "removeFriend": "Eliminar amigo",
-    "removeFriendConfirm": "¿Estás seguro de que quieres eliminar a {{name}} como amigo?",
+    "removeFriendConfirm": "Estas seguro de que quieres eliminar a {{name}} como amigo?",
     "failedToRemove": "Error al eliminar amigo. Por favor intenta de nuevo.",
     "empty": {
-      "noFriends": "Aún no tienes amigos",
+      "noFriends": "Aun no tienes amigos",
       "noFriendsDescription": "Busca y agrega amigos para ver sus listas de deseos",
       "noRequests": "No hay solicitudes pendientes",
       "noResults": "No se encontraron usuarios"
     },
-    "confirmRemove": "¿Estás seguro de que quieres eliminar a este amigo?",
-    "confirmBlock": "¿Estás seguro de que quieres bloquear a este usuario?"
+    "confirmRemove": "Estas seguro de que quieres eliminar a este amigo?",
+    "confirmBlock": "Estas seguro de que quieres bloquear a este usuario?"
   },
   "onboarding": {
-    "welcome": "¡Bienvenido!",
+    "welcome": "Bienvenido!",
     "letsGetStarted": "Configuremos tu perfil para empezar",
-    "whatsYourName": "¿Cuál es tu nombre?",
-    "whensYourBirthday": "¿Cuándo es tu cumpleaños?",
+    "whatsYourName": "Cual es tu nombre?",
+    "whensYourBirthday": "Cuando es tu cumpleanos?",
     "birthdayNote": "Usaremos esto para celebrar con tus amigos",
     "addPhoto": "Agregar foto de perfil",
     "addPhotoOptional": "Agregar foto de perfil (opcional)",
@@ -351,12 +351,132 @@
     "skip": "Omitir",
     "finish": "Finalizar",
     "enterYourName": "Ingresa tu nombre",
-    "selectBirthday": "Selecciona tu cumpleaños",
+    "selectBirthday": "Selecciona tu cumpleanos",
     "requiredField": "Campo obligatorio",
     "enterDisplayName": "Por favor ingresa tu nombre para mostrar",
     "confirmAndSave": "Confirmar y guardar",
-    "reviewInfo": "Revisa tu información",
-    "errorSaving": "Error al guardar la información del perfil",
-    "errorGettingUser": "No se pudo obtener la información del usuario"
+    "reviewInfo": "Revisa tu informacion",
+    "errorSaving": "Error al guardar la informacion del perfil",
+    "errorGettingUser": "No se pudo obtener la informacion del usuario"
+  },
+  "alerts": {
+    "titles": {
+      "success": "Exitoso",
+      "error": "Error",
+      "warning": "Advertencia",
+      "confirm": "Confirmar",
+      "required": "Requerido",
+      "requiredField": "Campo requerido",
+      "loginFailed": "Error al iniciar sesion",
+      "signupFailed": "Error al registrarse",
+      "permissionRequired": "Permiso requerido",
+      "comingSoon": "Proximamente",
+      "deleted": "Eliminado",
+      "done": "Listo",
+      "saved": "Guardado",
+      "added": "Agregado!",
+      "noGroups": "Sin grupos",
+      "alreadyClaimed": "Ya reclamado",
+      "unableToClaim": "No se pudo reclamar",
+      "unableToUnclaim": "No se pudo liberar"
+    },
+    "messages": {
+      "profileUpdated": "Perfil actualizado correctamente",
+      "failedLoadProfile": "Error al cargar el perfil",
+      "failedUploadAvatar": "Error al subir el avatar",
+      "enterDisplayName": "Por favor ingresa tu nombre",
+      "couldNotGetUser": "No se pudo obtener la informacion del usuario",
+      "failedSaveProfile": "Error al guardar el perfil",
+      "somethingWentWrong": "Algo salio mal",
+      "fillAllFields": "Por favor completa todos los campos requeridos",
+      "passwordsNoMatch": "Las contrasenas no coinciden",
+      "passwordMinLength": "La contrasena debe tener al menos 6 caracteres",
+      "accountCreated": "Cuenta creada! Bienvenido a Wishlist!",
+      "checkEmailVerify": "Por favor revisa tu correo para verificar tu cuenta antes de iniciar sesion.",
+      "friendRequestSent": "Solicitud de amistad enviada!",
+      "friendRequestAccepted": "Solicitud de amistad aceptada!",
+      "failedSendRequest": "Error al enviar la solicitud",
+      "failedAcceptRequest": "Error al aceptar la solicitud",
+      "failedDeclineRequest": "Error al rechazar la solicitud",
+      "failedRemoveFriend": "Error al eliminar amigo. Por favor intenta de nuevo.",
+      "confirmRemoveFriend": "Estas seguro de que quieres eliminar a este amigo?",
+      "youAreNowFriends": "Ahora son amigos!",
+      "personalDetailsSaved": "Detalles personales guardados",
+      "failedLoadDetails": "Error al cargar los detalles personales",
+      "failedSaveDetails": "Error al guardar los detalles personales",
+      "dateUpdated": "Fecha actualizada",
+      "dateAdded": "Fecha agregada",
+      "dateRemoved": "Fecha eliminada",
+      "failedLoadDates": "Error al cargar las fechas",
+      "failedSaveDate": "Error al guardar la fecha",
+      "failedDeleteDate": "Error al eliminar la fecha",
+      "pleaseEnterTitle": "Por favor ingresa un titulo",
+      "confirmDeleteDate": "Estas seguro de que quieres eliminar esta fecha?",
+      "failedLoadGroup": "Error al cargar los detalles del grupo",
+      "groupInfoUpdated": "Informacion del grupo actualizada correctamente",
+      "groupNameRequired": "El nombre del grupo no puede estar vacio",
+      "failedSaveGroupInfo": "Error al guardar la informacion del grupo",
+      "allowPhotoAccess": "Por favor permite el acceso a tu biblioteca de fotos",
+      "failedUploadPhoto": "Error al subir la foto",
+      "failedUpdatePhoto": "Error al actualizar la foto del grupo",
+      "confirmRemoveMember": "Estas seguro de que quieres eliminar a este miembro?",
+      "failedRemoveMember": "Error al eliminar miembro",
+      "confirmTransferAdmin": "Estas seguro de que quieres transferir el rol de administrador a este miembro? Ya no seras el administrador.",
+      "failedTransferAdmin": "Error al transferir el rol de administrador",
+      "memberNowAdmin": "{{name}} ahora es el administrador del grupo.",
+      "confirmLeaveGroup": "Estas seguro de que quieres abandonar este grupo?",
+      "failedLeaveGroup": "Error al abandonar el grupo",
+      "confirmDeleteGroup": "Estas seguro de que quieres eliminar este grupo? Esta accion no se puede deshacer.",
+      "confirmChangeMode": "Cambiar al modo {{mode}}?",
+      "modeChangeWarning": "Algunas funciones pueden comportarse diferente.",
+      "failedChangeMode": "Error al cambiar el modo del grupo. Por favor intenta de nuevo.",
+      "failedLoadWishlist": "Error al cargar los articulos de la lista",
+      "mustBeLoggedIn": "Debes iniciar sesion para agregar articulos",
+      "itemAdded": "Regalo agregado a tu lista",
+      "failedDeleteItem": "Error al eliminar el articulo",
+      "itemAddedSuccess": "Articulo agregado a tu lista!",
+      "itemRemoved": "Articulo eliminado de la lista",
+      "joinGroupToFavorite": "Unete a un grupo para marcar favoritos",
+      "failedUpdateFavorite": "Error al actualizar el favorito",
+      "failedAddItem": "Error al agregar el articulo",
+      "failedUpdatePriority": "Error al actualizar la prioridad",
+      "giftLeaderReassigned": "El lider de regalo ha sido reasignado",
+      "chatNotAvailable": "Chat no disponible",
+      "confirmClaim": "Reclamar este articulo?",
+      "claimDescription": "Los demas veran que te estas encargando de este regalo. Puedes liberarlo despues si es necesario.",
+      "someoneElseClaimed": "Alguien mas acaba de reclamar este articulo. Actualizando lista...",
+      "failedClaim": "Error al reclamar el articulo. Por favor intenta de nuevo.",
+      "confirmUnclaim": "Liberar este articulo?",
+      "unclaimDescription": "Esto permitira que otros lo reclamen.",
+      "failedUnclaim": "Error al liberar el articulo. Por favor intenta de nuevo.",
+      "failedOpenSplit": "Error al abrir la division",
+      "failedPledge": "Error al prometer",
+      "failedCloseSplit": "Error al cerrar la division",
+      "greetingsComingSoon": "Los mensajes de felicitacion estaran disponibles en una futura actualizacion!"
+    }
+  },
+  "placeholders": {
+    "enterName": "Ingresa tu nombre",
+    "enterEmail": "tu@correo.com",
+    "enterPassword": "Ingresa tu contrasena",
+    "minCharacters": "Al menos 6 caracteres",
+    "reenterPassword": "Reingresa la contrasena",
+    "fullName": "Juan Perez",
+    "searchNameEmail": "Buscar por nombre o correo",
+    "enterGroupName": "Ingresa el nombre del grupo",
+    "groupDescription": "Agrega una descripcion del grupo (opcional)",
+    "dateTitle": "ej., Aniversario de bodas",
+    "optionalNotes": "Notas opcionales",
+    "typeMessage": "Escribe tu mensaje..."
+  },
+  "sections": {
+    "groupInfo": "Informacion del grupo",
+    "groupMode": "Modo del grupo",
+    "budget": "Presupuesto",
+    "members": "Miembros ({{count}})",
+    "inviteCode": "Codigo de invitacion",
+    "dangerZone": "Zona de peligro",
+    "deliveryVisibility": "Visibilidad de la direccion de entrega",
+    "bankVisibility": "Visibilidad de los datos bancarios"
   }
 }
