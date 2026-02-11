@@ -2,16 +2,361 @@
   "common": {
     "loading": "Cargando...",
     "error": "Error",
+    "success": "Éxito",
     "cancel": "Cancelar",
     "save": "Guardar",
-    "ok": "OK"
+    "delete": "Eliminar",
+    "confirm": "Confirmar",
+    "close": "Cerrar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "done": "Listo",
+    "edit": "Editar",
+    "add": "Agregar",
+    "remove": "Quitar",
+    "retry": "Reintentar",
+    "search": "Buscar",
+    "ok": "OK",
+    "yes": "Sí",
+    "no": "No",
+    "errors": {
+      "generic": "Algo salió mal",
+      "network": "Error de red. Por favor revisa tu conexión.",
+      "notFound": "No encontrado",
+      "unauthorized": "No tienes autorización para realizar esta acción"
+    },
+    "empty": {
+      "noResults": "No se encontraron resultados",
+      "noData": "No hay datos disponibles"
+    },
+    "time": {
+      "justNow": "Justo ahora",
+      "minutesAgo": "hace {{count}} minuto",
+      "minutesAgo_plural": "hace {{count}} minutos",
+      "hoursAgo": "hace {{count}} hora",
+      "hoursAgo_plural": "hace {{count}} horas",
+      "daysAgo": "hace {{count}} día",
+      "daysAgo_plural": "hace {{count}} días",
+      "today": "Hoy",
+      "tomorrow": "Mañana",
+      "yesterday": "Ayer"
+    }
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "signup": "Registrarse",
+    "logout": "Cerrar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "resetPassword": "Restablecer contraseña",
+    "createAccount": "Crear cuenta",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "dontHaveAccount": "¿No tienes una cuenta?",
+    "welcomeBack": "Bienvenido de nuevo",
+    "signInToAccount": "Inicia sesión en tu cuenta",
+    "enterEmail": "tu@correo.com",
+    "enterPassword": "Ingresa tu contraseña",
+    "fillAllFields": "Por favor completa todos los campos",
+    "loginFailed": "Error al iniciar sesión",
+    "errors": {
+      "invalidEmail": "Por favor ingresa un correo electrónico válido",
+      "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
+      "passwordsDoNotMatch": "Las contraseñas no coinciden",
+      "invalidCredentials": "Correo o contraseña incorrectos",
+      "emailInUse": "Este correo electrónico ya está en uso"
+    }
+  },
+  "groups": {
+    "title": "Mis grupos",
+    "myGroups": "Mis grupos",
+    "createGroup": "Crear grupo",
+    "joinGroup": "Unirse al grupo",
+    "groupName": "Nombre del grupo",
+    "groupDescription": "Descripción del grupo",
+    "groupPhoto": "Foto del grupo",
+    "inviteCode": "Código de invitación",
+    "copyInviteCode": "Copiar código",
+    "codeCopied": "Código copiado al portapapeles",
+    "enterInviteCode": "Ingresa el código de invitación",
+    "members": "Miembros",
+    "member": "miembro",
+    "member_plural": "miembros",
+    "admin": "Admin",
+    "settings": "Configuración",
+    "leaveGroup": "Salir del grupo",
+    "deleteGroup": "Eliminar grupo",
+    "group": "grupo",
+    "group_plural": "grupos",
+    "mode": {
+      "gifts": "Regalos",
+      "greetings": "Saludos",
+      "giftsDescription": "Intercambio de regalos físicos con seguimiento y presupuestos",
+      "greetingsDescription": "Envía buenos deseos de cumpleaños y saludos virtuales"
+    },
+    "budget": {
+      "title": "Presupuesto",
+      "perGift": "Por regalo",
+      "monthly": "Mensual",
+      "yearly": "Anual",
+      "amount": "Cantidad",
+      "spent": "Gastado",
+      "remaining": "Restante"
+    },
+    "empty": {
+      "noGroups": "Aún no tienes grupos",
+      "noGroupsDescription": "Crea un grupo nuevo o únete a uno\ncon un código de invitación",
+      "noMembers": "Aún no hay miembros"
+    },
+    "confirmLeave": "¿Estás seguro de que quieres salir de este grupo?",
+    "confirmDelete": "¿Estás seguro de que quieres eliminar este grupo? Esta acción no se puede deshacer."
+  },
+  "wishlist": {
+    "title": "Mi lista de deseos",
+    "addItem": "Agregar artículo",
+    "editItem": "Editar artículo",
+    "itemTitle": "Título del artículo",
+    "itemUrl": "URL del artículo",
+    "itemPrice": "Precio",
+    "itemPriority": "Prioridad",
+    "itemImage": "Imagen del artículo",
+    "startYourWishlist": "Empieza tu lista de deseos",
+    "tapToAddItems": "Toca el botón + arriba para agregar artículos de Amazon",
+    "itemAddedSuccess": "¡Artículo agregado a tu lista de deseos!",
+    "itemRemovedSuccess": "Artículo eliminado de la lista",
+    "failedToLoad": "Error al cargar los artículos de la lista",
+    "failedToDelete": "Error al eliminar el artículo",
+    "mustBeLoggedIn": "Debes iniciar sesión para agregar artículos",
+    "itemType": {
+      "gift": "Regalo",
+      "surpriseMe": "Sorpréndeme",
+      "mysteryBox": "Caja misteriosa"
+    },
+    "priority": {
+      "low": "Baja",
+      "medium": "Media",
+      "high": "Alta",
+      "highest": "Máxima"
+    },
+    "claim": {
+      "claim": "Reclamar",
+      "unclaim": "Liberar",
+      "claimed": "Reclamado",
+      "claimedBy": "Reclamado por {{name}}",
+      "taken": "Tomado",
+      "youClaimed": "Lo reclamaste",
+      "confirmUnclaim": "¿Estás seguro de que quieres liberar este artículo?"
+    },
+    "split": {
+      "title": "Pago dividido",
+      "openSplit": "Abrir división",
+      "closeSplit": "Cerrar división",
+      "contribute": "Contribuir",
+      "pledged": "Comprometido",
+      "funded": "Financiado",
+      "fullyFunded": "Totalmente financiado",
+      "contributors": "Contribuyentes",
+      "yourContribution": "Tu contribución",
+      "enterAmount": "Ingresa la cantidad"
+    },
+    "favorite": {
+      "markFavorite": "Marcar como favorito",
+      "removeFavorite": "Quitar favorito",
+      "mostWanted": "Más deseado"
+    },
+    "empty": {
+      "noItems": "Aún no hay artículos",
+      "noItemsDescription": "¡Agrega algo que te gustaría recibir!",
+      "noItemsOther": "{{name}} aún no ha agregado nada"
+    },
+    "errors": {
+      "titleRequired": "El título del artículo es obligatorio",
+      "invalidUrl": "Por favor ingresa una URL válida",
+      "invalidPrice": "Por favor ingresa un precio válido"
+    }
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "markAllRead": "Marcar todas como leídas",
+    "empty": {
+      "noNotifications": "No hay notificaciones",
+      "noNotificationsDescription": "¡Estás al día!"
+    },
+    "types": {
+      "friendRequest": "te envió una solicitud de amistad",
+      "friendAccepted": "aceptó tu solicitud de amistad",
+      "birthdayReminder": "El cumpleaños de {{name}} es {{when}}",
+      "giftLeader": "Eres el líder de regalos para el cumpleaños de {{name}}",
+      "itemClaimed": "reclamó un artículo de tu lista",
+      "splitInvite": "te invitó a contribuir a una división",
+      "splitFunded": "El pago dividido está totalmente financiado",
+      "contribution": "contribuyó {{amount}} a la división"
+    }
+  },
+  "profile": {
+    "title": "Perfil",
+    "editProfile": "Editar perfil",
+    "displayName": "Nombre para mostrar",
+    "birthday": "Cumpleaños",
+    "birthdayLocked": "La fecha de cumpleaños no se puede cambiar después de la configuración",
+    "profilePhoto": "Foto de perfil",
+    "changePhoto": "Cambiar foto",
+    "removePhoto": "Eliminar foto",
+    "personalDetails": {
+      "title": "Detalles personales",
+      "subtitle": "Ayuda a tus amigos a saber qué te gusta",
+      "sizes": "Tallas",
+      "shirtSize": "Talla de camisa",
+      "shoeSize": "Talla de zapato",
+      "pantSize": "Talla de pantalón",
+      "ringSize": "Talla de anillo",
+      "preferences": "Preferencias",
+      "favoriteColors": "Colores favoritos",
+      "favoriteBrands": "Marcas favoritas",
+      "interests": "Intereses",
+      "dislikes": "No me gusta",
+      "deliveryAddress": "Dirección de entrega",
+      "bankDetails": "Datos bancarios",
+      "externalLinks": "Enlaces externos",
+      "addLink": "Agregar enlace",
+      "completeness": "{{percent}}% completo",
+      "lastUpdated": "Última actualización {{date}}"
+    },
+    "secretNotes": {
+      "title": "Notas secretas",
+      "subtitle": "Notas privadas sobre esta persona que solo tú puedes ver",
+      "addNote": "Agregar nota",
+      "editNote": "Editar nota",
+      "deleteNote": "Eliminar nota",
+      "placeholder": "Escribe algo útil para recordar...",
+      "empty": "Aún no hay notas"
+    }
+  },
+  "calendar": {
+    "title": "Calendario",
+    "today": "Hoy",
+    "upcoming": "Próximos",
+    "birthdays": "Cumpleaños",
+    "friendDates": "Fechas de amigos",
+    "syncToDevice": "Sincronizar con dispositivo",
+    "synced": "Sincronizado",
+    "countdown": {
+      "today": "¡Hoy!",
+      "tomorrow": "Mañana",
+      "daysLeft": "falta {{count}} día",
+      "daysLeft_plural": "faltan {{count}} días",
+      "weeksLeft": "falta {{count}} semana",
+      "weeksLeft_plural": "faltan {{count}} semanas",
+      "monthsLeft": "falta {{count}} mes",
+      "monthsLeft_plural": "faltan {{count}} meses"
+    },
+    "publicDates": {
+      "title": "Fechas públicas",
+      "add": "Agregar fecha",
+      "edit": "Editar fecha",
+      "dateTitle": "Título de la fecha",
+      "dateMonth": "Mes",
+      "dateDay": "Día",
+      "empty": "No se han agregado fechas públicas"
+    }
+  },
+  "celebrations": {
+    "title": "Celebraciones",
+    "giftLeader": {
+      "title": "Líder de regalos",
+      "youAre": "Eres el líder de regalos",
+      "assignedTo": "Líder de regalos: {{name}}",
+      "responsibilities": "Coordinar la compra y entrega del regalo",
+      "reassign": "Reasignar"
+    },
+    "contributions": {
+      "title": "Contribuciones",
+      "contribute": "Contribuir",
+      "yourContribution": "Tu contribución",
+      "totalCollected": "Total recaudado",
+      "target": "Meta",
+      "markPaid": "Marcar como pagado",
+      "paid": "Pagado",
+      "pledged": "Comprometido"
+    },
+    "chat": {
+      "title": "Chat del grupo",
+      "placeholder": "Escribe un mensaje...",
+      "send": "Enviar",
+      "linkToItem": "Enlazar artículo",
+      "empty": "Aún no hay mensajes"
+    },
+    "status": {
+      "upcoming": "Próximo",
+      "inProgress": "En progreso",
+      "completed": "Completado"
+    }
   },
   "settings": {
+    "title": "Configuración",
     "language": "Idioma",
-    "languageDescription": "Elige tu idioma preferido"
+    "languageDescription": "Elige tu idioma preferido",
+    "notifications": "Notificaciones",
+    "notificationsDescription": "Administrar preferencias de notificaciones",
+    "privacy": "Privacidad",
+    "help": "Ayuda y soporte",
+    "about": "Acerca de",
+    "version": "Versión"
   },
   "languages": {
-    "en": "Ingles",
-    "es": "Espanol"
+    "en": "Inglés",
+    "es": "Español"
+  },
+  "friends": {
+    "title": "Amigos",
+    "findFriends": "Buscar amigos",
+    "addFriend": "Agregar amigo",
+    "pending": "Pendiente",
+    "requests": "Solicitudes",
+    "sent": "Enviadas",
+    "received": "Recibidas",
+    "accept": "Aceptar",
+    "decline": "Rechazar",
+    "cancel": "Cancelar",
+    "remove": "Eliminar",
+    "block": "Bloquear",
+    "unblock": "Desbloquear",
+    "searchUsers": "Buscar usuarios...",
+    "importContacts": "Importar contactos",
+    "contactsPermission": "Permite acceso a contactos para encontrar amigos",
+    "friend": "amigo",
+    "friend_plural": "amigos",
+    "removeFriend": "Eliminar amigo",
+    "removeFriendConfirm": "¿Estás seguro de que quieres eliminar a {{name}} como amigo?",
+    "failedToRemove": "Error al eliminar amigo. Por favor intenta de nuevo.",
+    "empty": {
+      "noFriends": "Aún no tienes amigos",
+      "noFriendsDescription": "Busca y agrega amigos para ver sus listas de deseos",
+      "noRequests": "No hay solicitudes pendientes",
+      "noResults": "No se encontraron usuarios"
+    },
+    "confirmRemove": "¿Estás seguro de que quieres eliminar a este amigo?",
+    "confirmBlock": "¿Estás seguro de que quieres bloquear a este usuario?"
+  },
+  "onboarding": {
+    "welcome": "¡Bienvenido!",
+    "letsGetStarted": "Configuremos tu perfil para empezar",
+    "whatsYourName": "¿Cuál es tu nombre?",
+    "whensYourBirthday": "¿Cuándo es tu cumpleaños?",
+    "birthdayNote": "Usaremos esto para celebrar con tus amigos",
+    "addPhoto": "Agregar foto de perfil",
+    "addPhotoOptional": "Agregar foto de perfil (opcional)",
+    "changePhoto": "Cambiar foto",
+    "skip": "Omitir",
+    "finish": "Finalizar",
+    "enterYourName": "Ingresa tu nombre",
+    "selectBirthday": "Selecciona tu cumpleaños",
+    "requiredField": "Campo obligatorio",
+    "enterDisplayName": "Por favor ingresa tu nombre para mostrar",
+    "confirmAndSave": "Confirmar y guardar",
+    "reviewInfo": "Revisa tu información",
+    "errorSaving": "Error al guardar la información del perfil",
+    "errorGettingUser": "No se pudo obtener la información del usuario"
   }
 }
