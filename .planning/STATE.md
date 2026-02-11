@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 ## Current Position
 
 Phase: 30 - Server Integration & Translation Files (2 of 4)
-Plan: 01 of 04
+Plan: 03 of 04
 Status: In progress
-Last activity: 2026-02-11 - Completed 30-01-PLAN.md (i18n server sync schema)
+Last activity: 2026-02-11 - Completed 30-03-PLAN.md (localized push notifications)
 
-Progress: [###-------] 38% v1.5 in progress (3/8 plans complete)
+Progress: [####------] 50% v1.5 in progress (4/8 plans complete)
 
 ## Milestone History
 
@@ -29,7 +29,7 @@ Progress: [###-------] 38% v1.5 in progress (3/8 plans complete)
 | Phase | Goal | Requirements | Status |
 |-------|------|--------------|--------|
 | 29 | Foundation & Tooling | INFRA-01, INFRA-02, INFRA-03, PERS-01 | Complete (2/2) |
-| 30 | Server Integration & Translation Files | PERS-02, PERS-03, NOTIF-01, NOTIF-02, TRANS-04, TRANS-05 | In progress (1/4) |
+| 30 | Server Integration & Translation Files | PERS-02, PERS-03, NOTIF-01, NOTIF-02, TRANS-04, TRANS-05 | In progress (2/4) |
 | 31 | Root Integration & Settings UI | SETT-01, SETT-02 | Pending |
 | 32 | UI Component Migration | TRANS-01, TRANS-02, TRANS-03 | Pending |
 
@@ -49,6 +49,8 @@ v1.5 key architectural decisions:
 - TypeScript-safe translation keys via automated tooling
 - Neutral Latin American Spanish for initial release
 - Store preferred_language in users table (not auth metadata) for Edge Function service role access (30-01)
+- Push Edge Function fallback chain: user language → English → original title/body for backward compatibility (30-03)
+- Variable interpolation excludes notification_type and avatar_url to avoid recursion (30-03)
 
 ### Pending Todos (Manual Setup)
 
@@ -79,6 +81,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-11
-Stopped at: Completed 30-01-PLAN.md (i18n server sync schema)
-Resume file: .planning/phases/30-server-integration-translation-files/30-01-SUMMARY.md
-Next: `/gsd:execute-plan .planning/phases/30-server-integration-translation-files/30-02-PLAN.md`
+Stopped at: Completed 30-03-PLAN.md (localized push notifications)
+Resume file: .planning/phases/30-server-integration-translation-files/30-03-SUMMARY.md
+Next: `/gsd:execute-plan .planning/phases/30-server-integration-translation-files/30-04-PLAN.md`
