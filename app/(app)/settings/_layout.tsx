@@ -33,6 +33,12 @@ export default function SettingsLayout() {
           title: 'Important Dates',
         }}
       />
+      <Stack.Screen
+        name="language"
+        options={{
+          title: 'Language', // Placeholder, overridden by screen's Stack.Screen options
+        }}
+      />
     </Stack>
   );
 }
