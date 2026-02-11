@@ -1,0 +1,17 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "cancel": "Cancel",
+    "save": "Save",
+    "ok": "OK"
+  },
+  "settings": {
+    "language": "Language",
+    "languageDescription": "Choose your preferred language"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Spanish"
+  }
+}
