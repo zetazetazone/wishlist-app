@@ -479,7 +479,7 @@ Plans:
 - [x] 31-01-PLAN.md -- Language settings screen with radio card UI and profile navigation link
 
 #### Phase 32: UI Component Migration
-**Goal**: All UI strings translated across 140+ files with localized date/time formatting
+**Goal**: All UI strings translated across 93+ files with localized date/time formatting
 **Depends on**: Phase 31
 **Requirements**: TRANS-01, TRANS-02, TRANS-03
 **Success Criteria** (what must be TRUE):
@@ -488,7 +488,22 @@ Plans:
   3. Date and time displays are localized (e.g., "11 de febrero" in Spanish)
   4. Tab labels, navigation titles, and screen headers update on language change
   5. No hardcoded strings remain in JSX (verified via eslint-plugin-i18next)
-**Plans**: TBD
+**Plans**: 13 plans
+
+Plans:
+- [ ] 32-01-PLAN.md -- Create useLocalizedFormat hook and configure eslint-plugin-i18next
+- [ ] 32-02-PLAN.md -- Migrate tab screens (wishlist, groups, calendar, friends, notifications, celebrations)
+- [ ] 32-03-PLAN.md -- Migrate auth and onboarding screens (login, signup, onboarding)
+- [ ] 32-04-PLAN.md -- Migrate settings and profile screens (5 files)
+- [ ] 32-05-PLAN.md -- Migrate group, celebration, requests, and discover screens
+- [ ] 32-06-PLAN.md -- Migrate group components (12 files)
+- [ ] 32-07-PLAN.md -- Migrate wishlist item components (10 files)
+- [ ] 32-08-PLAN.md -- Migrate claim and split components (10 files)
+- [ ] 32-09-PLAN.md -- Migrate celebration and chat components (8 files)
+- [ ] 32-10-PLAN.md -- Migrate profile section components (12 files)
+- [ ] 32-11-PLAN.md -- Migrate notes, friends, calendar, and UI components (11 files)
+- [ ] 32-12-PLAN.md -- Update countdown.ts and deviceCalendar.ts utilities
+- [ ] 32-13-PLAN.md -- Final ESLint verification and visual checkpoint
 
 </details>
 
@@ -527,4 +542,4 @@ Plans:
 | 29. Foundation & Tooling | v1.5 | 2/2 | Complete | 2026-02-11 |
 | 30. Server Integration & Translation Files | v1.5 | 6/6 | Complete | 2026-02-11 |
 | 31. Root Integration & Settings UI | v1.5 | 1/1 | Complete | 2026-02-11 |
-| 32. UI Component Migration | v1.5 | 0/? | Pending | - |
+| 32. UI Component Migration | v1.5 | 0/13 | Pending | - |
