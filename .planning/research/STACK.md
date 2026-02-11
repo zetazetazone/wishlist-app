@@ -1,354 +1,247 @@
-# Stack Research: v1.4 Friends System
+# Stack Research: v1.5 Localization (i18n)
 
-**Researched:** 2026-02-09
+**Researched:** 2026-02-11
 **Overall confidence:** HIGH
 
 ## Summary
 
-**One new npm dependency required: `expo-contacts@~15.0.11`** for device phonebook access. All other capabilities (friend relationships, public dates, calendar integration) are implementable with the existing stack. The primary work is database schema additions (friends table with bidirectional request/accept pattern), new RLS policies following proven patterns, and integration with existing calendar sync utilities.
+**Two new npm dependencies required:** `expo-localization@~17.0.8` for device locale detection and `i18next@^25.8.5` + `react-i18next@^16.5.4` for translation management. The existing `@react-native-async-storage/async-storage@^2.2.0` already installed handles language preference persistence. Server-side localization for push notifications requires adding a `preferred_language` column to users table and modifying the existing Edge Function to include localized content.
 
-Key finding: The project already has the permission handling pattern established via `expo-calendar` and `expo-notifications`. The `expo-contacts` integration follows the exact same pattern. The friend relationship database design uses a single-table approach with status field (simpler than dual-table approaches) that maps well to Supabase RLS policies.
+Key finding: The established pattern is `expo-localization` (device detection) + `i18next`/`react-i18next` (translation engine). This is the official Expo-recommended approach and has the largest ecosystem. The project already has AsyncStorage installed which handles language persistence without additional dependencies.
 
 ---
 
-## Required Additions
+## Recommended Stack
 
-### New Dependencies
+### Core i18n Framework
 
 | Package | Version | Purpose | Why |
 |---------|---------|---------|-----|
-| `expo-contacts` | `~15.0.11` | Device phonebook access | Only Expo SDK library for contacts; managed workflow compatible; SDK 54 aligned |
+| `expo-localization` | `~17.0.8` | Device locale detection | Official Expo SDK library; hooks `useLocales()` and `useCalendars()` for reactive locale data; SDK 54 compatible |
+| `i18next` | `^25.8.5` | Core translation engine | Industry standard; 25M+ weekly downloads; supports interpolation, pluralization, context; no framework dependencies |
+| `react-i18next` | `^16.5.4` | React bindings for i18next | `useTranslation()` hook for component-level translations; React 19 compatible; TypeScript support |
 
-### Installation
+### Supporting Libraries (Already Installed)
 
-```bash
-npx expo install expo-contacts
-```
+| Package | Current Version | Purpose for i18n | Notes |
+|---------|-----------------|------------------|-------|
+| `@react-native-async-storage/async-storage` | `^2.2.0` | Persist user language preference | Already in dependencies; i18next-react-native-async-storage NOT needed (manual integration is simpler) |
+| `@supabase/supabase-js` | `^2.93.3` | Store preferred_language in user profile | Already in dependencies; Edge Functions read this for push notifications |
 
-This automatically installs the SDK 54-compatible version (~15.0.11).
+### What the Stack Does NOT Need
 
-### Existing Stack Reuse
+Libraries that are explicitly NOT required:
 
-| Capability Needed | Existing Solution | Confidence |
-|-------------------|-------------------|------------|
-| Friend relationship storage | New `friends` table + Supabase RLS (pattern from `group_members`) | HIGH |
-| Friend request workflow | Status field approach (pattern from `gift_claims.status`) | HIGH |
-| Public dates storage | New `public_dates` table + Supabase queries | HIGH |
-| Calendar sync for friend dates | `utils/deviceCalendar.ts` + `expo-calendar@~15.0.8` already installed | HIGH |
-| Permission request flow | Pattern from `lib/notifications.ts` lines 44-56 | HIGH |
-| Friend suggestions based on contacts | Phone number matching via Supabase query | HIGH |
-| Friend suggestions based on groups | Existing `group_members` table + join query | HIGH |
-| Friends list UI | `@shopify/flash-list` + existing member card patterns | HIGH |
-| Request/Accept UI | Gluestack UI components (already installed) | HIGH |
+| Package | Why Not Needed |
+|---------|---------------|
+| `i18next-react-native-async-storage` | Over-engineered; manual AsyncStorage.getItem/setItem in i18n init is simpler and more transparent |
+| `@formatjs/intl-locale` polyfill | Only needed for advanced ICU features; basic pluralization works without polyfills |
+| `@formatjs/intl-pluralrules` polyfill | English/Spanish have simple plural rules; polyfill only needed for complex plural languages (Arabic, Polish) |
+| `@lingui/react` / `@lingui/core` | Smaller bundle but requires build-time compilation step; i18next is simpler to set up |
+| `i18n-js` | Less feature-rich than i18next; no built-in React hooks; Expo docs mention it but recommend i18next for larger apps |
+| `react-intl` | ICU MessageFormat complexity not needed for simple English/Spanish; heavier bundle |
 
 ---
 
-## expo-contacts Integration
+## Installation
 
-### API Methods Required
+```bash
+# Core i18n libraries
+npx expo install expo-localization
+npm install i18next react-i18next
 
-| Method | Purpose | When Used |
-|--------|---------|-----------|
-| `Contacts.requestPermissionsAsync()` | Request access to device contacts | On first contact import attempt |
-| `Contacts.getPermissionsAsync()` | Check current permission status | Before showing import UI |
-| `Contacts.getContactsAsync()` | Fetch contacts with phone numbers | After permission granted |
-| `Contacts.Fields.PhoneNumbers` | Specify we only need phone numbers | Minimize data fetched |
+# OR combined (expo install handles version resolution for expo-localization)
+npx expo install expo-localization && npm install i18next@^25.8.5 react-i18next@^16.5.4
+```
 
-### Permission Configuration
+**Note:** `npx expo install` ensures SDK 54 compatibility for expo-localization. The npm packages (i18next, react-i18next) don't have Expo SDK version constraints.
 
-**app.json additions:**
+---
 
-```json
-{
-  "expo": {
-    "plugins": [
-      "expo-router",
-      ["expo-notifications", { ... }],
-      "expo-calendar",
-      [
-        "expo-contacts",
-        {
-          "contactsPermission": "Allow Wishlist to find friends from your contacts who already use the app."
-        }
-      ]
-    ],
-    "ios": {
-      "infoPlist": {
-        "NSContactsUsageDescription": "Allow Wishlist to find friends from your contacts who already use the app."
-      }
-    },
-    "android": {
-      "permissions": [
-        "android.permission.READ_CALENDAR",
-        "android.permission.WRITE_CALENDAR",
-        "android.permission.READ_CONTACTS"
-      ]
-    }
+## Version Compatibility with Expo 54
+
+| Package | Version | React 19 | TypeScript 5.9 | Expo SDK 54 | Notes |
+|---------|---------|----------|----------------|-------------|-------|
+| `expo-localization` | `~17.0.8` | Yes | Yes | Yes | `npx expo install` auto-selects correct version |
+| `i18next` | `^25.8.5` | N/A (core) | Yes (requires ^5) | N/A | No React dependency |
+| `react-i18next` | `^16.5.4` | Yes | Yes (requires ^5) | N/A | Peer dep: i18next >= 25.6.2, react >= 16.8.0 |
+
+**Verified compatibility:**
+- react-i18next v16.5.4 peer deps: `{ i18next: '>= 25.6.2', react: '>= 16.8.0', typescript: '^5' }`
+- Project has: React 19.1.0, TypeScript 5.9.2 - all requirements satisfied
+
+---
+
+## Integration Points with Existing Stack
+
+### 1. Supabase: User Language Preference
+
+Add `preferred_language` column to users table:
+
+```sql
+ALTER TABLE public.users
+ADD COLUMN preferred_language TEXT DEFAULT 'en' CHECK (preferred_language IN ('en', 'es'));
+```
+
+**Why server-side storage:**
+- Push notifications are generated server-side (Edge Functions)
+- System emails (if added) need user's language
+- Analytics/admin can see user language distribution
+- Single source of truth (not just device-dependent)
+
+### 2. Edge Function: Localized Push Notifications
+
+Modify existing `supabase/functions/push/index.ts` to:
+1. Query user's `preferred_language` along with device tokens
+2. Pass language to notification content lookup
+3. Store translation strings in Edge Function or query from translations table
+
+**Pattern:**
+```typescript
+// In push/index.ts
+const { data: userData } = await supabase
+  .from('users')
+  .select('preferred_language')
+  .eq('id', user_id)
+  .single();
+
+const lang = userData?.preferred_language || 'en';
+const localizedTitle = translations[notificationType][lang].title;
+const localizedBody = translations[notificationType][lang].body;
+```
+
+### 3. AsyncStorage: Language Persistence
+
+Reuse existing AsyncStorage for client-side language caching:
+
+```typescript
+// In i18n initialization
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const LANGUAGE_KEY = '@app_language';
+
+// Load saved language or detect from device
+const savedLanguage = await AsyncStorage.getItem(LANGUAGE_KEY);
+const deviceLanguage = getLocales()[0]?.languageCode || 'en';
+const initialLanguage = savedLanguage || deviceLanguage;
+
+// Save when user changes language
+const changeLanguage = async (lang: string) => {
+  await AsyncStorage.setItem(LANGUAGE_KEY, lang);
+  await i18n.changeLanguage(lang);
+  // Also update Supabase user profile
+  await supabase.from('users').update({ preferred_language: lang }).eq('id', userId);
+};
+```
+
+### 4. expo-localization: Device Detection
+
+```typescript
+import { getLocales } from 'expo-localization';
+
+// Get device language code (e.g., 'en', 'es', 'es-MX')
+const deviceLanguage = getLocales()[0]?.languageCode;
+
+// Supported languages (expand in future)
+const SUPPORTED_LANGUAGES = ['en', 'es'];
+
+// Fallback logic
+const initialLanguage = SUPPORTED_LANGUAGES.includes(deviceLanguage)
+  ? deviceLanguage
+  : 'en'; // English fallback
+```
+
+---
+
+## Translation File Structure
+
+Recommended structure for maintainability:
+
+```
+src/
+  i18n/
+    index.ts          # i18next initialization
+    resources.ts      # Combines all locale resources
+    locales/
+      en/
+        common.json   # Shared strings (OK, Cancel, etc.)
+        home.json     # Home screen strings
+        groups.json   # Groups feature strings
+        friends.json  # Friends feature strings
+        settings.json # Settings screen strings
+      es/
+        common.json
+        home.json
+        groups.json
+        friends.json
+        settings.json
+```
+
+**Why namespaced files:**
+- Parallel development (different devs can work on different features)
+- Lazy loading potential (load only needed namespaces)
+- Easier to hand off to translators (one file per feature)
+- Clearer ownership and organization
+
+---
+
+## TypeScript Integration
+
+For type-safe translation keys:
+
+```typescript
+// src/i18n/types.ts
+import 'i18next';
+import type common from './locales/en/common.json';
+import type home from './locales/en/home.json';
+
+declare module 'i18next' {
+  interface CustomTypeOptions {
+    defaultNS: 'common';
+    resources: {
+      common: typeof common;
+      home: typeof home;
+      // Add other namespaces...
+    };
   }
 }
 ```
 
-**Critical Note on iOS Permission String:**
-Apple has rejected apps with generic permission messages like "Allow $(PRODUCT_NAME) to access your contacts." The message MUST explain the specific purpose. The string above explicitly states "find friends...who already use the app" which matches the actual feature and should pass App Store review.
-
-### iOS 18 Limited Access Handling
-
-iOS 18 introduced granular contact permissions where users can grant access to only some contacts. The `expo-contacts` SDK 54 version (~15.0.11) supports this via the `accessPrivileges` property in the permission response:
-
-```typescript
-const { status, accessPrivileges } = await Contacts.getPermissionsAsync();
-
-// status: 'granted' | 'denied' | 'undetermined'
-// accessPrivileges: 'all' | 'limited' | 'none' (iOS 18+)
-
-if (status === 'granted' && accessPrivileges === 'limited') {
-  // User granted access to only some contacts
-  // Show UI explaining they can add more contacts via system settings
-}
-```
-
-**Recommendation:** Handle `limited` gracefully by:
-1. Proceeding with the contacts the user shared
-2. Showing a subtle hint that they can share more contacts if desired
-3. NOT repeatedly prompting for more access (bad UX, potential rejection)
-
-### Android Permissions
-
-The config plugin automatically adds `READ_CONTACTS` permission to AndroidManifest.xml. No manual manifest editing required in managed workflow.
-
-**Note:** `WRITE_CONTACTS` is NOT needed for this feature (we only read contacts to find friends, never write).
+This provides:
+- Autocomplete for translation keys in VSCode
+- Compile-time errors for missing/wrong keys
+- Refactoring support when renaming keys
 
 ---
 
-## Database Schema Pattern
+## Alternatives Considered
 
-### Friend Relationship Approach
+| Alternative | Why Not Selected |
+|-------------|------------------|
+| **Lingui** (`@lingui/react` v5.9.1) | Smaller bundle (10.4KB vs ~15KB) but requires Babel macro setup and extraction CLI; adds build complexity; i18next is simpler for 2-language app |
+| **i18n-js** (v4.5.2) | Simpler API but no React hooks; manual re-renders on language change; i18next + react-i18next handles this automatically |
+| **react-intl** (v7.x) | ICU MessageFormat is powerful but complex; overkill for simple string translations; larger bundle |
+| **Native iOS/Android strings** | Would require ejecting from managed workflow; loses cross-platform consistency; harder to maintain |
+| **Server-only translations** | Higher latency; offline mode fails; client-side caching is essential for mobile apps |
 
-**Recommended: Single Table with Status Field**
-
-This approach uses one row per friend request/relationship with a status that progresses from `pending` to `accepted` (or `declined`). Simpler than dual-table approaches and maps well to RLS.
-
-```sql
-CREATE TABLE public.friends (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  requester_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
-  addressee_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
-  status TEXT CHECK (status IN ('pending', 'accepted', 'declined', 'blocked')) DEFAULT 'pending',
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-
-  -- Prevent duplicate requests in either direction
-  CONSTRAINT unique_friend_pair UNIQUE (requester_id, addressee_id),
-  -- Prevent self-friending
-  CONSTRAINT no_self_friend CHECK (requester_id != addressee_id)
-);
-```
-
-**Why single-table over dual-table:**
-- Simpler queries: One table to query for both pending requests and confirmed friends
-- Atomic status transitions: `UPDATE...SET status = 'accepted'` vs multi-table transaction
-- RLS is simpler: One set of policies instead of coordinating two tables
-- Matches existing patterns: `gift_claims.status` progression is the same concept
-
-### Public Dates Schema
-
-```sql
-CREATE TABLE public.public_dates (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
-  title TEXT NOT NULL CHECK (char_length(title) <= 100),
-  date DATE NOT NULL,
-  is_recurring BOOLEAN DEFAULT true,  -- Annual recurrence like birthdays
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
-
-**Why separate table from birthdays:**
-- Birthdays are on `users` table (one per user, required)
-- Public dates are many-per-user, optional, user-defined
-- Different RLS: Birthday visible to group members; public dates visible to friends
-
-### Contact Matching Schema
-
-For efficient contact-to-user matching, store normalized phone numbers:
-
-```sql
--- Add to users table or create separate table
-ALTER TABLE public.users
-ADD COLUMN phone_number TEXT,
-ADD COLUMN phone_number_normalized TEXT GENERATED ALWAYS AS (
-  regexp_replace(phone_number, '[^0-9]', '', 'g')
-) STORED;
-
-CREATE INDEX idx_users_phone_normalized ON public.users(phone_number_normalized);
-```
-
-**Normalization logic:** Strip all non-digits for matching. Device contacts have varied formats (+1 555-123-4567, 5551234567, etc.). Normalizing to digits-only enables simple equality matching.
+**Decision rationale:** i18next + react-i18next is the most battle-tested combination with the best documentation, TypeScript support, and React integration. The ~5KB bundle difference vs Lingui is negligible compared to the simpler setup and larger community.
 
 ---
 
-## RLS Patterns
+## Future Language Expansion
 
-### Friends Table RLS
+The architecture supports adding languages without code changes:
 
-Follows patterns established in `group_members` and `gift_claims`:
+1. Add new locale folder: `src/i18n/locales/fr/`
+2. Add translations to each JSON file
+3. Update `resources.ts` to import French resources
+4. Add `'fr'` to `SUPPORTED_LANGUAGES` array
+5. Add `'fr'` to database CHECK constraint
 
-```sql
--- SELECT: Users can see their own friend relationships
-CREATE POLICY "Users can view own friend relationships"
-  ON public.friends FOR SELECT
-  USING (
-    requester_id = (SELECT auth.uid()) OR
-    addressee_id = (SELECT auth.uid())
-  );
-
--- INSERT: Users can send friend requests
-CREATE POLICY "Users can send friend requests"
-  ON public.friends FOR INSERT
-  WITH CHECK (requester_id = (SELECT auth.uid()));
-
--- UPDATE: Only addressee can accept/decline pending requests
-CREATE POLICY "Addressee can respond to requests"
-  ON public.friends FOR UPDATE
-  USING (
-    addressee_id = (SELECT auth.uid()) AND
-    status = 'pending'
-  )
-  WITH CHECK (
-    addressee_id = (SELECT auth.uid()) AND
-    status IN ('accepted', 'declined', 'blocked')
-  );
-
--- DELETE: Either party can remove accepted friendship
-CREATE POLICY "Users can remove friendships"
-  ON public.friends FOR DELETE
-  USING (
-    (requester_id = (SELECT auth.uid()) OR addressee_id = (SELECT auth.uid()))
-    AND status = 'accepted'
-  );
-```
-
-### Public Dates RLS
-
-```sql
--- SELECT: Friends can view each other's public dates
-CREATE POLICY "Friends can view public dates"
-  ON public.public_dates FOR SELECT
-  USING (
-    user_id = (SELECT auth.uid())
-    OR EXISTS (
-      SELECT 1 FROM public.friends f
-      WHERE f.status = 'accepted'
-        AND (
-          (f.requester_id = (SELECT auth.uid()) AND f.addressee_id = public_dates.user_id)
-          OR (f.addressee_id = (SELECT auth.uid()) AND f.requester_id = public_dates.user_id)
-        )
-    )
-  );
-
--- INSERT/UPDATE/DELETE: Owner only
-CREATE POLICY "Users can manage own public dates"
-  ON public.public_dates FOR ALL
-  USING (user_id = (SELECT auth.uid()))
-  WITH CHECK (user_id = (SELECT auth.uid()));
-```
-
----
-
-## Integration Points
-
-### 1. Contact Import -> Friend Suggestions
-
-```typescript
-// Fetch device contacts
-const { data: contacts } = await Contacts.getContactsAsync({
-  fields: [Contacts.Fields.PhoneNumbers],
-});
-
-// Normalize phone numbers
-const phoneNumbers = contacts
-  .flatMap(c => c.phoneNumbers?.map(p => p.number?.replace(/\D/g, '')) ?? [])
-  .filter(Boolean);
-
-// Match against users table
-const { data: matchedUsers } = await supabase
-  .from('users')
-  .select('id, display_name, avatar_url, phone_number_normalized')
-  .in('phone_number_normalized', phoneNumbers)
-  .neq('id', currentUserId); // Exclude self
-```
-
-### 2. Friend Request -> Notifications
-
-Reuse existing `device_tokens` and Edge Function pattern from gift leader notifications:
-
-```sql
--- Trigger on friends INSERT where status = 'pending'
--- Calls notify_friend_request() which inserts into notifications
--- Edge Function sends push via Expo Push API
-```
-
-### 3. Friend Dates -> Calendar Sync
-
-Extend existing `utils/deviceCalendar.ts`:
-
-```typescript
-// New function alongside existing syncBirthdayEvent
-export async function syncFriendDates(
-  friendId: string,
-  birthday: Date,
-  publicDates: PublicDate[]
-): Promise<SyncResult[]> {
-  // Reuse getOrCreateWishlistCalendar()
-  // Create events for birthday + each public date
-  // Set yearly recurrence for recurring dates
-}
-```
-
-### 4. Friends -> Group Invitations
-
-Friends list provides a natural source for group invites:
-
-```typescript
-// When inviting to group, show friends first
-const { data: friends } = await supabase
-  .from('friends')
-  .select(`
-    requester:requester_id(id, display_name, avatar_url),
-    addressee:addressee_id(id, display_name, avatar_url)
-  `)
-  .eq('status', 'accepted')
-  .or(`requester_id.eq.${userId},addressee_id.eq.${userId}`);
-```
-
----
-
-## Rejected Alternatives
-
-| Alternative | Why Not |
-|-------------|---------|
-| `react-native-contacts` (community) | Not maintained for managed Expo workflow; expo-contacts is official and SDK-aligned |
-| Dual-table approach (friend_requests + friendships) | More complex, requires transaction for accept, harder RLS coordination |
-| Store raw phone numbers without normalization | Matching fails on format differences; normalization enables simple equality |
-| Use email for matching instead of phone | Phone contacts rarely have email; phone is the primary identifier |
-| expo-contacts/next (new API) | SDK 55+ only; current project is SDK 54 |
-| `ContactAccessButton` (iOS 18 SwiftUI) | Requires native module; managed workflow should use standard permission flow |
-| Storing full contact data | Privacy concern; only store phone numbers for matching, never names/photos from contacts |
-
----
-
-## What NOT to Add
-
-The following are NOT needed for the Friends System:
-
-| Package | Why Not Needed |
-|---------|---------------|
-| `react-hook-form` | Friend request UI is simple (accept/decline buttons); existing useState patterns sufficient |
-| `zustand` / state management | Friend state is fetched from Supabase; no complex client-side state needed |
-| `expo-sharing` | No share-to-invite flow in scope; invite codes work via copy/paste |
-| `expo-sms` | No SMS invite flow in scope |
-| `@react-native-community/contacts` | Deprecated; expo-contacts is the replacement |
+**Languages to consider:**
+- Portuguese (pt) - Large user base in Latin America
+- French (fr) - Canada, Western Africa
+- German (de) - European market
 
 ---
 
@@ -356,43 +249,45 @@ The following are NOT needed for the Friends System:
 
 | Area | Confidence | Evidence |
 |------|------------|----------|
-| expo-contacts version ~15.0.11 for SDK 54 | HIGH | NPM shows 15.0.11 as latest; SDK 54 changelog confirms ~15.x range |
-| Permission configuration via config plugin | HIGH | Verified in Expo docs; same pattern as expo-calendar already in project |
-| iOS 18 limited access support | HIGH | expo/expo PR #35772 merged April 2025; accessPrivileges property documented |
-| Single-table friend schema | HIGH | Industry standard pattern; Supabase-compatible; matches existing status-field patterns |
-| RLS for bidirectional relationships | MEDIUM | Pattern is sound; complexity is in the OR conditions for bidirectional queries |
-| Phone number normalization for matching | HIGH | Standard approach; digits-only normalization handles format variations |
-| Calendar integration reuse | HIGH | Existing `deviceCalendar.ts` has all primitives; extension is straightforward |
+| expo-localization v17.0.8 for SDK 54 | HIGH | `npm view` confirmed; Expo docs reference SDK 54 |
+| i18next + react-i18next versions | HIGH | npm verified v25.8.5 and v16.5.4; peer deps match project |
+| React 19 compatibility | HIGH | react-i18next changelog confirms React 19 support in v15+ |
+| TypeScript 5.9 compatibility | HIGH | Both packages require TypeScript ^5; project has 5.9.2 |
+| No polyfills needed for en/es | HIGH | English/Spanish have simple plural rules (one/other); Hermes handles this natively |
+| AsyncStorage reuse pattern | HIGH | Documented in multiple Expo i18n tutorials; already installed |
+| Server-side language preference pattern | HIGH | Standard approach; Supabase schema change is straightforward |
+| Edge Function localization | MEDIUM | Requires code changes to existing push function; pattern is sound but implementation untested |
 
 ---
 
 ## Sources
 
-### expo-contacts
-- [Expo Contacts SDK Documentation](https://docs.expo.dev/versions/latest/sdk/contacts/) - Official API reference
-- [Expo SDK 54 Changelog](https://expo.dev/changelog/sdk-54) - SDK version compatibility
-- [expo-contacts npm package](https://www.npmjs.com/package/expo-contacts) - Version 15.0.11 confirmed
-- [GitHub PR #35772: iOS Limited Access Support](https://github.com/expo/expo/pull/35772) - accessPrivileges property
+### Official Documentation
+- [Expo Localization SDK](https://docs.expo.dev/versions/latest/sdk/localization/) - API reference for expo-localization
+- [Expo Localization Guide](https://docs.expo.dev/guides/localization/) - Best practices for Expo i18n
+- [i18next Documentation](https://www.i18next.com/) - Core i18next reference
+- [react-i18next Documentation](https://react.i18next.com/) - React bindings reference
 
-### iOS 18 Permissions
-- [Apple: Meet the Contact Access Button (WWDC24)](https://developer.apple.com/videos/play/wwdc2024/10121/) - iOS 18 contact permission changes
-- [Apple: Accessing the Contact Store](https://developer.apple.com/documentation/contacts/accessing-the-contact-store) - CNAuthorizationStatus.limited
-- [GitHub Issue #894: react-native-permissions iOS 18](https://github.com/zoontek/react-native-permissions/issues/894) - Community discussion on limited access
+### Package Versions (Verified 2026-02-11)
+- [expo-localization npm](https://www.npmjs.com/package/expo-localization) - v17.0.8
+- [i18next npm](https://www.npmjs.com/package/i18next) - v25.8.5
+- [react-i18next npm](https://www.npmjs.com/package/react-i18next) - v16.5.4
 
-### Database Patterns
-- [User Friends System & Database Design](https://www.coderbased.com/p/user-friends-system-and-database) - Single-table with status approach
-- [Modeling Mutual Friendship](https://minimalmodeling.substack.com/p/modeling-mutual-friendship) - Bidirectional relationship patterns
-- [Supabase RLS Documentation](https://supabase.com/docs/guides/database/postgres/row-level-security) - Policy patterns
-- [Neon: Modelling Authorization for Social Networks](https://neon.com/blog/modelling-authorization-for-a-social-network-with-postgres-rls-and-drizzle-orm) - RLS best practices
+### Community Resources
+- [Expo Starter: Internationalization](https://starter.obytes.com/guides/internationalization/) - Reference implementation
+- [Phrase Blog: React Native i18n with Expo and i18next](https://phrase.com/blog/posts/react-native-i18n-with-expo-and-i18next-part-1/) - Tutorial
+- [LaunchToday: Multi-language Support in Expo](https://launchtoday.dev/blog/expo-multi-language-support) - Best practices guide
 
-### Existing Project Patterns
-- `lib/notifications.ts` lines 44-56 - Permission request pattern
-- `utils/deviceCalendar.ts` - Calendar sync pattern
-- `supabase/migrations/20260206000001_v1.3_claims_details_notes.sql` - Status field RLS pattern
+### Supabase
+- [Supabase Edge Functions](https://supabase.com/docs/guides/functions) - Server-side TypeScript functions
+- [Custom i18n-ready Authentication Emails](https://blog.mansueli.com/creating-customized-i18n-ready-authentication-emails-using-supabase-edge-functions-postgresql-and-resend) - i18n pattern for Edge Functions
 
 ---
 
 ## Previous Research (Preserved)
+
+### v1.4 Friends System (2026-02-09)
+One new npm dependency: `expo-contacts@~15.0.11` for device phonebook access. Single-table friend relationship schema with status field. Phone number normalization for contact matching.
 
 ### v1.3 Gift Claims & Personal Details (2026-02-05)
 No new npm dependencies needed. gift_claims table with celebrant-exclusion RLS, personal_details with public-read/owner-write, member_notes with subject-exclusion. JSONB for flexible preferences with pg_jsonschema validation.
@@ -404,4 +299,4 @@ No new dependencies needed. expo-image-picker + Supabase Storage for group photo
 No new dependencies needed. Existing StarRating, expo-image-picker, MaterialCommunityIcons, NativeWind sufficient for all UI polish features.
 
 ---
-*Research completed: 2026-02-09*
+*Research completed: 2026-02-11*
