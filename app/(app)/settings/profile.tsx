@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { Alert, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useLanguage } from '@/hooks/useLanguage';
 import {
   VStack,
   HStack,
@@ -32,6 +34,7 @@ interface UserProfile {
 
 export default function ProfileSettingsScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [displayName, setDisplayName] = useState('');
   const [avatarPath, setAvatarPath] = useState<string | null>(null);
@@ -39,6 +42,8 @@ export default function ProfileSettingsScreen() {
   const [isSaving, setIsSaving] = useState(false);
   const [avatarTimestamp, setAvatarTimestamp] = useState(Date.now());
   const [completeness, setCompleteness] = useState<CompletenessResult | null>(null);
+  const [userId, setUserId] = useState<string | undefined>(undefined);
+  const { currentLanguage } = useLanguage(userId);
 
   useEffect(() => {
     loadProfile();
@@ -67,6 +72,7 @@ export default function ProfileSettingsScreen() {
       setProfile(data);
       setDisplayName(data.display_name || '');
       setAvatarPath(data.avatar_url);
+      setUserId(user.id); // Store userId for useLanguage hook
 
       // Load personal details for completeness indicator
       const details = await getPersonalDetails(user.id);
@@ -270,6 +276,32 @@ export default function ProfileSettingsScreen() {
               </VStack>
               <HStack alignItems="center" space="sm">
                 <MaterialCommunityIcons name="calendar-heart" size={20} color="#8B1538" />
+                <MaterialCommunityIcons name="chevron-right" size={20} color="#9CA3AF" />
+              </HStack>
+            </HStack>
+          </Box>
+        </Pressable>
+
+        {/* Language Settings Link */}
+        <Pressable
+          onPress={() => router.push('/settings/language')}
+        >
+          <Box
+            backgroundColor="$white"
+            borderRadius="$lg"
+            padding="$4"
+            borderWidth={1}
+            borderColor="$borderLight200"
+          >
+            <HStack justifyContent="space-between" alignItems="center">
+              <VStack>
+                <Text fontWeight="$semibold">{t('settings.language')}</Text>
+                <Text fontSize="$xs" color="$textLight500">
+                  {t(`languages.${currentLanguage}`)}
+                </Text>
+              </VStack>
+              <HStack alignItems="center" space="sm">
+                <MaterialCommunityIcons name="translate" size={20} color="#8B1538" />
                 <MaterialCommunityIcons name="chevron-right" size={20} color="#9CA3AF" />
               </HStack>
             </HStack>
