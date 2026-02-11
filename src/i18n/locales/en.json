@@ -2,16 +2,361 @@
   "common": {
     "loading": "Loading...",
     "error": "Error",
+    "success": "Success",
     "cancel": "Cancel",
     "save": "Save",
-    "ok": "OK"
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "edit": "Edit",
+    "add": "Add",
+    "remove": "Remove",
+    "retry": "Retry",
+    "search": "Search",
+    "ok": "OK",
+    "yes": "Yes",
+    "no": "No",
+    "errors": {
+      "generic": "Something went wrong",
+      "network": "Network error. Please check your connection.",
+      "notFound": "Not found",
+      "unauthorized": "You are not authorized to perform this action"
+    },
+    "empty": {
+      "noResults": "No results found",
+      "noData": "No data available"
+    },
+    "time": {
+      "justNow": "Just now",
+      "minutesAgo": "{{count}} minute ago",
+      "minutesAgo_plural": "{{count}} minutes ago",
+      "hoursAgo": "{{count}} hour ago",
+      "hoursAgo_plural": "{{count}} hours ago",
+      "daysAgo": "{{count}} day ago",
+      "daysAgo_plural": "{{count}} days ago",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "yesterday": "Yesterday"
+    }
+  },
+  "auth": {
+    "login": "Sign In",
+    "signup": "Sign Up",
+    "logout": "Log Out",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "createAccount": "Create Account",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "welcomeBack": "Welcome Back",
+    "signInToAccount": "Sign in to your account",
+    "enterEmail": "your@email.com",
+    "enterPassword": "Enter your password",
+    "fillAllFields": "Please fill in all fields",
+    "loginFailed": "Login Failed",
+    "errors": {
+      "invalidEmail": "Please enter a valid email address",
+      "passwordTooShort": "Password must be at least 6 characters",
+      "passwordsDoNotMatch": "Passwords do not match",
+      "invalidCredentials": "Invalid email or password",
+      "emailInUse": "This email is already in use"
+    }
+  },
+  "groups": {
+    "title": "My Groups",
+    "myGroups": "My Groups",
+    "createGroup": "Create Group",
+    "joinGroup": "Join Group",
+    "groupName": "Group Name",
+    "groupDescription": "Group Description",
+    "groupPhoto": "Group Photo",
+    "inviteCode": "Invite Code",
+    "copyInviteCode": "Copy Invite Code",
+    "codeCopied": "Code copied to clipboard",
+    "enterInviteCode": "Enter invite code",
+    "members": "Members",
+    "member": "member",
+    "member_plural": "members",
+    "admin": "Admin",
+    "settings": "Settings",
+    "leaveGroup": "Leave Group",
+    "deleteGroup": "Delete Group",
+    "group": "group",
+    "group_plural": "groups",
+    "mode": {
+      "gifts": "Gifts",
+      "greetings": "Greetings",
+      "giftsDescription": "Exchange physical gifts with tracking and budgets",
+      "greetingsDescription": "Send birthday wishes and virtual greetings"
+    },
+    "budget": {
+      "title": "Budget",
+      "perGift": "Per Gift",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "amount": "Amount",
+      "spent": "Spent",
+      "remaining": "Remaining"
+    },
+    "empty": {
+      "noGroups": "No Groups Yet",
+      "noGroupsDescription": "Create a new group or join one\nwith an invite code",
+      "noMembers": "No members yet"
+    },
+    "confirmLeave": "Are you sure you want to leave this group?",
+    "confirmDelete": "Are you sure you want to delete this group? This action cannot be undone."
+  },
+  "wishlist": {
+    "title": "My Wishlist",
+    "addItem": "Add Item",
+    "editItem": "Edit Item",
+    "itemTitle": "Item Title",
+    "itemUrl": "Item URL",
+    "itemPrice": "Price",
+    "itemPriority": "Priority",
+    "itemImage": "Item Image",
+    "startYourWishlist": "Start Your Wishlist",
+    "tapToAddItems": "Tap the + button above to add items from Amazon",
+    "itemAddedSuccess": "Item added to your wishlist!",
+    "itemRemovedSuccess": "Item removed from wishlist",
+    "failedToLoad": "Failed to load wishlist items",
+    "failedToDelete": "Failed to delete item",
+    "mustBeLoggedIn": "You must be logged in to add items",
+    "itemType": {
+      "gift": "Gift",
+      "surpriseMe": "Surprise Me",
+      "mysteryBox": "Mystery Box"
+    },
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "highest": "Highest"
+    },
+    "claim": {
+      "claim": "Claim",
+      "unclaim": "Unclaim",
+      "claimed": "Claimed",
+      "claimedBy": "Claimed by {{name}}",
+      "taken": "Taken",
+      "youClaimed": "You claimed this",
+      "confirmUnclaim": "Are you sure you want to unclaim this item?"
+    },
+    "split": {
+      "title": "Split Payment",
+      "openSplit": "Open Split",
+      "closeSplit": "Close Split",
+      "contribute": "Contribute",
+      "pledged": "Pledged",
+      "funded": "Funded",
+      "fullyFunded": "Fully Funded",
+      "contributors": "Contributors",
+      "yourContribution": "Your Contribution",
+      "enterAmount": "Enter amount"
+    },
+    "favorite": {
+      "markFavorite": "Mark as Favorite",
+      "removeFavorite": "Remove Favorite",
+      "mostWanted": "Most Wanted"
+    },
+    "empty": {
+      "noItems": "No items yet",
+      "noItemsDescription": "Add something you'd love to receive!",
+      "noItemsOther": "{{name}} hasn't added anything yet"
+    },
+    "errors": {
+      "titleRequired": "Item title is required",
+      "invalidUrl": "Please enter a valid URL",
+      "invalidPrice": "Please enter a valid price"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark All as Read",
+    "empty": {
+      "noNotifications": "No notifications",
+      "noNotificationsDescription": "You're all caught up!"
+    },
+    "types": {
+      "friendRequest": "sent you a friend request",
+      "friendAccepted": "accepted your friend request",
+      "birthdayReminder": "{{name}}'s birthday is {{when}}",
+      "giftLeader": "You are the gift leader for {{name}}'s birthday",
+      "itemClaimed": "claimed your wishlist item",
+      "splitInvite": "invited you to contribute to a split",
+      "splitFunded": "Split payment is fully funded",
+      "contribution": "contributed {{amount}} to the split"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "editProfile": "Edit Profile",
+    "displayName": "Display Name",
+    "birthday": "Birthday",
+    "birthdayLocked": "Birthday cannot be changed after setup",
+    "profilePhoto": "Profile Photo",
+    "changePhoto": "Change Photo",
+    "removePhoto": "Remove Photo",
+    "personalDetails": {
+      "title": "Personal Details",
+      "subtitle": "Help your friends know what you love",
+      "sizes": "Sizes",
+      "shirtSize": "Shirt Size",
+      "shoeSize": "Shoe Size",
+      "pantSize": "Pant Size",
+      "ringSize": "Ring Size",
+      "preferences": "Preferences",
+      "favoriteColors": "Favorite Colors",
+      "favoriteBrands": "Favorite Brands",
+      "interests": "Interests",
+      "dislikes": "Dislikes",
+      "deliveryAddress": "Delivery Address",
+      "bankDetails": "Bank Details",
+      "externalLinks": "External Links",
+      "addLink": "Add Link",
+      "completeness": "{{percent}}% complete",
+      "lastUpdated": "Last updated {{date}}"
+    },
+    "secretNotes": {
+      "title": "Secret Notes",
+      "subtitle": "Private notes about this person that only you can see",
+      "addNote": "Add Note",
+      "editNote": "Edit Note",
+      "deleteNote": "Delete Note",
+      "placeholder": "Write something helpful to remember...",
+      "empty": "No notes yet"
+    }
+  },
+  "calendar": {
+    "title": "Calendar",
+    "today": "Today",
+    "upcoming": "Upcoming",
+    "birthdays": "Birthdays",
+    "friendDates": "Friend Dates",
+    "syncToDevice": "Sync to Device",
+    "synced": "Synced",
+    "countdown": {
+      "today": "Today!",
+      "tomorrow": "Tomorrow",
+      "daysLeft": "{{count}} day left",
+      "daysLeft_plural": "{{count}} days left",
+      "weeksLeft": "{{count}} week left",
+      "weeksLeft_plural": "{{count}} weeks left",
+      "monthsLeft": "{{count}} month left",
+      "monthsLeft_plural": "{{count}} months left"
+    },
+    "publicDates": {
+      "title": "Public Dates",
+      "add": "Add Date",
+      "edit": "Edit Date",
+      "dateTitle": "Date Title",
+      "dateMonth": "Month",
+      "dateDay": "Day",
+      "empty": "No public dates added"
+    }
+  },
+  "celebrations": {
+    "title": "Celebrations",
+    "giftLeader": {
+      "title": "Gift Leader",
+      "youAre": "You are the gift leader",
+      "assignedTo": "Gift leader: {{name}}",
+      "responsibilities": "Coordinate gift purchase and delivery",
+      "reassign": "Reassign"
+    },
+    "contributions": {
+      "title": "Contributions",
+      "contribute": "Contribute",
+      "yourContribution": "Your Contribution",
+      "totalCollected": "Total Collected",
+      "target": "Target",
+      "markPaid": "Mark as Paid",
+      "paid": "Paid",
+      "pledged": "Pledged"
+    },
+    "chat": {
+      "title": "Group Chat",
+      "placeholder": "Type a message...",
+      "send": "Send",
+      "linkToItem": "Link to Item",
+      "empty": "No messages yet"
+    },
+    "status": {
+      "upcoming": "Upcoming",
+      "inProgress": "In Progress",
+      "completed": "Completed"
+    }
   },
   "settings": {
+    "title": "Settings",
     "language": "Language",
-    "languageDescription": "Choose your preferred language"
+    "languageDescription": "Choose your preferred language",
+    "notifications": "Notifications",
+    "notificationsDescription": "Manage notification preferences",
+    "privacy": "Privacy",
+    "help": "Help & Support",
+    "about": "About",
+    "version": "Version"
   },
   "languages": {
     "en": "English",
     "es": "Spanish"
+  },
+  "friends": {
+    "title": "Friends",
+    "findFriends": "Find Friends",
+    "addFriend": "Add Friend",
+    "pending": "Pending",
+    "requests": "Requests",
+    "sent": "Sent",
+    "received": "Received",
+    "accept": "Accept",
+    "decline": "Decline",
+    "cancel": "Cancel",
+    "remove": "Remove",
+    "block": "Block",
+    "unblock": "Unblock",
+    "searchUsers": "Search users...",
+    "importContacts": "Import Contacts",
+    "contactsPermission": "Allow access to contacts to find friends",
+    "friend": "friend",
+    "friend_plural": "friends",
+    "removeFriend": "Remove Friend",
+    "removeFriendConfirm": "Are you sure you want to remove {{name}} as a friend?",
+    "failedToRemove": "Failed to remove friend. Please try again.",
+    "empty": {
+      "noFriends": "No friends yet",
+      "noFriendsDescription": "Find and add friends to see their wishlists",
+      "noRequests": "No pending requests",
+      "noResults": "No users found"
+    },
+    "confirmRemove": "Are you sure you want to remove this friend?",
+    "confirmBlock": "Are you sure you want to block this user?"
+  },
+  "onboarding": {
+    "welcome": "Welcome!",
+    "letsGetStarted": "Let's set up your profile to get started",
+    "whatsYourName": "What's your name?",
+    "whensYourBirthday": "When's your birthday?",
+    "birthdayNote": "We'll use this to celebrate with your friends",
+    "addPhoto": "Add Profile Photo",
+    "addPhotoOptional": "Add Profile Photo (Optional)",
+    "changePhoto": "Change Photo",
+    "skip": "Skip",
+    "finish": "Finish",
+    "enterYourName": "Enter your name",
+    "selectBirthday": "Select your birthday",
+    "requiredField": "Required Field",
+    "enterDisplayName": "Please enter your display name",
+    "confirmAndSave": "Confirm & Save",
+    "reviewInfo": "Review your information",
+    "errorSaving": "Failed to save profile information",
+    "errorGettingUser": "Could not get user information"
   }
 }
