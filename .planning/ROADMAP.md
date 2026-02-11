@@ -476,7 +476,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 31-01-PLAN.md -- Language settings screen with radio card UI and profile navigation link
+- [x] 31-01-PLAN.md -- Language settings screen with radio card UI and profile navigation link
 
 #### Phase 32: UI Component Migration
 **Goal**: All UI strings translated across 140+ files with localized date/time formatting
@@ -526,5 +526,5 @@ Plans:
 | 28. Calendar Integration | v1.4 | 2/2 | Complete | 2026-02-10 |
 | 29. Foundation & Tooling | v1.5 | 2/2 | Complete | 2026-02-11 |
 | 30. Server Integration & Translation Files | v1.5 | 6/6 | Complete | 2026-02-11 |
-| 31. Root Integration & Settings UI | v1.5 | 0/1 | Pending | - |
+| 31. Root Integration & Settings UI | v1.5 | 1/1 | Complete | 2026-02-11 |
 | 32. UI Component Migration | v1.5 | 0/? | Pending | - |

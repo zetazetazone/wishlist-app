@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 
 ## Current Position
 
-Phase: 30 - Server Integration & Translation Files (2 of 4)
-Plan: 06 of 06
+Phase: 31 - Root Integration & Settings UI (3 of 4)
+Plan: 01 of 01
 Status: Phase complete
-Last activity: 2026-02-11 - Completed 30-06-PLAN.md (translation file gap closure)
+Last activity: 2026-02-11 - Completed 31-01-PLAN.md (language settings UI)
 
-Progress: [########--] 89% v1.5 in progress (8/9 plans complete)
+Progress: [#########-] 90% v1.5 in progress (9/10 plans complete)
 
 ## Milestone History
 
@@ -30,7 +30,7 @@ Progress: [########--] 89% v1.5 in progress (8/9 plans complete)
 |-------|------|--------------|--------|
 | 29 | Foundation & Tooling | INFRA-01, INFRA-02, INFRA-03, PERS-01 | Complete (2/2) |
 | 30 | Server Integration & Translation Files | PERS-02, PERS-03, NOTIF-01, NOTIF-02, TRANS-04, TRANS-05 | Complete (6/6) |
-| 31 | Root Integration & Settings UI | SETT-01, SETT-02 | Pending |
+| 31 | Root Integration & Settings UI | SETT-01, SETT-02 | Complete (1/1) |
 | 32 | UI Component Migration | TRANS-01, TRANS-02, TRANS-03 | Pending |
 
 ## Accumulated Context
@@ -57,6 +57,8 @@ v1.5 key architectural decisions:
 - i18n initialization guard in root layout prevents flash of untranslated content (30-05)
 - alerts namespace split into titles (18 keys) and messages (64 keys) for semantic clarity (30-06)
 - Placeholder translations maintain example format consistency (30-06)
+- Radio card UI pattern for language selection with TouchableOpacity (31-01)
+- userId extraction pattern via supabase.auth.getUser for hook initialization (31-01)
 
 ### Pending Todos (Manual Setup)
 
@@ -87,6 +89,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-11
-Stopped at: Completed 30-06-PLAN.md (translation file gap closure) - Phase 30 complete
-Resume file: .planning/phases/30-server-integration-translation-files/30-06-SUMMARY.md
-Next: Phase 31 - Root Integration & Settings UI
+Stopped at: Completed 31-01-PLAN.md (language settings UI) - Phase 31 complete
+Resume file: .planning/phases/31-root-integration-settings-ui/31-01-SUMMARY.md
+Next: Phase 32 - UI Component Migration
