@@ -12,9 +12,9 @@ interface NotificationPayload {
   record: {
     id: string;
     user_id: string;
-    title: string;
-    body: string;
-    data: Record<string, any>;
+    title: string;  // fallback title from trigger
+    body: string;   // fallback body from trigger
+    data: Record<string, any>;  // may include notification_type and variables
   };
   schema: string;
 }
@@ -157,6 +157,41 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    // Check if we should use localized templates
+    let finalTitle = title;
+    let finalBody = body;
+
+    const notificationType = data?.notification_type as string | undefined;
+    if (notificationType) {
+      // Get user's language preference
+      const userLanguage = await getUserLanguage(supabase, user_id);
+      console.log(`User ${user_id} language preference: ${userLanguage}`);
+
+      // Build variables object from data
+      const variables: Record<string, string> = {};
+      for (const [key, value] of Object.entries(data)) {
+        if (key !== 'notification_type' && key !== 'avatar_url' && typeof value === 'string') {
+          variables[key] = value;
+        }
+      }
+
+      // Get localized notification
+      const localized = await getLocalizedNotification(
+        supabase,
+        notificationType,
+        userLanguage,
+        variables
+      );
+
+      if (localized) {
+        finalTitle = localized.title;
+        finalBody = localized.body;
+        console.log(`Using localized template for ${notificationType} in ${userLanguage}`);
+      } else {
+        console.log(`Using fallback title/body for ${notificationType}`);
+      }
+    }
+
     // Query device tokens for the user
     const { data: tokens, error: tokensError } = await supabase
       .from('device_tokens')
@@ -188,8 +223,8 @@ serve(async (req) => {
     const messages: ExpoPushMessage[] = tokens.map((token: DeviceToken) => ({
       to: token.expo_push_token,
       sound: 'default',
-      title,
-      body,
+      title: finalTitle,
+      body: finalBody,
       data: data || {},
       // Use the Android notification channel we created
       channelId: 'default',
