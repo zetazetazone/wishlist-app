@@ -46,6 +46,84 @@ interface ExpoPushResponse {
   }>;
 }
 
+interface NotificationTemplate {
+  title_template: string;
+  body_template: string;
+}
+
+// Get user's preferred language, fallback to 'en'
+async function getUserLanguage(
+  supabase: any,
+  userId: string
+): Promise<string> {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('preferred_language')
+      .eq('id', userId)
+      .single();
+
+    if (error) {
+      console.warn('Failed to fetch user language:', error);
+      return 'en';
+    }
+
+    return data?.preferred_language || 'en';
+  } catch (error) {
+    console.warn('Error fetching user language:', error);
+    return 'en';
+  }
+}
+
+// Get localized notification template with fallback to English
+async function getLocalizedNotification(
+  supabase: any,
+  notificationType: string,
+  languageCode: string,
+  variables: Record<string, string>
+): Promise<{ title: string; body: string } | null> {
+  // Try user's preferred language first
+  const { data: template, error } = await supabase
+    .from('notification_translations')
+    .select('title_template, body_template')
+    .eq('notification_type', notificationType)
+    .eq('language_code', languageCode)
+    .single();
+
+  let finalTemplate: NotificationTemplate | null = template;
+
+  // Fallback to English if preferred language template not found
+  if (error || !template) {
+    if (languageCode !== 'en') {
+      console.log(`Template not found for ${notificationType}/${languageCode}, falling back to English`);
+      const { data: fallback } = await supabase
+        .from('notification_translations')
+        .select('title_template, body_template')
+        .eq('notification_type', notificationType)
+        .eq('language_code', 'en')
+        .single();
+      finalTemplate = fallback;
+    }
+  }
+
+  if (!finalTemplate) {
+    console.warn(`No template found for notification type: ${notificationType}`);
+    return null;
+  }
+
+  // Apply variable interpolation
+  let title = finalTemplate.title_template;
+  let body = finalTemplate.body_template;
+
+  for (const [key, value] of Object.entries(variables)) {
+    const pattern = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+    title = title.replace(pattern, value);
+    body = body.replace(pattern, value);
+  }
+
+  return { title, body };
+}
+
 serve(async (req) => {
   // CORS headers for webhook calls
   const corsHeaders = {
