@@ -22,9 +22,15 @@ export type { SupportedLanguage } from '../src/i18n';
  * @returns Supported device language or 'en' as fallback
  */
 function getDeviceLanguage(): SupportedLanguage {
-  const locales = getLocales();
-  const deviceLang = locales[0]?.languageCode;
-  return isSupported(deviceLang || '') ? (deviceLang as SupportedLanguage) : 'en';
+  try {
+    const locales = getLocales();
+    const deviceLang = locales[0]?.languageCode;
+    return isSupported(deviceLang || '') ? (deviceLang as SupportedLanguage) : 'en';
+  } catch {
+    // expo-localization native module may not be available (e.g., in Expo Go)
+    console.warn('[language] getLocales failed, defaulting to English');
+    return 'en';
+  }
 }
 
 /**

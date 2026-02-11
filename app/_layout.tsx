@@ -9,7 +9,7 @@ import { GluestackUIProvider } from '@gluestack-ui/themed';
 import { config } from '../gluestack-ui.config';
 import './global.css';
 import { supabase } from '../lib/supabase';
-import { useLanguage } from '../hooks/useLanguage';
+import { syncLanguageFromServer } from '../lib/language';
 import { initI18n } from '../src/i18n';
 
 export default function RootLayout() {
@@ -19,9 +19,6 @@ export default function RootLayout() {
   const [i18nReady, setI18nReady] = useState(false);
   const [userId, setUserId] = useState<string | undefined>(undefined);
 
-  // Initialize useLanguage hook with userId from auth session
-  const { syncFromServer } = useLanguage(userId);
-
   // Initialize i18n before rendering app
   useEffect(() => {
     initI18n().then(() => setI18nReady(true));
@@ -30,9 +27,11 @@ export default function RootLayout() {
   // Sync language preference from server when userId becomes available
   useEffect(() => {
     if (userId && i18nReady) {
-      syncFromServer();
+      syncLanguageFromServer(userId).catch((error) => {
+        console.warn('[RootLayout] Language sync failed:', error);
+      });
     }
-  }, [userId, i18nReady, syncFromServer]);
+  }, [userId, i18nReady]);
 
   useEffect(() => {
     // Check initial session only once

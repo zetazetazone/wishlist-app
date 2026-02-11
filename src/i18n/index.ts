@@ -10,11 +10,16 @@ export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 
 // Detect device language with fallback to English
 const getDeviceLanguage = (): SupportedLanguage => {
-  const locales = getLocales();
-  const deviceLang = locales[0]?.languageCode;
+  try {
+    const locales = getLocales();
+    const deviceLang = locales[0]?.languageCode;
 
-  if (deviceLang && SUPPORTED_LANGUAGES.includes(deviceLang as SupportedLanguage)) {
-    return deviceLang as SupportedLanguage;
+    if (deviceLang && SUPPORTED_LANGUAGES.includes(deviceLang as SupportedLanguage)) {
+      return deviceLang as SupportedLanguage;
+    }
+  } catch {
+    // expo-localization native module may not be available (e.g., in Expo Go)
+    console.warn('[i18n] getLocales failed, defaulting to English');
   }
   return 'en';
 };
