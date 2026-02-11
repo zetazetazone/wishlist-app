@@ -83,7 +83,17 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 
 ### Active
 
-**v1.5+ — Future Enhancements**
+**v1.5 — Localization**
+
+- [ ] App auto-detects device language on first launch (fallback to English)
+- [ ] App supports English and Spanish languages
+- [ ] All UI strings are localized (buttons, labels, navigation, error messages)
+- [ ] System messages are localized (push notifications, reminders, auto-generated content)
+- [ ] User's language preference is stored server-side in profile
+- [ ] User can change language in profile settings
+- [ ] Localization architecture supports adding more languages in the future
+
+**v1.6+ — Future Enhancements**
 
 - [ ] Instagram integration for friend discovery
 - [ ] User can configure notification preferences
@@ -165,23 +175,17 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 | Friend dates in teal (#0D9488) | Visual distinction from group birthday colors | ✓ Good - clear differentiation |
 | Month/day storage for public dates | Enables efficient annual recurrence queries | ✓ Good - flexible design |
 
-## Current State
+## Current Milestone: v1.5 Localization
 
-**v1.4 Friends System — SHIPPED 2026-02-10**
+**Goal:** Enable users to use the app in their preferred language, starting with English and Spanish.
 
-Delivered complete friends network:
-- Contact import with iOS 18 limited access and E.164 phone normalization
-- Friend requests (send/accept/decline/block) with push notifications
-- Friends tab with friend list and pending requests badge
-- Public dates management for anniversaries and special events
-- Calendar integration with friend dates in teal and device sync
-
-**Next Milestone Goals (v1.5+)**
-- Instagram friend discovery
-- Notification preferences
-- Chat read receipts and reactions
-- Gift Leader dashboard
-- Suggested friends based on mutual connections
+**Target features:**
+- Auto-detect device language on first launch
+- English and Spanish language support
+- Localized UI strings and system messages (push notifications, reminders)
+- Server-side language preference in user profile
+- Language change option in profile settings
+- Extensible architecture for future languages
 
 ---
-*Last updated: 2026-02-10 after v1.4 milestone*
+*Last updated: 2026-02-11 after v1.5 milestone start*
