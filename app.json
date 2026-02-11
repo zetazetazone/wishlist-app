@@ -62,7 +62,8 @@
         {
           "contactsPermission": "Allow Wishlist to find friends who already use the app"
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "owner": "zetazeta"
   }
