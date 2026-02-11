@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-11)
 
 ## Current Position
 
-Phase: 31 - Root Integration & Settings UI (3 of 4)
+Phase: 32 - UI Component Migration (4 of 4)
 Plan: 01 of 01
-Status: Phase complete
-Last activity: 2026-02-11 - Completed 31-01-PLAN.md (language settings UI)
+Status: In progress
+Last activity: 2026-02-11 - Completed 32-01-PLAN.md (UI migration foundation)
 
-Progress: [#########-] 90% v1.5 in progress (9/10 plans complete)
+Progress: [##########] 100% v1.5 in progress (10/10 plans complete)
 
 ## Milestone History
 
@@ -31,7 +31,7 @@ Progress: [#########-] 90% v1.5 in progress (9/10 plans complete)
 | 29 | Foundation & Tooling | INFRA-01, INFRA-02, INFRA-03, PERS-01 | Complete (2/2) |
 | 30 | Server Integration & Translation Files | PERS-02, PERS-03, NOTIF-01, NOTIF-02, TRANS-04, TRANS-05 | Complete (6/6) |
 | 31 | Root Integration & Settings UI | SETT-01, SETT-02 | Complete (1/1) |
-| 32 | UI Component Migration | TRANS-01, TRANS-02, TRANS-03 | Pending |
+| 32 | UI Component Migration | TRANS-01, TRANS-02, TRANS-03 | In progress (1/1) |
 
 ## Accumulated Context
 
@@ -59,6 +59,9 @@ v1.5 key architectural decisions:
 - Placeholder translations maintain example format consistency (30-06)
 - Radio card UI pattern for language selection with TouchableOpacity (31-01)
 - userId extraction pattern via supabase.auth.getUser for hook initialization (31-01)
+- useLocalizedFormat hook for date formatting with automatic en/es locale selection (32-01)
+- eslint-plugin-i18next configured at warn level for incremental migration (32-01)
+- ESLint v8 for .eslintrc.js compatibility with Expo config (32-01)
 
 ### Pending Todos (Manual Setup)
 
@@ -89,6 +92,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-11
-Stopped at: Completed 31-01-PLAN.md (language settings UI) - Phase 31 complete
-Resume file: .planning/phases/31-root-integration-settings-ui/31-01-SUMMARY.md
-Next: Phase 32 - UI Component Migration
+Stopped at: Completed 32-01-PLAN.md (UI migration foundation) - Phase 32 in progress
+Resume file: .planning/phases/32-ui-component-migration/32-01-SUMMARY.md
+Next: Continue Phase 32 - UI Component Migration with high-traffic screens (32-02)
