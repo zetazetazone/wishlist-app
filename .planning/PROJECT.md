@@ -89,9 +89,17 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 - ✓ User can change language in profile settings — v1.5
 - ✓ Localization architecture supports adding more languages in the future — v1.5
 
+- ✓ Wishlist displays as 2-column grid using FlashList — v1.6
+- ✓ Grid cards show image, title, price, and action button — v1.6
+- ✓ Tapping grid card opens item detail page with full-bleed hero image — v1.6
+- ✓ Detail page shows claim UI for group members (except celebrant) — v1.6
+- ✓ Options bottom sheet for favorite, priority, share, delete actions — v1.6
+- ✓ Claim state syncs in real-time via Supabase postgres_changes — v1.6
+- ✓ Detail page loads in <200ms from grid tap — v1.6
+
 ### Active
 
-**v1.6+ — Future Enhancements**
+**v1.7+ — Future Enhancements**
 
 - [ ] Instagram integration for friend discovery
 - [ ] User can configure notification preferences
@@ -103,6 +111,9 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 - [ ] Mutual friend display ("You and Sarah have 3 mutual friends")
 - [ ] Friend birthday reminders (separate from calendar events)
 - [ ] User can invite friends to groups from friend list
+- [ ] Tablet-optimized responsive grid (3+ columns)
+- [ ] Grid item reordering via drag-and-drop
+- [ ] Grid filtering and sorting options
 
 ### Out of Scope
 
@@ -121,14 +132,17 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 
 ## Context
 
-**Shipped v1.5 with:**
-- ~47,000 lines of TypeScript across 200+ files
+**Shipped v1.6 with:**
+- ~33,000 lines of TypeScript across 200+ files
 - React Native 0.81.5 with Expo 54
 - Supabase for auth, database, realtime, edge functions, and storage
 - 15 database migrations, 2 pg_cron jobs, 1 Edge Function
 - Complete i18n infrastructure with i18next, react-i18next, expo-localization
 - 956 translation keys in English and Spanish with TypeScript-safe keys
 - Server-synced language preference with localized push notifications
+- Modern 2-column grid wishlist with WishlistGridCard and FlashList
+- Item detail page with full-bleed hero, claim UI, and realtime sync
+- Modal-based OptionsSheet for item management actions
 
 **Tech stack:**
 - React Native + Expo 54 (managed workflow)
@@ -181,18 +195,12 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 | Neutral Latin American Spanish | Broader audience (ustedes vs vosotros), avoids regional specificity | ✓ Good - inclusive |
 | Single translation namespace | Simpler than separate files, easier maintenance, works with nested keys | ✓ Good - maintainable |
 | ESLint v8 for i18n linting | Required for .eslintrc.js compatibility with Expo config | ✓ Good - tooling works |
-
-## Current Milestone: v1.6 Wishlist UI Redesign
-
-**Goal:** Simplify the wishlist UI with a modern, minimal grid layout and dedicated item detail pages.
-
-**Target features:**
-- Clean 2-column grid layout replacing big luxury cards
-- Minimal item cards: image (or item type icon), title, price
-- New item detail page with full-bleed hero image
-- Options bottom sheet for item actions (favorite, priority, share, edit, delete)
-- Claim UI moves from grid cards to item detail page
-- Consistent design across My Wishlist and celebration page views
+| expo-image for grid cards | High-performance caching, SDK 54 compatible, built-in loading states | ✓ Good - smooth performance |
+| Feature inventory upfront | 648-line documentation prevents feature loss during migration | ✓ Good - zero regressions |
+| Uniform grid (not masonry) | User requirement: rows start and end at same height | ✓ Good - clean layout |
+| Modal + Animated for OptionsSheet | More reliable cross-device behavior than @gorhom/bottom-sheet | ✓ Good - consistent UX |
+| Query param for celebrationId | Cleaner URL structure vs separate route for detail navigation | ✓ Good - simple routing |
+| Parallel fetch item + celebration | Meet <200ms detail page load time target | ✓ Good - fast navigation |
 
 ---
-*Last updated: 2026-02-12 after v1.6 milestone start*
+*Last updated: 2026-02-12 after v1.6 milestone*

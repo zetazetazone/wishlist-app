@@ -1,5 +1,33 @@
 # Project Milestones: Wishlist Group Gifting App
 
+## v1.6 Wishlist UI Redesign (Shipped: 2026-02-12)
+
+**Delivered:** Modern 2-column grid layout with dedicated item detail pages and options bottom sheet for streamlined wishlist management.
+
+**Phases completed:** 33-36 (11 plans total)
+
+**Key accomplishments:**
+
+- expo-image foundation with comprehensive 648-line feature inventory mapping all 30 props from LuxuryWishlistCard to new component architecture
+- 2-column grid layout with WishlistGridCard using FlashList, action buttons, and consistent display across My Wishlist and Celebration pages
+- Item detail page with full-bleed hero image, brand parsing, claim UI for group members, and split contribution progress display
+- Realtime sync via Supabase postgres_changes for claim state and split contributions with <200ms load target achieved
+- Options bottom sheet with item preview, favorite toggle, priority adjustment, share, edit placeholder, and delete with confirmation
+- Modal-based OptionsSheet rewritten from @gorhom/bottom-sheet to Modal + Animated for reliable cross-device behavior
+
+**Stats:**
+
+- 46 files created/modified
+- 11,160 lines added, 442 removed
+- 4 phases, 11 plans, 65 commits
+- 1 day (2026-02-12)
+
+**Git range:** `feat(33-02)` → `docs(36)`
+
+**What's next:** Enhanced grid (tablet-optimized, drag reordering), social sharing features, notification preferences, Gift Leader dashboard
+
+---
+
 ## v1.5 Localization (Shipped: 2026-02-12)
 
 **Delivered:** Complete English and Spanish localization with instant language switching.

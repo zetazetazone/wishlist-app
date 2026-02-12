@@ -5,20 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-12)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.6 Wishlist UI Redesign
+**Current focus:** Planning next milestone
 
 ## Current Position
 
-Phase: 36 (Options Sheet & Polish) - COMPLETE
-Plan: 3 of 3 complete
-Status: Milestone complete
-Last activity: 2026-02-12 — Completed 36-03-PLAN.md (Final Verification)
+Phase: N/A (milestone complete)
+Plan: N/A
+Status: Ready to plan next milestone
+Last activity: 2026-02-12 — v1.6 milestone complete
 
-Progress: 4/4 phases complete ✓
-Phase 33 Progress: ████ 2/2 complete
-Phase 34 Progress: ████ 3/3 complete
-Phase 35 Progress: ████ 3/3 complete
-Phase 36 Progress: ████ 3/3 complete
+Progress: Milestone v1.6 shipped
 
 ## Milestone History
 
@@ -28,6 +24,7 @@ Phase 36 Progress: ████ 3/3 complete
 - **v1.3 Gift Claims & Personal Details** - Shipped 2026-02-09 (5 phases, 15 plans)
 - **v1.4 Friends System** - Shipped 2026-02-10 (6 phases, 12 plans)
 - **v1.5 Localization** - Shipped 2026-02-12 (4 phases, 13 plans)
+- **v1.6 Wishlist UI Redesign** - Shipped 2026-02-12 (4 phases, 11 plans)
 
 ## Accumulated Context
 
@@ -35,60 +32,7 @@ Phase 36 Progress: ████ 3/3 complete
 
 Key decisions from all milestones archived in PROJECT.md Key Decisions table.
 
-v1.5 decisions archived in `.planning/milestones/v1.5-ROADMAP.md`.
-
-**v1.6 Phase 33 Decisions**:
-
-| ID | Decision | Rationale | Phase-Plan |
-|---|----------|-----------|------------|
-| D33-01-001 | Use expo-image for image handling | High-performance caching, SDK 54 compatible, built-in loading states | 33-01 |
-| D33-01-002 | Comprehensive upfront documentation | 603-line monolithic component needs clear migration path to prevent feature loss | 33-01 |
-
-**v1.6 Phase 34 Decisions**:
-
-| ID | Decision | Rationale | Phase-Plan |
-|---|----------|-----------|------------|
-| TD-34-01-001 | Use Pressable instead of TouchableOpacity | Future-proof, officially recommended by React Native, consistent cross-platform behavior | 34-01 |
-| TD-34-01-002 | Non-null assertion on image_url after hasImage check | hasImage already validates image_url exists and is standard item type | 34-01 |
-| TD-34-01-003 | Action button separate Pressable with stopPropagation | Prevents touch conflicts on nested pressables, works consistently iOS/Android | 34-01 |
-| TD-34-01-004 | Single default blurhash for all images | Simpler implementation, acceptable UX for v1.6 | 34-01 |
-| TD-34-02-001 | FlashList v2 masonry prop pattern | Use masonry prop instead of deprecated MasonryFlashList component | 34-02 |
-| TD-34-02-002 | Omit estimatedItemSize in FlashList v2 | v2 auto-measures items for better accuracy | 34-02 |
-| TD-34-02-003 | View-context-aware rendering logic | Three branches: owner, celebrant, non-celebrant for correct prop routing | 34-02 |
-| TD-34-02-004 | Conditional RefreshControl | Only render if onRefresh prop provided for flexible reuse | 34-02 |
-| TD-34-03-001 | Use index.tsx for My Wishlist tab | _layout.tsx routes "My Wishlist" to index, not wishlist-luxury | 34-03 |
-| TD-34-03-002 | Calculated height for nested FlashList | FlashList can't measure when inside ScrollView | 34-03 |
-| TD-34-03-003 | Uniform grid (not masonry) | User requirement: rows start and end at same height | 34-03 |
-| TD-34-03-004 | 4px card margin for 8px gap | FlashList numColumns doesn't support columnWrapperStyle in types | 34-03 |
-| TD-34-03-005 | Action button inside imageContainer | User requirement: button on bottom-right of image | 34-03 |
-
-**v1.6 Phase 35 Decisions**:
-
-| ID | Decision | Rationale | Phase-Plan |
-|---|----------|-----------|------------|
-| TD-35-01-001 | Use expo-linear-gradient for header overlay | CSS linear-gradient not supported in React Native | 35-01 |
-| TD-35-01-002 | Use celebrations.notAuthenticated key | Key already exists, consistent with codebase | 35-01 |
-| TD-35-01-003 | Remove description display | WishlistItem type does not have description field | 35-01 |
-| 35-02-D01 | Direct claimer object mapping | Map claim.claimer to ClaimerAvatar props directly | 35-02 |
-| 35-03-D01 | Use query param celebrationId | Cleaner URL structure vs separate route | 35-03 |
-| 35-03-D02 | Parallel fetch item + celebration | Meet <200ms load time target | 35-03 |
-| 35-03-D03 | Channel names include item ID | Ensure uniqueness for realtime subscriptions | 35-03 |
-| 35-03-D04 | Snake_case SplitStatus properties | Match interface definition from lib/contributions.ts | 35-03 |
-
-**v1.6 Phase 36 Decisions**:
-
-| ID | Decision | Rationale | Phase-Plan |
-|---|----------|-----------|------------|
-| D36-01-001 | Use Alert for edit feature placeholder | Edit form doesn't exist in v1.6 scope, temporary alert provides clear UX feedback without navigation errors | 36-01 |
-| D36-01-002 | Share uses React Native Share API | Native share sheet provides platform-appropriate sharing options, includes amazon_url in message when available | 36-01 |
-| D36-01-003 | Priority change updates local state immediately | Provides instant UI feedback, propagates to parent for persistence, smooth user experience | 36-01 |
-| D36-02-001 | My Wishlist action button opens OptionsSheet | Provides quick access to item options without navigation, better UX for owner managing list | 36-02 |
-| D36-02-002 | Favorite toggle shows alert in detail page | GroupPickerSheet requires full group context (userGroups state) not available in detail page | 36-02 |
-| D36-02-003 | Delete navigates back from detail page | Prevents showing deleted item after successful deletion | 36-02 |
-| D36-03-001 | Use Modal + Animated instead of @gorhom/bottom-sheet | More reliable cross-device behavior, consistent ref handling | 36-03 |
-| D36-03-002 | PanResponder for drag-to-close gesture | Native gesture handling, smooth snap-back animation on partial drag | 36-03 |
-| D36-03-003 | 65% sheet height with safe area insets | Ensures all buttons visible on devices with home indicators | 36-03 |
-| D36-03-004 | Remove claimed-to-bottom sorting | User preference - items should stay in original position by priority | 36-03 |
+v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 
 ### Pending Todos (Manual Setup)
 
@@ -120,6 +64,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-12
-Stopped at: Phase 36 complete, Milestone v1.6 complete
-Resume file: N/A (milestone complete)
-Next: `/gsd:complete-milestone v1.6` to archive and prepare for next version
+Stopped at: v1.6 milestone complete and archived
+Resume file: N/A
+Next: `/gsd:new-milestone` to start next version (questioning -> research -> requirements -> roadmap)
