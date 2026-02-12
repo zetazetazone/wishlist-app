@@ -47,28 +47,28 @@ Plans:
 - [x] 34-02-PLAN.md — Create WishlistGrid FlashList wrapper with grid configuration
 - [x] 34-03-PLAN.md — Integrate WishlistGrid into My Wishlist and Celebration screens
 
-### Phase 35: Detail Page & Claim UI
+### Phase 35: Detail Page & Claim UI ✓
 **Goal**: Create item detail page with full-bleed hero, claim UI for group members, real-time state sync
 **Depends on**: Phase 34
 **Requirements**: DETAIL-01, DETAIL-02, DETAIL-03, DETAIL-04, DETAIL-05, DETAIL-06, DETAIL-07, CLAIM-01, CLAIM-02, CLAIM-03, CLAIM-04, CLAIM-05, CLAIM-06, PERF-03
-**Status**: Planning Complete
+**Status**: Complete (2026-02-12)
 **Success Criteria** (what must be TRUE):
-  1. Tapping grid card navigates to /wishlist/[id] detail page
-  2. Detail page shows full-bleed hero image extending from top
-  3. Detail page shows title, brand (parsed), price, and "Go to Store" button
-  4. Detail page shows favorite badge and priority stars
-  5. Header has back button and share/options button
-  6. Group members (except celebrant) can claim/unclaim from detail page
-  7. Split contributions UI displays progress on detail page
-  8. Celebrant sees "Taken" badge without claimer identity
-  9. Claim state syncs via Supabase realtime
-  10. Detail page loads in <200ms from grid tap
+  1. Tapping grid card navigates to /wishlist/[id] detail page ✓
+  2. Detail page shows full-bleed hero image extending from top ✓
+  3. Detail page shows title, brand (parsed), price, and "Go to Store" button ✓
+  4. Detail page shows favorite badge and priority stars ✓
+  5. Header has back button and share/options button ✓
+  6. Group members (except celebrant) can claim/unclaim from detail page ✓
+  7. Split contributions UI displays progress on detail page ✓
+  8. Celebrant sees "Taken" badge without claimer identity ✓
+  9. Claim state syncs via Supabase realtime ✓
+  10. Detail page loads in <200ms from grid tap ✓
 **Plans:** 3 plans
 
 Plans:
-- [ ] 35-01-PLAN.md — Create ItemDetailScreen with hero image, item info, header
-- [ ] 35-02-PLAN.md — Add claim UI (claim/unclaim, split contribution) to detail
-- [ ] 35-03-PLAN.md — Integrate navigation and realtime sync
+- [x] 35-01-PLAN.md — Create ItemDetailScreen with hero image, item info, header
+- [x] 35-02-PLAN.md — Add claim UI (claim/unclaim, split contribution) to detail
+- [x] 35-03-PLAN.md — Integrate navigation and realtime sync
 
 ### Phase 36: Options Sheet & Polish
 **Goal**: Implement options bottom sheet with item preview and actions, final polish and regression testing
@@ -105,20 +105,20 @@ Plans:
 | GRID-06 | 34 | ✓ Complete |
 | PERF-01 | 34 | ✓ Complete |
 | PERF-02 | 34 | ✓ Complete |
-| DETAIL-01 | 35 | Pending |
-| DETAIL-02 | 35 | Pending |
-| DETAIL-03 | 35 | Pending |
-| DETAIL-04 | 35 | Pending |
-| DETAIL-05 | 35 | Pending |
-| DETAIL-06 | 35 | Pending |
-| DETAIL-07 | 35 | Pending |
-| CLAIM-01 | 35 | Pending |
-| CLAIM-02 | 35 | Pending |
-| CLAIM-03 | 35 | Pending |
-| CLAIM-04 | 35 | Pending |
-| CLAIM-05 | 35 | Pending |
-| CLAIM-06 | 35 | Pending |
-| PERF-03 | 35 | Pending |
+| DETAIL-01 | 35 | ✓ Complete |
+| DETAIL-02 | 35 | ✓ Complete |
+| DETAIL-03 | 35 | ✓ Complete |
+| DETAIL-04 | 35 | ✓ Complete |
+| DETAIL-05 | 35 | ✓ Complete |
+| DETAIL-06 | 35 | ✓ Complete |
+| DETAIL-07 | 35 | ✓ Complete |
+| CLAIM-01 | 35 | ✓ Complete |
+| CLAIM-02 | 35 | ✓ Complete |
+| CLAIM-03 | 35 | ✓ Complete |
+| CLAIM-04 | 35 | ✓ Complete |
+| CLAIM-05 | 35 | ✓ Complete |
+| CLAIM-06 | 35 | ✓ Complete |
+| PERF-03 | 35 | ✓ Complete |
 | OPTIONS-01 | 36 | Pending |
 | OPTIONS-02 | 36 | Pending |
 | OPTIONS-03 | 36 | Pending |
