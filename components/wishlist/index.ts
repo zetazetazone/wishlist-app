@@ -6,3 +6,4 @@
 
 export { WishlistGridCard } from './WishlistGridCard';
 export { WishlistGrid } from './WishlistGrid';
+export { OptionsSheet, type OptionsSheetRef } from './OptionsSheet';
