@@ -80,7 +80,7 @@ Plans:
   3. Favorite toggle works and updates UI immediately
   4. Priority (star rating) adjustment works
   5. Share action works (native share sheet)
-  6. Edit action navigates to edit form
+  6. Edit action shows placeholder (edit form deferred to future)
   7. Delete action shows confirmation and removes item
   8. All existing wishlist functionality verified working (regression test)
 **Plans:** 3 plans

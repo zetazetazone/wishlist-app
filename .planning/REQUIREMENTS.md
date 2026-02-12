@@ -42,7 +42,7 @@ Requirements for the Wishlist UI Redesign milestone. Each maps to roadmap phases
 - [ ] **OPTIONS-03**: Options sheet provides favorite toggle action
 - [ ] **OPTIONS-04**: Options sheet provides priority (star rating) adjustment
 - [ ] **OPTIONS-05**: Options sheet provides share action
-- [ ] **OPTIONS-06**: Options sheet provides edit action (navigates to edit form)
+- [ ] **OPTIONS-06**: Options sheet provides edit action (placeholder alert - edit form deferred)
 - [ ] **OPTIONS-07**: Options sheet provides delete action with confirmation
 
 ### Performance
