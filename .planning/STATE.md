@@ -9,15 +9,15 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 
 ## Current Position
 
-Phase: 35 (Detail Page & Claim UI) - IN PROGRESS
-Plan: 2 of 3 complete
-Status: In progress
-Last activity: 2026-02-12 — Completed 35-02-PLAN.md (Claim UI Integration)
+Phase: 35 (Detail Page & Claim UI) - COMPLETE
+Plan: 3 of 3 complete
+Status: Phase complete
+Last activity: 2026-02-12 — Completed 35-03-PLAN.md (Navigation & Realtime Sync)
 
-Progress: 2/4 phases complete
+Progress: 3/4 phases complete
 Phase 33 Progress: ████ 2/2 complete
 Phase 34 Progress: ████ 3/3 complete
-Phase 35 Progress: ██░░ 2/3 complete
+Phase 35 Progress: ████ 3/3 complete
 
 ## Milestone History
 
@@ -69,6 +69,10 @@ v1.5 decisions archived in `.planning/milestones/v1.5-ROADMAP.md`.
 | TD-35-01-002 | Use celebrations.notAuthenticated key | Key already exists, consistent with codebase | 35-01 |
 | TD-35-01-003 | Remove description display | WishlistItem type does not have description field | 35-01 |
 | 35-02-D01 | Direct claimer object mapping | Map claim.claimer to ClaimerAvatar props directly | 35-02 |
+| 35-03-D01 | Use query param celebrationId | Cleaner URL structure vs separate route | 35-03 |
+| 35-03-D02 | Parallel fetch item + celebration | Meet <200ms load time target | 35-03 |
+| 35-03-D03 | Channel names include item ID | Ensure uniqueness for realtime subscriptions | 35-03 |
+| 35-03-D04 | Snake_case SplitStatus properties | Match interface definition from lib/contributions.ts | 35-03 |
 
 ### Pending Todos (Manual Setup)
 
@@ -100,6 +104,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-12
-Stopped at: Phase 35 Plan 02 complete
-Resume file: .planning/phases/35-detail-page-claim-ui/35-03-PLAN.md
-Next: Execute Phase 35 Plan 35-03 (Realtime Sync & Polish)
+Stopped at: Phase 35 complete
+Resume file: N/A (phase complete)
+Next: Plan Phase 36 (if applicable) or milestone review
