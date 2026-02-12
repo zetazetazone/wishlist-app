@@ -319,6 +319,174 @@ export default function ItemDetailScreen() {
   const brand = item ? parseBrandFromTitle(item.title) : null;
   const priceDisplay = item ? formatItemPrice(item) : null;
 
+  // Render claim section based on user context
+  const renderClaimSection = () => {
+    // Owner view - no claim UI
+    if (isOwner) return null;
+
+    // Celebrant view - show taken status only
+    if (isCelebrant) {
+      if (!isTaken) return null;
+      return (
+        <View style={styles.claimSection}>
+          <TakenBadge />
+        </View>
+      );
+    }
+
+    // Not claimable item types
+    if (item?.item_type === 'surprise_me' || item?.item_type === 'mystery_box') {
+      return (
+        <View style={styles.claimSection}>
+          <View style={styles.notClaimableNote}>
+            <MaterialCommunityIcons name="information-outline" size={20} color={colors.cream[600]} />
+            <Text style={styles.notClaimableText}>
+              {t('wishlist.claim.notClaimable')}
+            </Text>
+          </View>
+        </View>
+      );
+    }
+
+    // Your claim view
+    if (isYourClaim) {
+      return (
+        <View style={styles.claimSection}>
+          <View style={styles.yourClaimHeader}>
+            <MaterialCommunityIcons name="check-circle" size={24} color={colors.success} />
+            <Text style={styles.yourClaimTitle}>{t('wishlist.claim.yourClaim')}</Text>
+          </View>
+
+          {/* Split progress if opened */}
+          {splitStatus?.isOpen && (
+            <>
+              <SplitContributionProgress
+                itemPrice={item?.price || 0}
+                additionalCosts={splitStatus.additionalCosts}
+                totalPledged={splitStatus.totalPledged}
+                isFullyFunded={splitStatus.isFullyFunded}
+              />
+              <ContributorsDisplay contributors={contributors} />
+            </>
+          )}
+
+          {/* Actions */}
+          <View style={styles.claimActions}>
+            {/* Open split button (if not already split) */}
+            {!splitStatus?.isOpen && (
+              <ClaimButton
+                variant="openSplit"
+                onClaim={() => {}}
+                onUnclaim={() => {}}
+                isClaimed={true}
+                isYourClaim={true}
+                loading={claimLoading}
+                onOpenSplit={() => setOpenSplitModalVisible(true)}
+              />
+            )}
+
+            {/* Close split button (if split open and not fully funded) */}
+            {splitStatus?.isOpen && !splitStatus.isFullyFunded && (
+              <ClaimButton
+                variant="closeSplit"
+                onClaim={() => {}}
+                onUnclaim={() => {}}
+                isClaimed={true}
+                isYourClaim={true}
+                loading={claimLoading}
+                onCloseSplit={handleCloseSplit}
+              />
+            )}
+
+            {/* Unclaim button (if not split) */}
+            {!splitStatus?.isOpen && (
+              <Pressable
+                style={styles.unclaimButton}
+                onPress={handleUnclaim}
+                disabled={claimLoading}
+              >
+                <Text style={styles.unclaimButtonText}>{t('wishlist.claim.unclaim')}</Text>
+              </Pressable>
+            )}
+          </View>
+        </View>
+      );
+    }
+
+    // Claimed by someone else view
+    if (claim) {
+      return (
+        <View style={styles.claimSection}>
+          {/* Claimer info */}
+          {claim.claimer && (
+            <View style={styles.claimerSection}>
+              <ClaimerAvatar
+                claimer={{
+                  id: claim.claimer.id,
+                  display_name: claim.claimer.display_name,
+                  avatar_url: claim.claimer.avatar_url,
+                }}
+              />
+              <View style={styles.claimerInfo}>
+                <Text style={styles.claimedByLabel}>{t('wishlist.claim.claimedBy', { name: '' }).replace('{{name}}', '')}</Text>
+                <Text style={styles.claimerName}>{claim.claimer.display_name || t('common.unknown')}</Text>
+              </View>
+            </View>
+          )}
+
+          {/* Split progress if open */}
+          {splitStatus?.isOpen && (
+            <>
+              <SplitContributionProgress
+                itemPrice={item?.price || 0}
+                additionalCosts={splitStatus.additionalCosts}
+                totalPledged={splitStatus.totalPledged}
+                isFullyFunded={splitStatus.isFullyFunded}
+              />
+              <ContributorsDisplay contributors={contributors} />
+
+              {/* User's contribution badge */}
+              {userPledgeAmount > 0 && (
+                <View style={styles.userPledgeBadge}>
+                  <MaterialCommunityIcons name="hand-heart" size={18} color={colors.success} />
+                  <Text style={styles.userPledgeText}>
+                    {t('wishlist.split.yourContribution', { amount: userPledgeAmount.toFixed(2) })}
+                  </Text>
+                </View>
+              )}
+
+              {/* Contribute button (if split open and not fully funded and user hasn't pledged) */}
+              {!splitStatus.isFullyFunded && userPledgeAmount === 0 && (
+                <ClaimButton
+                  variant="contribute"
+                  onClaim={() => {}}
+                  onUnclaim={() => {}}
+                  isClaimed={true}
+                  isYourClaim={false}
+                  loading={claimLoading}
+                  onContribute={() => setSplitModalVisible(true)}
+                />
+              )}
+            </>
+          )}
+        </View>
+      );
+    }
+
+    // Unclaimed - show claim button
+    return (
+      <View style={styles.claimSection}>
+        <ClaimButton
+          onClaim={handleClaim}
+          onUnclaim={handleUnclaim}
+          isClaimed={false}
+          isYourClaim={false}
+          loading={claimLoading}
+        />
+      </View>
+    );
+  };
+
   // Render hero image or placeholder
   const renderHero = () => {
     if (!item) return null;
@@ -472,12 +640,8 @@ export default function ItemDetailScreen() {
         {/* Item Info */}
         {renderItemInfo()}
 
-        {/* Claim UI placeholder - Phase 35-02 */}
-        {!isOwner && (
-          <View style={styles.claimSection}>
-            {/* TODO: Add claim UI in 35-02 */}
-          </View>
-        )}
+        {/* Claim UI Section */}
+        {renderClaimSection()}
       </ScrollView>
     </View>
   );
