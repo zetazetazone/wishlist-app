@@ -247,6 +247,63 @@ export default function ItemDetailScreen() {
     );
   }, [claim, item, t]);
 
+  // Open for split handler
+  const handleOpenSplit = useCallback(async (additionalCosts?: number) => {
+    if (!id) return;
+
+    setClaimLoading(true);
+    try {
+      const result = await openSplit(id, additionalCosts);
+      if (result.success) {
+        await loadClaimContext();
+      } else {
+        Alert.alert(t('alerts.titles.error'), result.error || t('wishlist.split.failedToOpenSplit'));
+      }
+    } catch (err) {
+      Alert.alert(t('alerts.titles.error'), t('wishlist.split.failedToOpenSplit'));
+    } finally {
+      setClaimLoading(false);
+    }
+  }, [id, t, loadClaimContext]);
+
+  // Pledge contribution handler
+  const handlePledge = useCallback(async (amount: number) => {
+    if (!id) return;
+
+    setClaimLoading(true);
+    try {
+      const result = await pledgeContribution(id, amount);
+      if (result.success) {
+        await loadClaimContext();
+      } else {
+        Alert.alert(t('alerts.titles.error'), result.error || t('wishlist.split.failedToPledge'));
+      }
+    } catch (err) {
+      Alert.alert(t('alerts.titles.error'), t('wishlist.split.failedToPledge'));
+    } finally {
+      setClaimLoading(false);
+    }
+  }, [id, t, loadClaimContext]);
+
+  // Close split (cover remaining) handler
+  const handleCloseSplit = useCallback(async () => {
+    if (!id) return;
+
+    setClaimLoading(true);
+    try {
+      const result = await closeSplit(id);
+      if (result.success) {
+        await loadClaimContext();
+      } else {
+        Alert.alert(t('alerts.titles.error'), result.error || t('wishlist.split.failedToCloseSplit'));
+      }
+    } catch (err) {
+      Alert.alert(t('alerts.titles.error'), t('wishlist.split.failedToCloseSplit'));
+    } finally {
+      setClaimLoading(false);
+    }
+  }, [id, t, loadClaimContext]);
+
   // Parse brand from title
   const brand = item ? parseBrandFromTitle(item.title) : null;
   const priceDisplay = item ? formatItemPrice(item) : null;
