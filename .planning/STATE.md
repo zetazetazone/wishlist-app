@@ -10,15 +10,15 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 ## Current Position
 
 Phase: 36 (Options Sheet & Polish) - IN PROGRESS
-Plan: 1 of 3 in progress
+Plan: 2 of 3 complete
 Status: In progress
-Last activity: 2026-02-12 — Completed 36-01-PLAN.md (OptionsSheet Component)
+Last activity: 2026-02-12 — Completed 36-02-PLAN.md (WishlistGridCard Integration)
 
 Progress: 3/4 phases complete, 1 in progress
 Phase 33 Progress: ████ 2/2 complete
 Phase 34 Progress: ████ 3/3 complete
 Phase 35 Progress: ████ 3/3 complete
-Phase 36 Progress: █░░ 1/3 complete
+Phase 36 Progress: ██░ 2/3 complete
 
 ## Milestone History
 
@@ -82,6 +82,9 @@ v1.5 decisions archived in `.planning/milestones/v1.5-ROADMAP.md`.
 | D36-01-001 | Use Alert for edit feature placeholder | Edit form doesn't exist in v1.6 scope, temporary alert provides clear UX feedback without navigation errors | 36-01 |
 | D36-01-002 | Share uses React Native Share API | Native share sheet provides platform-appropriate sharing options, includes amazon_url in message when available | 36-01 |
 | D36-01-003 | Priority change updates local state immediately | Provides instant UI feedback, propagates to parent for persistence, smooth user experience | 36-01 |
+| D36-02-001 | My Wishlist action button opens OptionsSheet | Provides quick access to item options without navigation, better UX for owner managing list | 36-02 |
+| D36-02-002 | Favorite toggle shows alert in detail page | GroupPickerSheet requires full group context (userGroups state) not available in detail page | 36-02 |
+| D36-02-003 | Delete navigates back from detail page | Prevents showing deleted item after successful deletion | 36-02 |
 
 ### Pending Todos (Manual Setup)
 
@@ -113,6 +116,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-12
-Stopped at: Phase 36-01 complete (OptionsSheet component)
-Resume file: .planning/phases/36-options-sheet-polish/36-02-PLAN.md
-Next: Plan 36-02 (WishlistGridCard Integration)
+Stopped at: Phase 36-02 complete (WishlistGridCard Integration)
+Resume file: .planning/phases/36-options-sheet-polish/36-03-PLAN.md
+Next: Plan 36-03 (Grid Card Component)
