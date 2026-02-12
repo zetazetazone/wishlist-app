@@ -24,6 +24,24 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '@/lib/supabase';
 import { getWishlistItem } from '@/lib/wishlistItems';
+import {
+  getClaimsForItems,
+  getItemClaimStatus,
+  claimItem,
+  unclaimItem,
+  type ClaimWithUser,
+  type ItemClaimStatus,
+} from '@/lib/claims';
+import {
+  getSplitStatus,
+  getContributors,
+  getSuggestedShare,
+  openSplit,
+  pledgeContribution,
+  closeSplit,
+  type SplitStatus,
+  type SplitContributor,
+} from '@/lib/contributions';
 import { formatItemPrice, getImagePlaceholder, parseBrandFromTitle } from '@/utils/wishlist';
 import { colors, spacing, borderRadius, shadows } from '@/constants/theme';
 import type { WishlistItem } from '@/types/database.types';
@@ -48,6 +66,22 @@ export default function ItemDetailScreen() {
   // User context
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isOwner, setIsOwner] = useState(false);
+
+  // Claim state
+  const [claim, setClaim] = useState<ClaimWithUser | null>(null);
+  const [isTaken, setIsTaken] = useState(false);
+  const [isCelebrant, setIsCelebrant] = useState(false);
+  const [claimLoading, setClaimLoading] = useState(false);
+
+  // Split state
+  const [splitStatus, setSplitStatus] = useState<SplitStatus | null>(null);
+  const [contributors, setContributors] = useState<SplitContributor[]>([]);
+  const [suggestedShare, setSuggestedShare] = useState<number>(0);
+  const [userPledgeAmount, setUserPledgeAmount] = useState<number>(0);
+
+  // Derived state
+  const isYourClaim = claim?.claimed_by === currentUserId;
+  const isClaimed = !!claim || isTaken;
 
   // Load item data
   const loadItem = useCallback(async () => {
