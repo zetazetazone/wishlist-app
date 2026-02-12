@@ -51,6 +51,7 @@ Plans:
 **Goal**: Create item detail page with full-bleed hero, claim UI for group members, real-time state sync
 **Depends on**: Phase 34
 **Requirements**: DETAIL-01, DETAIL-02, DETAIL-03, DETAIL-04, DETAIL-05, DETAIL-06, DETAIL-07, CLAIM-01, CLAIM-02, CLAIM-03, CLAIM-04, CLAIM-05, CLAIM-06, PERF-03
+**Status**: Planning Complete
 **Success Criteria** (what must be TRUE):
   1. Tapping grid card navigates to /wishlist/[id] detail page
   2. Detail page shows full-bleed hero image extending from top
@@ -62,10 +63,12 @@ Plans:
   8. Celebrant sees "Taken" badge without claimer identity
   9. Claim state syncs via Supabase realtime
   10. Detail page loads in <200ms from grid tap
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD
+- [ ] 35-01-PLAN.md — Create ItemDetailScreen with hero image, item info, header
+- [ ] 35-02-PLAN.md — Add claim UI (claim/unclaim, split contribution) to detail
+- [ ] 35-03-PLAN.md — Integrate navigation and realtime sync
 
 ### Phase 36: Options Sheet & Polish
 **Goal**: Implement options bottom sheet with item preview and actions, final polish and regression testing
