@@ -2,7 +2,7 @@
 
 **Status:** In Progress
 **Phases:** 33-36
-**Total Plans:** TBD
+**Total Plans:** 2 (Phase 33) + TBD (Phases 34-36)
 
 ## Overview
 
@@ -20,10 +20,11 @@ Simplify the wishlist UI with a modern, minimal 2-column grid layout and dedicat
   3. Shared utility functions created (brand parser, price formatter, image placeholder)
   4. No existing functionality removed in this phase (preparation only)
   5. TypeScript types defined for new components (WishlistGridCard, ItemDetailScreen, ItemOptionsSheet)
-**Plans**: TBD
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD
+- [ ] 33-01-PLAN.md — Install expo-image and create feature inventory document
+- [ ] 33-02-PLAN.md — Create shared TypeScript types and utility functions
 
 ### Phase 34: Grid Layout Implementation
 **Goal**: Replace current wishlist display with 2-column masonry grid using FlashList, implement WishlistGridCard component
