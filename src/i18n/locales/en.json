@@ -415,7 +415,11 @@
     "errors": {
       "titleRequired": "Item title is required",
       "invalidUrl": "Please enter a valid URL",
-      "invalidPrice": "Please enter a valid price"
+      "invalidPrice": "Please enter a valid price",
+      "itemNotFound": "Item not found"
+    },
+    "detail": {
+      "goToStore": "Go to Store"
     }
   },
   "notifications": {

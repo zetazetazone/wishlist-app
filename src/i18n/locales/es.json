@@ -415,7 +415,11 @@
     "errors": {
       "titleRequired": "El titulo del articulo es obligatorio",
       "invalidUrl": "Por favor ingresa una URL valida",
-      "invalidPrice": "Por favor ingresa un precio valido"
+      "invalidPrice": "Por favor ingresa un precio valido",
+      "itemNotFound": "Articulo no encontrado"
+    },
+    "detail": {
+      "goToStore": "Ir a la tienda"
     }
   },
   "notifications": {
