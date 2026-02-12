@@ -9,14 +9,14 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 
 ## Current Position
 
-Phase: 34 (Grid Layout Implementation) - IN PROGRESS
-Plan: 2 of 5 complete
-Status: In progress - WishlistGrid wrapper created
-Last activity: 2026-02-12 — Completed 34-02-PLAN.md (Grid Wrapper Component)
+Phase: 34 (Grid Layout Implementation) - COMPLETE
+Plan: 3 of 3 complete
+Status: Complete - Grid integrated into both screens
+Last activity: 2026-02-12 — Completed 34-03-PLAN.md (Screen Integration)
 
-Progress: 1/4 phases complete
+Progress: 2/4 phases complete
 Phase 33 Progress: ████ 2/2 complete
-Phase 34 Progress: ██░░░ 2/5 plans complete
+Phase 34 Progress: ████ 3/3 complete
 
 ## Milestone History
 
@@ -54,6 +54,11 @@ v1.5 decisions archived in `.planning/milestones/v1.5-ROADMAP.md`.
 | TD-34-02-002 | Omit estimatedItemSize in FlashList v2 | v2 auto-measures items for better accuracy | 34-02 |
 | TD-34-02-003 | View-context-aware rendering logic | Three branches: owner, celebrant, non-celebrant for correct prop routing | 34-02 |
 | TD-34-02-004 | Conditional RefreshControl | Only render if onRefresh prop provided for flexible reuse | 34-02 |
+| TD-34-03-001 | Use index.tsx for My Wishlist tab | _layout.tsx routes "My Wishlist" to index, not wishlist-luxury | 34-03 |
+| TD-34-03-002 | Calculated height for nested FlashList | FlashList can't measure when inside ScrollView | 34-03 |
+| TD-34-03-003 | Uniform grid (not masonry) | User requirement: rows start and end at same height | 34-03 |
+| TD-34-03-004 | 4px card margin for 8px gap | FlashList numColumns doesn't support columnWrapperStyle in types | 34-03 |
+| TD-34-03-005 | Action button inside imageContainer | User requirement: button on bottom-right of image | 34-03 |
 
 ### Pending Todos (Manual Setup)
 
@@ -84,6 +89,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-12
-Stopped at: Phase 34 Plan 02 complete (Grid Wrapper Component)
-Resume file: .planning/phases/34-grid-layout-implementation/34-02-SUMMARY.md
-Next: Phase 34 Plan 03 (My Wishlist Integration)
+Stopped at: Phase 34 complete (Grid Layout Implementation)
+Resume file: .planning/phases/34-grid-layout-implementation/34-03-SUMMARY.md
+Next: Phase 35 (Detail Page & Claim UI)
