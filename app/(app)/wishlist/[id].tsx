@@ -5,7 +5,7 @@
  * Supports 4 view contexts: owner, celebrant, claimer, viewer.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -51,6 +51,7 @@ import { OpenSplitModal } from '@/components/wishlist/OpenSplitModal';
 import { TakenBadge } from '@/components/wishlist/TakenBadge';
 import { ClaimerAvatar } from '@/components/wishlist/ClaimerAvatar';
 import { ClaimButton } from '@/components/wishlist/ClaimButton';
+import { OptionsSheet, OptionsSheetRef } from '@/components/wishlist';
 import type { WishlistItem } from '@/types/database.types';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -73,12 +74,16 @@ export default function ItemDetailScreen() {
   // User context
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isOwner, setIsOwner] = useState(false);
+  const optionsSheetRef = useRef<OptionsSheetRef>(null);
 
   // Claim state
   const [claim, setClaim] = useState<ClaimWithUser | null>(null);
   const [isTaken, setIsTaken] = useState(false);
   const [isCelebrant, setIsCelebrant] = useState(false);
   const [claimLoading, setClaimLoading] = useState(false);
+
+  // Favorite state (owner only)
+  const [isFavorited, setIsFavorited] = useState(false);
 
   // Split state
   const [splitStatus, setSplitStatus] = useState<SplitStatus | null>(null);
@@ -137,6 +142,16 @@ export default function ItemDetailScreen() {
       setItem(itemData);
       const isItemOwner = itemData.user_id === user.id;
       setIsOwner(isItemOwner);
+
+      // Load favorite status for owner view
+      if (isItemOwner) {
+        const { data: favs } = await supabase
+          .from('group_favorites')
+          .select('item_id')
+          .eq('user_id', user.id)
+          .eq('item_id', id);
+        setIsFavorited(!!favs && favs.length > 0);
+      }
 
       // Set celebrant status from parallel fetch
       if (celebrationData?.data) {
@@ -395,6 +410,55 @@ export default function ItemDetailScreen() {
       setClaimLoading(false);
     }
   }, [id, t, loadClaimContext]);
+
+  // OptionsSheet callbacks (owner view only)
+  const handleFavoriteToggle = useCallback(async (toggleItem: WishlistItem) => {
+    // Show alert that favorite must be changed from My Wishlist
+    // (GroupPickerSheet needs full group context not available here)
+    Alert.alert(
+      t('wishlist.favorite.changeFromList'),
+      t('wishlist.favorite.changeFromListMessage')
+    );
+  }, [t]);
+
+  const handlePriorityChange = useCallback(async (itemId: string, newPriority: number) => {
+    // Optimistic update
+    if (item) {
+      setItem({ ...item, priority: newPriority });
+    }
+
+    try {
+      await supabase
+        .from('wishlist_items')
+        .update({ priority: newPriority })
+        .eq('id', itemId);
+    } catch (error) {
+      console.error('Error updating priority:', error);
+      // Reload on error
+      loadItem();
+    }
+  }, [item, loadItem]);
+
+  const handleDelete = useCallback(async (itemId: string) => {
+    try {
+      const { error } = await supabase
+        .from('wishlist_items')
+        .delete()
+        .eq('id', itemId);
+
+      if (error) throw error;
+
+      // Navigate back after successful delete
+      router.back();
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      Alert.alert(t('alerts.titles.error'), t('wishlist.failedToDelete'));
+    }
+  }, [router, t]);
+
+  const isFavoriteCallback = useCallback((itemId: string) => {
+    return isFavorited;
+  }, [isFavorited]);
 
   // Parse brand from title
   const brand = item ? parseBrandFromTitle(item.title) : null;
@@ -708,7 +772,11 @@ export default function ItemDetailScreen() {
           ),
           headerRight: () => (
             <Pressable
-              onPress={() => {/* TODO: Options sheet in Phase 36 */}}
+              onPress={() => {
+                if (isOwner && item) {
+                  optionsSheetRef.current?.open(item);
+                }
+              }}
               style={[styles.headerButton, { marginRight: spacing.sm }]}
             >
               <MaterialCommunityIcons name="dots-vertical" size={24} color={colors.white} />
@@ -759,6 +827,17 @@ export default function ItemDetailScreen() {
         onConfirm={handleOpenSplit}
         itemTitle={item?.title || ''}
       />
+
+      {/* OptionsSheet - owner view only */}
+      {isOwner && (
+        <OptionsSheet
+          ref={optionsSheetRef}
+          onFavoriteToggle={handleFavoriteToggle}
+          onPriorityChange={handlePriorityChange}
+          onDelete={handleDelete}
+          isFavorite={isFavoriteCallback}
+        />
+      )}
     </View>
   );
 }
