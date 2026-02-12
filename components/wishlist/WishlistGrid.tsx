@@ -61,6 +61,14 @@ export interface WishlistGridProps {
   // Empty state
   /** Component to show when items array is empty */
   ListEmptyComponent?: React.ReactElement;
+
+  // Header (for banners, special items, etc.)
+  /** Component to show above the grid items */
+  ListHeaderComponent?: React.ReactElement;
+
+  // Nested scroll support
+  /** Set to false when inside a ScrollView to use calculated height */
+  scrollEnabled?: boolean;
 }
 
 /**
@@ -85,6 +93,8 @@ export function WishlistGrid({
   refreshing,
   onRefresh,
   ListEmptyComponent,
+  ListHeaderComponent,
+  scrollEnabled = true,
 }: WishlistGridProps) {
   /**
    * Render individual grid card with appropriate context
@@ -178,6 +188,10 @@ export function WishlistGrid({
       }
       // Empty state
       ListEmptyComponent={ListEmptyComponent}
+      // Header
+      ListHeaderComponent={ListHeaderComponent}
+      // Nested scroll support
+      scrollEnabled={scrollEnabled}
     />
   );
 }

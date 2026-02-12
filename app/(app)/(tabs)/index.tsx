@@ -1,11 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
-  ScrollView,
   TouchableOpacity,
   Alert,
-  RefreshControl,
   StatusBar,
   LayoutAnimation,
   Image,
@@ -19,6 +17,7 @@ import { supabase } from '../../../lib/supabase';
 import { WishlistItem } from '../../../types/database.types';
 import AddItemModal from '../../../components/wishlist/AddItemModal';
 import LuxuryWishlistCard from '../../../components/wishlist/LuxuryWishlistCard';
+import { WishlistGrid } from '../../../components/wishlist';
 import { colors, spacing, borderRadius, shadows } from '../../../constants/theme';
 import { getAvatarUrl } from '../../../lib/storage';
 import {
@@ -429,6 +428,35 @@ export default function LuxuryWishlistScreen() {
     ? favorites.filter(f => f.itemId === selectedItemForPicker.id).map(f => f.groupId)
     : [];
 
+  // Grid handlers
+  const handleItemPress = useCallback((item: WishlistItem) => {
+    // For Phase 34: Navigate to item detail (placeholder)
+    // Phase 35 will add actual detail navigation
+    console.log('Item pressed:', item.id);
+    // TODO: router.push(`/wishlist/${item.id}`) in Phase 35
+  }, []);
+
+  const handleItemAction = useCallback((item: WishlistItem) => {
+    // Open group picker to set favorite (heart action)
+    handleHeartPress(item);
+  }, [handleHeartPress]);
+
+  // Sort items: favorited items first (any group), then by priority
+  const sortedItems = useMemo(() => {
+    return [...items].sort((a, b) => {
+      const aFavorited = favorites.some(f => f.itemId === a.id);
+      const bFavorited = favorites.some(f => f.itemId === b.id);
+      if (aFavorited && !bFavorited) return -1;
+      if (!aFavorited && bFavorited) return 1;
+      return (b.priority || 0) - (a.priority || 0);
+    });
+  }, [items, favorites]);
+
+  // Get favorited item IDs as Set for WishlistGrid
+  const favoriteItemIds = useMemo(() => {
+    return new Set(favorites.map(f => f.itemId));
+  }, [favorites]);
+
   return (
     <>
       <StatusBar barStyle="light-content" />
@@ -527,113 +555,7 @@ export default function LuxuryWishlistScreen() {
         </LinearGradient>
 
         {/* Content */}
-        <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={{
-            padding: spacing.lg,
-            paddingTop: spacing.md,
-          }}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              tintColor={colors.burgundy[600]}
-              colors={[colors.burgundy[600]]}
-            />
-          }
-        >
-          {/* Re-add Special Items Banner */}
-          {missingSpecialItems.length > 0 && !loading && (
-            <View
-              style={{
-                backgroundColor: colors.cream[100],
-                borderRadius: borderRadius.lg,
-                padding: spacing.md,
-                marginBottom: spacing.md,
-                borderWidth: 1,
-                borderColor: colors.gold[200],
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: '600',
-                  color: colors.burgundy[700],
-                  marginBottom: spacing.sm,
-                }}
-              >
-                {t('wishlist.addSpecialItems', { defaultValue: 'Add Special Items' })}
-              </Text>
-              <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-                {missingSpecialItems.includes('surprise_me') && (
-                  <TouchableOpacity
-                    onPress={() => handleReaddSpecialItem('surprise_me')}
-                    style={{
-                      flex: 1,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: colors.burgundy[100],
-                      paddingVertical: spacing.sm,
-                      paddingHorizontal: spacing.md,
-                      borderRadius: borderRadius.md,
-                      gap: spacing.xs,
-                    }}
-                    activeOpacity={0.7}
-                  >
-                    <MaterialCommunityIcons
-                      name="help-circle-outline"
-                      size={20}
-                      color={colors.burgundy[700]}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        fontWeight: '600',
-                        color: colors.burgundy[700],
-                      }}
-                    >
-                      {t('wishlist.itemType.surpriseMe')}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-                {missingSpecialItems.includes('mystery_box') && (
-                  <TouchableOpacity
-                    onPress={() => handleReaddSpecialItem('mystery_box')}
-                    style={{
-                      flex: 1,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: colors.gold[100],
-                      paddingVertical: spacing.sm,
-                      paddingHorizontal: spacing.md,
-                      borderRadius: borderRadius.md,
-                      gap: spacing.xs,
-                    }}
-                    activeOpacity={0.7}
-                  >
-                    <MaterialCommunityIcons
-                      name="gift"
-                      size={20}
-                      color={colors.gold[700]}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        fontWeight: '600',
-                        color: colors.gold[700],
-                      }}
-                    >
-                      {t('wishlist.itemType.mysteryBox')}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            </View>
-          )}
-
+        <View style={{ flex: 1 }}>
           {loading ? (
             <View style={{ paddingVertical: spacing.xxl }}>
               <Text
@@ -646,99 +568,170 @@ export default function LuxuryWishlistScreen() {
                 {t('common.loading')}
               </Text>
             </View>
-          ) : items.length === 0 ? (
-            <MotiView
-              from={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ type: 'spring', delay: 200 }}
-            >
-              <View
-                style={{
-                  backgroundColor: colors.white,
-                  borderRadius: borderRadius.xl,
-                  padding: spacing.xxl,
-                  alignItems: 'center',
-                  marginTop: spacing.xxl,
-                  borderWidth: 2,
-                  borderColor: colors.gold[100],
-                  borderStyle: 'dashed',
-                }}
-              >
-                <View
-                  style={{
-                    width: 100,
-                    height: 100,
-                    borderRadius: 50,
-                    backgroundColor: colors.burgundy[50],
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: spacing.lg,
-                  }}
-                >
-                  <MaterialCommunityIcons
-                    name="gift-outline"
-                    size={60}
-                    color={colors.burgundy[400]}
-                  />
-                </View>
-
-                <Text
-                  style={{
-                    fontSize: 24,
-                    fontWeight: '700',
-                    color: colors.burgundy[800],
-                    marginBottom: spacing.sm,
-                    textAlign: 'center',
-                  }}
-                >
-                  {t('wishlist.startYourWishlist')}
-                </Text>
-
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: colors.burgundy[400],
-                    textAlign: 'center',
-                    lineHeight: 24,
-                  }}
-                >
-                  {t('wishlist.tapToAddItems')}
-                </Text>
-              </View>
-            </MotiView>
           ) : (
-            (() => {
-              // Sort items: favorited items first (any group), then by priority
-              const sortedItems = [...items].sort((a, b) => {
-                const aFavorited = favorites.some(f => f.itemId === a.id);
-                const bFavorited = favorites.some(f => f.itemId === b.id);
-                if (aFavorited && !bFavorited) return -1;
-                if (!aFavorited && bFavorited) return 1;
-                return (b.priority || 0) - (a.priority || 0);
-              });
+            <WishlistGrid
+              items={sortedItems}
+              onItemPress={handleItemPress}
+              onItemAction={handleItemAction}
+              isOwner={true}
+              favoriteItemIds={favoriteItemIds}
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              ListHeaderComponent={
+                missingSpecialItems.length > 0 ? (
+                  <View
+                    style={{
+                      backgroundColor: colors.cream[100],
+                      borderRadius: borderRadius.lg,
+                      padding: spacing.md,
+                      marginBottom: spacing.md,
+                      borderWidth: 1,
+                      borderColor: colors.gold[200],
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        fontWeight: '600',
+                        color: colors.burgundy[700],
+                        marginBottom: spacing.sm,
+                      }}
+                    >
+                      {t('wishlist.addSpecialItems', { defaultValue: 'Add Special Items' })}
+                    </Text>
+                    <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+                      {missingSpecialItems.includes('surprise_me') && (
+                        <TouchableOpacity
+                          onPress={() => handleReaddSpecialItem('surprise_me')}
+                          style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: colors.burgundy[100],
+                            paddingVertical: spacing.sm,
+                            paddingHorizontal: spacing.md,
+                            borderRadius: borderRadius.md,
+                            gap: spacing.xs,
+                          }}
+                          activeOpacity={0.7}
+                        >
+                          <MaterialCommunityIcons
+                            name="help-circle-outline"
+                            size={20}
+                            color={colors.burgundy[700]}
+                          />
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              fontWeight: '600',
+                              color: colors.burgundy[700],
+                            }}
+                          >
+                            {t('wishlist.itemType.surpriseMe')}
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                      {missingSpecialItems.includes('mystery_box') && (
+                        <TouchableOpacity
+                          onPress={() => handleReaddSpecialItem('mystery_box')}
+                          style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: colors.gold[100],
+                            paddingVertical: spacing.sm,
+                            paddingHorizontal: spacing.md,
+                            borderRadius: borderRadius.md,
+                            gap: spacing.xs,
+                          }}
+                          activeOpacity={0.7}
+                        >
+                          <MaterialCommunityIcons
+                            name="gift"
+                            size={20}
+                            color={colors.gold[700]}
+                          />
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              fontWeight: '600',
+                              color: colors.gold[700],
+                            }}
+                          >
+                            {t('wishlist.itemType.mysteryBox')}
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  </View>
+                ) : undefined
+              }
+              ListEmptyComponent={
+                <MotiView
+                  from={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: 'spring', delay: 200 }}
+                >
+                  <View
+                    style={{
+                      backgroundColor: colors.white,
+                      borderRadius: borderRadius.xl,
+                      padding: spacing.xxl,
+                      alignItems: 'center',
+                      marginTop: spacing.xxl,
+                      borderWidth: 2,
+                      borderColor: colors.gold[100],
+                      borderStyle: 'dashed',
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: 100,
+                        height: 100,
+                        borderRadius: 50,
+                        backgroundColor: colors.burgundy[50],
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: spacing.lg,
+                      }}
+                    >
+                      <MaterialCommunityIcons
+                        name="gift-outline"
+                        size={60}
+                        color={colors.burgundy[400]}
+                      />
+                    </View>
 
-              return sortedItems.map((item, index) => {
-                const itemFavorites = favorites
-                  .filter(f => f.itemId === item.id)
-                  .map(f => ({ groupId: f.groupId, groupName: f.groupName }));
+                    <Text
+                      style={{
+                        fontSize: 24,
+                        fontWeight: '700',
+                        color: colors.burgundy[800],
+                        marginBottom: spacing.sm,
+                        textAlign: 'center',
+                      }}
+                    >
+                      {t('wishlist.startYourWishlist')}
+                    </Text>
 
-                return (
-                  <LuxuryWishlistCard
-                    key={item.id}
-                    item={item}
-                    onDelete={handleDeleteItem}
-                    onPriorityChange={handlePriorityChange}
-                    index={index}
-                    favoriteGroups={itemFavorites}
-                    onToggleFavorite={() => handleHeartPress(item)}
-                    showFavoriteHeart={true}
-                    totalUserGroups={userGroups.length}
-                  />
-                );
-              });
-            })()
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: colors.burgundy[400],
+                        textAlign: 'center',
+                        lineHeight: 24,
+                      }}
+                    >
+                      {t('wishlist.tapToAddItems')}
+                    </Text>
+                  </View>
+                </MotiView>
+              }
+            />
           )}
-        </ScrollView>
+        </View>
 
         {/* Floating Add Button */}
         <TouchableOpacity

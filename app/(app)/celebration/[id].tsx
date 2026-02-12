@@ -22,6 +22,7 @@ import {
   Modal,
   KeyboardAvoidingView,
   Platform,
+  Dimensions,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -533,6 +534,18 @@ export default function CelebrationDetailScreen() {
     });
   }, [celebrantItems, celebrantFavoriteId, claims, currentUserId, celebration?.celebrant_id]);
 
+  // Calculate grid height for WishlistGrid when nested in ScrollView
+  // Card width: (screenWidth - padding*2 - gap) / 2
+  // Card height: ~cardWidth * 1.4 (square image + content)
+  const wishlistGridHeight = useMemo(() => {
+    const screenWidth = Dimensions.get('window').width;
+    const cardWidth = (screenWidth - 16 * 2 - 8) / 2; // padding=16, gap=8
+    const cardHeight = cardWidth * 1.4; // Approx: square image + content area
+    const rowGap = 8;
+    const rows = Math.ceil(sortedCelebrantItems.length / 2);
+    return rows * cardHeight + (rows - 1) * rowGap + 32; // Extra padding
+  }, [sortedCelebrantItems.length]);
+
   // Loading state
   if (loading) {
     return (
@@ -933,7 +946,7 @@ export default function CelebrationDetailScreen() {
                       <Text style={styles.emptyText}>{t('wishlist.empty.noItems')}</Text>
                     </View>
                   ) : (
-                    <View style={{ minHeight: 400 }}>
+                    <View style={{ height: wishlistGridHeight }}>
                       <WishlistGrid
                         items={sortedCelebrantItems}
                         onItemPress={handleWishlistItemPress}
@@ -944,6 +957,7 @@ export default function CelebrationDetailScreen() {
                         claims={claimsMap}
                         currentUserId={currentUserId || undefined}
                         favoriteItemIds={celebrantFavoriteId ? new Set([celebrantFavoriteId]) : undefined}
+                        scrollEnabled={false}
                         ListEmptyComponent={
                           <View style={styles.emptyCard}>
                             <Text style={styles.emptyText}>{t('wishlist.empty.noItems')}</Text>
