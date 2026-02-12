@@ -45,6 +45,13 @@ import {
 } from '@/lib/contributions';
 import { formatItemPrice, getImagePlaceholder, parseBrandFromTitle } from '@/utils/wishlist';
 import { colors, spacing, borderRadius, shadows } from '@/constants/theme';
+import { SplitContributionProgress } from '@/components/wishlist/SplitContributionProgress';
+import { ContributorsDisplay } from '@/components/wishlist/ContributorsDisplay';
+import { SplitModal } from '@/components/wishlist/SplitModal';
+import { OpenSplitModal } from '@/components/wishlist/OpenSplitModal';
+import { TakenBadge } from '@/components/wishlist/TakenBadge';
+import { ClaimerAvatar } from '@/components/wishlist/ClaimerAvatar';
+import { ClaimButton } from '@/components/wishlist/ClaimButton';
 import type { WishlistItem } from '@/types/database.types';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -83,6 +90,10 @@ export default function ItemDetailScreen() {
   // Derived state
   const isYourClaim = claim?.claimed_by === currentUserId;
   const isClaimed = !!claim || isTaken;
+
+  // Modal state
+  const [splitModalVisible, setSplitModalVisible] = useState(false);
+  const [openSplitModalVisible, setOpenSplitModalVisible] = useState(false);
 
   // Load item data
   const loadItem = useCallback(async () => {
