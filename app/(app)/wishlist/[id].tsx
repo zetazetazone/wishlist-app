@@ -116,11 +116,14 @@ export default function ItemDetailScreen() {
 
       if (celebrationId) {
         promises.push(
-          supabase
-            .from('celebrations')
-            .select('celebrant_id')
-            .eq('id', celebrationId)
-            .single()
+          (async () => {
+            const result = await supabase
+              .from('celebrations')
+              .select('celebrant_id')
+              .eq('id', celebrationId)
+              .single();
+            return result;
+          })()
         );
       }
 
@@ -237,7 +240,7 @@ export default function ItemDetailScreen() {
   // Realtime subscription for split contribution changes
   useEffect(() => {
     if (!id || isOwner || isCelebrant) return;
-    if (!splitStatus?.isOpen) return;
+    if (!splitStatus?.is_open) return;
 
     const channel = supabase
       .channel(`split-contrib-${id}`)
@@ -263,7 +266,7 @@ export default function ItemDetailScreen() {
       console.log('[Realtime] Unsubscribing from split channel');
       supabase.removeChannel(channel);
     };
-  }, [id, isOwner, isCelebrant, splitStatus?.isOpen, loadClaimContext]);
+  }, [id, isOwner, isCelebrant, splitStatus?.is_open, loadClaimContext]);
 
   // Claim item handler
   const handleClaim = useCallback(async () => {
@@ -436,13 +439,13 @@ export default function ItemDetailScreen() {
           </View>
 
           {/* Split progress if opened */}
-          {splitStatus?.isOpen && (
+          {splitStatus?.is_open && (
             <>
               <SplitContributionProgress
                 itemPrice={item?.price || 0}
-                additionalCosts={splitStatus.additionalCosts}
-                totalPledged={splitStatus.totalPledged}
-                isFullyFunded={splitStatus.isFullyFunded}
+                additionalCosts={splitStatus.additional_costs}
+                totalPledged={splitStatus.total_pledged}
+                isFullyFunded={splitStatus.is_fully_funded}
               />
               <ContributorsDisplay contributors={contributors} />
             </>
@@ -451,7 +454,7 @@ export default function ItemDetailScreen() {
           {/* Actions */}
           <View style={styles.claimActions}>
             {/* Open split button (if not already split) */}
-            {!splitStatus?.isOpen && (
+            {!splitStatus?.is_open && (
               <ClaimButton
                 variant="openSplit"
                 onClaim={() => {}}
@@ -464,7 +467,7 @@ export default function ItemDetailScreen() {
             )}
 
             {/* Close split button (if split open and not fully funded) */}
-            {splitStatus?.isOpen && !splitStatus.isFullyFunded && (
+            {splitStatus?.is_open && !splitStatus.is_fully_funded && (
               <ClaimButton
                 variant="closeSplit"
                 onClaim={() => {}}
@@ -477,7 +480,7 @@ export default function ItemDetailScreen() {
             )}
 
             {/* Unclaim button (if not split) */}
-            {!splitStatus?.isOpen && (
+            {!splitStatus?.is_open && (
               <Pressable
                 style={styles.unclaimButton}
                 onPress={handleUnclaim}
@@ -513,13 +516,13 @@ export default function ItemDetailScreen() {
           )}
 
           {/* Split progress if open */}
-          {splitStatus?.isOpen && (
+          {splitStatus?.is_open && (
             <>
               <SplitContributionProgress
                 itemPrice={item?.price || 0}
-                additionalCosts={splitStatus.additionalCosts}
-                totalPledged={splitStatus.totalPledged}
-                isFullyFunded={splitStatus.isFullyFunded}
+                additionalCosts={splitStatus.additional_costs}
+                totalPledged={splitStatus.total_pledged}
+                isFullyFunded={splitStatus.is_fully_funded}
               />
               <ContributorsDisplay contributors={contributors} />
 
@@ -534,7 +537,7 @@ export default function ItemDetailScreen() {
               )}
 
               {/* Contribute button (if split open and not fully funded and user hasn't pledged) */}
-              {!splitStatus.isFullyFunded && userPledgeAmount === 0 && (
+              {!splitStatus.is_fully_funded && userPledgeAmount === 0 && (
                 <ClaimButton
                   variant="contribute"
                   onClaim={() => {}}
@@ -743,8 +746,8 @@ export default function ItemDetailScreen() {
         onConfirm={handlePledge}
         itemTitle={item?.title || ''}
         itemPrice={item?.price || 0}
-        additionalCosts={splitStatus?.additionalCosts}
-        totalPledged={splitStatus?.totalPledged || 0}
+        additionalCosts={splitStatus?.additional_costs}
+        totalPledged={splitStatus?.total_pledged || 0}
         suggestedAmount={suggestedShare}
         loading={claimLoading}
       />
