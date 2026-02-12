@@ -182,5 +182,17 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 | Single translation namespace | Simpler than separate files, easier maintenance, works with nested keys | ✓ Good - maintainable |
 | ESLint v8 for i18n linting | Required for .eslintrc.js compatibility with Expo config | ✓ Good - tooling works |
 
+## Current Milestone: v1.6 Wishlist UI Redesign
+
+**Goal:** Simplify the wishlist UI with a modern, minimal grid layout and dedicated item detail pages.
+
+**Target features:**
+- Clean 2-column grid layout replacing big luxury cards
+- Minimal item cards: image (or item type icon), title, price
+- New item detail page with full-bleed hero image
+- Options bottom sheet for item actions (favorite, priority, share, edit, delete)
+- Claim UI moves from grid cards to item detail page
+- Consistent design across My Wishlist and celebration page views
+
 ---
-*Last updated: 2026-02-12 after v1.5 milestone*
+*Last updated: 2026-02-12 after v1.6 milestone start*

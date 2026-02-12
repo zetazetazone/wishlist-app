@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-12)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** Planning next milestone
+**Current focus:** v1.6 Wishlist UI Redesign
 
 ## Current Position
 
-Phase: Not started
+Phase: Not started (defining requirements)
 Plan: —
-Status: Ready to plan next milestone
-Last activity: 2026-02-12 — v1.5 Localization milestone complete
+Status: Defining requirements
+Last activity: 2026-02-12 — Milestone v1.6 started
 
-Progress: Ready for v1.6
+Progress: Defining requirements
 
 ## Milestone History
 
