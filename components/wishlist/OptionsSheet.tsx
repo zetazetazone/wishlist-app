@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useState, useCallback, useRef, useEffect } from 'react';
+import { forwardRef, useImperativeHandle, useState, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { formatItemPrice, getImagePlaceholder } from '@/utils/wishlist';
@@ -20,7 +21,7 @@ import StarRating from '@/components/ui/StarRating';
 import { WishlistItem } from '@/types/database.types';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-const SHEET_HEIGHT = SCREEN_HEIGHT * 0.55;
+const SHEET_HEIGHT = SCREEN_HEIGHT * 0.65; // Increased from 0.55 to fit all content
 const DRAG_THRESHOLD = 50; // Minimum drag distance to trigger close
 
 interface OptionsSheetProps {
@@ -38,6 +39,7 @@ export interface OptionsSheetRef {
 export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
   function OptionsSheet({ onFavoriteToggle, onPriorityChange, onDelete, isFavorite }, ref) {
     const { t } = useTranslation();
+    const insets = useSafeAreaInsets();
     const [visible, setVisible] = useState(false);
     const [item, setItem] = useState<WishlistItem | null>(null);
 
@@ -220,7 +222,10 @@ export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
           <Animated.View
             style={[
               styles.sheet,
-              { transform: [{ translateY: sheetTransform }] },
+              {
+                transform: [{ translateY: sheetTransform }],
+                paddingBottom: Math.max(insets.bottom, 20) + 16, // Safe area + extra padding
+              },
             ]}
           >
             {/* Drag handle */}
@@ -374,7 +379,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.cream[50],
     borderTopLeftRadius: borderRadius.xl,
     borderTopRightRadius: borderRadius.xl,
-    paddingBottom: 40,
+    // paddingBottom applied dynamically based on safe area insets
   },
   handleContainer: {
     alignItems: 'center',
