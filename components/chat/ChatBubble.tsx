@@ -5,8 +5,9 @@
 
 import React from 'react';
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { formatDistanceToNow } from 'date-fns';
+import { useLocalizedFormat } from '../../hooks/useLocalizedFormat';
 import type { ChatMessage } from '../../lib/chat';
 
 interface ChatBubbleProps {
@@ -15,24 +16,24 @@ interface ChatBubbleProps {
   onLinkedItemPress?: (itemId: string) => void;
 }
 
-/**
- * Format the timestamp as relative time (e.g., "2 minutes ago")
- */
-function formatTimestamp(dateString: string): string {
-  try {
-    return formatDistanceToNow(new Date(dateString), { addSuffix: true });
-  } catch {
-    return '';
-  }
-}
-
 export function ChatBubble({
   message,
   isOwnMessage,
   onLinkedItemPress,
 }: ChatBubbleProps) {
-  const senderName = message.sender?.display_name || 'Unknown';
+  const { t } = useTranslation();
+  const { formatDistanceToNow } = useLocalizedFormat();
+
+  const senderName = message.sender?.display_name || t('common.unknown');
   const senderInitial = senderName.charAt(0).toUpperCase();
+
+  const formatTimestamp = (dateString: string): string => {
+    try {
+      return formatDistanceToNow(new Date(dateString), { addSuffix: true });
+    } catch {
+      return '';
+    }
+  };
 
   return (
     <View

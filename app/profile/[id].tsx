@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { View, ScrollView } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
+import { useLocalizedFormat } from '@/hooks/useLocalizedFormat';
 import {
   VStack,
   HStack,
@@ -23,6 +24,8 @@ type UserProfile = Database['public']['Tables']['user_profiles']['Row'];
 
 export default function ProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { t } = useTranslation();
+  const { format } = useLocalizedFormat();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -60,20 +63,20 @@ export default function ProfileScreen() {
   const avatarUrl = profile?.avatar_url ? getAvatarUrl(profile.avatar_url) : null;
 
   const formatBirthday = (birthday: string | null) => {
-    if (!birthday) return 'Not specified';
+    if (!birthday) return t('profile.notSpecified');
     try {
-      return format(new Date(birthday), 'MMMM d, yyyy');
+      return format(new Date(birthday), 'PPP');
     } catch (error) {
-      return 'Invalid date';
+      return t('profile.invalidDate');
     }
   };
 
   const formatMemberSince = (createdAt: string | null) => {
-    if (!createdAt) return 'Unknown';
+    if (!createdAt) return t('common.unknown');
     try {
-      return format(new Date(createdAt), 'MMMM yyyy');
+      return format(new Date(createdAt), 'LLLL yyyy');
     } catch (error) {
-      return 'Unknown';
+      return t('common.unknown');
     }
   };
 
@@ -82,7 +85,7 @@ export default function ProfileScreen() {
       <>
         <Stack.Screen
           options={{
-            title: 'Profile',
+            title: t('profile.title'),
             headerShown: true,
           }}
         />
@@ -98,13 +101,13 @@ export default function ProfileScreen() {
       <>
         <Stack.Screen
           options={{
-            title: 'Profile',
+            title: t('profile.title'),
             headerShown: true,
           }}
         />
         <Center flex={1} padding="$6">
           <Text fontSize="$lg" color="$textLight600">
-            Profile not found
+            {t('profile.notFound')}
           </Text>
         </Center>
       </>
@@ -115,7 +118,7 @@ export default function ProfileScreen() {
     <>
       <Stack.Screen
         options={{
-          title: profile.display_name || 'Profile',
+          title: profile.display_name || t('profile.title'),
           headerShown: true,
         }}
       />
@@ -126,14 +129,14 @@ export default function ProfileScreen() {
           <Center>
             <Avatar size="2xl" borderRadius="$full" marginBottom="$4">
               {avatarUrl ? (
-                <AvatarImage source={{ uri: avatarUrl }} alt={profile.display_name || 'Profile'} />
+                <AvatarImage source={{ uri: avatarUrl }} alt={profile.display_name || t('profile.title')} />
               ) : (
                 <AvatarFallbackText>
-                  {profile.display_name || profile.email || 'User'}
+                  {profile.display_name || profile.email || t('profile.user')}
                 </AvatarFallbackText>
               )}
             </Avatar>
-            <Heading size="xl">{profile.display_name || 'Unknown User'}</Heading>
+            <Heading size="xl">{profile.display_name || t('profile.unknownUser')}</Heading>
           </Center>
 
           <Divider marginVertical="$2" />
@@ -143,7 +146,7 @@ export default function ProfileScreen() {
             {/* Birthday */}
             <Box>
               <Text fontSize="$sm" color="$textLight500" marginBottom="$1">
-                Birthday
+                {t('profile.birthday')}
               </Text>
               <Text fontSize="$lg" fontWeight="$medium">
                 {formatBirthday(profile.birthday)}
@@ -153,7 +156,7 @@ export default function ProfileScreen() {
             {/* Member Since */}
             <Box>
               <Text fontSize="$sm" color="$textLight500" marginBottom="$1">
-                Member Since
+                {t('profile.memberSince')}
               </Text>
               <Text fontSize="$lg" fontWeight="$medium">
                 {formatMemberSince(profile.created_at)}
@@ -164,7 +167,7 @@ export default function ProfileScreen() {
             {profile.email && (
               <Box>
                 <Text fontSize="$sm" color="$textLight500" marginBottom="$1">
-                  Email
+                  {t('profile.email')}
                 </Text>
                 <Text fontSize="$lg" fontWeight="$medium">
                   {profile.email}

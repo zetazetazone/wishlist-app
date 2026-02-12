@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Linking, Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
@@ -93,6 +94,7 @@ export default function LuxuryWishlistCard({
   onPledge,
   onCloseSplit,
 }: LuxuryWishlistCardProps) {
+  const { t } = useTranslation();
   // State for split modals
   const [showSplitModal, setShowSplitModal] = useState(false);
   const [showOpenSplitModal, setShowOpenSplitModal] = useState(false);
@@ -156,18 +158,18 @@ export default function LuxuryWishlistCard({
       if (canOpen) {
         await Linking.openURL(item.amazon_url);
       } else {
-        Alert.alert('Error', 'Unable to open this link');
+        Alert.alert(t('alerts.titles.error'), t('wishlist.card.unableToOpenLink'));
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to open link');
+      Alert.alert(t('alerts.titles.error'), t('wishlist.card.failedToOpenLink'));
     }
   };
 
   const handleDelete = () => {
-    Alert.alert('Remove Gift', 'Remove this item from your wishlist?', [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert(t('wishlist.card.removeGift'), t('wishlist.card.removeFromWishlist'), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: 'Remove',
+        text: t('common.remove'),
         style: 'destructive',
         onPress: () => onDelete?.(item.id),
       },
@@ -203,12 +205,12 @@ export default function LuxuryWishlistCard({
       : 0;
 
     Alert.alert(
-      'Cover Remaining Amount',
-      `You'll cover the remaining $${remaining.toFixed(2)} to complete this split.`,
+      t('wishlist.split.coverRemaining'),
+      t('wishlist.split.coverRemainingMessage', { amount: remaining.toFixed(2) }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Cover It',
+          text: t('wishlist.split.coverIt'),
           onPress: () => onCloseSplit?.(item.id),
         },
       ]
@@ -340,7 +342,7 @@ export default function LuxuryWishlistCard({
                       fontStyle: 'italic',
                     }}
                   >
-                    Open to any gift, as long as it comes with care 💝
+                    {t('wishlist.card.surpriseMeDescription')}
                   </Text>
                 )}
               </View>
@@ -451,7 +453,7 @@ export default function LuxuryWishlistCard({
                   letterSpacing: 0.3,
                 }}
               >
-                View Product
+                {t('wishlist.card.viewProduct')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -543,7 +545,7 @@ export default function LuxuryWishlistCard({
                     }}>
                       <MaterialCommunityIcons name="check-circle" size={18} color={colors.success} />
                       <Text style={{ color: colors.success, fontWeight: '600' }}>
-                        Your contribution: ${userPledgeAmount.toFixed(2)}
+                        {t('wishlist.split.yourContribution', { amount: userPledgeAmount.toFixed(2) })}
                       </Text>
                     </View>
                   ) : !splitStatus.isFullyFunded && (

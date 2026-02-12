@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity, Linking, Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { WishlistItem } from '../../types/database.types';
 import StarRating from '../ui/StarRating';
 import { useState } from 'react';
@@ -12,11 +13,12 @@ export default function WishlistItemCardSimple({
   item,
   onDelete,
 }: WishlistItemCardSimpleProps) {
+  const { t } = useTranslation();
   const [showMenu, setShowMenu] = useState(false);
 
   const handleOpenLink = async () => {
     if (!item.amazon_url) {
-      Alert.alert('Error', 'No link available for this item');
+      Alert.alert(t('alerts.titles.error'), t('wishlist.card.noLinkAvailable'));
       return;
     }
     try {
@@ -24,23 +26,23 @@ export default function WishlistItemCardSimple({
       if (canOpen) {
         await Linking.openURL(item.amazon_url);
       } else {
-        Alert.alert('Error', 'Unable to open this link');
+        Alert.alert(t('alerts.titles.error'), t('wishlist.card.unableToOpenLink'));
       }
     } catch (error) {
       console.error('Error opening link:', error);
-      Alert.alert('Error', 'Failed to open link');
+      Alert.alert(t('alerts.titles.error'), t('wishlist.card.failedToOpenLink'));
     }
   };
 
   const handleDelete = () => {
     setShowMenu(false);
     Alert.alert(
-      'Delete Item',
-      'Remove this item from your wishlist?',
+      t('wishlist.card.deleteItem'),
+      t('wishlist.card.removeFromWishlist'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: () => onDelete?.(item.id),
         },
@@ -86,7 +88,7 @@ export default function WishlistItemCardSimple({
           activeOpacity={0.8}
         >
           <Text className="text-white text-center font-semibold text-sm">
-            View Product
+            {t('wishlist.card.viewProduct')}
           </Text>
         </TouchableOpacity>
 
@@ -109,14 +111,14 @@ export default function WishlistItemCardSimple({
             className="px-4 py-3 border-b border-gray-100"
             activeOpacity={0.7}
           >
-            <Text className="text-red-600 font-medium">Delete</Text>
+            <Text className="text-red-600 font-medium">{t('common.delete')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setShowMenu(false)}
             className="px-4 py-3"
             activeOpacity={0.7}
           >
-            <Text className="text-gray-600 font-medium">Cancel</Text>
+            <Text className="text-gray-600 font-medium">{t('common.cancel')}</Text>
           </TouchableOpacity>
         </View>
       )}

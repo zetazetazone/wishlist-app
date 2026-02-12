@@ -16,6 +16,7 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   BottomSheetModal,
@@ -51,6 +52,7 @@ export function ContributionModal({
   existingContribution,
   onSave,
 }: ContributionModalProps) {
+  const { t } = useTranslation();
   const [amount, setAmount] = useState('');
   const [contributions, setContributions] = useState<Contribution[]>([]);
   const [loading, setLoading] = useState(false);
@@ -100,7 +102,7 @@ export function ContributionModal({
     // Parse and validate amount
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount) || numAmount <= 0) {
-      setError('Please enter a valid amount greater than 0');
+      setError(t('celebrations.contributions.invalidAmount'));
       return;
     }
 
@@ -172,7 +174,7 @@ export function ContributionModal({
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title}>
-            {existingContribution ? 'Update Contribution' : 'Add Contribution'}
+            {existingContribution ? t('celebrations.contributions.updateContribution') : t('celebrations.contributions.addContribution')}
           </Text>
           <Pressable onPress={onClose} style={styles.closeButton}>
             <MaterialCommunityIcons name="close" size={24} color="#6b7280" />
@@ -181,7 +183,7 @@ export function ContributionModal({
 
         {/* Amount Input - Using BottomSheetTextInput for proper keyboard handling */}
         <View style={styles.inputSection}>
-          <Text style={styles.inputLabel}>Your Contribution</Text>
+          <Text style={styles.inputLabel}>{t('celebrations.contributions.yourContribution')}</Text>
           <View style={styles.inputWrapper}>
             <Text style={styles.currencySymbol}>$</Text>
             <BottomSheetTextInput
@@ -200,14 +202,14 @@ export function ContributionModal({
         {/* Contributors List */}
         <View style={styles.contributorsSection}>
           <Text style={styles.sectionTitle}>
-            Other Contributors ({otherContributions.length})
+            {t('celebrations.contributions.otherContributors', { count: otherContributions.length })}
           </Text>
 
           {loading ? (
             <ActivityIndicator size="small" color="#8B1538" />
           ) : otherContributions.length === 0 ? (
             <Text style={styles.noContributors}>
-              No other contributions yet. Be the first!
+              {t('celebrations.contributions.noContributorsYet')}
             </Text>
           ) : (
             <ScrollView
@@ -216,7 +218,7 @@ export function ContributionModal({
             >
               {otherContributions.map(contribution => {
                 const name =
-                  contribution.contributor?.display_name || 'Unknown';
+                  contribution.contributor?.display_name || t('common.unknown');
                 const initial = name.charAt(0).toUpperCase();
 
                 return (
@@ -250,7 +252,7 @@ export function ContributionModal({
 
           {otherContributions.length > 0 && (
             <View style={styles.totalRow}>
-              <Text style={styles.totalLabel}>Others' Total:</Text>
+              <Text style={styles.totalLabel}>{t('celebrations.contributions.othersTotal')}</Text>
               <Text style={styles.totalAmount}>
                 {formatCurrency(othersTotal)}
               </Text>
@@ -273,7 +275,7 @@ export function ContributionModal({
             <>
               <MaterialCommunityIcons name="check" size={20} color="#ffffff" />
               <Text style={styles.saveButtonText}>
-                {existingContribution ? 'Update' : 'Add'} Contribution
+                {existingContribution ? t('celebrations.contributions.updateContribution') : t('celebrations.contributions.addContribution')}
               </Text>
             </>
           )}

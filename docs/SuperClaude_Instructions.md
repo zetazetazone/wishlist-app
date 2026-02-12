@@ -16,6 +16,10 @@ npx expo start --dev-client --clear
 
 npx expo start --host tunnel 
 
+npx supabase link --project-ref txtlgfrgrrqhztngpvaa
+
+npx eas build --profile development
+
 ####################################
            TROUBLESHOOT
 ####################################

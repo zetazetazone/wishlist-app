@@ -11,9 +11,11 @@ import {
   ScrollView,
 } from 'react-native';
 import { Link } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { signUp } from '../../utils/auth';
 
 export default function SignupScreen() {
+  const { t } = useTranslation();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,17 +24,17 @@ export default function SignupScreen() {
 
   const handleSignup = async () => {
     if (!fullName || !email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill in all required fields');
+      Alert.alert(t('alerts.titles.error'), t('auth.fillAllFields'));
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      Alert.alert(t('alerts.titles.error'), t('auth.errors.passwordsDoNotMatch'));
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
+      Alert.alert(t('alerts.titles.error'), t('auth.errors.passwordTooShort'));
       return;
     }
 
@@ -45,20 +47,20 @@ export default function SignupScreen() {
     setLoading(false);
 
     if (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An error occurred';
-      Alert.alert('Signup Failed', errorMessage);
+      const errorMessage = error instanceof Error ? error.message : t('common.errors.generic');
+      Alert.alert(t('auth.signupFailed'), errorMessage);
     } else {
       // Check if user was auto-confirmed (email confirmation disabled)
       if (data?.user?.confirmed_at) {
         // User is automatically signed in, no need for email verification
-        Alert.alert('Success!', 'Account created! Welcome to Wishlist!');
+        Alert.alert(t('common.success'), t('auth.accountCreatedWelcome'));
         // Auth state change will redirect to app automatically
       } else {
         // Email verification required
         Alert.alert(
-          'Success!',
-          'Account created! Please check your email to verify your account.',
-          [{ text: 'OK' }]
+          t('common.success'),
+          t('auth.accountCreatedVerify'),
+          [{ text: t('common.ok') }]
         );
       }
     }
@@ -76,10 +78,10 @@ export default function SignupScreen() {
         {/* Header */}
         <View style={{ marginBottom: 32 }}>
           <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#111827', marginBottom: 8 }}>
-            Create Account
+            {t('auth.createAccount')}
           </Text>
           <Text style={{ fontSize: 16, color: '#6B7280' }}>
-            Join your friends in gift-giving
+            {t('auth.joinFriends')}
           </Text>
         </View>
 
@@ -88,7 +90,7 @@ export default function SignupScreen() {
           {/* Full Name */}
           <View style={{ marginBottom: 20 }}>
             <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 8 }}>
-              Full Name
+              {t('profile.displayName')}
             </Text>
             <TextInput
               style={{
@@ -99,7 +101,7 @@ export default function SignupScreen() {
                 fontSize: 16,
                 color: '#111827',
               }}
-              placeholder="John Doe"
+              placeholder={t('profile.enterName')}
               placeholderTextColor="#9CA3AF"
               value={fullName}
               onChangeText={setFullName}
@@ -111,7 +113,7 @@ export default function SignupScreen() {
           {/* Email */}
           <View style={{ marginBottom: 20 }}>
             <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 8 }}>
-              Email
+              {t('auth.email')}
             </Text>
             <TextInput
               style={{
@@ -122,7 +124,7 @@ export default function SignupScreen() {
                 fontSize: 16,
                 color: '#111827',
               }}
-              placeholder="your@email.com"
+              placeholder={t('auth.enterEmail')}
               placeholderTextColor="#9CA3AF"
               value={email}
               onChangeText={setEmail}
@@ -135,7 +137,7 @@ export default function SignupScreen() {
           {/* Password */}
           <View style={{ marginBottom: 20 }}>
             <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 8 }}>
-              Password
+              {t('auth.password')}
             </Text>
             <TextInput
               style={{
@@ -146,7 +148,7 @@ export default function SignupScreen() {
                 fontSize: 16,
                 color: '#111827',
               }}
-              placeholder="At least 6 characters"
+              placeholder={t('auth.passwordHint')}
               placeholderTextColor="#9CA3AF"
               value={password}
               onChangeText={setPassword}
@@ -158,7 +160,7 @@ export default function SignupScreen() {
           {/* Confirm Password */}
           <View style={{ marginBottom: 32 }}>
             <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 8 }}>
-              Confirm Password
+              {t('auth.confirmPassword')}
             </Text>
             <TextInput
               style={{
@@ -169,7 +171,7 @@ export default function SignupScreen() {
                 fontSize: 16,
                 color: '#111827',
               }}
-              placeholder="Re-enter password"
+              placeholder={t('auth.reenterPassword')}
               placeholderTextColor="#9CA3AF"
               value={confirmPassword}
               onChangeText={setConfirmPassword}
@@ -195,18 +197,18 @@ export default function SignupScreen() {
               <ActivityIndicator color="white" />
             ) : (
               <Text style={{ color: 'white', fontSize: 16, fontWeight: '600' }}>
-                Create Account
+                {t('auth.createAccount')}
               </Text>
             )}
           </TouchableOpacity>
 
           {/* Login Link */}
           <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={{ color: '#6B7280', fontSize: 14 }}>Already have an account? </Text>
+            <Text style={{ color: '#6B7280', fontSize: 14 }}>{t('auth.alreadyHaveAccount')} </Text>
             <Link href="/auth/login" asChild>
               <TouchableOpacity>
                 <Text style={{ color: '#0EA5E9', fontSize: 14, fontWeight: '600' }}>
-                  Sign In
+                  {t('auth.login')}
                 </Text>
               </TouchableOpacity>
             </Link>

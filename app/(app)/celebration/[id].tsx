@@ -24,6 +24,8 @@ import {
   Platform,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import { useLocalizedFormat } from '@/hooks/useLocalizedFormat';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../../../lib/supabase';
 import {
@@ -68,36 +70,38 @@ import { getDaysUntilBirthday, getCountdownText } from '../../../utils/countdown
 import { MemberNotesSection } from '../../../components/notes/MemberNotesSection';
 import { colors, spacing, borderRadius } from '../../../constants/theme';
 
-/**
- * Format date as "Month Day, Year" (e.g., "March 15, 2026")
- */
-function formatEventDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
+// Date formatting is done inside component using useLocalizedFormat
 
 /**
- * Get status badge styling
+ * Get status badge styling - returns translation key for label
  */
 function getStatusStyle(status: string) {
   switch (status) {
     case 'active':
-      return { bg: '#dcfce7', text: '#15803d', label: 'Active' };
+      return { bg: '#dcfce7', text: '#15803d', labelKey: 'celebrations.status.active' };
     case 'completed':
-      return { bg: '#f3f4f6', text: '#4b5563', label: 'Completed' };
+      return { bg: '#f3f4f6', text: '#4b5563', labelKey: 'celebrations.status.completed' };
     case 'upcoming':
     default:
-      return { bg: '#dbeafe', text: '#1d4ed8', label: 'Upcoming' };
+      return { bg: '#dbeafe', text: '#1d4ed8', labelKey: 'celebrations.status.upcoming' };
   }
 }
 
 export default function CelebrationDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { t } = useTranslation();
+  const { format: formatDate } = useLocalizedFormat();
+
+  // Helper to format event date
+  const formatEventDate = useCallback((dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      return formatDate(date, 'PPP'); // e.g., "March 15, 2026"
+    } catch (error) {
+      return dateString;
+    }
+  }, [formatDate]);
 
   // Celebration state
   const [celebration, setCelebration] = useState<CelebrationDetail | null>(null);
@@ -148,14 +152,14 @@ export default function CelebrationDetailScreen() {
       setError(null);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        setError('Not authenticated');
+        setError(t('celebrations.notAuthenticated'));
         return;
       }
       setCurrentUserId(user.id);
 
       const data = await getCelebration(id);
       if (!data) {
-        setError('Celebration not found or access denied');
+        setError(t('celebrations.notFoundOrAccessDenied'));
         return;
       }
       setCelebration(data);
@@ -169,7 +173,7 @@ export default function CelebrationDetailScreen() {
       if (chatRoom) {
         setChatRoomId(chatRoom.id);
       } else {
-        setChatError('Chat not available for this celebration');
+        setChatError(t('celebrations.chatNotAvailable'));
       }
     } catch (err) {
       console.error('Failed to load celebration:', err);
@@ -299,12 +303,12 @@ export default function CelebrationDetailScreen() {
       setReassignModalVisible(false);
       // Reload to get updated data
       await loadCelebration();
-      Alert.alert('Success', 'Gift Leader has been reassigned');
+      Alert.alert(t('common.success'), t('celebrations.giftLeaderReassigned'));
     } catch (err) {
       console.error('Failed to reassign Gift Leader:', err);
       Alert.alert(
-        'Error',
-        err instanceof Error ? err.message : 'Failed to reassign Gift Leader'
+        t('alerts.titles.error'),
+        err instanceof Error ? err.message : t('celebrations.failedToReassignGiftLeader')
       );
     } finally {
       setReassigning(false);
@@ -314,7 +318,7 @@ export default function CelebrationDetailScreen() {
   // Handle sending chat message
   const handleSendMessage = async (content: string) => {
     if (!chatRoomId) {
-      Alert.alert('Error', 'Chat not available');
+      Alert.alert(t('alerts.titles.error'), t('celebrations.chatNotAvailable'));
       return;
     }
 
@@ -323,8 +327,8 @@ export default function CelebrationDetailScreen() {
     } catch (err) {
       console.error('Failed to send message:', err);
       Alert.alert(
-        'Error',
-        err instanceof Error ? err.message : 'Failed to send message'
+        t('alerts.titles.error'),
+        err instanceof Error ? err.message : t('celebrations.failedToSendMessage')
       );
       throw err; // Re-throw so ChatInput can handle
     }
@@ -339,12 +343,12 @@ export default function CelebrationDetailScreen() {
   // Handle claiming an item with confirmation dialog (per CONTEXT: "Modal confirmation before claiming")
   const handleClaimItem = useCallback(async (item: WishlistItem) => {
     Alert.alert(
-      'Claim this item?',
-      `You are about to claim "${item.title}". This lets others know you'll get this gift.`,
+      t('wishlist.claim.confirmTitle'),
+      t('wishlist.claim.confirmMessage', { title: item.title }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Claim',
+          text: t('wishlist.claim.claim'),
           onPress: async () => {
             setClaimingItemId(item.id);
             try {
@@ -352,15 +356,15 @@ export default function CelebrationDetailScreen() {
               if (!result.success) {
                 // Handle race condition gracefully
                 if (result.error?.includes('already claimed') || result.error?.includes('unique')) {
-                  Alert.alert('Already Claimed', 'Someone else just claimed this item. Refreshing list...');
+                  Alert.alert(t('alerts.titles.alreadyClaimed'), t('wishlist.claim.alreadyClaimedRefreshing'));
                 } else {
-                  Alert.alert('Unable to Claim', result.error || 'Please try again.');
+                  Alert.alert(t('alerts.titles.unableToClaim'), result.error || t('common.errors.generic'));
                 }
               }
               // Refresh claims regardless
               await loadClaims();
             } catch (error) {
-              Alert.alert('Error', 'Failed to claim item. Please try again.');
+              Alert.alert(t('alerts.titles.error'), t('wishlist.claim.failedToClaim'));
             } finally {
               setClaimingItemId(null);
             }
@@ -369,28 +373,28 @@ export default function CelebrationDetailScreen() {
       ],
       { cancelable: true }
     );
-  }, [loadClaims]);
+  }, [loadClaims, t]);
 
   // Handle unclaiming an item with confirmation dialog
   const handleUnclaimItem = useCallback(async (item: WishlistItem, claimId: string) => {
     Alert.alert(
-      'Unclaim this item?',
-      `Release your claim on "${item.title}"? Someone else will be able to claim it.`,
+      t('wishlist.claim.unclaimTitle'),
+      t('wishlist.claim.unclaimMessage', { title: item.title }),
       [
-        { text: 'Keep Claim', style: 'cancel' },
+        { text: t('wishlist.claim.keepClaim'), style: 'cancel' },
         {
-          text: 'Unclaim',
+          text: t('wishlist.claim.unclaim'),
           style: 'destructive',
           onPress: async () => {
             setClaimingItemId(item.id);
             try {
               const result = await unclaimItem(claimId);
               if (!result.success) {
-                Alert.alert('Unable to Unclaim', result.error || 'Please try again.');
+                Alert.alert(t('alerts.titles.unableToUnclaim'), result.error || t('common.errors.generic'));
               }
               await loadClaims();
             } catch (error) {
-              Alert.alert('Error', 'Failed to unclaim item. Please try again.');
+              Alert.alert(t('alerts.titles.error'), t('wishlist.claim.failedToUnclaim'));
             } finally {
               setClaimingItemId(null);
             }
@@ -399,7 +403,7 @@ export default function CelebrationDetailScreen() {
       ],
       { cancelable: true }
     );
-  }, [loadClaims]);
+  }, [loadClaims, t]);
 
   // Handle opening a split contribution
   const handleOpenSplit = useCallback(async (itemId: string, additionalCosts?: number) => {
@@ -409,14 +413,14 @@ export default function CelebrationDetailScreen() {
       if (result.success) {
         await loadClaims();
       } else {
-        Alert.alert('Error', result.error || 'Failed to open split');
+        Alert.alert(t('alerts.titles.error'), result.error || t('wishlist.split.failedToOpenSplit'));
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to open split. Please try again.');
+      Alert.alert(t('alerts.titles.error'), t('wishlist.split.failedToOpenSplit'));
     } finally {
       setClaimingItemId(null);
     }
-  }, [loadClaims]);
+  }, [loadClaims, t]);
 
   // Handle pledging to a split
   const handlePledge = useCallback(async (itemId: string, amount: number) => {
@@ -426,14 +430,14 @@ export default function CelebrationDetailScreen() {
       if (result.success) {
         await loadClaims();
       } else {
-        Alert.alert('Error', result.error || 'Failed to pledge');
+        Alert.alert(t('alerts.titles.error'), result.error || t('wishlist.split.failedToPledge'));
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to pledge. Please try again.');
+      Alert.alert(t('alerts.titles.error'), t('wishlist.split.failedToPledge'));
     } finally {
       setClaimingItemId(null);
     }
-  }, [loadClaims]);
+  }, [loadClaims, t]);
 
   // Handle closing a split (covering remaining)
   const handleCloseSplit = useCallback(async (itemId: string) => {
@@ -443,14 +447,14 @@ export default function CelebrationDetailScreen() {
       if (result.success) {
         await loadClaims();
       } else {
-        Alert.alert('Error', result.error || 'Failed to close split');
+        Alert.alert(t('alerts.titles.error'), result.error || t('wishlist.split.failedToCloseSplit'));
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to close split. Please try again.');
+      Alert.alert(t('alerts.titles.error'), t('wishlist.split.failedToCloseSplit'));
     } finally {
       setClaimingItemId(null);
     }
-  }, [loadClaims]);
+  }, [loadClaims, t]);
 
   // Navigate to wishlist item (from linked item in chat)
   const handleLinkedItemPress = (itemId: string) => {
@@ -496,7 +500,7 @@ export default function CelebrationDetailScreen() {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <Stack.Screen options={{ title: 'Loading...' }} />
+        <Stack.Screen options={{ title: t('common.loading') }} />
         <ActivityIndicator size="large" color="#8B1538" />
       </View>
     );
@@ -506,11 +510,11 @@ export default function CelebrationDetailScreen() {
   if (error || !celebration) {
     return (
       <View style={styles.centered}>
-        <Stack.Screen options={{ title: 'Error' }} />
+        <Stack.Screen options={{ title: t('common.error') }} />
         <MaterialCommunityIcons name="alert-circle-outline" size={48} color="#ef4444" />
-        <Text style={styles.errorText}>{error || 'Celebration not found'}</Text>
+        <Text style={styles.errorText}>{error || t('celebrations.notFound')}</Text>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backButtonText}>Go Back</Text>
+          <Text style={styles.backButtonText}>{t('common.back')}</Text>
         </Pressable>
       </View>
     );
@@ -536,8 +540,8 @@ export default function CelebrationDetailScreen() {
     <View style={styles.container}>
       <Stack.Screen
         options={{
-          title: `${celebrantName}'s Birthday`,
-          headerBackTitle: 'Celebrations',
+          title: t('celebrations.usersBirthday', { name: celebrantName }),
+          headerBackTitle: t('celebrations.title'),
         }}
       />
 
@@ -558,7 +562,7 @@ export default function CelebrationDetailScreen() {
               color={viewMode === 'info' ? '#8B1538' : '#6b7280'}
             />
             <Text style={[styles.toggleText, viewMode === 'info' && styles.toggleTextActive]}>
-              Info
+              {t('celebrations.info')}
             </Text>
           </Pressable>
           <Pressable
@@ -571,7 +575,7 @@ export default function CelebrationDetailScreen() {
               color={viewMode === 'chat' ? '#8B1538' : '#6b7280'}
             />
             <Text style={[styles.toggleText, viewMode === 'chat' && styles.toggleTextActive]}>
-              Chat
+              {t('celebrations.chat')}
             </Text>
           </Pressable>
         </View>
@@ -620,14 +624,14 @@ export default function CelebrationDetailScreen() {
                   <View style={styles.greetingsCountdown}>
                     <MaterialCommunityIcons name="cake-variant" size={28} color={colors.gold[600]} />
                     <Text style={styles.greetingsCountdownText}>
-                      {daysUntil === 0 ? "It's today!" : daysUntil === 1 ? 'Tomorrow!' : `${countdownText} away`}
+                      {daysUntil === 0 ? t('celebrations.itsToday') : daysUntil === 1 ? t('celebrations.tomorrow') : t('celebrations.daysAway', { days: countdownText })}
                     </Text>
                   </View>
 
                   {/* Status Badge */}
                   <View style={[styles.statusBadge, { backgroundColor: statusStyle.bg }]}>
                     <Text style={[styles.statusText, { color: statusStyle.text }]}>
-                      {statusStyle.label}
+                      {t(statusStyle.labelKey)}
                     </Text>
                   </View>
                 </View>
@@ -635,17 +639,17 @@ export default function CelebrationDetailScreen() {
                 {/* Birthday Message */}
                 <View style={styles.greetingsMessageArea}>
                   <Text style={styles.greetingsMessage}>
-                    Wishing {celebrantName} a wonderful birthday!
+                    {t('celebrations.wishingWonderfulBirthday', { name: celebrantName })}
                   </Text>
                 </View>
 
                 {/* Send a Greeting Button */}
                 <Pressable
                   style={styles.sendGreetingButton}
-                  onPress={() => Alert.alert('Coming Soon', 'Greeting messages will be available in a future update!')}
+                  onPress={() => Alert.alert(t('alerts.titles.comingSoon'), t('celebrations.greetingsComingSoon'))}
                 >
                   <MaterialCommunityIcons name="party-popper" size={22} color={colors.white} />
-                  <Text style={styles.sendGreetingText}>Send a Greeting</Text>
+                  <Text style={styles.sendGreetingText}>{t('celebrations.sendGreeting')}</Text>
                 </Pressable>
 
                 {/* Quick Chat Preview */}
@@ -655,9 +659,9 @@ export default function CelebrationDetailScreen() {
                 >
                   <MaterialCommunityIcons name="chat" size={24} color="#3b82f6" />
                   <View style={styles.chatPreviewText}>
-                    <Text style={styles.chatPreviewTitle}>Group Chat</Text>
+                    <Text style={styles.chatPreviewTitle}>{t('celebrations.groupChat')}</Text>
                     <Text style={styles.chatPreviewSubtitle}>
-                      {chatRoomId ? 'Tap to join the conversation' : 'Chat not available'}
+                      {chatRoomId ? t('celebrations.tapToJoinConversation') : t('celebrations.chatNotAvailable')}
                     </Text>
                   </View>
                   <MaterialCommunityIcons name="chevron-right" size={24} color="#9ca3af" />
@@ -686,7 +690,7 @@ export default function CelebrationDetailScreen() {
                   </View>
 
                   {/* Celebrant Name */}
-                  <Text style={styles.celebrantName}>{celebrantName}'s Birthday</Text>
+                  <Text style={styles.celebrantName}>{t('celebrations.usersBirthday', { name: celebrantName })}</Text>
 
                   {/* Event Date */}
                   <View style={styles.dateRow}>
@@ -703,7 +707,7 @@ export default function CelebrationDetailScreen() {
                   {/* Status Badge */}
                   <View style={[styles.statusBadge, { backgroundColor: statusStyle.bg }]}>
                     <Text style={[styles.statusText, { color: statusStyle.text }]}>
-                      {statusStyle.label}
+                      {t(statusStyle.labelKey)}
                     </Text>
                   </View>
 
@@ -728,7 +732,7 @@ export default function CelebrationDetailScreen() {
                 <View style={styles.section}>
                   <View style={styles.sectionHeader}>
                     <MaterialCommunityIcons name="crown" size={22} color="#8B1538" />
-                    <Text style={styles.sectionTitle}>Gift Leader</Text>
+                    <Text style={styles.sectionTitle}>{t('celebrations.giftLeader')}</Text>
                   </View>
 
                   <View style={styles.giftLeaderCard}>
@@ -759,8 +763,7 @@ export default function CelebrationDetailScreen() {
                       <View style={styles.leaderMessage}>
                         <MaterialCommunityIcons name="star" size={18} color="#8B1538" />
                         <Text style={styles.leaderMessageText}>
-                          You are coordinating this gift! Organize the group, collect contributions,
-                          and make this celebration special.
+                          {t('celebrations.giftLeaderMessage')}
                         </Text>
                       </View>
                     )}
@@ -772,7 +775,7 @@ export default function CelebrationDetailScreen() {
                         onPress={() => setReassignModalVisible(true)}
                       >
                         <MaterialCommunityIcons name="account-switch" size={18} color="#8B1538" />
-                        <Text style={styles.reassignButtonText}>Reassign Gift Leader</Text>
+                        <Text style={styles.reassignButtonText}>{t('celebrations.reassignGiftLeader')}</Text>
                       </Pressable>
                     )}
                   </View>
@@ -782,7 +785,7 @@ export default function CelebrationDetailScreen() {
                 <View style={styles.section}>
                   <View style={styles.sectionHeader}>
                     <MaterialCommunityIcons name="cash-multiple" size={22} color="#22c55e" />
-                    <Text style={styles.sectionTitle}>Contributions</Text>
+                    <Text style={styles.sectionTitle}>{t('celebrations.contributions')}</Text>
                   </View>
 
                   {contributionsLoading ? (
@@ -810,7 +813,7 @@ export default function CelebrationDetailScreen() {
                           />
                           <View style={styles.yourContributionText}>
                             <Text style={styles.yourContributionLabel}>
-                              {userContribution ? 'Your Contribution' : 'Add Your Contribution'}
+                              {userContribution ? t('celebrations.yourContribution') : t('celebrations.addYourContribution')}
                             </Text>
                             {userContribution && (
                               <Text style={styles.yourContributionAmount}>
@@ -826,10 +829,10 @@ export default function CelebrationDetailScreen() {
                       {contributions.length > 0 && (
                         <View style={styles.contributorsList}>
                           <Text style={styles.contributorsTitle}>
-                            Contributors ({contributions.length})
+                            {t('celebrations.contributorsCount', { count: contributions.length })}
                           </Text>
                           {contributions.slice(0, 5).map(contribution => {
-                            const name = contribution.contributor?.display_name || 'Unknown';
+                            const name = contribution.contributor?.display_name || t('common.unknown');
                             const isYou = contribution.user_id === currentUserId;
                             return (
                               <View key={contribution.id} style={styles.contributorRow}>
@@ -846,7 +849,7 @@ export default function CelebrationDetailScreen() {
                                   </View>
                                 )}
                                 <Text style={styles.contributorName}>
-                                  {isYou ? 'You' : name}
+                                  {isYou ? t('common.you') : name}
                                 </Text>
                                 <Text style={styles.contributorAmount}>
                                   ${contribution.amount.toFixed(2)}
@@ -856,7 +859,7 @@ export default function CelebrationDetailScreen() {
                           })}
                           {contributions.length > 5 && (
                             <Text style={styles.moreContributors}>
-                              +{contributions.length - 5} more contributors
+                              {t('celebrations.moreContributors', { count: contributions.length - 5 })}
                             </Text>
                           )}
                         </View>
@@ -881,7 +884,7 @@ export default function CelebrationDetailScreen() {
                 <View style={styles.section}>
                   <View style={styles.sectionHeader}>
                     <MaterialCommunityIcons name="gift" size={22} color="#8B1538" />
-                    <Text style={styles.sectionTitle}>{celebrantName}'s Wishlist</Text>
+                    <Text style={styles.sectionTitle}>{t('celebrations.usersWishlist', { name: celebrantName })}</Text>
                   </View>
 
                   {wishlistLoading ? (
@@ -890,7 +893,7 @@ export default function CelebrationDetailScreen() {
                     </View>
                   ) : sortedCelebrantItems.length === 0 ? (
                     <View style={styles.emptyCard}>
-                      <Text style={styles.emptyText}>No wishlist items yet</Text>
+                      <Text style={styles.emptyText}>{t('wishlist.empty.noItems')}</Text>
                     </View>
                   ) : (
                     <View style={styles.wishlistContainer}>
@@ -949,7 +952,7 @@ export default function CelebrationDetailScreen() {
                   <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                       <MaterialCommunityIcons name="history" size={22} color="#6b7280" />
-                      <Text style={styles.sectionTitle}>Gift Leader History</Text>
+                      <Text style={styles.sectionTitle}>{t('celebrations.giftLeaderHistory')}</Text>
                     </View>
 
                     <View style={styles.historyCard}>
@@ -960,17 +963,17 @@ export default function CelebrationDetailScreen() {
                             <Text style={styles.historyName}>
                               {entry.assigned_to_user?.display_name ||
                                 entry.assigned_to_user?.full_name ||
-                                'Unknown'}
+                                t('common.unknown')}
                             </Text>
                             <Text style={styles.historyReason}>
                               {entry.reason === 'auto_rotation'
-                                ? 'Automatically assigned'
+                                ? t('celebrations.autoAssigned')
                                 : entry.reason === 'manual_reassign'
-                                  ? `Reassigned by ${entry.assigned_by_user?.display_name || 'admin'}`
-                                  : 'Member left group'}
+                                  ? t('celebrations.reassignedBy', { name: entry.assigned_by_user?.display_name || t('groups.admin') })
+                                  : t('celebrations.memberLeftGroup')}
                             </Text>
                             <Text style={styles.historyDate}>
-                              {new Date(entry.created_at).toLocaleDateString()}
+                              {formatDate(new Date(entry.created_at), 'PP')}
                             </Text>
                           </View>
                         </View>
@@ -986,9 +989,9 @@ export default function CelebrationDetailScreen() {
                 >
                   <MaterialCommunityIcons name="chat" size={24} color="#3b82f6" />
                   <View style={styles.chatPreviewText}>
-                    <Text style={styles.chatPreviewTitle}>Group Chat</Text>
+                    <Text style={styles.chatPreviewTitle}>{t('celebrations.groupChat')}</Text>
                     <Text style={styles.chatPreviewSubtitle}>
-                      {chatRoomId ? 'Tap to join the conversation' : 'Chat not available'}
+                      {chatRoomId ? t('celebrations.tapToJoinConversation') : t('celebrations.chatNotAvailable')}
                     </Text>
                   </View>
                   <MaterialCommunityIcons name="chevron-right" size={24} color="#9ca3af" />
@@ -1004,7 +1007,7 @@ export default function CelebrationDetailScreen() {
                 <MaterialCommunityIcons name="chat-remove-outline" size={48} color="#ef4444" />
                 <Text style={styles.chatErrorText}>{chatError}</Text>
                 <Text style={styles.chatErrorSubtext}>
-                  You cannot view this celebration's chat
+                  {t('celebrations.cannotViewChat')}
                 </Text>
               </View>
             ) : chatRoomId ? (
@@ -1018,8 +1021,8 @@ export default function CelebrationDetailScreen() {
                   disabled={celebration.status === 'completed'}
                   placeholder={
                     celebration.status === 'completed'
-                      ? 'Chat is closed for completed celebrations'
-                      : 'Type a message...'
+                      ? t('celebrations.chatClosedCompleted')
+                      : t('celebrations.typeMessage')
                   }
                 />
               </>
@@ -1041,14 +1044,14 @@ export default function CelebrationDetailScreen() {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Reassign Gift Leader</Text>
+            <Text style={styles.modalTitle}>{t('celebrations.reassignGiftLeader')}</Text>
             <Pressable onPress={() => setReassignModalVisible(false)}>
               <MaterialCommunityIcons name="close" size={24} color="#6b7280" />
             </Pressable>
           </View>
 
           <Text style={styles.modalSubtitle}>
-            Select a group member to become the new Gift Leader
+            {t('celebrations.selectNewGiftLeader')}
           </Text>
 
           <ScrollView style={styles.memberList}>
@@ -1083,10 +1086,10 @@ export default function CelebrationDetailScreen() {
                   <View style={styles.memberInfo}>
                     <Text style={styles.memberName}>{memberName}</Text>
                     {isCurrentLeader && (
-                      <Text style={styles.currentLeaderText}>Current Gift Leader</Text>
+                      <Text style={styles.currentLeaderText}>{t('celebrations.currentGiftLeader')}</Text>
                     )}
                     {member.role === 'admin' && !isCurrentLeader && (
-                      <Text style={styles.adminText}>Admin</Text>
+                      <Text style={styles.adminText}>{t('groups.admin')}</Text>
                     )}
                   </View>
                   {!isCurrentLeader && !reassigning && (

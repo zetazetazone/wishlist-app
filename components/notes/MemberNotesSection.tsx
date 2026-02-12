@@ -10,6 +10,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, Pressable, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { VStack, HStack } from '@gluestack-ui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '@/lib/supabase';
@@ -41,6 +42,7 @@ export function MemberNotesSection({
   aboutUserName,
   isSubject,
 }: MemberNotesSectionProps) {
+  const { t } = useTranslation();
   const [notes, setNotes] = useState<NoteWithAuthor[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -86,7 +88,7 @@ export function MemberNotesSection({
         setNotes((prev) => [newNote, ...prev]);
       } catch (error) {
         console.error('Failed to create note:', error);
-        Alert.alert('Error', 'Failed to add note. Please try again.');
+        Alert.alert(t('common.error'), t('profile.secretNotes.failedToAdd'));
         throw error; // Re-throw so AddNoteSheet knows it failed
       }
     },
@@ -166,7 +168,7 @@ export function MemberNotesSection({
       <View style={styles.card}>
         {/* Section Header */}
         <HStack justifyContent="space-between" alignItems="center" style={styles.header}>
-          <Text style={styles.sectionTitle}>Notes</Text>
+          <Text style={styles.sectionTitle}>{t('profile.secretNotes.title')}</Text>
           <Pressable
             style={styles.addButton}
             onPress={() => setIsAddSheetOpen(true)}
@@ -195,9 +197,9 @@ export function MemberNotesSection({
           </VStack>
         ) : (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyText}>Be the first to add a note!</Text>
+            <Text style={styles.emptyText}>{t('profile.secretNotes.beFirst')}</Text>
             <Text style={styles.emptySubtext}>
-              Help others find the perfect gift for {aboutUserName}
+              {t('profile.secretNotes.helpOthers', { name: aboutUserName })}
             </Text>
             <Pressable
               style={styles.emptyAddButton}
@@ -208,7 +210,7 @@ export function MemberNotesSection({
                 size={18}
                 color={colors.white}
               />
-              <Text style={styles.emptyAddButtonText}>Add Note</Text>
+              <Text style={styles.emptyAddButtonText}>{t('profile.secretNotes.addNote')}</Text>
             </Pressable>
           </View>
         )}

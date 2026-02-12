@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, borderRadius } from '../../constants/theme';
 
 interface MostWantedBadgeProps {
@@ -7,14 +8,16 @@ interface MostWantedBadgeProps {
 }
 
 export function MostWantedBadge({ groupName, allGroups }: MostWantedBadgeProps) {
+  const { t } = useTranslation();
+
   const getBadgeText = () => {
     if (allGroups) {
-      return '♥ MOST WANTED in all groups';
+      return `♥ ${t('wishlist.favorite.mostWantedAllGroups')}`;
     }
     if (groupName) {
-      return `♥ MOST WANTED in ${groupName}`;
+      return `♥ ${t('wishlist.favorite.mostWantedInGroup', { group: groupName })}`;
     }
-    return '♥ MOST WANTED';
+    return `♥ ${t('wishlist.favorite.mostWanted')}`;
   };
 
   return (

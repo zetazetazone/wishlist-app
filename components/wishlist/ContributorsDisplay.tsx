@@ -16,6 +16,7 @@ import {
   Modal,
   StyleSheet,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 
 interface Contributor {
@@ -48,6 +49,7 @@ export function ContributorsDisplay({
   contributors,
   maxVisible = 5,
 }: ContributorsDisplayProps) {
+  const { t } = useTranslation();
   const [selectedContributor, setSelectedContributor] = useState<Contributor | null>(null);
 
   // Don't render anything if no contributors
@@ -94,7 +96,7 @@ export function ContributorsDisplay({
           <View style={styles.overflowBadge}>
             <Text style={styles.overflowText}>+{overflowCount}</Text>
           </View>
-          <Text style={styles.moreText}>more</Text>
+          <Text style={styles.moreText}>{t('common.more')}</Text>
         </View>
       )}
 
@@ -111,8 +113,10 @@ export function ContributorsDisplay({
         >
           <View style={styles.tooltipContainer}>
             <Text style={styles.tooltipText}>
-              {selectedContributor?.display_name || 'Unknown'} contributed{' '}
-              {selectedContributor && formatCurrency(selectedContributor.amount)}
+              {t('wishlist.split.contributorAmount', {
+                name: selectedContributor?.display_name || t('common.unknown'),
+                amount: selectedContributor ? formatCurrency(selectedContributor.amount) : '',
+              })}
             </Text>
           </View>
         </Pressable>

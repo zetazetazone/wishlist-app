@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Stack } from 'expo-router';
 import { FlashList } from '@shopify/flash-list';
-import { format, formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
+import { useLocalizedFormat } from '../../../hooks/useLocalizedFormat';
 import {
   VStack,
   HStack,
@@ -24,6 +25,8 @@ interface NotificationWithDetails extends UserNotification {
 }
 
 export default function NotificationsScreen() {
+  const { t } = useTranslation();
+  const { formatDistanceToNow } = useLocalizedFormat();
   const [notifications, setNotifications] = useState<NotificationWithDetails[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
@@ -56,7 +59,7 @@ export default function NotificationsScreen() {
         // Transform notifications for display
         const transformedNotifications: NotificationWithDetails[] = (data || []).map(notification => ({
           ...notification,
-          display_text: notification.body || notification.title || 'Notification',
+          display_text: notification.body || notification.title || t('notifications.notification'),
           timestamp: formatDistanceToNow(new Date(notification.created_at), { addSuffix: true }),
         }));
 
@@ -89,7 +92,7 @@ export default function NotificationsScreen() {
           const newNotification = payload.new as UserNotification;
           const transformedNotification: NotificationWithDetails = {
             ...newNotification,
-            display_text: newNotification.body || newNotification.title || 'Notification',
+            display_text: newNotification.body || newNotification.title || t('notifications.notification'),
             timestamp: formatDistanceToNow(new Date(newNotification.created_at), { addSuffix: true }),
           };
 
@@ -178,7 +181,7 @@ export default function NotificationsScreen() {
     <>
       <Stack.Screen
         options={{
-          title: 'Notifications',
+          title: t('notifications.title'),
           headerShown: true,
         }}
       />
@@ -192,10 +195,10 @@ export default function NotificationsScreen() {
           <Center flex={1} padding="$6">
             <VStack space="md" alignItems="center">
               <Heading size="lg" color="$textLight600">
-                No notifications yet
+                {t('notifications.empty.noNotifications')}
               </Heading>
               <Text textAlign="center" color="$textLight500">
-                You'll see updates about your groups and wishlists here
+                {t('notifications.empty.noNotificationsDescription')}
               </Text>
             </VStack>
           </Center>

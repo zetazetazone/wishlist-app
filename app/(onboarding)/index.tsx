@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, ScrollView, Platform, Alert } from 'react-native';
 import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
@@ -19,8 +20,11 @@ import {
 import { supabase } from '@/lib/supabase';
 import { uploadAvatar, getAvatarUrl } from '@/lib/storage';
 import { getOrCreateSurpriseMe } from '@/lib/favorites';
+import { useLocalizedFormat } from '../../hooks/useLocalizedFormat';
 
 export default function OnboardingScreen() {
+  const { t } = useTranslation();
+  const { format } = useLocalizedFormat();
   const [displayName, setDisplayName] = useState('');
   const [birthday, setBirthday] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -48,14 +52,14 @@ export default function OnboardingScreen() {
       }
     } catch (error) {
       console.error('Error uploading avatar:', error);
-      Alert.alert('Error', 'Failed to upload avatar');
+      Alert.alert(t('alerts.titles.error'), t('onboarding.failedToUploadAvatar'));
     }
   };
 
   const handleContinue = () => {
     // Validate required fields before showing confirmation
     if (!displayName.trim()) {
-      Alert.alert('Required Field', 'Please enter your display name');
+      Alert.alert(t('onboarding.requiredField'), t('onboarding.enterDisplayName'));
       return;
     }
     // Transition to confirmation step
@@ -70,7 +74,7 @@ export default function OnboardingScreen() {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
 
       if (userError || !user) {
-        Alert.alert('Error', 'Could not get user information');
+        Alert.alert(t('alerts.titles.error'), t('onboarding.couldNotGetUser'));
         setIsLoading(false);
         return;
       }
@@ -88,7 +92,7 @@ export default function OnboardingScreen() {
 
       if (updateError) {
         console.error('Error updating profile:', updateError);
-        Alert.alert('Error', 'Failed to save profile information');
+        Alert.alert(t('alerts.titles.error'), t('onboarding.failedToSaveProfile'));
         setIsLoading(false);
         return;
       }
@@ -105,7 +109,7 @@ export default function OnboardingScreen() {
       router.replace('/(app)/(tabs)');
     } catch (error) {
       console.error('Error in onboarding:', error);
-      Alert.alert('Error', 'Something went wrong');
+      Alert.alert(t('alerts.titles.error'), t('common.errors.generic'));
       setIsLoading(false);
     }
   };
@@ -118,9 +122,9 @@ export default function OnboardingScreen() {
       {step === 'form' && (
         <VStack flex={1} padding="$6" justifyContent="center" space="xl">
           <VStack space="md" marginBottom="$8">
-            <Heading size="2xl">Welcome!</Heading>
+            <Heading size="2xl">{t('onboarding.welcome')}</Heading>
             <Text size="lg" color="$textLight600">
-              Let's set up your profile to get started
+              {t('onboarding.letsSetUp')}
             </Text>
           </VStack>
 
@@ -131,23 +135,23 @@ export default function OnboardingScreen() {
                 {avatarUrl ? (
                   <AvatarImage source={{ uri: avatarUrl }} alt="Profile" />
                 ) : (
-                  <AvatarFallbackText>{displayName || 'Add Photo'}</AvatarFallbackText>
+                  <AvatarFallbackText>{displayName || t('onboarding.addPhoto')}</AvatarFallbackText>
                 )}
               </Avatar>
             </Pressable>
             <Button variant="link" onPress={handleAvatarUpload}>
               <ButtonText>
-                {avatarPath ? 'Change Photo' : 'Add Profile Photo (Optional)'}
+                {avatarPath ? t('onboarding.changePhoto') : t('onboarding.addPhotoOptional')}
               </ButtonText>
             </Button>
           </VStack>
 
           {/* Display Name Input */}
           <VStack space="sm">
-            <Text fontWeight="$medium">Display Name *</Text>
+            <Text fontWeight="$medium">{t('onboarding.displayNameRequired')}</Text>
             <Input variant="outline" size="lg">
               <InputField
-                placeholder="Enter your name"
+                placeholder={t('onboarding.enterYourName')}
                 value={displayName}
                 onChangeText={setDisplayName}
                 autoCapitalize="words"
@@ -157,7 +161,7 @@ export default function OnboardingScreen() {
 
           {/* Birthday Picker */}
           <VStack space="sm">
-            <Text fontWeight="$medium">Birthday *</Text>
+            <Text fontWeight="$medium">{t('onboarding.birthdayRequired')}</Text>
             {Platform.OS === 'ios' ? (
               <DateTimePicker
                 value={birthday}
@@ -197,7 +201,7 @@ export default function OnboardingScreen() {
             onPress={handleContinue}
             isDisabled={!displayName.trim()}
           >
-            <ButtonText>Continue</ButtonText>
+            <ButtonText>{t('common.continue')}</ButtonText>
           </Button>
         </VStack>
       )}
@@ -206,15 +210,11 @@ export default function OnboardingScreen() {
       {step === 'confirm' && (
         <VStack flex={1} padding="$6" space="xl" justifyContent="center">
           <Heading size="2xl" textAlign="center">
-            Confirm Your Birthday
+            {t('onboarding.confirmBirthday')}
           </Heading>
 
           <Text size="xl" textAlign="center" fontWeight="$semibold">
-            {birthday.toLocaleDateString('en-US', {
-              month: 'long',
-              day: 'numeric',
-              year: 'numeric'
-            })}
+            {format(birthday, 'MMMM d, yyyy')}
           </Text>
 
           <View
@@ -230,11 +230,10 @@ export default function OnboardingScreen() {
               <MaterialCommunityIcons name="alert-circle" size={24} color="#B45309" />
               <View style={{ flex: 1, marginLeft: 12 }}>
                 <Text style={{ fontWeight: '700', color: '#92400E', marginBottom: 4 }}>
-                  Important Notice
+                  {t('onboarding.importantNotice')}
                 </Text>
                 <Text style={{ color: '#92400E', fontSize: 14, lineHeight: 20 }}>
-                  Your birthday cannot be changed after you complete setup.
-                  This helps ensure fair birthday celebrations in your groups.
+                  {t('onboarding.birthdayCannotChange')}
                 </Text>
               </View>
             </View>
@@ -242,10 +241,10 @@ export default function OnboardingScreen() {
 
           <VStack space="md" marginTop="$4">
             <Button size="lg" onPress={handleConfirmAndSave} isDisabled={isLoading}>
-              <ButtonText>{isLoading ? 'Saving...' : 'Yes, This Is Correct'}</ButtonText>
+              <ButtonText>{isLoading ? t('common.saving') : t('onboarding.yesCorrect')}</ButtonText>
             </Button>
             <Button variant="outline" size="lg" onPress={() => setStep('form')}>
-              <ButtonText>Go Back and Edit</ButtonText>
+              <ButtonText>{t('onboarding.goBackEdit')}</ButtonText>
             </Button>
           </VStack>
         </VStack>

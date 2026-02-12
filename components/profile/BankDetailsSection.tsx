@@ -9,6 +9,7 @@
 
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import {
   VStack,
   Heading,
@@ -28,6 +29,7 @@ export function BankDetailsSection({
   bankDetails,
   onChange,
 }: BankDetailsSectionProps) {
+  const { t } = useTranslation();
   const updateField = (key: keyof BankDetails, value: string) => {
     // Clear value if empty string (don't store empty strings)
     onChange({ ...bankDetails, [key]: value || undefined });
@@ -36,9 +38,9 @@ export function BankDetailsSection({
   return (
     <VStack space="md" style={styles.section}>
       <VStack space="xs">
-        <Heading size="sm">Bank Details</Heading>
+        <Heading size="sm">{t('profile.personalDetails.bankDetails')}</Heading>
         <Text style={styles.helperText}>
-          For receiving money when friends pool for your gifts
+          {t('profile.personalDetails.bankDetailsHelper')}
         </Text>
       </VStack>
 
@@ -50,16 +52,16 @@ export function BankDetailsSection({
           color={colors.burgundy[600]}
         />
         <Text style={styles.securityText}>
-          Only visible to your group members by default
+          {t('profile.personalDetails.bankSecurityNote')}
         </Text>
       </View>
 
       {/* Account Holder Name */}
       <VStack space="xs">
-        <Text style={styles.label}>Account Holder Name</Text>
+        <Text style={styles.label}>{t('profile.personalDetails.accountHolder')}</Text>
         <Input variant="outline" size="md">
           <InputField
-            placeholder="e.g., John Smith"
+            placeholder={t('profile.personalDetails.accountHolderPlaceholder')}
             value={bankDetails.account_holder || ''}
             onChangeText={(val) => updateField('account_holder', val)}
             autoCapitalize="words"
@@ -69,41 +71,41 @@ export function BankDetailsSection({
 
       {/* IBAN */}
       <VStack space="xs">
-        <Text style={styles.label}>IBAN</Text>
+        <Text style={styles.label}>{t('profile.personalDetails.iban')}</Text>
         <Input variant="outline" size="md">
           <InputField
-            placeholder="e.g., DE89370400440532013000"
+            placeholder={t('profile.personalDetails.ibanPlaceholder')}
             value={bankDetails.iban || ''}
             onChangeText={(val) => updateField('iban', val)}
             autoCapitalize="characters"
           />
         </Input>
         <Text style={styles.fieldHint}>
-          European bank account number (International Bank Account Number)
+          {t('profile.personalDetails.ibanHint')}
         </Text>
       </VStack>
 
       {/* Account Number (alternative) */}
       <VStack space="xs">
-        <Text style={styles.label}>Account Number (if no IBAN)</Text>
+        <Text style={styles.label}>{t('profile.personalDetails.accountNumber')}</Text>
         <Input variant="outline" size="md">
           <InputField
-            placeholder="e.g., 12345678"
+            placeholder={t('profile.personalDetails.accountNumberPlaceholder')}
             value={bankDetails.account_number || ''}
             onChangeText={(val) => updateField('account_number', val)}
           />
         </Input>
         <Text style={styles.fieldHint}>
-          For non-European bank accounts
+          {t('profile.personalDetails.accountNumberHint')}
         </Text>
       </VStack>
 
       {/* Bank Name (optional) */}
       <VStack space="xs">
-        <Text style={styles.label}>Bank Name (optional)</Text>
+        <Text style={styles.label}>{t('profile.personalDetails.bankName')}</Text>
         <Input variant="outline" size="md">
           <InputField
-            placeholder="e.g., ING Bank"
+            placeholder={t('profile.personalDetails.bankNamePlaceholder')}
             value={bankDetails.bank_name || ''}
             onChangeText={(val) => updateField('bank_name', val)}
           />

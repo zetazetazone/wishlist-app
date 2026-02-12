@@ -12,6 +12,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { CompletenessResult } from '../../lib/profileCompleteness';
@@ -31,6 +32,7 @@ function getProgressColor(percentage: number): string {
 }
 
 export function CompletenessIndicator({ result }: CompletenessIndicatorProps) {
+  const { t } = useTranslation();
   const progressColor = getProgressColor(result.percentage);
 
   return (
@@ -47,7 +49,7 @@ export function CompletenessIndicator({ result }: CompletenessIndicatorProps) {
             size={20}
             color={colors.burgundy[800]}
           />
-          <Text style={styles.headerTitle}>Profile Completeness</Text>
+          <Text style={styles.headerTitle}>{t('profile.personalDetails.completenessTitle')}</Text>
         </View>
 
         {/* Progress Bar */}
@@ -69,14 +71,14 @@ export function CompletenessIndicator({ result }: CompletenessIndicatorProps) {
             {result.percentage}%
           </Text>
           <Text style={styles.sectionsText}>
-            {result.filledCount} of {result.totalCount} sections
+            {t('profile.personalDetails.sectionsCount', { filled: result.filledCount, total: result.totalCount })}
           </Text>
         </View>
 
         {/* Missing Sections Hint */}
         {result.missingSections.length > 0 && result.percentage < 100 && (
           <Text style={styles.hintText}>
-            Add: {result.missingSections.slice(0, 2).join(', ')}
+            {t('profile.personalDetails.addSections', { sections: result.missingSections.slice(0, 2).join(', ') })}
             {result.missingSections.length > 2 && ' ...'}
           </Text>
         )}

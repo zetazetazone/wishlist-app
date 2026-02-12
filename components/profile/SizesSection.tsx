@@ -9,6 +9,7 @@
 
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import {
   VStack,
   Heading,
@@ -33,6 +34,7 @@ interface SizesSectionProps {
 }
 
 export function SizesSection({ sizes, onChange }: SizesSectionProps) {
+  const { t } = useTranslation();
   const updateSize = (key: keyof PersonalSizes, value: string) => {
     // Clear value if empty string (don't store empty strings)
     onChange({ ...sizes, [key]: value || undefined });
@@ -41,21 +43,21 @@ export function SizesSection({ sizes, onChange }: SizesSectionProps) {
   return (
     <VStack space="md" style={styles.section}>
       <VStack space="xs">
-        <Heading size="sm">Clothing Sizes</Heading>
+        <Heading size="sm">{t('profile.personalDetails.clothingSizes')}</Heading>
         <Text style={styles.helperText}>
-          Help gift-givers pick the right size
+          {t('profile.personalDetails.sizesHelper')}
         </Text>
       </VStack>
 
       {/* Shirt Size - Select */}
       <VStack space="xs">
-        <Text style={styles.label}>Shirt</Text>
+        <Text style={styles.label}>{t('profile.personalDetails.shirt')}</Text>
         <Select
           selectedValue={sizes.shirt || ''}
           onValueChange={(val) => updateSize('shirt', val)}
         >
           <SelectTrigger variant="outline" size="md">
-            <SelectInput placeholder="Select shirt size" />
+            <SelectInput placeholder={t('profile.personalDetails.selectShirtSize')} />
           </SelectTrigger>
           <SelectPortal>
             <SelectBackdrop />
@@ -70,10 +72,10 @@ export function SizesSection({ sizes, onChange }: SizesSectionProps) {
 
       {/* Pants Size - Free Text */}
       <VStack space="xs">
-        <Text style={styles.label}>Pants</Text>
+        <Text style={styles.label}>{t('profile.personalDetails.pants')}</Text>
         <Input variant="outline" size="md">
           <InputField
-            placeholder="e.g., 32x30, M, size 8"
+            placeholder={t('profile.personalDetails.pantsPlaceholder')}
             value={sizes.pants || ''}
             onChangeText={(val) => updateSize('pants', val)}
           />
@@ -82,10 +84,10 @@ export function SizesSection({ sizes, onChange }: SizesSectionProps) {
 
       {/* Shoe Size - Free Text */}
       <VStack space="xs">
-        <Text style={styles.label}>Shoe</Text>
+        <Text style={styles.label}>{t('profile.personalDetails.shoe')}</Text>
         <Input variant="outline" size="md">
           <InputField
-            placeholder="e.g., 10 US, 42 EU"
+            placeholder={t('profile.personalDetails.shoePlaceholder')}
             value={sizes.shoe || ''}
             onChangeText={(val) => updateSize('shoe', val)}
           />
@@ -94,10 +96,10 @@ export function SizesSection({ sizes, onChange }: SizesSectionProps) {
 
       {/* Ring Size - Free Text */}
       <VStack space="xs">
-        <Text style={styles.label}>Ring</Text>
+        <Text style={styles.label}>{t('profile.personalDetails.ring')}</Text>
         <Input variant="outline" size="md">
           <InputField
-            placeholder="e.g., 7, size 6"
+            placeholder={t('profile.personalDetails.ringPlaceholder')}
             value={sizes.ring || ''}
             onChangeText={(val) => updateSize('ring', val)}
           />

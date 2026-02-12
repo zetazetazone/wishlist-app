@@ -12,6 +12,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -38,6 +39,7 @@ import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
  */
 export default function DiscoverScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // State
@@ -163,12 +165,12 @@ export default function DiscoverScreen() {
   // Get subtitle text based on state
   const getSubtitle = () => {
     if (searchQuery.length >= 2) {
-      return `${searchResults.length} results`;
+      return t('discovery.resultsCount', { count: searchResults.length });
     }
     if (matchedContacts.length > 0) {
-      return `${matchedContacts.length} matches found`;
+      return t('discovery.matchesFound', { count: matchedContacts.length });
     }
-    return 'Search or import contacts';
+    return t('discovery.searchOrImport');
   };
 
   // Render permission denied state
@@ -187,10 +189,10 @@ export default function DiscoverScreen() {
           />
         </View>
 
-        <Text style={styles.permissionTitle}>Import Your Contacts</Text>
+        <Text style={styles.permissionTitle}>{t('discovery.importContacts')}</Text>
 
         <Text style={styles.permissionSubtitle}>
-          Find friends who already use Wishlist by importing your contacts
+          {t('discovery.importContactsDescription')}
         </Text>
 
         <TouchableOpacity
@@ -203,14 +205,14 @@ export default function DiscoverScreen() {
             color={colors.white}
             style={{ marginRight: spacing.sm }}
           />
-          <Text style={styles.primaryButtonText}>Allow Access</Text>
+          <Text style={styles.primaryButtonText}>{t('discovery.allowAccess')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.linkButton}
           onPress={() => Linking.openSettings()}
         >
-          <Text style={styles.linkButtonText}>Open Settings</Text>
+          <Text style={styles.linkButtonText}>{t('settings.openSettings')}</Text>
         </TouchableOpacity>
       </View>
     </MotiView>
@@ -230,9 +232,9 @@ export default function DiscoverScreen() {
         style={{ marginRight: spacing.sm }}
       />
       <View style={{ flex: 1 }}>
-        <Text style={styles.limitedBannerTitle}>Limited Access</Text>
+        <Text style={styles.limitedBannerTitle}>{t('discovery.limitedAccess')}</Text>
         <Text style={styles.limitedBannerText}>
-          You've granted access to some contacts. Tap to add more.
+          {t('discovery.limitedAccessDescription')}
         </Text>
       </View>
       <MaterialCommunityIcons
@@ -297,7 +299,7 @@ export default function DiscoverScreen() {
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ type: 'timing', duration: 600 }}
           >
-            <Text style={styles.headerTitle}>Find Friends</Text>
+            <Text style={styles.headerTitle}>{t('friends.findFriends')}</Text>
             <Text style={styles.headerSubtitle}>{getSubtitle()}</Text>
           </MotiView>
         </LinearGradient>
@@ -313,7 +315,7 @@ export default function DiscoverScreen() {
             />
             <TextInput
               style={styles.searchInput}
-              placeholder="Search by name or email"
+              placeholder={t('discovery.searchPlaceholder')}
               placeholderTextColor={colors.cream[400]}
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -371,7 +373,7 @@ export default function DiscoverScreen() {
             {searching && (
               <View style={styles.searchingContainer}>
                 <ActivityIndicator size="small" color={colors.burgundy[600]} />
-                <Text style={styles.searchingText}>Searching...</Text>
+                <Text style={styles.searchingText}>{t('discovery.searching')}</Text>
               </View>
             )}
 
@@ -379,8 +381,8 @@ export default function DiscoverScreen() {
             {!searching && displayList.length === 0 ? (
               renderEmptyState(
                 isSearchMode
-                  ? `No users found matching "${searchQuery}"`
-                  : 'No contacts found on Wishlist yet'
+                  ? t('discovery.noUsersFound', { query: searchQuery })
+                  : t('discovery.noContactsOnWishlist')
               )
             ) : (
               !searching &&

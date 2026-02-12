@@ -11,8 +11,10 @@
 
 import React, { useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { formatDistanceToNow, format, differenceInDays } from 'date-fns';
+import { useLocalizedFormat } from '../../hooks/useLocalizedFormat';
 import { colors, spacing, borderRadius } from '../../constants/theme';
 
 interface ClaimTimestampProps {
@@ -28,6 +30,8 @@ interface ClaimTimestampProps {
  * - Tap again to toggle back
  */
 export function ClaimTimestamp({ timestamp }: ClaimTimestampProps) {
+  const { t } = useTranslation();
+  const { locale } = useLocalizedFormat();
   const [showTimestamp, setShowTimestamp] = useState(false);
 
   const date = new Date(timestamp);
@@ -36,15 +40,15 @@ export function ClaimTimestamp({ timestamp }: ClaimTimestampProps) {
   // Use relative format for recent claims, exact date for older ones
   const displayText =
     daysDiff < 7
-      ? formatDistanceToNow(date, { addSuffix: true })
-      : format(date, 'MMM d, h:mma');
+      ? formatDistanceToNow(date, { addSuffix: true, locale })
+      : format(date, 'MMM d, h:mma', { locale });
 
   return (
     <TouchableOpacity
       onPress={() => setShowTimestamp(!showTimestamp)}
       style={styles.container}
       activeOpacity={0.7}
-      accessibilityLabel={showTimestamp ? displayText : 'Tap to show claim time'}
+      accessibilityLabel={showTimestamp ? displayText : t('wishlist.claim.tapToShowClaimTime')}
       accessibilityRole="button"
     >
       {showTimestamp ? (

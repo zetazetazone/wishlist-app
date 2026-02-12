@@ -9,6 +9,7 @@
 
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import {
   VStack,
   Heading,
@@ -28,6 +29,7 @@ export function DeliveryAddressSection({
   address,
   onChange,
 }: DeliveryAddressSectionProps) {
+  const { t } = useTranslation();
   const updateField = (key: keyof DeliveryAddress, value: string) => {
     // Clear value if empty string (don't store empty strings)
     onChange({ ...address, [key]: value || undefined });
@@ -36,18 +38,18 @@ export function DeliveryAddressSection({
   return (
     <VStack space="md" style={styles.section}>
       <VStack space="xs">
-        <Heading size="sm">Delivery Address</Heading>
+        <Heading size="sm">{t('profile.personalDetails.deliveryAddress')}</Heading>
         <Text style={styles.helperText}>
-          Where should gifts be delivered?
+          {t('profile.personalDetails.deliveryAddressHelper')}
         </Text>
       </VStack>
 
       {/* Street */}
       <VStack space="xs">
-        <Text style={styles.label}>Street Address</Text>
+        <Text style={styles.label}>{t('profile.personalDetails.streetAddress')}</Text>
         <Input variant="outline" size="md">
           <InputField
-            placeholder="e.g., 123 Main Street, Apt 4B"
+            placeholder={t('profile.personalDetails.streetPlaceholder')}
             value={address.street || ''}
             onChangeText={(val) => updateField('street', val)}
           />
@@ -57,10 +59,10 @@ export function DeliveryAddressSection({
       {/* City and Postal Code Row */}
       <HStack space="md">
         <VStack space="xs" style={styles.halfWidth}>
-          <Text style={styles.label}>City</Text>
+          <Text style={styles.label}>{t('profile.personalDetails.city')}</Text>
           <Input variant="outline" size="md">
             <InputField
-              placeholder="e.g., Amsterdam"
+              placeholder={t('profile.personalDetails.cityPlaceholder')}
               value={address.city || ''}
               onChangeText={(val) => updateField('city', val)}
             />
@@ -68,10 +70,10 @@ export function DeliveryAddressSection({
         </VStack>
 
         <VStack space="xs" style={styles.halfWidth}>
-          <Text style={styles.label}>Postal Code</Text>
+          <Text style={styles.label}>{t('profile.personalDetails.postalCode')}</Text>
           <Input variant="outline" size="md">
             <InputField
-              placeholder="e.g., 1012 AB"
+              placeholder={t('profile.personalDetails.postalCodePlaceholder')}
               value={address.postal_code || ''}
               onChangeText={(val) => updateField('postal_code', val)}
             />
@@ -81,10 +83,10 @@ export function DeliveryAddressSection({
 
       {/* Country */}
       <VStack space="xs">
-        <Text style={styles.label}>Country</Text>
+        <Text style={styles.label}>{t('profile.personalDetails.country')}</Text>
         <Input variant="outline" size="md">
           <InputField
-            placeholder="e.g., Netherlands"
+            placeholder={t('profile.personalDetails.countryPlaceholder')}
             value={address.country || ''}
             onChangeText={(val) => updateField('country', val)}
           />

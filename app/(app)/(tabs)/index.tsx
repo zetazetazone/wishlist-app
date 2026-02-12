@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../../../lib/supabase';
 import { WishlistItem } from '../../../types/database.types';
 import AddItemModal from '../../../components/wishlist/AddItemModal';
@@ -40,6 +41,7 @@ type ItemType = 'standard' | 'surprise_me' | 'mystery_box';
 
 export default function LuxuryWishlistScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -117,7 +119,7 @@ export default function LuxuryWishlistScreen() {
       setItems(data || []);
     } catch (error) {
       console.error('Error fetching wishlist items:', error);
-      Alert.alert('Error', 'Failed to load wishlist items');
+      Alert.alert(t('alerts.titles.error'), t('wishlist.failedToLoad'));
     } finally {
       setLoading(false);
     }
@@ -154,7 +156,7 @@ export default function LuxuryWishlistScreen() {
 
   const handleHeartPress = (item: WishlistItem) => {
     if (userGroups.length === 0) {
-      Alert.alert('No Groups', 'Join a group to mark favorites');
+      Alert.alert(t('alerts.titles.noGroups'), t('groups.empty.noGroups'));
       return;
     }
 
@@ -220,7 +222,7 @@ export default function LuxuryWishlistScreen() {
       const allFavs = await getAllFavoritesForUser(userId);
       setFavorites(allFavs);
       await fetchWishlistItems();
-      Alert.alert('Error', 'Failed to update favorite');
+      Alert.alert(t('alerts.titles.error'), t('common.errors.generic'));
     }
   };
 
@@ -292,7 +294,7 @@ export default function LuxuryWishlistScreen() {
       const allFavs = await getAllFavoritesForUser(userId);
       setFavorites(allFavs);
       await fetchWishlistItems();
-      Alert.alert('Error', 'Failed to update favorites');
+      Alert.alert(t('alerts.titles.error'), t('common.errors.generic'));
     }
   };
 
@@ -304,7 +306,7 @@ export default function LuxuryWishlistScreen() {
     item_type: 'standard';
   }) => {
     if (!userId) {
-      Alert.alert('Error', 'You must be logged in to add items');
+      Alert.alert(t('alerts.titles.error'), t('wishlist.mustBeLoggedIn'));
       throw new Error('Not logged in');
     }
 
@@ -329,7 +331,7 @@ export default function LuxuryWishlistScreen() {
 
       setItems([data, ...items]);
 
-      Alert.alert('Success!', 'Gift added to your wishlist!');
+      Alert.alert(t('alerts.titles.added'), t('wishlist.itemAddedSuccess'));
     } catch (error) {
       console.error('Error adding item:', error);
       throw error;
@@ -376,7 +378,7 @@ export default function LuxuryWishlistScreen() {
       }
     } catch (error) {
       console.error('Error deleting item:', error);
-      Alert.alert('Error', 'Failed to delete item');
+      Alert.alert(t('alerts.titles.error'), t('wishlist.failedToDelete'));
     }
   };
 
@@ -395,7 +397,7 @@ export default function LuxuryWishlistScreen() {
       }
     } catch (error) {
       console.error('Error re-adding special item:', error);
-      Alert.alert('Error', 'Failed to add item');
+      Alert.alert(t('alerts.titles.error'), t('common.errors.generic'));
     }
   };
 
@@ -418,7 +420,7 @@ export default function LuxuryWishlistScreen() {
       console.error('Error updating priority:', error);
       // Revert optimistic update on error
       await fetchWishlistItems();
-      Alert.alert('Error', 'Failed to update priority');
+      Alert.alert(t('alerts.titles.error'), t('common.errors.generic'));
     }
   };
 
@@ -504,7 +506,7 @@ export default function LuxuryWishlistScreen() {
                       marginBottom: spacing.xs,
                     }}
                   >
-                    My Wishlist
+                    {t('wishlist.title')}
                   </Text>
                   <Text
                     style={{
@@ -513,7 +515,7 @@ export default function LuxuryWishlistScreen() {
                       fontWeight: '400',
                     }}
                   >
-                    {items.length} {items.length === 1 ? 'gift' : 'gifts'}
+                    {items.length} {t('wishlist.itemType.gift', { count: items.length })}
                   </Text>
                 </View>
               </View>
@@ -561,7 +563,7 @@ export default function LuxuryWishlistScreen() {
                   marginBottom: spacing.sm,
                 }}
               >
-                Add Special Items
+                {t('wishlist.addSpecialItems', { defaultValue: 'Add Special Items' })}
               </Text>
               <View style={{ flexDirection: 'row', gap: spacing.sm }}>
                 {missingSpecialItems.includes('surprise_me') && (
@@ -592,7 +594,7 @@ export default function LuxuryWishlistScreen() {
                         color: colors.burgundy[700],
                       }}
                     >
-                      Surprise Me
+                      {t('wishlist.itemType.surpriseMe')}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -624,7 +626,7 @@ export default function LuxuryWishlistScreen() {
                         color: colors.gold[700],
                       }}
                     >
-                      Mystery Box
+                      {t('wishlist.itemType.mysteryBox')}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -641,7 +643,7 @@ export default function LuxuryWishlistScreen() {
                   fontSize: 16,
                 }}
               >
-                Loading...
+                {t('common.loading')}
               </Text>
             </View>
           ) : items.length === 0 ? (
@@ -689,7 +691,7 @@ export default function LuxuryWishlistScreen() {
                     textAlign: 'center',
                   }}
                 >
-                  Start Your Wishlist
+                  {t('wishlist.startYourWishlist')}
                 </Text>
 
                 <Text
@@ -700,7 +702,7 @@ export default function LuxuryWishlistScreen() {
                     lineHeight: 24,
                   }}
                 >
-                  Tap the gift button below to add{'\n'}gifts you're wishing for
+                  {t('wishlist.tapToAddItems')}
                 </Text>
               </View>
             </MotiView>

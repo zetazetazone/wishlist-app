@@ -12,6 +12,7 @@ import {
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter, Stack, useFocusEffect } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { fetchGroupDetails } from '../../../utils/groups';
 import { Group, User } from '../../../types';
 import { colors, spacing, borderRadius, shadows } from '../../../constants/theme';
@@ -33,6 +34,7 @@ interface GroupWithMembers extends Group {
 export default function GroupDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { t } = useTranslation();
   const [group, setGroup] = useState<GroupWithMembers | null>(null);
   const [loading, setLoading] = useState(true);
   const [sortedMembers, setSortedMembers] = useState<Array<{
@@ -91,7 +93,7 @@ export default function GroupDetailScreen() {
     setLoading(false);
 
     if (error || !data) {
-      Alert.alert('Error', 'Failed to load group details');
+      Alert.alert(t('alerts.titles.error'), t('groups.failedToLoad'));
       router.back();
       return;
     }
@@ -108,8 +110,8 @@ export default function GroupDetailScreen() {
       router.push(`/(app)/celebration/${celebration.id}`);
     } else {
       Alert.alert(
-        'No Celebration Yet',
-        'There is no upcoming celebration for this member yet. Celebrations are created automatically as birthdays approach.'
+        t('groups.noCelebrationYet'),
+        t('groups.celebrationsCreatedAutomatically')
       );
     }
   };
@@ -119,8 +121,8 @@ export default function GroupDetailScreen() {
 
     try {
       await Share.share({
-        message: `Join "${group.name}" on Wishlist App!\n\nInvite Code: ${group.invite_code}\n\nUse this code to join our gift-giving group.`,
-        title: `Join ${group.name}`,
+        message: t('groups.shareMessage', { name: group.name, code: group.invite_code }),
+        title: t('groups.joinGroup', { name: group.name }),
       });
     } catch (error) {
       console.error('Error sharing:', error);
@@ -131,11 +133,11 @@ export default function GroupDetailScreen() {
     if (!group) return;
     // Note: Clipboard API would be used here in a full implementation
     Alert.alert(
-      'Invite Code',
+      t('groups.inviteCode'),
       group.invite_code,
       [
-        { text: 'Share', onPress: handleShare },
-        { text: 'Close' },
+        { text: t('common.share'), onPress: handleShare },
+        { text: t('common.close') },
       ]
     );
   };
@@ -143,7 +145,7 @@ export default function GroupDetailScreen() {
   if (loading) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.cream[50], alignItems: 'center', justifyContent: 'center' }}>
-        <Stack.Screen options={{ title: 'Loading...', headerShown: false }} />
+        <Stack.Screen options={{ title: t('common.loading'), headerShown: false }} />
         <ActivityIndicator size="large" color={colors.burgundy[600]} />
       </View>
     );
@@ -152,8 +154,8 @@ export default function GroupDetailScreen() {
   if (!group) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.cream[50], alignItems: 'center', justifyContent: 'center' }}>
-        <Stack.Screen options={{ title: 'Group Not Found', headerShown: false }} />
-        <Text style={{ color: colors.burgundy[400] }}>Group not found</Text>
+        <Stack.Screen options={{ title: t('groups.notFound'), headerShown: false }} />
+        <Text style={{ color: colors.burgundy[400] }}>{t('groups.notFound')}</Text>
       </View>
     );
   }
@@ -218,7 +220,7 @@ export default function GroupDetailScreen() {
                     fontWeight: '700',
                   }}
                 >
-                  Share Invite Code
+                  {t('groups.shareInviteCode')}
                 </Text>
               </TouchableOpacity>
 
@@ -249,7 +251,7 @@ export default function GroupDetailScreen() {
                     fontWeight: '700',
                   }}
                 >
-                  View Invite Code
+                  {t('groups.viewInviteCode')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -272,7 +274,7 @@ export default function GroupDetailScreen() {
                 marginBottom: spacing.md,
               }}
             >
-              Members
+              {t('groups.members')}
             </Text>
 
             <View style={{ gap: spacing.sm }}>
@@ -283,7 +285,7 @@ export default function GroupDetailScreen() {
                     role: member.role,
                     users: {
                       id: member.users.id,
-                      full_name: member.users.full_name || 'Unknown',
+                      full_name: member.users.full_name || t('common.unknown'),
                       avatar_url: member.users.avatar_url,
                     },
                   }}

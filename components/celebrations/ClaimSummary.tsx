@@ -7,6 +7,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing } from '../../constants/theme';
 
@@ -25,6 +26,8 @@ export function ClaimSummary({
   claimedItems,
   splitItems,
 }: ClaimSummaryProps) {
+  const { t } = useTranslation();
+
   // Don't render if no items
   if (totalItems === 0) {
     return null;
@@ -46,11 +49,11 @@ export function ClaimSummary({
     <View style={styles.container}>
       <MaterialCommunityIcons name={iconName} size={16} color={iconColor} />
       <Text style={styles.summaryText}>
-        {totalClaimed} of {totalItems} items claimed
+        {t('celebrations.claimSummary.itemsClaimed', { claimed: totalClaimed, total: totalItems })}
       </Text>
       {hasSplits && (
         <Text style={styles.detailText}>
-          ({claimedItems} full, {splitItems} split)
+          {t('celebrations.claimSummary.breakdown', { full: claimedItems, split: splitItems })}
         </Text>
       )}
     </View>

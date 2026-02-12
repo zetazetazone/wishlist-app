@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface GiftLeaderBadgeProps {
@@ -21,6 +22,7 @@ export function GiftLeaderBadge({
   compact = false,
   style,
 }: GiftLeaderBadgeProps) {
+  const { t } = useTranslation();
   const backgroundColor = isCurrentUser ? '#8B1538' : '#f3f4f6'; // Burgundy or light gray
   const textColor = isCurrentUser ? '#ffffff' : '#4b5563';
   const iconColor = isCurrentUser ? '#ffffff' : '#8B1538';
@@ -29,7 +31,7 @@ export function GiftLeaderBadge({
     return (
       <View style={[styles.compactBadge, { backgroundColor }, style]}>
         <MaterialCommunityIcons name="crown" size={14} color={iconColor} />
-        <Text style={[styles.compactText, { color: textColor }]}>Leader</Text>
+        <Text style={[styles.compactText, { color: textColor }]}>{t('celebrations.giftLeader.leader')}</Text>
       </View>
     );
   }
@@ -38,7 +40,7 @@ export function GiftLeaderBadge({
     <View style={[styles.badge, { backgroundColor }, style]}>
       <MaterialCommunityIcons name="crown" size={16} color={iconColor} />
       <Text style={[styles.text, { color: textColor }]}>
-        {isCurrentUser ? 'You are the Gift Leader!' : 'Gift Leader'}
+        {isCurrentUser ? t('celebrations.giftLeader.youAreLeader') : t('celebrations.giftLeader.title')}
       </Text>
     </View>
   );

@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { updateGroupBudget } from '../../utils/groups';
 import { colors, spacing, borderRadius } from '../../constants/theme';
@@ -23,37 +24,37 @@ interface BudgetSettingsSectionProps {
 
 interface ApproachOption {
   key: BudgetApproach;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   icon: 'gift-outline' | 'calendar-month' | 'calendar-clock';
   placeholder: string;
-  helperText: string;
+  helperTextKey: string;
 }
 
 const APPROACH_OPTIONS: ApproachOption[] = [
   {
     key: 'per_gift',
-    title: 'Per Gift',
-    description: 'Suggested spending limit for each birthday',
+    titleKey: 'groups.budgetSection.perGift',
+    descriptionKey: 'groups.budgetSection.perGiftSettingsDesc',
     icon: 'gift-outline',
     placeholder: '50',
-    helperText: 'Suggested limit per birthday gift',
+    helperTextKey: 'groups.budgetSection.perGiftHelper',
   },
   {
     key: 'monthly',
-    title: 'Monthly',
-    description: 'Pool budget for all birthdays in a month',
+    titleKey: 'groups.budgetSection.monthly',
+    descriptionKey: 'groups.budgetSection.monthlyDescription',
     icon: 'calendar-month',
     placeholder: '100',
-    helperText: 'Total budget for all birthdays each month',
+    helperTextKey: 'groups.budgetSection.monthlyHelper',
   },
   {
     key: 'yearly',
-    title: 'Yearly',
-    description: 'Annual budget for all group celebrations',
+    titleKey: 'groups.budgetSection.yearly',
+    descriptionKey: 'groups.budgetSection.yearlyDescription',
     icon: 'calendar-clock',
     placeholder: '500',
-    helperText: 'Total annual budget for all celebrations',
+    helperTextKey: 'groups.budgetSection.yearlyHelper',
   },
 ];
 
@@ -63,6 +64,7 @@ export function BudgetSettingsSection({
   groupId,
   onBudgetUpdated,
 }: BudgetSettingsSectionProps) {
+  const { t } = useTranslation();
   const [selectedApproach, setSelectedApproach] = useState<BudgetApproach | null>(
     currentApproach
   );
@@ -82,12 +84,12 @@ export function BudgetSettingsSection({
     if (approach === selectedApproach) {
       // Deselecting - confirm removal
       Alert.alert(
-        'Remove Budget?',
-        'Budget tracking will be turned off for this group.',
+        t('groups.budgetSection.removeBudgetTitle'),
+        t('groups.budgetSection.removeBudgetMessage'),
         [
-          { text: 'Cancel', style: 'cancel' },
+          { text: t('common.cancel'), style: 'cancel' },
           {
-            text: 'Remove',
+            text: t('common.remove'),
             style: 'destructive',
             onPress: () => {
               setSelectedApproach(null);
@@ -99,12 +101,12 @@ export function BudgetSettingsSection({
     } else if (selectedApproach != null) {
       // Switching approach - confirm change
       Alert.alert(
-        'Change Budget Approach?',
-        'This will change how your group\'s budget is tracked. All spending history will be preserved.',
+        t('groups.budgetSection.changeApproachTitle'),
+        t('groups.budgetSection.changeApproachMessage'),
         [
-          { text: 'Cancel', style: 'cancel' },
+          { text: t('common.cancel'), style: 'cancel' },
           {
-            text: 'Change',
+            text: t('common.change'),
             style: 'default',
             onPress: () => {
               setSelectedApproach(approach);
@@ -129,7 +131,7 @@ export function BudgetSettingsSection({
 
     // Validate amount if provided
     if (amountText.trim() && (isNaN(parseFloat(amountText)) || parseFloat(amountText) < 0)) {
-      Alert.alert('Invalid Amount', 'Please enter a valid dollar amount.');
+      Alert.alert(t('groups.budgetSection.invalidAmountTitle'), t('groups.budgetSection.invalidAmountMessage'));
       setIsSaving(false);
       return;
     }
@@ -142,11 +144,11 @@ export function BudgetSettingsSection({
 
       if (error) throw error;
 
-      Alert.alert('Saved', 'Budget settings updated');
+      Alert.alert(t('common.saved'), t('groups.budgetSection.settingsUpdated'));
       onBudgetUpdated(selectedApproach, amountCents);
     } catch (error) {
       console.error('Error saving budget settings:', error);
-      Alert.alert('Error', 'Failed to update budget settings');
+      Alert.alert(t('alerts.titles.error'), t('groups.budgetSection.failedToUpdate'));
     } finally {
       setIsSaving(false);
     }
@@ -183,10 +185,10 @@ export function BudgetSettingsSection({
                   isActive && budgetStyles.approachCardTitleActive,
                 ]}
               >
-                {option.title}
+                {t(option.titleKey)}
               </Text>
               <Text style={budgetStyles.approachCardDescription}>
-                {option.description}
+                {t(option.descriptionKey)}
               </Text>
             </View>
             <View
@@ -204,7 +206,7 @@ export function BudgetSettingsSection({
       {/* Amount Input - shown when approach selected */}
       {selectedApproach && selectedOption && (
         <View style={budgetStyles.amountSection}>
-          <Text style={budgetStyles.fieldLabel}>Budget Amount</Text>
+          <Text style={budgetStyles.fieldLabel}>{t('groups.budgetSection.budgetAmount')}</Text>
           <View style={budgetStyles.amountInputRow}>
             <Text style={budgetStyles.dollarPrefix}>$</Text>
             <TextInput
@@ -216,7 +218,7 @@ export function BudgetSettingsSection({
               keyboardType="decimal-pad"
             />
           </View>
-          <Text style={budgetStyles.helperText}>{selectedOption.helperText}</Text>
+          <Text style={budgetStyles.helperText}>{t(selectedOption.helperTextKey)}</Text>
         </View>
       )}
 
@@ -234,7 +236,7 @@ export function BudgetSettingsSection({
           {isSaving ? (
             <ActivityIndicator size="small" color={colors.white} />
           ) : (
-            <Text style={budgetStyles.saveButtonText}>Save Budget Settings</Text>
+            <Text style={budgetStyles.saveButtonText}>{t('groups.budgetSection.saveSettings')}</Text>
           )}
         </TouchableOpacity>
       )}

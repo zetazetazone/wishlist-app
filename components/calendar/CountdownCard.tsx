@@ -5,10 +5,11 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { GroupBirthday } from '../../lib/birthdays';
 import { type FriendDate, FRIEND_DATE_COLOR } from '../../lib/friendDates';
-import { getPlanningStatus, getCountdownText, getStatusColor, type PlanningStatus } from '../../utils/countdown';
+import { getPlanningStatus, getStatusColor, type PlanningStatus } from '../../utils/countdown';
 
 type CalendarEvent = GroupBirthday | FriendDate;
 
@@ -32,9 +33,19 @@ export default function CountdownCard({
   daysUntil,
   onPress,
 }: CountdownCardProps) {
+  const { t } = useTranslation();
   const status = getPlanningStatus(daysUntil);
-  const countdownText = getCountdownText(daysUntil);
   const statusColor = getStatusColor(status);
+
+  // Localized countdown text
+  const getCountdownText = (days: number): string => {
+    if (days === 0) return t('calendar.countdown.today');
+    if (days === 1) return t('calendar.countdown.tomorrow');
+    if (days === -1) return t('calendar.countdown.invalidDate');
+    return t('calendar.countdown.daysCount', { count: days });
+  };
+
+  const countdownText = getCountdownText(daysUntil);
 
   // Type guard to check if event is a friend date
   const isFriendDate = (event: CalendarEvent): event is FriendDate => {
@@ -51,7 +62,7 @@ export default function CountdownCard({
 
   // Get source label for badge
   const sourceLabel = isFromFriend
-    ? (birthday.type === 'birthday' ? 'Friend' : birthday.friendName)
+    ? (birthday.type === 'birthday' ? t('calendar.countdown.friend') : birthday.friendName)
     : birthday.groupName;
 
   // Get color for source indicator
@@ -78,17 +89,17 @@ export default function CountdownCard({
     }
   };
 
-  // Get status label
+  // Get localized status label
   const getStatusLabel = (s: PlanningStatus): string => {
     switch (s) {
       case 'urgent':
-        return 'Urgent';
+        return t('calendar.countdown.urgent');
       case 'soon':
-        return 'Coming Soon';
+        return t('calendar.countdown.comingSoon');
       case 'planning':
-        return 'Plan Ahead';
+        return t('calendar.countdown.planAhead');
       case 'future':
-        return 'On Radar';
+        return t('calendar.countdown.onRadar');
     }
   };
 
@@ -116,7 +127,7 @@ export default function CountdownCard({
           {isFromFriend && (
             <View style={[styles.sourceBadge, { backgroundColor: `${FRIEND_DATE_COLOR}15` }]}>
               <Text style={[styles.sourceBadgeText, { color: FRIEND_DATE_COLOR }]}>
-                {birthday.type === 'birthday' ? 'Birthday' : 'Date'}
+                {birthday.type === 'birthday' ? t('calendar.countdown.birthdayLabel') : t('calendar.countdown.dateLabel')}
               </Text>
             </View>
           )}
@@ -130,9 +141,9 @@ export default function CountdownCard({
         <Text style={[styles.countdownText, { color: statusColor }]}>
           {countdownText}
         </Text>
-        {daysUntil > 0 && (
+        {daysUntil > 1 && (
           <Text style={styles.daysLabel}>
-            {daysUntil === 1 ? '' : 'days left'}
+            {t('calendar.countdown.daysLeft')}
           </Text>
         )}
       </View>

@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity, Linking, Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { WishlistItem } from '../../types/database.types';
 
 interface WishlistItemCardProps {
@@ -7,9 +8,11 @@ interface WishlistItemCardProps {
 }
 
 export default function WishlistItemCard({ item, onDelete }: WishlistItemCardProps) {
+  const { t } = useTranslation();
+
   const handleOpenLink = async () => {
     if (!item.amazon_url) {
-      Alert.alert('Error', 'No link available for this item');
+      Alert.alert(t('alerts.titles.error'), t('wishlist.card.noLinkAvailable'));
       return;
     }
     try {
@@ -17,22 +20,22 @@ export default function WishlistItemCard({ item, onDelete }: WishlistItemCardPro
       if (canOpen) {
         await Linking.openURL(item.amazon_url);
       } else {
-        Alert.alert('Error', 'Unable to open this link');
+        Alert.alert(t('alerts.titles.error'), t('wishlist.card.unableToOpenLink'));
       }
     } catch (error) {
       console.error('Error opening link:', error);
-      Alert.alert('Error', 'Failed to open link');
+      Alert.alert(t('alerts.titles.error'), t('wishlist.card.failedToOpenLink'));
     }
   };
 
   const handleDelete = () => {
     Alert.alert(
-      'Delete Item',
-      'Are you sure you want to remove this item from your wishlist?',
+      t('wishlist.card.deleteItem'),
+      t('wishlist.card.confirmDelete'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: () => onDelete?.(item.id),
         },
@@ -47,9 +50,9 @@ export default function WishlistItemCard({ item, onDelete }: WishlistItemCardPro
   };
 
   const getPriorityLabel = (priority: number) => {
-    if (priority >= 4) return 'High';
-    if (priority === 3) return 'Medium';
-    return 'Low';
+    if (priority >= 4) return t('wishlist.priority.high');
+    if (priority === 3) return t('wishlist.priority.medium');
+    return t('wishlist.priority.low');
   };
 
   const formatPrice = (price?: number) => {
@@ -98,7 +101,7 @@ export default function WishlistItemCard({ item, onDelete }: WishlistItemCardPro
           className="flex-1 bg-blue-500 rounded-lg py-3"
         >
           <Text className="text-white text-center font-semibold">
-            View Product
+            {t('wishlist.card.viewProduct')}
           </Text>
         </TouchableOpacity>
         {onDelete && (
@@ -106,7 +109,7 @@ export default function WishlistItemCard({ item, onDelete }: WishlistItemCardPro
             onPress={handleDelete}
             className="bg-red-50 border border-red-200 rounded-lg px-4 py-3"
           >
-            <Text className="text-red-600 font-semibold">Delete</Text>
+            <Text className="text-red-600 font-semibold">{t('common.delete')}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -114,7 +117,7 @@ export default function WishlistItemCard({ item, onDelete }: WishlistItemCardPro
       {/* Metadata */}
       <View className="mt-3 pt-3 border-t border-gray-100">
         <Text className="text-gray-400 text-xs">
-          Added {new Date(item.created_at).toLocaleDateString()}
+          {t('wishlist.card.added', { date: new Date(item.created_at).toLocaleDateString() })}
         </Text>
       </View>
     </View>

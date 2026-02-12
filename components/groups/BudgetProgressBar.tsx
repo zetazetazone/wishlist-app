@@ -14,6 +14,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BudgetStatus } from '../../lib/budget';
@@ -53,6 +54,8 @@ function getThresholdColor(level: BudgetStatus['thresholdLevel']): string {
 }
 
 export function BudgetProgressBar({ status }: BudgetProgressBarProps) {
+  const { t } = useTranslation();
+
   if (!status) return null;
 
   const isPoolBudget = status.approach === 'monthly' || status.approach === 'yearly';
@@ -71,7 +74,7 @@ export function BudgetProgressBar({ status }: BudgetProgressBarProps) {
             size={20}
             color={colors.burgundy[800]}
           />
-          <Text style={styles.headerTitle}>Budget</Text>
+          <Text style={styles.headerTitle}>{t('groups.budget.title')}</Text>
         </View>
 
         {isPoolBudget ? (
@@ -96,10 +99,10 @@ export function BudgetProgressBar({ status }: BudgetProgressBarProps) {
             {/* Amount Row */}
             <View style={styles.amountRow}>
               <Text style={styles.spentText}>
-                {formatBudgetAmount(status.spent)} spent
+                {t('groups.budget.spent', { amount: formatBudgetAmount(status.spent) })}
               </Text>
               <Text style={styles.ofText}>
-                of {formatBudgetAmount(status.budgetAmount)}
+                {t('groups.budget.of', { amount: formatBudgetAmount(status.budgetAmount) })}
               </Text>
             </View>
 
@@ -112,7 +115,7 @@ export function BudgetProgressBar({ status }: BudgetProgressBarProps) {
                   color={colors.error}
                 />
                 <Text style={styles.overBudgetText}>
-                  Over budget by {formatBudgetAmount(Math.abs(status.remaining))}
+                  {t('groups.budget.overBudgetBy', { amount: formatBudgetAmount(Math.abs(status.remaining)) })}
                 </Text>
               </View>
             )}
@@ -121,10 +124,10 @@ export function BudgetProgressBar({ status }: BudgetProgressBarProps) {
           /* Per-gift: Text-only suggestion */
           <>
             <Text style={styles.perGiftText}>
-              Suggested limit: {formatBudgetAmount(status.budgetAmount)} per gift
+              {t('groups.budget.suggestedLimit', { amount: formatBudgetAmount(status.budgetAmount) })}
             </Text>
             <Text style={styles.perGiftSubtext}>
-              This is a guideline, not a hard limit
+              {t('groups.budget.guidelineNote')}
             </Text>
           </>
         )}

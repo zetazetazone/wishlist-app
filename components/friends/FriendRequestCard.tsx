@@ -1,7 +1,8 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { formatDistanceToNow } from 'date-fns';
+import { useLocalizedFormat } from '../../hooks/useLocalizedFormat';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 import { FriendRequestWithProfile } from '../../lib/friends';
 
@@ -35,6 +36,8 @@ export function FriendRequestCard({
   onCancel,
   index = 0,
 }: FriendRequestCardProps) {
+  const { t } = useTranslation();
+  const { formatDistanceToNow } = useLocalizedFormat();
   const { profile, created_at } = request;
 
   // Get initials for avatar fallback
@@ -52,11 +55,11 @@ export function FriendRequestCard({
     try {
       return formatDistanceToNow(new Date(dateString), { addSuffix: true });
     } catch {
-      return 'recently';
+      return t('common.time.justNow');
     }
   };
 
-  const displayName = profile?.display_name || 'Unknown';
+  const displayName = profile?.display_name || t('common.unknown');
   const avatarUrl = profile?.avatar_url;
   const relativeTime = getRelativeTime(created_at);
 
@@ -144,7 +147,7 @@ export function FriendRequestCard({
                   fontWeight: '500',
                 }}
               >
-                {type === 'incoming' ? 'Received' : 'Sent'} {relativeTime}
+                {type === 'incoming' ? t('friends.received') : t('friends.sent')} {relativeTime}
               </Text>
             </View>
           </View>
@@ -188,7 +191,7 @@ export function FriendRequestCard({
                     fontSize: 14,
                   }}
                 >
-                  Accept
+                  {t('friends.accept')}
                 </Text>
               </TouchableOpacity>
 
@@ -222,7 +225,7 @@ export function FriendRequestCard({
                     fontSize: 14,
                   }}
                 >
-                  Decline
+                  {t('friends.decline')}
                 </Text>
               </TouchableOpacity>
             </>
@@ -257,7 +260,7 @@ export function FriendRequestCard({
                   fontSize: 14,
                 }}
               >
-                Cancel Request
+                {t('friends.cancelRequest')}
               </Text>
             </TouchableOpacity>
           )}

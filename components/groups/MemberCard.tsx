@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
@@ -44,6 +45,7 @@ export function MemberCard({
   onPress,
   index = 0,
 }: MemberCardProps) {
+  const { t } = useTranslation();
   const { users, role } = member;
   const isAdmin = role === 'admin';
 
@@ -156,7 +158,7 @@ export function MemberCard({
                       fontWeight: '700',
                     }}
                   >
-                    ADMIN
+                    {t('groups.admin').toUpperCase()}
                   </Text>
                 </View>
               )}

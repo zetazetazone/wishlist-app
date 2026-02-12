@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Alert, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useLocalizedFormat } from '@/hooks/useLocalizedFormat';
 import {
   VStack,
   HStack,
@@ -35,6 +35,7 @@ interface UserProfile {
 export default function ProfileSettingsScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const { format } = useLocalizedFormat();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [displayName, setDisplayName] = useState('');
   const [avatarPath, setAvatarPath] = useState<string | null>(null);
@@ -65,7 +66,7 @@ export default function ProfileSettingsScreen() {
 
       if (error) {
         console.error('Error loading profile:', error);
-        Alert.alert('Error', 'Failed to load profile');
+        Alert.alert(t('alerts.titles.error'), t('profile.failedToLoad'));
         return;
       }
 
@@ -81,7 +82,7 @@ export default function ProfileSettingsScreen() {
       }
     } catch (error) {
       console.error('Error in loadProfile:', error);
-      Alert.alert('Error', 'Something went wrong');
+      Alert.alert(t('alerts.titles.error'), t('common.errors.generic'));
     } finally {
       setIsLoading(false);
     }
@@ -99,13 +100,13 @@ export default function ProfileSettingsScreen() {
       }
     } catch (error) {
       console.error('Error uploading avatar:', error);
-      Alert.alert('Error', 'Failed to upload avatar');
+      Alert.alert(t('alerts.titles.error'), t('profile.failedToUploadPhoto'));
     }
   };
 
   const handleSave = async () => {
     if (!displayName.trim()) {
-      Alert.alert('Required Field', 'Please enter your display name');
+      Alert.alert(t('onboarding.requiredField'), t('onboarding.enterDisplayName'));
       return;
     }
 
@@ -114,7 +115,7 @@ export default function ProfileSettingsScreen() {
 
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        Alert.alert('Error', 'Could not get user information');
+        Alert.alert(t('alerts.titles.error'), t('onboarding.couldNotGetUser'));
         return;
       }
 
@@ -128,16 +129,16 @@ export default function ProfileSettingsScreen() {
 
       if (error) {
         console.error('Error updating profile:', error);
-        Alert.alert('Error', 'Failed to save profile');
+        Alert.alert(t('alerts.titles.error'), t('profile.failedToSave'));
         return;
       }
 
-      Alert.alert('Success', 'Profile updated successfully', [
-        { text: 'OK', onPress: () => router.back() }
+      Alert.alert(t('common.success'), t('profile.updatedSuccessfully'), [
+        { text: t('common.ok'), onPress: () => router.back() }
       ]);
     } catch (error) {
       console.error('Error in handleSave:', error);
-      Alert.alert('Error', 'Something went wrong');
+      Alert.alert(t('alerts.titles.error'), t('common.errors.generic'));
     } finally {
       setIsSaving(false);
     }
@@ -154,7 +155,7 @@ export default function ProfileSettingsScreen() {
   if (isLoading) {
     return (
       <VStack flex={1} justifyContent="center" alignItems="center">
-        <Text>Loading...</Text>
+        <Text>{t('common.loading')}</Text>
       </VStack>
     );
   }
@@ -165,7 +166,7 @@ export default function ProfileSettingsScreen() {
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <VStack flex={1} padding="$6" space="xl">
         <Heading size="lg" textAlign="center">
-          Edit Your Profile
+          {t('profile.editProfile')}
         </Heading>
 
         {/* Avatar Upload */}
@@ -175,13 +176,13 @@ export default function ProfileSettingsScreen() {
               {avatarUrl ? (
                 <AvatarImage source={{ uri: avatarUrl }} alt="Profile" />
               ) : (
-                <AvatarFallbackText>{displayName || 'User'}</AvatarFallbackText>
+                <AvatarFallbackText>{displayName || t('profile.user')}</AvatarFallbackText>
               )}
             </Avatar>
           </Pressable>
           <Button variant="link" onPress={handleAvatarUpload}>
             <ButtonText>
-              {avatarPath ? 'Change Photo' : 'Add Profile Photo'}
+              {avatarPath ? t('profile.changePhoto') : t('profile.addPhoto')}
             </ButtonText>
           </Button>
         </VStack>
@@ -189,11 +190,11 @@ export default function ProfileSettingsScreen() {
         {/* Display Name Input */}
         <VStack space="xs">
           <Text fontWeight="$medium" color="$textLight700">
-            Display Name
+            {t('profile.displayName')}
           </Text>
           <Input variant="outline" size="lg">
             <InputField
-              placeholder="Enter your name"
+              placeholder={t('onboarding.enterYourName')}
               value={displayName}
               onChangeText={setDisplayName}
               autoCapitalize="words"
@@ -205,7 +206,7 @@ export default function ProfileSettingsScreen() {
         <VStack space="xs">
           <HStack alignItems="center" space="xs">
             <Text fontWeight="$medium" color="$textLight700">
-              Birthday
+              {t('profile.birthday')}
             </Text>
             <MaterialCommunityIcons name="lock" size={14} color="#9CA3AF" />
           </HStack>
@@ -219,11 +220,11 @@ export default function ProfileSettingsScreen() {
             <Text color="$textLight600">
               {profile?.birthday
                 ? format(new Date(profile.birthday), 'MMMM d, yyyy')
-                : 'Not set'}
+                : t('profile.notSet')}
             </Text>
           </Box>
           <Text fontSize="$xs" color="$textLight500">
-            Birthday cannot be changed after initial setup
+            {t('profile.birthdayLocked')}
           </Text>
         </VStack>
 
@@ -240,9 +241,9 @@ export default function ProfileSettingsScreen() {
           >
             <HStack justifyContent="space-between" alignItems="center">
               <VStack>
-                <Text fontWeight="$semibold">Personal Details</Text>
+                <Text fontWeight="$semibold">{t('profile.personalDetails.title')}</Text>
                 <Text fontSize="$xs" color="$textLight500">
-                  Sizes, preferences & wishlists
+                  {t('profile.personalDetails.subtitle')}
                 </Text>
               </VStack>
               <HStack alignItems="center" space="sm">
@@ -269,9 +270,9 @@ export default function ProfileSettingsScreen() {
           >
             <HStack justifyContent="space-between" alignItems="center">
               <VStack>
-                <Text fontWeight="$semibold">Important Dates</Text>
+                <Text fontWeight="$semibold">{t('calendar.publicDates.title')}</Text>
                 <Text fontSize="$xs" color="$textLight500">
-                  Anniversaries & special events
+                  {t('calendar.publicDates.subtitle')}
                 </Text>
               </VStack>
               <HStack alignItems="center" space="sm">
@@ -315,7 +316,7 @@ export default function ProfileSettingsScreen() {
           onPress={handleSave}
           isDisabled={isSaving || !displayName.trim()}
         >
-          <ButtonText>{isSaving ? 'Saving...' : 'Save Changes'}</ButtonText>
+          <ButtonText>{isSaving ? t('common.saving') : t('profile.saveChanges')}</ButtonText>
         </Button>
       </VStack>
     </ScrollView>

@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius } from '../../constants/theme';
 
@@ -16,6 +17,8 @@ interface TakenCounterProps {
  * Per CONTEXT: "Show count: X of Y items taken visible to celebrant - builds anticipation"
  */
 export function TakenCounter({ takenCount, totalCount }: TakenCounterProps) {
+  const { t } = useTranslation();
+
   // Don't render if no items
   if (totalCount === 0) return null;
 
@@ -35,7 +38,7 @@ export function TakenCounter({ takenCount, totalCount }: TakenCounterProps) {
         fontSize: 13,
         fontWeight: '600',
       }}>
-        {takenCount} of {totalCount} items taken
+        {t('wishlist.claim.itemsTaken', { taken: takenCount, total: totalCount })}
       </Text>
     </View>
   );

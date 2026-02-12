@@ -8,7 +8,8 @@ import { View, Text, StyleSheet, RefreshControl, ActivityIndicator, ScrollView }
 import { FlashList } from '@shopify/flash-list';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
-import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
+import { useLocalizedFormat } from '../../../hooks/useLocalizedFormat';
 
 import { supabase } from '../../../lib/supabase';
 import { getGroupBirthdays, filterBirthdaysForDate, type GroupBirthday } from '../../../lib/birthdays';
@@ -22,6 +23,8 @@ import { CalendarSyncIconButton } from '../../../components/calendar/CalendarSyn
 const PLANNING_WINDOW_DAYS = 30;
 
 export default function CalendarScreen() {
+  const { t } = useTranslation();
+  const { format } = useLocalizedFormat();
   const [birthdays, setBirthdays] = useState<GroupBirthday[]>([]);
   const [friendDates, setFriendDates] = useState<FriendDate[]>([]);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -149,11 +152,11 @@ export default function CalendarScreen() {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Birthday Calendar</Text>
+          <Text style={styles.headerTitle}>{t('calendar.title')}</Text>
         </View>
         <View style={styles.centered}>
           <ActivityIndicator size="large" color="#8B1538" />
-          <Text style={styles.loadingText}>Loading birthdays...</Text>
+          <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
       </View>
     );
@@ -164,13 +167,13 @@ export default function CalendarScreen() {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Birthday Calendar</Text>
+          <Text style={styles.headerTitle}>{t('calendar.title')}</Text>
         </View>
         <View style={styles.centered}>
           <MaterialCommunityIcons name="alert-circle-outline" size={48} color="#ef4444" />
           <Text style={styles.errorText}>{error}</Text>
           <Text style={styles.retryText} onPress={loadCalendarData}>
-            Tap to retry
+            {t('common.retry')}
           </Text>
         </View>
       </View>
@@ -182,13 +185,13 @@ export default function CalendarScreen() {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Birthday Calendar</Text>
+          <Text style={styles.headerTitle}>{t('calendar.title')}</Text>
         </View>
         <View style={styles.centered}>
           <MaterialCommunityIcons name="calendar-blank" size={64} color="#d1d5db" />
-          <Text style={styles.emptyTitle}>No birthdays yet</Text>
+          <Text style={styles.emptyTitle}>{t('calendar.empty.noBirthdays')}</Text>
           <Text style={styles.emptySubtitle}>
-            When group members add their birthdays or you add friends, they'll appear here.
+            {t('calendar.empty.noBirthdaysDescription')}
           </Text>
         </View>
       </View>
@@ -198,13 +201,13 @@ export default function CalendarScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Birthday Calendar</Text>
+        <Text style={styles.headerTitle}>{t('calendar.title')}</Text>
         <View style={styles.headerRight}>
           {totalUpcoming > 0 && (
             <View style={styles.headerBadge}>
               <MaterialCommunityIcons name="cake-variant" size={16} color="#8B1538" />
               <Text style={styles.headerBadgeText}>
-                {totalUpcoming} upcoming
+                {t('calendar.upcoming', { count: totalUpcoming })}
               </Text>
             </View>
           )}
@@ -268,7 +271,7 @@ export default function CalendarScreen() {
             <View style={styles.sectionHeader}>
               <MaterialCommunityIcons name="account-heart" size={18} color={FRIEND_DATE_COLOR} />
               <Text style={[styles.sectionTitle, { color: FRIEND_DATE_COLOR }]}>
-                Friend Dates
+                {t('calendar.friendDates')}
               </Text>
             </View>
             {selectedDateFriendDates.map((friendDate) => {
@@ -285,14 +288,14 @@ export default function CalendarScreen() {
                   <View style={styles.friendDateContent}>
                     <Text style={styles.friendDateTitle}>{friendDate.title}</Text>
                     <Text style={styles.friendDateSubtitle}>
-                      {friendDate.friendName} • {friendDate.type === 'birthday' ? 'Birthday' : 'Special Date'}
+                      {friendDate.friendName} • {friendDate.type === 'birthday' ? t('calendar.birthday') : t('calendar.specialDate')}
                     </Text>
                     {daysUntil === 0 && (
-                      <Text style={[styles.friendDateBadge, { color: FRIEND_DATE_COLOR }]}>Today</Text>
+                      <Text style={[styles.friendDateBadge, { color: FRIEND_DATE_COLOR }]}>{t('calendar.countdown.today')}</Text>
                     )}
                     {daysUntil > 0 && daysUntil <= 7 && (
                       <Text style={[styles.friendDateBadge, { color: FRIEND_DATE_COLOR }]}>
-                        In {daysUntil} {daysUntil === 1 ? 'day' : 'days'}
+                        {t('calendar.countdown.daysLeft', { count: daysUntil })}
                       </Text>
                     )}
                   </View>
@@ -306,7 +309,7 @@ export default function CalendarScreen() {
         {selectedDate && selectedDateBirthdays.length === 0 && selectedDateFriendDates.length === 0 && (
           <View style={styles.noBirthdaysSection}>
             <Text style={styles.noBirthdaysText}>
-              No birthdays or dates on {format(new Date(selectedDate), 'MMMM d')}
+              {t('calendar.noEventsOnDate', { date: format(new Date(selectedDate), 'MMMM d') })}
             </Text>
           </View>
         )}
@@ -316,14 +319,14 @@ export default function CalendarScreen() {
           <View style={styles.sectionHeader}>
             <MaterialCommunityIcons name="clock-outline" size={18} color="#8B1538" />
             <Text style={styles.sectionTitle}>
-              Coming Up (Next {PLANNING_WINDOW_DAYS} days)
+              {t('calendar.comingUp', { days: PLANNING_WINDOW_DAYS })}
             </Text>
           </View>
 
           {upcomingBirthdays.length === 0 ? (
             <View style={styles.noUpcoming}>
               <Text style={styles.noUpcomingText}>
-                No birthdays in the next {PLANNING_WINDOW_DAYS} days
+                {t('calendar.noUpcoming', { days: PLANNING_WINDOW_DAYS })}
               </Text>
             </View>
           ) : (

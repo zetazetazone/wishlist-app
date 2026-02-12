@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius } from '../../constants/theme';
 
@@ -22,9 +23,10 @@ export function YourClaimIndicator({
   style,
   claimType = 'full',
 }: YourClaimIndicatorProps) {
+  const { t } = useTranslation();
   const isSplit = claimType === 'split';
   const iconName = isSplit ? 'gift-open' : 'gift';
-  const labelText = isSplit ? 'Your split' : 'Your claim';
+  const labelText = isSplit ? t('wishlist.claim.yourSplit') : t('wishlist.claim.yourClaim');
 
   return (
     <View style={[styles.container, style]}>

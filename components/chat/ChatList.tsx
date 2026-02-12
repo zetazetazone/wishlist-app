@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { FlashList } from '@shopify/flash-list';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
@@ -27,6 +28,7 @@ interface ChatListProps {
  * Subscription is set up internally and cleaned up on unmount.
  */
 export function ChatList({ chatRoomId, onLinkedItemPress }: ChatListProps) {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -111,7 +113,7 @@ export function ChatList({ chatRoomId, onLinkedItemPress }: ChatListProps) {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" color="#8B1538" />
-        <Text style={styles.loadingText}>Loading messages...</Text>
+        <Text style={styles.loadingText}>{t('celebrations.chat.loading')}</Text>
       </View>
     );
   }
@@ -139,9 +141,9 @@ export function ChatList({ chatRoomId, onLinkedItemPress }: ChatListProps) {
           size={64}
           color="#d1d5db"
         />
-        <Text style={styles.emptyTitle}>No messages yet</Text>
+        <Text style={styles.emptyTitle}>{t('celebrations.chat.empty')}</Text>
         <Text style={styles.emptySubtitle}>
-          Start the conversation! Coordinate the gift with your group.
+          {t('celebrations.chat.startConversation')}
         </Text>
       </View>
     );

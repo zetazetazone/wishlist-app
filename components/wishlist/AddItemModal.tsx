@@ -10,6 +10,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 import StarRating from '../ui/StarRating';
@@ -27,6 +28,7 @@ interface AddItemModalProps {
 }
 
 export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalProps) {
+  const { t } = useTranslation();
   const [amazonUrl, setAmazonUrl] = useState('');
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
@@ -45,17 +47,17 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
   const handleSubmit = async () => {
     // Validation for standard items
     if (!amazonUrl.trim()) {
-      Alert.alert('Error', 'Please enter a product URL');
+      Alert.alert(t('alerts.titles.error'), t('wishlist.form.enterProductUrl'));
       return;
     }
 
     if (!validateUrl(amazonUrl)) {
-      Alert.alert('Error', 'Please enter a valid URL');
+      Alert.alert(t('alerts.titles.error'), t('wishlist.errors.invalidUrl'));
       return;
     }
 
     if (!title.trim()) {
-      Alert.alert('Error', 'Please enter a product title');
+      Alert.alert(t('alerts.titles.error'), t('wishlist.errors.titleRequired'));
       return;
     }
 
@@ -75,7 +77,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
       resetForm();
       onClose();
     } catch (error) {
-      Alert.alert('Error', 'Failed to add item. Please try again.');
+      Alert.alert(t('alerts.titles.error'), t('wishlist.form.failedToAdd'));
       console.error('Error adding item:', error);
     } finally {
       setLoading(false);
@@ -140,7 +142,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                   color: colors.burgundy[800],
                 }}
               >
-                Add a Gift
+                {t('wishlist.form.addGift')}
               </Text>
               <TouchableOpacity
                 onPress={handleCancel}
@@ -172,7 +174,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                         marginBottom: spacing.xs,
                       }}
                     >
-                      Product URL *
+                      {t('wishlist.form.productUrl')} *
                     </Text>
                     <View
                       style={{
@@ -199,7 +201,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                           color: colors.burgundy[900],
                           paddingVertical: 0,
                         }}
-                        placeholder="Paste product link..."
+                        placeholder={t('wishlist.form.pasteProductLink')}
                         placeholderTextColor={colors.cream[400]}
                         value={amazonUrl}
                         onChangeText={setAmazonUrl}
@@ -221,7 +223,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                         marginBottom: spacing.xs,
                       }}
                     >
-                      Product Title *
+                      {t('wishlist.form.productTitle')} *
                     </Text>
                     <View
                       style={{
@@ -248,7 +250,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                           color: colors.burgundy[900],
                           paddingVertical: 0,
                         }}
-                        placeholder="Enter product name..."
+                        placeholder={t('wishlist.form.enterProductName')}
                         placeholderTextColor={colors.cream[400]}
                         value={title}
                         onChangeText={setTitle}
@@ -275,7 +277,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                           marginBottom: spacing.xs,
                         }}
                       >
-                        Price (Optional)
+                        {t('wishlist.form.priceOptional')}
                       </Text>
                       <View
                         style={{
@@ -326,7 +328,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                           marginBottom: spacing.xs,
                         }}
                       >
-                        Priority
+                        {t('wishlist.itemPriority')}
                       </Text>
                       <View
                         style={{
@@ -371,7 +373,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                       fontWeight: '600',
                     }}
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -394,7 +396,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                       fontWeight: '700',
                     }}
                   >
-                    {loading ? 'Adding...' : 'Add to Wishlist'}
+                    {loading ? t('wishlist.form.adding') : t('wishlist.form.addToWishlist')}
                   </Text>
                 </TouchableOpacity>
               </View>

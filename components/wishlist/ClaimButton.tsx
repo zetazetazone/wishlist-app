@@ -1,4 +1,5 @@
 import { TouchableOpacity, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 
@@ -40,6 +41,8 @@ export function ClaimButton({
   onContribute,
   onCloseSplit,
 }: ClaimButtonProps) {
+  const { t } = useTranslation();
+
   // Don't render for surprise_me/mystery_box items
   if (disabled) return null;
 
@@ -57,7 +60,7 @@ export function ClaimButton({
         ) : (
           <>
             <MaterialCommunityIcons name="account-group" size={18} color={colors.burgundy[600]} />
-            <Text style={styles.openSplitText}>Open for Split</Text>
+            <Text style={styles.openSplitText}>{t('wishlist.claim.openForSplit')}</Text>
           </>
         )}
       </TouchableOpacity>
@@ -77,7 +80,7 @@ export function ClaimButton({
         ) : (
           <>
             <MaterialCommunityIcons name="hand-heart" size={18} color={colors.white} />
-            <Text style={styles.contributeText}>Contribute</Text>
+            <Text style={styles.contributeText}>{t('wishlist.claim.contribute')}</Text>
           </>
         )}
       </TouchableOpacity>
@@ -97,7 +100,7 @@ export function ClaimButton({
         ) : (
           <>
             <MaterialCommunityIcons name="check-circle-outline" size={18} color={colors.burgundy[600]} />
-            <Text style={styles.closeSplitText}>Cover Remaining</Text>
+            <Text style={styles.closeSplitText}>{t('wishlist.claim.coverRemaining')}</Text>
           </>
         )}
       </TouchableOpacity>
@@ -121,8 +124,8 @@ export function ClaimButton({
   const buttonText = loading
     ? ''
     : isClaimed && isYourClaim
-      ? 'Unclaim'
-      : 'Claim';
+      ? t('wishlist.claim.unclaim')
+      : t('wishlist.claim.claim');
 
   // Determine if this is the unclaim variant (outline style)
   const isUnclaimVariant = isClaimed && isYourClaim;

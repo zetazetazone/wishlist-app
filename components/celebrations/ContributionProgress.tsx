@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface ContributionProgressProps {
@@ -31,6 +32,7 @@ export function ContributionProgress({
   targetAmount,
   contributorCount,
 }: ContributionProgressProps) {
+  const { t } = useTranslation();
   // Calculate progress percentage
   const hasTarget = targetAmount !== undefined && targetAmount !== null && targetAmount > 0;
   const progressPercent = hasTarget
@@ -71,7 +73,7 @@ export function ContributionProgress({
           </Text>
           {hasTarget && (
             <Text style={styles.targetAmount}>
-              {' of '}{formatCurrency(targetAmount!)} target
+              {' '}{t('common.of')} {formatCurrency(targetAmount!)} {t('celebrations.contributions.target')}
             </Text>
           )}
         </View>
@@ -85,7 +87,7 @@ export function ContributionProgress({
               color="#9ca3af"
             />
             <Text style={styles.contributorCount}>
-              {contributorCount} {contributorCount === 1 ? 'contributor' : 'contributors'}
+              {t('celebrations.contributions.contributorCount', { count: contributorCount })}
             </Text>
           </View>
         )}
@@ -95,7 +97,7 @@ export function ContributionProgress({
       {isComplete && (
         <View style={styles.completeBadge}>
           <MaterialCommunityIcons name="check-circle" size={16} color="#22c55e" />
-          <Text style={styles.completeText}>Target reached!</Text>
+          <Text style={styles.completeText}>{t('celebrations.contributions.targetReached')}</Text>
         </View>
       )}
     </View>

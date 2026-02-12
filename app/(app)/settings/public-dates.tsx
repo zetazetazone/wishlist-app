@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Alert, ScrollView, ActivityIndicator, Platform, FlatList, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { format } from 'date-fns';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useLocalizedFormat } from '@/hooks/useLocalizedFormat';
 import {
   VStack,
   HStack,
@@ -28,6 +29,8 @@ import { colors, spacing } from '@/constants/theme';
 
 export default function PublicDatesScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
+  const { format } = useLocalizedFormat();
 
   // Data state
   const [dates, setDates] = useState<PublicDate[]>([]);
@@ -56,7 +59,7 @@ export default function PublicDatesScreen() {
       setDates(data);
     } catch (error) {
       console.error('Failed to load dates:', error);
-      Alert.alert('Error', 'Failed to load dates');
+      Alert.alert(t('alerts.titles.error'), t('calendar.publicDates.failedToLoad'));
     } finally {
       setLoading(false);
     }
@@ -87,7 +90,7 @@ export default function PublicDatesScreen() {
 
     // Validate title
     if (!title.trim()) {
-      Alert.alert('Required', 'Please enter a title');
+      Alert.alert(t('alerts.titles.required'), t('calendar.publicDates.enterTitle'));
       return;
     }
 
@@ -121,32 +124,32 @@ export default function PublicDatesScreen() {
       // Reload dates and reset form
       await loadDates();
       resetForm();
-      Alert.alert('Success', editingDate ? 'Date updated' : 'Date added');
+      Alert.alert(t('common.success'), editingDate ? t('calendar.publicDates.dateUpdated') : t('calendar.publicDates.dateAdded'));
     } catch (error) {
       console.error('Failed to save date:', error);
-      Alert.alert('Error', 'Failed to save date');
+      Alert.alert(t('alerts.titles.error'), t('calendar.publicDates.failedToSave'));
     } finally {
       setSaving(false);
     }
   };
 
-  const handleDelete = (id: string, title: string) => {
+  const handleDelete = (id: string, dateTitle: string) => {
     Alert.alert(
-      'Delete Date',
-      `Are you sure you want to delete "${title}"?`,
+      t('calendar.publicDates.deleteDate'),
+      t('calendar.publicDates.deleteConfirm', { title: dateTitle }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deletePublicDate(id);
               await loadDates();
-              Alert.alert('Deleted', 'Date removed');
+              Alert.alert(t('calendar.publicDates.deleted'), t('calendar.publicDates.dateRemoved'));
             } catch (error) {
               console.error('Failed to delete date:', error);
-              Alert.alert('Error', 'Failed to delete date');
+              Alert.alert(t('alerts.titles.error'), t('calendar.publicDates.failedToDelete'));
             }
           },
         },
@@ -181,7 +184,7 @@ export default function PublicDatesScreen() {
         {/* Header */}
         <HStack justifyContent="space-between" alignItems="center">
           <Heading size="lg" color="$burgundy800">
-            Important Dates
+            {t('calendar.publicDates.title')}
           </Heading>
           <Button
             size="sm"
@@ -194,7 +197,7 @@ export default function PublicDatesScreen() {
                 size={18}
                 color="white"
               />
-              <ButtonText>{showForm ? 'Cancel' : 'Add'}</ButtonText>
+              <ButtonText>{showForm ? t('common.cancel') : t('common.add')}</ButtonText>
             </HStack>
           </Button>
         </HStack>
@@ -210,19 +213,19 @@ export default function PublicDatesScreen() {
           >
             <VStack space="md">
               <Text fontWeight="$semibold" fontSize="$md">
-                {editingDate ? 'Edit Date' : 'Add New Date'}
+                {editingDate ? t('calendar.publicDates.editDate') : t('calendar.publicDates.addNewDate')}
               </Text>
 
               {/* Title Input (Required) */}
               <VStack space="xs">
                 <Text fontSize="$sm" fontWeight="$medium">
-                  Title *
+                  {t('calendar.publicDates.titleRequired')}
                 </Text>
                 <Input variant="outline" size="lg">
                   <InputField
                     value={title}
                     onChangeText={setTitle}
-                    placeholder="e.g., Wedding Anniversary"
+                    placeholder={t('calendar.publicDates.titlePlaceholder')}
                   />
                 </Input>
               </VStack>
@@ -230,13 +233,13 @@ export default function PublicDatesScreen() {
               {/* Description Input (Optional) */}
               <VStack space="xs">
                 <Text fontSize="$sm" fontWeight="$medium">
-                  Description
+                  {t('calendar.publicDates.description')}
                 </Text>
                 <Input variant="outline" size="lg">
                   <InputField
                     value={description}
                     onChangeText={setDescription}
-                    placeholder="Optional notes"
+                    placeholder={t('calendar.publicDates.descriptionPlaceholder')}
                     multiline
                   />
                 </Input>
@@ -245,7 +248,7 @@ export default function PublicDatesScreen() {
               {/* Date Picker */}
               <VStack space="xs">
                 <Text fontSize="$sm" fontWeight="$medium">
-                  Date
+                  {t('calendar.publicDates.date')}
                 </Text>
                 {Platform.OS === 'ios' ? (
                   // iOS: Inline DateTimePicker
@@ -261,7 +264,7 @@ export default function PublicDatesScreen() {
                     <Pressable onPress={() => setShowDatePicker(true)}>
                       <Input variant="outline" size="lg" isReadOnly>
                         <InputField
-                          value={format(selectedDate, 'MMMM d, yyyy')}
+                          value={format(selectedDate, 'PPP')}
                           editable={false}
                         />
                       </Input>
@@ -282,10 +285,10 @@ export default function PublicDatesScreen() {
               <HStack justifyContent="space-between" alignItems="center">
                 <VStack flex={1}>
                   <Text fontSize="$sm" fontWeight="$medium">
-                    Repeat annually
+                    {t('calendar.publicDates.repeatAnnually')}
                   </Text>
                   <Text fontSize="$xs" color="$textLight500">
-                    Turn off to save the year
+                    {t('calendar.publicDates.repeatAnnuallyHint')}
                   </Text>
                 </VStack>
                 <Switch
@@ -304,7 +307,7 @@ export default function PublicDatesScreen() {
                   onPress={resetForm}
                   borderColor={colors.burgundy[600]}
                 >
-                  <ButtonText color={colors.burgundy[600]}>Cancel</ButtonText>
+                  <ButtonText color={colors.burgundy[600]}>{t('common.cancel')}</ButtonText>
                 </Button>
                 <Button
                   flex={1}
@@ -312,7 +315,7 @@ export default function PublicDatesScreen() {
                   isDisabled={saving || !title.trim()}
                   backgroundColor={colors.burgundy[600]}
                 >
-                  <ButtonText>{saving ? 'Saving...' : 'Save'}</ButtonText>
+                  <ButtonText>{saving ? t('common.saving') : t('common.save')}</ButtonText>
                 </Button>
               </HStack>
             </VStack>
@@ -333,7 +336,7 @@ export default function PublicDatesScreen() {
               color={colors.cream[400]}
             />
             <Text fontSize="$md" color="$textLight500" marginTop="$2">
-              No dates added yet
+              {t('calendar.publicDates.noDatesYet')}
             </Text>
             {!showForm && (
               <Button
@@ -342,7 +345,7 @@ export default function PublicDatesScreen() {
                 onPress={() => setShowForm(true)}
                 backgroundColor={colors.burgundy[600]}
               >
-                <ButtonText>Add Date</ButtonText>
+                <ButtonText>{t('calendar.publicDates.addDate')}</ButtonText>
               </Button>
             )}
           </Box>

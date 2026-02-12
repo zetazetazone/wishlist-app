@@ -11,6 +11,7 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface ChatInputProps {
@@ -22,10 +23,12 @@ interface ChatInputProps {
 export function ChatInput({
   onSend,
   disabled = false,
-  placeholder = 'Type a message...',
+  placeholder,
 }: ChatInputProps) {
+  const { t } = useTranslation();
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
+  const placeholderText = placeholder || t('celebrations.chat.placeholder');
 
   const canSend = message.trim().length > 0 && !disabled && !sending;
 
@@ -54,7 +57,7 @@ export function ChatInput({
           style={styles.input}
           value={message}
           onChangeText={setMessage}
-          placeholder={placeholder}
+          placeholder={placeholderText}
           placeholderTextColor="#9ca3af"
           multiline
           maxLength={1000}

@@ -7,6 +7,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, RefreshControl, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter, useFocusEffect } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../../../lib/supabase';
 import { getCelebrations, type Celebration } from '../../../lib/celebrations';
@@ -14,6 +15,7 @@ import { CelebrationCard } from '../../../components/celebrations/CelebrationCar
 
 export default function CelebrationsScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [celebrations, setCelebrations] = useState<Celebration[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -84,7 +86,7 @@ export default function CelebrationsScreen() {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" color="#8B1538" />
-        <Text style={styles.loadingText}>Loading celebrations...</Text>
+        <Text style={styles.loadingText}>{t('celebrations.loading')}</Text>
       </View>
     );
   }
@@ -96,7 +98,7 @@ export default function CelebrationsScreen() {
         <MaterialCommunityIcons name="alert-circle-outline" size={48} color="#ef4444" />
         <Text style={styles.errorText}>{error}</Text>
         <Text style={styles.retryText} onPress={loadCelebrations}>
-          Tap to retry
+          {t('common.retry')}
         </Text>
       </View>
     );
@@ -107,13 +109,13 @@ export default function CelebrationsScreen() {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Celebrations</Text>
+          <Text style={styles.headerTitle}>{t('celebrations.title')}</Text>
         </View>
         <View style={styles.centered}>
           <MaterialCommunityIcons name="party-popper" size={64} color="#d1d5db" />
-          <Text style={styles.emptyTitle}>No upcoming celebrations</Text>
+          <Text style={styles.emptyTitle}>{t('celebrations.empty.noCelebrations')}</Text>
           <Text style={styles.emptySubtitle}>
-            When celebrations are created in your groups, they'll appear here.
+            {t('celebrations.empty.noCelebrationsDescription')}
           </Text>
         </View>
       </View>
@@ -127,12 +129,12 @@ export default function CelebrationsScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Celebrations</Text>
+        <Text style={styles.headerTitle}>{t('celebrations.title')}</Text>
         {giftLeaderCelebrations.length > 0 && (
           <View style={styles.headerBadge}>
             <MaterialCommunityIcons name="crown" size={16} color="#8B1538" />
             <Text style={styles.headerBadgeText}>
-              Leading {giftLeaderCelebrations.length}
+              {t('celebrations.leading', { count: giftLeaderCelebrations.length })}
             </Text>
           </View>
         )}
@@ -156,7 +158,7 @@ export default function CelebrationsScreen() {
             <View style={styles.sectionHeader}>
               <MaterialCommunityIcons name="star" size={18} color="#8B1538" />
               <Text style={styles.sectionTitle}>
-                You are the Gift Leader for {giftLeaderCelebrations.length} celebration{giftLeaderCelebrations.length > 1 ? 's' : ''}
+                {t('celebrations.giftLeaderFor', { count: giftLeaderCelebrations.length })}
               </Text>
             </View>
           ) : null

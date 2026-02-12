@@ -8,6 +8,7 @@ import {
   Modal,
   StyleSheet,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 
 interface Claimer {
@@ -30,6 +31,7 @@ interface ClaimerAvatarProps {
  * "Tapping shows tooltip/popup with claimer's name"
  */
 export function ClaimerAvatar({ claimer, size = 28 }: ClaimerAvatarProps) {
+  const { t } = useTranslation();
   const [showName, setShowName] = useState(false);
 
   // Get display initial for placeholder avatar
@@ -89,7 +91,7 @@ export function ClaimerAvatar({ claimer, size = 28 }: ClaimerAvatarProps) {
         >
           <View style={styles.tooltipContainer}>
             <Text style={styles.tooltipText}>
-              Claimed by {claimer.display_name || 'Unknown'}
+              {t('wishlist.claim.claimedBy', { name: claimer.display_name || t('common.unknown') })}
             </Text>
           </View>
         </Pressable>

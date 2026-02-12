@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -13,6 +14,7 @@ import { colors, spacing, borderRadius, shadows } from '../../../constants/theme
 
 export default function GroupsScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [groups, setGroups] = useState<Array<Group & { member_count?: number }>>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -78,7 +80,7 @@ export default function GroupsScreen() {
                   marginBottom: spacing.xs,
                 }}
               >
-                My Groups
+                {t('groups.title')}
               </Text>
               <Text
                 style={{
@@ -87,7 +89,7 @@ export default function GroupsScreen() {
                   fontWeight: '400',
                 }}
               >
-                {groups.length} {groups.length === 1 ? 'group' : 'groups'}
+                {groups.length} {t('groups.group', { count: groups.length })}
               </Text>
             </View>
           </MotiView>
@@ -138,7 +140,7 @@ export default function GroupsScreen() {
                   fontWeight: '700',
                 }}
               >
-                Create Group
+                {t('groups.createGroup')}
               </Text>
             </TouchableOpacity>
 
@@ -170,7 +172,7 @@ export default function GroupsScreen() {
                   fontWeight: '700',
                 }}
               >
-                Join Group
+                {t('groups.joinGroup')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -220,7 +222,7 @@ export default function GroupsScreen() {
                     textAlign: 'center',
                   }}
                 >
-                  No Groups Yet
+                  {t('groups.empty.noGroups')}
                 </Text>
 
                 <Text
@@ -231,7 +233,7 @@ export default function GroupsScreen() {
                     lineHeight: 24,
                   }}
                 >
-                  Create a new group or join one{'\n'}with an invite code
+                  {t('groups.empty.noGroupsDescription')}
                 </Text>
               </View>
             </MotiView>

@@ -8,6 +8,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -31,6 +32,7 @@ export interface LuxuryBottomSheetRef {
 
 export default forwardRef<LuxuryBottomSheetRef, LuxuryBottomSheetProps>(
   function LuxuryBottomSheet({ onAdd }, ref) {
+    const { t } = useTranslation();
     const bottomSheetRef = useRef<BottomSheet>(null);
     const [amazonUrl, setAmazonUrl] = useState('');
     const [title, setTitle] = useState('');
@@ -61,17 +63,17 @@ export default forwardRef<LuxuryBottomSheetRef, LuxuryBottomSheetProps>(
 
     const handleSubmit = async () => {
       if (!amazonUrl.trim()) {
-        Alert.alert('Missing URL', 'Please paste a product link');
+        Alert.alert(t('wishlist.form.missingUrl'), t('wishlist.form.pasteProductLink'));
         return;
       }
 
       if (!validateUrl(amazonUrl)) {
-        Alert.alert('Invalid URL', 'Please enter a valid URL');
+        Alert.alert(t('wishlist.form.invalidUrl'), t('wishlist.errors.invalidUrl'));
         return;
       }
 
       if (!title.trim()) {
-        Alert.alert('Missing Title', 'Please enter a product name');
+        Alert.alert(t('wishlist.form.missingTitle'), t('wishlist.form.enterProductName'));
         return;
       }
 
@@ -91,7 +93,7 @@ export default forwardRef<LuxuryBottomSheetRef, LuxuryBottomSheetProps>(
         setPriority(3);
         bottomSheetRef.current?.close();
       } catch (error) {
-        Alert.alert('Error', 'Failed to add item. Please try again.');
+        Alert.alert(t('alerts.titles.error'), t('wishlist.form.failedToAdd'));
       } finally {
         setLoading(false);
       }
@@ -147,7 +149,7 @@ export default forwardRef<LuxuryBottomSheetRef, LuxuryBottomSheetProps>(
                     marginBottom: spacing.xs,
                   }}
                 >
-                  Add a Gift
+                  {t('wishlist.form.addGift')}
                 </Text>
                 <Text
                   style={{
@@ -156,7 +158,7 @@ export default forwardRef<LuxuryBottomSheetRef, LuxuryBottomSheetProps>(
                     fontWeight: '400',
                   }}
                 >
-                  Share what you're wishing for
+                  {t('wishlist.form.shareWhatYouWish')}
                 </Text>
               </View>
             </MotiView>
@@ -187,7 +189,7 @@ export default forwardRef<LuxuryBottomSheetRef, LuxuryBottomSheetProps>(
                   style={{ marginRight: spacing.sm }}
                 />
                 <TextInput
-                  placeholder="Paste product link..."
+                  placeholder={t('wishlist.form.pasteProductLink')}
                   placeholderTextColor={colors.cream[400]}
                   value={amazonUrl}
                   onChangeText={setAmazonUrl}
@@ -229,7 +231,7 @@ export default forwardRef<LuxuryBottomSheetRef, LuxuryBottomSheetProps>(
                   style={{ marginRight: spacing.sm }}
                 />
                 <TextInput
-                  placeholder="Product name..."
+                  placeholder={t('wishlist.form.productName')}
                   placeholderTextColor={colors.cream[400]}
                   value={title}
                   onChangeText={setTitle}
@@ -301,7 +303,7 @@ export default forwardRef<LuxuryBottomSheetRef, LuxuryBottomSheetProps>(
                     fontWeight: '600',
                   }}
                 >
-                  Priority
+                  {t('wishlist.itemPriority')}
                 </Text>
                 <StarRating
                   rating={priority}
@@ -337,7 +339,7 @@ export default forwardRef<LuxuryBottomSheetRef, LuxuryBottomSheetProps>(
                     letterSpacing: 0.5,
                   }}
                 >
-                  {loading ? 'Adding to Wishlist...' : 'Add to Wishlist'}
+                  {loading ? t('wishlist.form.addingToWishlist') : t('wishlist.form.addToWishlist')}
                 </Text>
               </TouchableOpacity>
             </MotiView>

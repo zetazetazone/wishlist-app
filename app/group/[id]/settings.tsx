@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
 import { MotiView } from 'moti';
@@ -45,6 +46,7 @@ interface MemberInfo {
 export default function GroupSettingsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { t } = useTranslation();
   const [group, setGroup] = useState<GroupDetails | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -147,7 +149,7 @@ export default function GroupSettingsScreen() {
   const handleSaveInfo = async () => {
     if (!id || !group) return;
     if (!editName.trim()) {
-      Alert.alert('Required', 'Group name cannot be empty');
+      Alert.alert(t('alerts.titles.required'), t('groups.nameCannotBeEmpty'));
       return;
     }
 
@@ -169,7 +171,7 @@ export default function GroupSettingsScreen() {
       });
 
       if (error) throw error;
-      Alert.alert('Saved', 'Group info updated successfully');
+      Alert.alert(t('common.saved'), t('groups.infoUpdatedSuccessfully'));
     } catch (error) {
       console.error('Error saving group info:', error);
       // Rollback optimistic update
@@ -180,7 +182,7 @@ export default function GroupSettingsScreen() {
       } : prev);
       setEditName(previousName);
       setEditDescription(previousDescription || '');
-      Alert.alert('Error', 'Failed to save group info');
+      Alert.alert(t('alerts.titles.error'), t('groups.failedToSaveInfo'));
     } finally {
       setIsSaving(false);
     }
@@ -193,7 +195,7 @@ export default function GroupSettingsScreen() {
       // Request permissions
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permission Required', 'Please allow access to your photo library');
+        Alert.alert(t('alerts.titles.permissionRequired'), t('groups.allowPhotoAccess'));
         return;
       }
 
@@ -213,7 +215,7 @@ export default function GroupSettingsScreen() {
       // Upload compressed photo
       const storagePath = await uploadGroupPhotoFromUri(uri, id);
       if (!storagePath) {
-        Alert.alert('Error', 'Failed to upload photo');
+        Alert.alert(t('alerts.titles.error'), t('groups.failedToUploadPhoto'));
         return;
       }
 
@@ -226,7 +228,7 @@ export default function GroupSettingsScreen() {
       setPhotoTimestamp(Date.now()); // Force avatar refresh
     } catch (error) {
       console.error('Error changing group photo:', error);
-      Alert.alert('Error', 'Failed to update group photo');
+      Alert.alert(t('alerts.titles.error'), t('groups.failedToUpdatePhoto'));
     } finally {
       setIsUploadingPhoto(false);
     }
@@ -234,17 +236,17 @@ export default function GroupSettingsScreen() {
 
   const handleRemoveMember = (member: MemberInfo) => {
     Alert.alert(
-      'Remove Member',
-      `Are you sure you want to remove ${member.full_name} from the group? This cannot be undone.`,
+      t('groups.removeMember'),
+      t('groups.removeMemberConfirm', { name: member.full_name }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Remove',
+          text: t('common.remove'),
           style: 'destructive',
           onPress: async () => {
             const { error } = await removeMember(id!, member.user_id);
             if (error) {
-              Alert.alert('Error', 'Failed to remove member');
+              Alert.alert(t('alerts.titles.error'), t('groups.failedToRemoveMember'));
             } else {
               setMembers(prev => prev.filter(m => m.user_id !== member.user_id));
             }
@@ -256,17 +258,17 @@ export default function GroupSettingsScreen() {
 
   const handleMakeAdmin = (member: MemberInfo) => {
     Alert.alert(
-      'Transfer Admin Role',
-      `Are you sure you want to make ${member.full_name} the group admin? You will become a regular member and lose admin privileges.`,
+      t('groups.transferAdminRole'),
+      t('groups.transferAdminConfirm', { name: member.full_name }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Transfer',
+          text: t('groups.transfer'),
           style: 'destructive',
           onPress: async () => {
             const { error } = await transferAdmin(id!, member.user_id);
             if (error) {
-              Alert.alert('Error', 'Failed to transfer admin role');
+              Alert.alert(t('alerts.titles.error'), t('groups.failedToTransferAdmin'));
             } else {
               // Update local state: demote self, promote target
               setMembers(prev => prev.map(m => ({
@@ -274,7 +276,7 @@ export default function GroupSettingsScreen() {
                 role: m.user_id === member.user_id ? 'admin' as const : m.user_id === currentUserId ? 'member' as const : m.role,
               })));
               setIsAdmin(false);
-              Alert.alert('Done', `${member.full_name} is now the group admin.`);
+              Alert.alert(t('common.done'), t('groups.adminTransferred', { name: member.full_name }));
             }
           },
         },
@@ -284,17 +286,17 @@ export default function GroupSettingsScreen() {
 
   const handleLeaveGroup = () => {
     Alert.alert(
-      'Leave Group',
-      'Are you sure you want to leave this group? You will need an invite code to rejoin.',
+      t('groups.leaveGroup'),
+      t('groups.leaveGroupConfirm'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Leave',
+          text: t('groups.leave'),
           style: 'destructive',
           onPress: async () => {
             const { error } = await leaveGroup(id!);
             if (error) {
-              Alert.alert('Error', 'Failed to leave group');
+              Alert.alert(t('alerts.titles.error'), t('groups.failedToLeaveGroup'));
             } else {
               router.replace('/(app)/(tabs)/groups');
             }
@@ -312,14 +314,14 @@ export default function GroupSettingsScreen() {
     const isToGreetings = newMode === 'greetings';
 
     Alert.alert(
-      isToGreetings ? 'Switch to Greetings Mode?' : 'Switch to Gifts Mode?',
+      isToGreetings ? t('groups.switchToGreetingsMode') : t('groups.switchToGiftsMode'),
       isToGreetings
-        ? 'The following features will be hidden from all members:\n\n\u2022 Wishlists and favorite items\n\u2022 Gift Leader assignments\n\u2022 Contribution tracking\n\nExisting gift data will be preserved and will reappear if you switch back to Gifts mode.'
-        : 'The following features will become visible to all members:\n\n\u2022 Wishlists and favorite items\n\u2022 Gift Leader assignments\n\u2022 Contribution tracking\n\nMembers will be able to coordinate gifts for upcoming birthdays.',
+        ? t('groups.switchToGreetingsDescription')
+        : t('groups.switchToGiftsDescription'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: isToGreetings ? 'Switch to Greetings' : 'Switch to Gifts',
+          text: isToGreetings ? t('groups.switchToGreetings') : t('groups.switchToGifts'),
           style: isToGreetings ? 'destructive' : 'default',
           onPress: async () => {
             setIsSwitchingMode(true);
@@ -332,16 +334,16 @@ export default function GroupSettingsScreen() {
               const { error } = await updateGroupMode(id, newMode);
               if (error) throw error;
 
-              const modeName = newMode === 'greetings' ? 'Greetings' : 'Gifts';
+              const modeName = newMode === 'greetings' ? t('groups.modes.greetings') : t('groups.modes.gifts');
               Alert.alert(
-                'Mode Changed',
-                `This group is now in ${modeName} mode. Members will see the change on their next visit.`
+                t('groups.modeChanged'),
+                t('groups.modeChangedDescription', { mode: modeName })
               );
             } catch (error) {
               console.error('Error switching mode:', error);
               // Rollback optimistic update
               setGroup(prev => prev ? { ...prev, mode: previousMode } : prev);
-              Alert.alert('Error', 'Failed to change group mode. Please try again.');
+              Alert.alert(t('alerts.titles.error'), t('groups.failedToChangeMode'));
             } finally {
               setIsSwitchingMode(false);
             }
@@ -409,7 +411,7 @@ export default function GroupSettingsScreen() {
                   color: colors.white,
                 }}
               >
-                Group Settings
+                {t('groups.groupSettings')}
               </Text>
             </View>
           </MotiView>
@@ -432,7 +434,7 @@ export default function GroupSettingsScreen() {
               transition={{ type: 'spring', delay: 100 }}
             >
               <SettingsSection
-                title="Group Info"
+                title={t('groups.sections.groupInfo')}
                 icon="information-outline"
               >
                 {/* Group Photo */}
@@ -457,19 +459,19 @@ export default function GroupSettingsScreen() {
                     activeOpacity={0.7}
                   >
                     <Text style={settingsStyles.changePhotoText}>
-                      {isUploadingPhoto ? 'Uploading...' : group.photo_url ? 'Change Photo' : 'Add Photo'}
+                      {isUploadingPhoto ? t('common.uploading') : group.photo_url ? t('profile.changePhoto') : t('profile.addPhoto')}
                     </Text>
                   </TouchableOpacity>
                 </View>
 
                 {/* Group Name Input */}
                 <View style={settingsStyles.fieldContainer}>
-                  <Text style={settingsStyles.fieldLabel}>Group Name</Text>
+                  <Text style={settingsStyles.fieldLabel}>{t('groups.groupName')}</Text>
                   <TextInput
                     style={settingsStyles.textInput}
                     value={editName}
                     onChangeText={setEditName}
-                    placeholder="Enter group name"
+                    placeholder={t('groups.enterGroupName')}
                     placeholderTextColor={colors.cream[500]}
                     autoCapitalize="words"
                     maxLength={50}
@@ -478,12 +480,12 @@ export default function GroupSettingsScreen() {
 
                 {/* Group Description Input */}
                 <View style={settingsStyles.fieldContainer}>
-                  <Text style={settingsStyles.fieldLabel}>Description</Text>
+                  <Text style={settingsStyles.fieldLabel}>{t('groups.description')}</Text>
                   <TextInput
                     style={[settingsStyles.textInput, settingsStyles.textArea]}
                     value={editDescription}
                     onChangeText={setEditDescription}
-                    placeholder="Add a group description (optional)"
+                    placeholder={t('groups.descriptionPlaceholder')}
                     placeholderTextColor={colors.cream[500]}
                     multiline
                     numberOfLines={3}
@@ -505,7 +507,7 @@ export default function GroupSettingsScreen() {
                   {isSaving ? (
                     <ActivityIndicator size="small" color={colors.white} />
                   ) : (
-                    <Text style={settingsStyles.saveButtonText}>Save Changes</Text>
+                    <Text style={settingsStyles.saveButtonText}>{t('profile.saveChanges')}</Text>
                   )}
                 </TouchableOpacity>
               </SettingsSection>
@@ -520,7 +522,7 @@ export default function GroupSettingsScreen() {
               transition={{ type: 'spring', delay: isAdmin ? 150 : 100 }}
             >
               <SettingsSection
-                title="Group Mode"
+                title={t('groups.sections.groupMode')}
                 icon="swap-horizontal"
               >
                 {isAdmin ? (
@@ -552,7 +554,7 @@ export default function GroupSettingsScreen() {
                               : modeStyles.modeCardTextInactive,
                           ]}
                         >
-                          Greetings
+                          {t('groups.modes.greetings')}
                         </Text>
                       </TouchableOpacity>
 
@@ -582,7 +584,7 @@ export default function GroupSettingsScreen() {
                               : modeStyles.modeCardTextInactive,
                           ]}
                         >
-                          Gifts
+                          {t('groups.modes.gifts')}
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -594,15 +596,15 @@ export default function GroupSettingsScreen() {
                       />
                     )}
                     <Text style={modeStyles.infoText}>
-                      Controls which features are visible to group members
+                      {t('groups.modeControlsFeatures')}
                     </Text>
                   </View>
                 ) : (
                   <View>
-                    <Text style={modeStyles.readOnlyLabel}>Current mode</Text>
+                    <Text style={modeStyles.readOnlyLabel}>{t('groups.currentMode')}</Text>
                     <GroupModeBadge mode={(group.mode as 'greetings' | 'gifts') || 'gifts'} />
                     <Text style={modeStyles.readOnlyInfo}>
-                      Only the group admin can change the mode.
+                      {t('groups.onlyAdminCanChangeMode')}
                     </Text>
                   </View>
                 )}
@@ -618,7 +620,7 @@ export default function GroupSettingsScreen() {
               transition={{ type: 'spring', delay: 200 }}
             >
               <SettingsSection
-                title="Budget"
+                title={t('groups.sections.budget')}
                 icon="cash-multiple"
               >
                 <BudgetSettingsSection
@@ -644,7 +646,7 @@ export default function GroupSettingsScreen() {
             transition={{ type: 'spring', delay: isAdmin ? 300 : 200 }}
           >
             <SettingsSection
-              title={`Members (${members.length})`}
+              title={t('groups.sections.members', { count: members.length })}
               icon="account-multiple"
             >
               {members.map((member) => (
@@ -659,7 +661,7 @@ export default function GroupSettingsScreen() {
               ))}
               {members.length === 0 && (
                 <Text style={styles.placeholderText}>
-                  No members found
+                  {t('groups.noMembersFound')}
                 </Text>
               )}
             </SettingsSection>
@@ -673,7 +675,7 @@ export default function GroupSettingsScreen() {
               transition={{ type: 'spring', delay: isAdmin ? 400 : 300 }}
             >
               <SettingsSection
-                title="Invite Code"
+                title={t('groups.sections.inviteCode')}
                 icon="link-variant"
               >
                 <InviteCodeSection
@@ -695,7 +697,7 @@ export default function GroupSettingsScreen() {
             transition={{ type: 'spring', delay: isAdmin ? 500 : 400 }}
           >
             <SettingsSection
-              title="Danger Zone"
+              title={t('groups.sections.dangerZone')}
               icon="alert-circle-outline"
               danger
             >
@@ -715,7 +717,7 @@ export default function GroupSettingsScreen() {
                         flex: 1,
                       }}
                     >
-                      To leave this group, first transfer the admin role to another member using the shield icon in the Members section above.
+                      {t('groups.transferAdminToLeave')}
                     </Text>
                   </View>
                 </View>
@@ -728,7 +730,7 @@ export default function GroupSettingsScreen() {
                       marginBottom: spacing.md,
                     }}
                   >
-                    You will need an invite code to rejoin this group after leaving.
+                    {t('groups.needInviteToRejoin')}
                   </Text>
                   <TouchableOpacity
                     onPress={handleLeaveGroup}
@@ -755,7 +757,7 @@ export default function GroupSettingsScreen() {
                           color: colors.white,
                         }}
                       >
-                        Leave Group
+                        {t('groups.leaveGroup')}
                       </Text>
                     </View>
                   </TouchableOpacity>

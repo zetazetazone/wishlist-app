@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { regenerateInviteCode } from '../../utils/groups';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
@@ -29,19 +30,20 @@ export function InviteCodeSection({
   groupName,
   onCodeRegenerated,
 }: InviteCodeSectionProps) {
+  const { t } = useTranslation();
   const [isRegenerating, setIsRegenerating] = useState(false);
 
   const handleCopy = async () => {
     try {
       const { setStringAsync } = await import('expo-clipboard');
       await setStringAsync(inviteCode);
-      Alert.alert('Copied!', 'Invite code copied to clipboard');
+      Alert.alert(t('groups.inviteSection.copied'), t('groups.inviteSection.copiedMessage'));
     } catch (error) {
       // Fallback: share the code instead if clipboard native module unavailable
       try {
         await Share.share({ message: inviteCode });
       } catch {
-        Alert.alert('Invite Code', inviteCode);
+        Alert.alert(t('groups.inviteCode'), inviteCode);
       }
     }
   };
@@ -49,8 +51,8 @@ export function InviteCodeSection({
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `Join "${groupName}" on Wishlist App!\n\nInvite Code: ${inviteCode}`,
-        title: `Join ${groupName}`,
+        message: t('groups.shareMessage', { name: groupName, code: inviteCode }),
+        title: t('groups.joinGroupTitle', { name: groupName }),
       });
     } catch (error) {
       console.error('Error sharing invite code:', error);
@@ -59,12 +61,12 @@ export function InviteCodeSection({
 
   const handleRegenerate = () => {
     Alert.alert(
-      'Regenerate Code?',
-      'The current code will stop working immediately. Anyone with the old code won\'t be able to join.',
+      t('groups.inviteSection.regenerateTitle'),
+      t('groups.inviteSection.regenerateMessage'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Regenerate',
+          text: t('groups.inviteSection.regenerate'),
           style: 'destructive',
           onPress: async () => {
             setIsRegenerating(true);
@@ -73,11 +75,11 @@ export function InviteCodeSection({
               if (error) throw error;
               if (newCode) {
                 onCodeRegenerated(newCode);
-                Alert.alert('Done', 'New invite code generated');
+                Alert.alert(t('common.done'), t('groups.inviteSection.regeneratedSuccess'));
               }
             } catch (error) {
               console.error('Error regenerating invite code:', error);
-              Alert.alert('Error', 'Failed to regenerate invite code');
+              Alert.alert(t('alerts.titles.error'), t('groups.inviteSection.regenerateFailed'));
             } finally {
               setIsRegenerating(false);
             }
@@ -106,7 +108,7 @@ export function InviteCodeSection({
             size={18}
             color={colors.white}
           />
-          <Text style={styles.actionButtonText}>Copy</Text>
+          <Text style={styles.actionButtonText}>{t('groups.inviteSection.copy')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -119,7 +121,7 @@ export function InviteCodeSection({
             size={18}
             color={colors.white}
           />
-          <Text style={styles.actionButtonText}>Share</Text>
+          <Text style={styles.actionButtonText}>{t('common.share')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -138,14 +140,14 @@ export function InviteCodeSection({
             />
           )}
           <Text style={[styles.actionButtonText, styles.regenerateButtonText]}>
-            New Code
+            {t('groups.inviteSection.newCode')}
           </Text>
         </TouchableOpacity>
       </View>
 
       {/* Info text */}
       <Text style={styles.infoText}>
-        Share this code with friends to invite them to the group
+        {t('groups.inviteSection.shareHint')}
       </Text>
     </View>
   );

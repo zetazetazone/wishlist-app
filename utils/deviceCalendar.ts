@@ -1,10 +1,16 @@
 /**
  * Device Calendar Sync Utility
  * Syncs birthday events to Google Calendar (Android) or Apple Calendar (iOS)
+ *
+ * Note: Calendar event text is created in app language when t() is provided,
+ * but device calendar display may vary based on system settings.
  */
 
 import * as Calendar from 'expo-calendar';
 import { Platform } from 'react-native';
+
+// Translation function type for localization support
+export type TranslationFn = (key: string, options?: Record<string, string | number>) => string;
 
 // Re-export types for consistency
 export type { GroupBirthday } from '../lib/birthdays';
@@ -79,7 +85,33 @@ export async function getOrCreateWishlistCalendar(): Promise<string> {
   // Check if our calendar already exists
   const existingCalendar = calendars.find(c => c.title === CALENDAR_NAME);
   if (existingCalendar) {
-    return existingCalendar.id;
+    // On Android, check if it's a synced calendar (not local-only)
+    // If it's local and we have a Google account available, delete and recreate
+    if (Platform.OS === 'android') {
+      const isLocalCalendar = existingCalendar.source?.type === Calendar.SourceType.LOCAL ||
+                              existingCalendar.source?.isLocalAccount === true;
+      const hasGoogleAccount = calendars.some(c =>
+        c.source?.name?.includes('@gmail.com') ||
+        c.source?.name?.includes('@googlemail.com') ||
+        c.ownerAccount?.includes('@gmail.com')
+      );
+
+      if (isLocalCalendar && hasGoogleAccount) {
+        // Delete local calendar to recreate with Google sync
+        try {
+          await Calendar.deleteCalendarAsync(existingCalendar.id);
+          console.log('Deleted local calendar to recreate with Google sync');
+        } catch (e) {
+          console.warn('Could not delete local calendar:', e);
+          return existingCalendar.id; // Fall back to existing
+        }
+        // Continue to create new calendar with Google source below
+      } else {
+        return existingCalendar.id;
+      }
+    } else {
+      return existingCalendar.id;
+    }
   }
 
   // Find appropriate source for the new calendar
@@ -91,14 +123,28 @@ export async function getOrCreateWishlistCalendar(): Promise<string> {
           ?? calendars.find(c => c.source?.type === Calendar.SourceType.LOCAL)?.source
           ?? calendars[0]?.source; // Fallback to any available source
   } else {
-    // Android: Create a local calendar
-    // We need to find a local source or use a local account
+    // Android: Prefer Google Calendar for sync, fall back to local
+    // Look for Google account calendar first (syncs to Google Calendar)
+    const googleSource = calendars.find(c =>
+      c.source?.name?.includes('@gmail.com') ||
+      c.source?.name?.includes('@googlemail.com') ||
+      c.source?.name?.toLowerCase().includes('google') ||
+      c.ownerAccount?.includes('@gmail.com') ||
+      c.ownerAccount?.includes('@googlemail.com')
+    )?.source;
+
+    // Fall back to any synced calendar, then local
+    const syncedSource = calendars.find(c =>
+      c.source?.type !== Calendar.SourceType.LOCAL &&
+      c.source?.isLocalAccount !== true
+    )?.source;
+
     const localSource = calendars.find(c =>
       c.source?.type === Calendar.SourceType.LOCAL ||
       c.source?.isLocalAccount === true
     )?.source;
 
-    source = localSource ?? {
+    source = googleSource ?? syncedSource ?? localSource ?? {
       isLocalAccount: true,
       name: 'Wishlist',
       type: Calendar.SourceType.LOCAL,
@@ -111,6 +157,11 @@ export async function getOrCreateWishlistCalendar(): Promise<string> {
 
   // Create the calendar
   try {
+    // For Android with Google source, use the email as ownerAccount for sync
+    const ownerAccount = Platform.OS === 'ios'
+      ? source.name
+      : source.name?.includes('@') ? source.name : 'Wishlist App';
+
     const calendarId = await Calendar.createCalendarAsync({
       title: CALENDAR_NAME,
       color: CALENDAR_COLOR,
@@ -119,7 +170,7 @@ export async function getOrCreateWishlistCalendar(): Promise<string> {
       source,
       name: 'wishlistBirthdays',
       accessLevel: Calendar.CalendarAccessLevel.OWNER,
-      ownerAccount: Platform.OS === 'ios' ? source.name : 'Wishlist App',
+      ownerAccount,
     });
 
     return calendarId;
@@ -222,11 +273,17 @@ function getNextOccurrence(month: number, day: number): Date {
 /**
  * Sync a single birthday event to the device calendar
  * Creates a yearly recurring event with reminders
+ *
+ * @param userName - Name of the birthday person
+ * @param birthday - Birthday date
+ * @param groupName - Name of the group
+ * @param t - Optional translation function for localized event titles
  */
 export async function syncBirthdayEvent(
   userName: string,
   birthday: Date | string,
-  groupName: string
+  groupName: string,
+  t?: TranslationFn
 ): Promise<SyncResult> {
   try {
     const calendarId = await getOrCreateWishlistCalendar();
@@ -234,13 +291,45 @@ export async function syncBirthdayEvent(
     // Calculate next occurrence
     const eventDate = getNextBirthdayOccurrence(birthday);
 
+    // Android bug: CalendarProvider2.fixAllDayTime() can't parse duration format
+    // for all-day recurring events (tries to parse "T86400" as integer).
+    // Workaround: On Android, use timed event (midnight to 11:59 PM) instead of allDay.
+    // This bypasses fixAllDayTime() and allows recurring events to work.
+    // See: https://github.com/SufficientlySecure/calendar-import-export/issues/78
+
+    const isAndroid = Platform.OS === 'android';
+
+    let startDate: Date;
+    let endDate: Date;
+
+    if (isAndroid) {
+      // Use timed event: midnight to 11:59:59 PM (avoids fixAllDayTime bug)
+      startDate = new Date(eventDate);
+      startDate.setHours(0, 0, 0, 0);
+      endDate = new Date(eventDate);
+      endDate.setHours(23, 59, 59, 999);
+    } else {
+      // iOS: Use proper all-day event
+      startDate = eventDate;
+      endDate = new Date(eventDate);
+      endDate.setDate(endDate.getDate() + 1);
+    }
+
+    // Create event title and notes (localized if t is provided)
+    const eventTitle = t
+      ? t('calendar.eventTitle.birthday', { name: userName })
+      : `${userName}'s Birthday`;
+    const eventNotes = t
+      ? t('calendar.eventNotes.birthday', { group: groupName })
+      : `Birthday celebration for ${groupName} group - Wishlist App`;
+
     // Create the event
     const eventId = await Calendar.createEventAsync(calendarId, {
-      title: `${userName}'s Birthday`,
-      notes: `Birthday celebration for ${groupName} group - Wishlist App`,
-      startDate: eventDate,
-      endDate: eventDate,
-      allDay: true,
+      title: eventTitle,
+      notes: eventNotes,
+      startDate,
+      endDate,
+      allDay: !isAndroid, // Only use allDay on iOS
       alarms: [
         { relativeOffset: -10080 }, // 1 week before (7 days * 24 hours * 60 minutes)
         { relativeOffset: -1440 },  // 1 day before (24 hours * 60 minutes)
@@ -263,9 +352,13 @@ export async function syncBirthdayEvent(
 /**
  * Sync a friend date event to the device calendar
  * Creates a yearly recurring event with reminders
+ *
+ * @param friendDate - Friend date data
+ * @param t - Optional translation function for localized event titles
  */
 export async function syncFriendDateEvent(
-  friendDate: FriendDate
+  friendDate: FriendDate,
+  t?: TranslationFn
 ): Promise<SyncResult> {
   try {
     const calendarId = await getOrCreateWishlistCalendar();
@@ -273,22 +366,49 @@ export async function syncFriendDateEvent(
     // Construct date from month/day using current year
     const eventDate = getNextOccurrence(friendDate.month, friendDate.day);
 
-    // Format title based on type
-    const title = friendDate.type === 'birthday'
-      ? `${friendDate.title}'s Birthday`
-      : friendDate.title;
+    // Android bug workaround: Use timed event instead of allDay
+    const isAndroid = Platform.OS === 'android';
 
-    // Format notes with friend context
-    const notes = friendDate.type === 'birthday'
-      ? `Friend birthday - ${friendDate.friendName} - Wishlist App`
-      : `${friendDate.friendName}'s special date - Wishlist App`;
+    let startDate: Date;
+    let endDate: Date;
+
+    if (isAndroid) {
+      // Use timed event: midnight to 11:59:59 PM (avoids fixAllDayTime bug)
+      startDate = new Date(eventDate);
+      startDate.setHours(0, 0, 0, 0);
+      endDate = new Date(eventDate);
+      endDate.setHours(23, 59, 59, 999);
+    } else {
+      // iOS: Use proper all-day event
+      startDate = eventDate;
+      endDate = new Date(eventDate);
+      endDate.setDate(endDate.getDate() + 1);
+    }
+
+    // Format title based on type (localized if t is provided)
+    let title: string;
+    let notes: string;
+
+    if (friendDate.type === 'birthday') {
+      title = t
+        ? t('calendar.eventTitle.friendBirthday', { name: friendDate.title })
+        : `${friendDate.title}'s Birthday`;
+      notes = t
+        ? t('calendar.eventNotes.friendBirthday', { friend: friendDate.friendName })
+        : `Friend birthday - ${friendDate.friendName} - Wishlist App`;
+    } else {
+      title = friendDate.title;
+      notes = t
+        ? t('calendar.eventNotes.specialDate', { friend: friendDate.friendName })
+        : `${friendDate.friendName}'s special date - Wishlist App`;
+    }
 
     const eventId = await Calendar.createEventAsync(calendarId, {
       title,
       notes,
-      startDate: eventDate,
-      endDate: eventDate,
-      allDay: true,
+      startDate,
+      endDate,
+      allDay: !isAndroid, // Only use allDay on iOS
       alarms: [
         { relativeOffset: -10080 }, // 1 week before
         { relativeOffset: -1440 },  // 1 day before
@@ -311,8 +431,11 @@ export async function syncFriendDateEvent(
 /**
  * Sync all birthdays to the device calendar
  * Returns results for each sync attempt
+ *
+ * @param birthdays - Array of birthday data
+ * @param t - Optional translation function for localized event titles
  */
-export async function syncAllBirthdays(birthdays: GroupBirthday[]): Promise<SyncResult[]> {
+export async function syncAllBirthdays(birthdays: GroupBirthday[], t?: TranslationFn): Promise<SyncResult[]> {
   if (birthdays.length === 0) {
     return [];
   }
@@ -335,7 +458,8 @@ export async function syncAllBirthdays(birthdays: GroupBirthday[]): Promise<Sync
     const result = await syncBirthdayEvent(
       birthday.userName,
       birthday.birthday,
-      birthday.groupName
+      birthday.groupName,
+      t
     );
     results.push(result);
   }
@@ -346,10 +470,15 @@ export async function syncAllBirthdays(birthdays: GroupBirthday[]): Promise<Sync
 /**
  * Sync all calendar events (group birthdays + friend dates) to device calendar
  * Returns results for each sync attempt
+ *
+ * @param birthdays - Array of birthday data
+ * @param friendDates - Array of friend date data
+ * @param t - Optional translation function for localized event titles
  */
 export async function syncAllCalendarEvents(
   birthdays: GroupBirthday[],
-  friendDates: FriendDate[]
+  friendDates: FriendDate[],
+  t?: TranslationFn
 ): Promise<SyncResult[]> {
   const totalEvents = birthdays.length + friendDates.length;
   if (totalEvents === 0) {
@@ -373,14 +502,15 @@ export async function syncAllCalendarEvents(
     const result = await syncBirthdayEvent(
       birthday.userName,
       birthday.birthday,
-      birthday.groupName
+      birthday.groupName,
+      t
     );
     results.push(result);
   }
 
   // Sync friend dates
   for (const friendDate of friendDates) {
-    const result = await syncFriendDateEvent(friendDate);
+    const result = await syncFriendDateEvent(friendDate, t);
     results.push(result);
   }
 

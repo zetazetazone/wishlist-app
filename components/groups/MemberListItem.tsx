@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius } from '../../constants/theme';
 
@@ -31,6 +32,7 @@ export function MemberListItem({
   onRemove,
   onMakeAdmin,
 }: MemberListItemProps) {
+  const { t } = useTranslation();
   const isAdmin = member.role === 'admin';
 
   // Show action buttons only when viewer is admin, target is not self, and target is not admin
@@ -105,7 +107,7 @@ export function MemberListItem({
             {member.full_name}
             {isCurrentUser && (
               <Text style={{ color: colors.cream[600], fontWeight: '400' }}>
-                {' '}(You)
+                {' '}({t('common.you')})
               </Text>
             )}
           </Text>
@@ -135,7 +137,7 @@ export function MemberListItem({
                   fontWeight: '700',
                 }}
               >
-                ADMIN
+                {t('groups.admin').toUpperCase()}
               </Text>
             </View>
           </View>

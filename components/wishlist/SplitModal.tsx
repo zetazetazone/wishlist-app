@@ -16,6 +16,7 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   BottomSheetModal,
@@ -61,6 +62,7 @@ export function SplitModal({
   suggestedAmount,
   loading = false,
 }: SplitModalProps) {
+  const { t } = useTranslation();
   const [amount, setAmount] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -110,13 +112,13 @@ export function SplitModal({
 
     // Validate positive amount
     if (isNaN(numAmount) || numAmount <= 0) {
-      setError('Enter a positive amount');
+      setError(t('wishlist.split.enterPositiveAmount'));
       return;
     }
 
     // Validate not exceeding remaining
     if (numAmount > remaining) {
-      setError(`Amount exceeds remaining (${formatCurrency(remaining)})`);
+      setError(t('wishlist.split.amountExceedsRemaining', { amount: formatCurrency(remaining) }));
       return;
     }
 
@@ -172,7 +174,7 @@ export function SplitModal({
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title} numberOfLines={2}>
-            Contribute to {itemTitle}
+            {t('wishlist.split.contributeTo', { item: itemTitle })}
           </Text>
           <Pressable onPress={onClose} style={styles.closeButton}>
             <MaterialCommunityIcons
@@ -186,16 +188,16 @@ export function SplitModal({
         {/* Progress Info */}
         <View style={styles.progressInfo}>
           <Text style={styles.progressText}>
-            {formatCurrency(totalPledged)} of {formatCurrency(totalTarget)} funded
+            {t('wishlist.split.amountOfFunded', { pledged: formatCurrency(totalPledged), target: formatCurrency(totalTarget) })}
           </Text>
           <Text style={styles.remainingText}>
-            {formatCurrency(remaining)} remaining
+            {t('wishlist.split.amountRemaining', { amount: formatCurrency(remaining) })}
           </Text>
         </View>
 
         {/* Amount Input - Using BottomSheetTextInput for proper keyboard handling */}
         <View style={styles.inputSection}>
-          <Text style={styles.inputLabel}>Your Pledge</Text>
+          <Text style={styles.inputLabel}>{t('wishlist.split.yourPledge')}</Text>
           <View style={styles.inputWrapper}>
             <Text style={styles.currencySymbol}>$</Text>
             <BottomSheetTextInput
@@ -225,7 +227,7 @@ export function SplitModal({
               color={colors.burgundy[600]}
             />
             <Text style={styles.suggestedText}>
-              Split equally: {formatCurrency(Math.min(suggestedAmount, remaining))}
+              {t('wishlist.split.splitEqually', { amount: formatCurrency(Math.min(suggestedAmount, remaining)) })}
             </Text>
           </Pressable>
         )}
@@ -237,7 +239,7 @@ export function SplitModal({
             onPress={onClose}
             disabled={loading}
           >
-            <Text style={styles.cancelButtonText}>Cancel</Text>
+            <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
           </Pressable>
 
           <Pressable
@@ -258,7 +260,7 @@ export function SplitModal({
                   color={colors.white}
                 />
                 <Text style={styles.confirmButtonText}>
-                  Pledge {amount ? formatCurrency(parseFloat(amount) || 0) : '$0'}
+                  {t('wishlist.split.pledgeAmount', { amount: amount ? formatCurrency(parseFloat(amount) || 0) : '$0' })}
                 </Text>
               </>
             )}

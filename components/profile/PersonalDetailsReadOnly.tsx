@@ -15,8 +15,9 @@
 
 import React from 'react';
 import { StyleSheet, View, Text, Linking } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { HStack, VStack } from '@gluestack-ui/themed';
-import { formatDistanceToNow } from 'date-fns';
+import { useLocalizedFormat } from '../../hooks/useLocalizedFormat';
 import type {
   PersonalSizes,
   PersonalPreferences,
@@ -102,14 +103,15 @@ function isSectionVisible(
 
 /**
  * Get display labels for size fields.
+ * Now using translation keys.
  */
-const sizeLabels: Record<keyof PersonalSizes, string> = {
-  shirt: 'Shirt',
-  pants: 'Pants',
-  shoe: 'Shoe',
-  ring: 'Ring',
-  dress: 'Dress',
-  jacket: 'Jacket',
+const sizeLabelsKeys: Record<keyof PersonalSizes, string> = {
+  shirt: 'profile.personalDetails.shirt',
+  pants: 'profile.personalDetails.pants',
+  shoe: 'profile.personalDetails.shoe',
+  ring: 'profile.personalDetails.ring',
+  dress: 'profile.personalDetails.dress',
+  jacket: 'profile.personalDetails.jacket',
 };
 
 export function PersonalDetailsReadOnly({
@@ -122,6 +124,9 @@ export function PersonalDetailsReadOnly({
   updatedAt,
   isGroupMember = false,
 }: PersonalDetailsReadOnlyProps) {
+  const { t } = useTranslation();
+  const { formatDistanceToNow } = useLocalizedFormat();
+
   const handleOpenLink = (url: string) => {
     Linking.openURL(url).catch((err) =>
       console.error('Failed to open URL:', err)
@@ -139,22 +144,22 @@ export function PersonalDetailsReadOnly({
       {/* Last Updated */}
       {updatedAt && (
         <Text style={styles.updatedText}>
-          Updated {formatDistanceToNow(new Date(updatedAt), { addSuffix: true })}
+          {t('profile.personalDetails.lastUpdated', { date: formatDistanceToNow(new Date(updatedAt), { addSuffix: true }) })}
         </Text>
       )}
 
       {/* Sizes Section */}
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Clothing Sizes</Text>
+        <Text style={styles.sectionTitle}>{t('profile.personalDetails.clothingSizes')}</Text>
         {hasSizes(sizes) ? (
           <View style={styles.sizesGrid}>
-            {(Object.entries(sizeLabels) as [keyof PersonalSizes, string][]).map(
-              ([key, label]) => {
+            {(Object.entries(sizeLabelsKeys) as [keyof PersonalSizes, string][]).map(
+              ([key, labelKey]) => {
                 const value = sizes[key];
                 if (!value || !value.trim()) return null;
                 return (
                   <View key={key} style={styles.sizeRow}>
-                    <Text style={styles.sizeLabel}>{label}</Text>
+                    <Text style={styles.sizeLabel}>{t(labelKey as any)}</Text>
                     <Text style={styles.sizeValue}>{value}</Text>
                   </View>
                 );
@@ -162,19 +167,19 @@ export function PersonalDetailsReadOnly({
             )}
           </View>
         ) : (
-          <Text style={styles.emptyText}>No sizes added yet</Text>
+          <Text style={styles.emptyText}>{t('profile.personalDetails.noSizesYet')}</Text>
         )}
       </View>
 
       {/* Preferences Section */}
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Preferences</Text>
+        <Text style={styles.sectionTitle}>{t('profile.personalDetails.preferences')}</Text>
         {hasPreferences(preferences) ? (
           <VStack space="md">
             {/* Colors */}
             {preferences.colors && preferences.colors.length > 0 && (
               <View>
-                <Text style={styles.subSectionTitle}>Favorite Colors</Text>
+                <Text style={styles.subSectionTitle}>{t('profile.personalDetails.favoriteColors')}</Text>
                 <HStack flexWrap="wrap">
                   {preferences.colors.map((tag, idx) => (
                     <TagChip
@@ -190,7 +195,7 @@ export function PersonalDetailsReadOnly({
             {/* Brands */}
             {preferences.brands && preferences.brands.length > 0 && (
               <View>
-                <Text style={styles.subSectionTitle}>Favorite Brands</Text>
+                <Text style={styles.subSectionTitle}>{t('profile.personalDetails.favoriteBrands')}</Text>
                 <HStack flexWrap="wrap">
                   {preferences.brands.map((tag, idx) => (
                     <TagChip
@@ -206,7 +211,7 @@ export function PersonalDetailsReadOnly({
             {/* Interests */}
             {preferences.interests && preferences.interests.length > 0 && (
               <View>
-                <Text style={styles.subSectionTitle}>Interests</Text>
+                <Text style={styles.subSectionTitle}>{t('profile.personalDetails.interests')}</Text>
                 <HStack flexWrap="wrap">
                   {preferences.interests.map((tag, idx) => (
                     <TagChip
@@ -222,7 +227,7 @@ export function PersonalDetailsReadOnly({
             {/* Dislikes */}
             {preferences.dislikes && preferences.dislikes.length > 0 && (
               <View>
-                <Text style={styles.subSectionTitle}>Dislikes</Text>
+                <Text style={styles.subSectionTitle}>{t('profile.personalDetails.dislikes')}</Text>
                 <HStack flexWrap="wrap">
                   {preferences.dislikes.map((tag, idx) => (
                     <View key={`dislike-${idx}`} style={styles.dislikeChip}>
@@ -234,13 +239,13 @@ export function PersonalDetailsReadOnly({
             )}
           </VStack>
         ) : (
-          <Text style={styles.emptyText}>No preferences added yet</Text>
+          <Text style={styles.emptyText}>{t('profile.personalDetails.noPreferencesYet')}</Text>
         )}
       </View>
 
       {/* External Wishlists Section */}
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>External Wishlists</Text>
+        <Text style={styles.sectionTitle}>{t('profile.personalDetails.externalWishlists')}</Text>
         {externalLinks.length > 0 ? (
           <VStack space="sm">
             {externalLinks.map((link, idx) => (
@@ -253,7 +258,7 @@ export function PersonalDetailsReadOnly({
             ))}
           </VStack>
         ) : (
-          <Text style={styles.emptyText}>No external wishlists added</Text>
+          <Text style={styles.emptyText}>{t('profile.personalDetails.noExternalWishlists')}</Text>
         )}
       </View>
 
@@ -261,7 +266,7 @@ export function PersonalDetailsReadOnly({
       {showDeliveryAddress && deliveryAddress && (
         <View style={styles.card}>
           <HStack style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Delivery Address</Text>
+            <Text style={styles.sectionTitle}>{t('profile.personalDetails.deliveryAddress')}</Text>
             <MaterialCommunityIcons
               name={visibility?.delivery_address === 'public' ? 'earth' : 'account-group'}
               size={16}
@@ -289,7 +294,7 @@ export function PersonalDetailsReadOnly({
       {showBankDetails && bankDetails && (
         <View style={styles.card}>
           <HStack style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Bank Details</Text>
+            <Text style={styles.sectionTitle}>{t('profile.personalDetails.bankDetails')}</Text>
             <MaterialCommunityIcons
               name={visibility?.bank_details === 'public' ? 'earth' : 'account-group'}
               size={16}
@@ -299,25 +304,25 @@ export function PersonalDetailsReadOnly({
           <View style={styles.bankDetailsGrid}>
             {bankDetails.account_holder && (
               <View style={styles.bankRow}>
-                <Text style={styles.bankLabel}>Account Holder</Text>
+                <Text style={styles.bankLabel}>{t('profile.personalDetails.accountHolderLabel')}</Text>
                 <Text style={styles.bankValue}>{bankDetails.account_holder}</Text>
               </View>
             )}
             {bankDetails.iban && (
               <View style={styles.bankRow}>
-                <Text style={styles.bankLabel}>IBAN</Text>
+                <Text style={styles.bankLabel}>{t('profile.personalDetails.iban')}</Text>
                 <Text style={styles.bankValue}>{maskSensitive(bankDetails.iban)}</Text>
               </View>
             )}
             {bankDetails.account_number && !bankDetails.iban && (
               <View style={styles.bankRow}>
-                <Text style={styles.bankLabel}>Account Number</Text>
+                <Text style={styles.bankLabel}>{t('profile.personalDetails.accountNumberLabel')}</Text>
                 <Text style={styles.bankValue}>{maskSensitive(bankDetails.account_number)}</Text>
               </View>
             )}
             {bankDetails.bank_name && (
               <View style={styles.bankRow}>
-                <Text style={styles.bankLabel}>Bank</Text>
+                <Text style={styles.bankLabel}>{t('profile.personalDetails.bankLabel')}</Text>
                 <Text style={styles.bankValue}>{bankDetails.bank_name}</Text>
               </View>
             )}

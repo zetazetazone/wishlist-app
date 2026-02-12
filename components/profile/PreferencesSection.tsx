@@ -9,6 +9,7 @@
 
 import React from 'react';
 import { StyleSheet, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { VStack, Heading } from '@gluestack-ui/themed';
 import type { PersonalPreferences, PreferenceTag } from '../../types/database.types';
 import { TagInput } from './TagInput';
@@ -37,6 +38,7 @@ interface PreferencesSectionProps {
 }
 
 export function PreferencesSection({ preferences, onChange }: PreferencesSectionProps) {
+  const { t } = useTranslation();
   const updatePreference = (
     key: keyof PersonalPreferences,
     tags: PreferenceTag[]
@@ -46,47 +48,47 @@ export function PreferencesSection({ preferences, onChange }: PreferencesSection
 
   return (
     <VStack space="lg" style={styles.section}>
-      <Heading size="sm">Preferences</Heading>
+      <Heading size="sm">{t('profile.personalDetails.preferences')}</Heading>
 
       {/* Favorite Colors */}
       <VStack space="xs">
-        <Text style={styles.label}>Favorite Colors</Text>
+        <Text style={styles.label}>{t('profile.personalDetails.favoriteColors')}</Text>
         <TagInput
           tags={preferences.colors || []}
           onChange={(tags) => updatePreference('colors', tags)}
           predefinedOptions={COLOR_OPTIONS}
-          placeholder="Add custom color..."
+          placeholder={t('profile.personalDetails.addCustomColor')}
         />
       </VStack>
 
       {/* Favorite Brands */}
       <VStack space="xs">
-        <Text style={styles.label}>Favorite Brands</Text>
+        <Text style={styles.label}>{t('profile.personalDetails.favoriteBrands')}</Text>
         <TagInput
           tags={preferences.brands || []}
           onChange={(tags) => updatePreference('brands', tags)}
-          placeholder="Add brands you love"
+          placeholder={t('profile.personalDetails.addBrands')}
         />
       </VStack>
 
       {/* Interests */}
       <VStack space="xs">
-        <Text style={styles.label}>Interests</Text>
+        <Text style={styles.label}>{t('profile.personalDetails.interests')}</Text>
         <TagInput
           tags={preferences.interests || []}
           onChange={(tags) => updatePreference('interests', tags)}
-          placeholder="Add hobbies or interests"
+          placeholder={t('profile.personalDetails.addInterests')}
         />
       </VStack>
 
       {/* Dislikes */}
       <VStack space="xs">
-        <Text style={styles.label}>Dislikes</Text>
-        <Text style={styles.warningHint}>Things to avoid when choosing gifts</Text>
+        <Text style={styles.label}>{t('profile.personalDetails.dislikes')}</Text>
+        <Text style={styles.warningHint}>{t('profile.personalDetails.dislikesHint')}</Text>
         <TagInput
           tags={preferences.dislikes || []}
           onChange={(tags) => updatePreference('dislikes', tags)}
-          placeholder="Things to avoid"
+          placeholder={t('profile.personalDetails.addDislikes')}
         />
       </VStack>
     </VStack>

@@ -16,6 +16,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Alert, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import {
   VStack,
   Heading,
@@ -45,6 +46,7 @@ import { colors, spacing } from '@/constants/theme';
 
 export default function PersonalDetailsScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   // Loading and saving states
   const [isLoading, setIsLoading] = useState(true);
@@ -87,7 +89,7 @@ export default function PersonalDetailsScreen() {
       }
     } catch (error) {
       console.error('Error loading personal details:', error);
-      Alert.alert('Error', 'Failed to load personal details');
+      Alert.alert(t('alerts.titles.error'), t('profile.personalDetails.failedToLoad'));
     } finally {
       setIsLoading(false);
     }
@@ -105,12 +107,12 @@ export default function PersonalDetailsScreen() {
         bank_details: bankDetails,
         visibility,
       });
-      Alert.alert('Success', 'Personal details saved', [
-        { text: 'OK', onPress: () => router.back() },
+      Alert.alert(t('common.success'), t('profile.personalDetails.saved'), [
+        { text: t('common.ok'), onPress: () => router.back() },
       ]);
     } catch (error) {
       console.error('Error saving personal details:', error);
-      Alert.alert('Error', 'Failed to save personal details');
+      Alert.alert(t('alerts.titles.error'), t('profile.personalDetails.failedToSave'));
     } finally {
       setIsSaving(false);
     }
@@ -141,7 +143,7 @@ export default function PersonalDetailsScreen() {
     >
       <VStack space="lg" flex={1}>
         {/* Header */}
-        <Heading size="lg">Personal Details</Heading>
+        <Heading size="lg">{t('profile.personalDetails.title')}</Heading>
 
         {/* Completeness Indicator */}
         <CompletenessIndicator result={completeness} />
@@ -158,7 +160,7 @@ export default function PersonalDetailsScreen() {
         {/* Delivery Address Section */}
         <VStack space="sm">
           <VisibilityToggle
-            label="Delivery Address Visibility"
+            label={t('profile.personalDetails.deliveryAddressVisibility')}
             value={visibility.delivery_address || 'friends_only'}
             onChange={(val) => setVisibility({ ...visibility, delivery_address: val })}
           />
@@ -171,7 +173,7 @@ export default function PersonalDetailsScreen() {
         {/* Bank Details Section */}
         <VStack space="sm">
           <VisibilityToggle
-            label="Bank Details Visibility"
+            label={t('profile.personalDetails.bankDetailsVisibility')}
             value={visibility.bank_details || 'friends_only'}
             onChange={(val) => setVisibility({ ...visibility, bank_details: val })}
           />
@@ -188,7 +190,7 @@ export default function PersonalDetailsScreen() {
             onPress={handleSave}
             isDisabled={isSaving}
           >
-            <ButtonText>{isSaving ? 'Saving...' : 'Save Changes'}</ButtonText>
+            <ButtonText>{isSaving ? t('common.saving') : t('profile.saveChanges')}</ButtonText>
           </Button>
         </Box>
       </VStack>

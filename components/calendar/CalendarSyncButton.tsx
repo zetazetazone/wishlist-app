@@ -12,6 +12,7 @@ import {
   Alert,
   View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   checkCalendarPermission,
@@ -36,15 +37,16 @@ export function CalendarSyncButton({
   onSyncComplete,
   style,
 }: CalendarSyncButtonProps) {
+  const { t } = useTranslation();
   const [syncing, setSyncing] = useState(false);
   const [syncComplete, setSyncComplete] = useState(false);
 
   const handleSync = useCallback(async () => {
     if (birthdays.length === 0 && friendDates.length === 0) {
       Alert.alert(
-        'No Events to Sync',
-        'There are no calendar events to sync.',
-        [{ text: 'OK' }]
+        t('calendar.sync.noEventsTitle'),
+        t('calendar.sync.noEventsMessage'),
+        [{ text: t('common.ok') }]
       );
       return;
     }
@@ -61,9 +63,9 @@ export function CalendarSyncButton({
 
         if (!granted) {
           Alert.alert(
-            'Permission Required',
-            'Calendar access is required to sync birthdays. Please enable calendar access in your device settings.',
-            [{ text: 'OK' }]
+            t('calendar.sync.permissionTitle'),
+            t('calendar.sync.permissionMessage'),
+            [{ text: t('common.ok') }]
           );
           setSyncing(false);
           return;
@@ -77,22 +79,22 @@ export function CalendarSyncButton({
 
       if (summary.failed === 0) {
         Alert.alert(
-          'Sync Complete',
-          `Successfully synced ${summary.success} event${summary.success > 1 ? 's' : ''} to your calendar.`,
-          [{ text: 'OK' }]
+          t('calendar.sync.completeTitle'),
+          t('calendar.sync.completeMessage', { count: summary.success }),
+          [{ text: t('common.ok') }]
         );
         setSyncComplete(true);
       } else if (summary.success === 0) {
         Alert.alert(
-          'Sync Failed',
-          'Failed to sync events to your calendar. Please try again.',
-          [{ text: 'OK' }]
+          t('calendar.sync.failedTitle'),
+          t('calendar.sync.failedMessage'),
+          [{ text: t('common.ok') }]
         );
       } else {
         Alert.alert(
-          'Partial Sync',
-          `Synced ${summary.success} of ${summary.total} events. ${summary.failed} failed.`,
-          [{ text: 'OK' }]
+          t('calendar.sync.partialTitle'),
+          t('calendar.sync.partialMessage', { success: summary.success, total: summary.total, failed: summary.failed }),
+          [{ text: t('common.ok') }]
         );
         setSyncComplete(true);
       }
@@ -102,14 +104,14 @@ export function CalendarSyncButton({
     } catch (error) {
       console.error('Calendar sync error:', error);
       Alert.alert(
-        'Sync Error',
-        error instanceof Error ? error.message : 'An unexpected error occurred.',
-        [{ text: 'OK' }]
+        t('calendar.sync.errorTitle'),
+        error instanceof Error ? error.message : t('calendar.sync.errorMessage'),
+        [{ text: t('common.ok') }]
       );
     } finally {
       setSyncing(false);
     }
-  }, [birthdays, friendDates, onSyncComplete]);
+  }, [birthdays, friendDates, onSyncComplete, t]);
 
   return (
     <TouchableOpacity
@@ -126,7 +128,7 @@ export function CalendarSyncButton({
       {syncing ? (
         <>
           <ActivityIndicator size="small" color="#ffffff" />
-          <Text style={styles.buttonText}>Syncing...</Text>
+          <Text style={styles.buttonText}>{t('calendar.sync.syncing')}</Text>
         </>
       ) : (
         <>
@@ -136,7 +138,7 @@ export function CalendarSyncButton({
             color="#ffffff"
           />
           <Text style={styles.buttonText}>
-            {syncComplete ? 'Synced!' : 'Sync to Calendar'}
+            {syncComplete ? t('calendar.sync.synced') : t('calendar.sync.syncToCalendar')}
           </Text>
         </>
       )}
@@ -151,15 +153,16 @@ export function CalendarSyncIconButton({
   onSyncComplete,
   style,
 }: CalendarSyncButtonProps) {
+  const { t } = useTranslation();
   const [syncing, setSyncing] = useState(false);
   const [syncComplete, setSyncComplete] = useState(false);
 
   const handleSync = useCallback(async () => {
     if (birthdays.length === 0 && friendDates.length === 0) {
       Alert.alert(
-        'No Events',
-        'There are no calendar events to sync.',
-        [{ text: 'OK' }]
+        t('calendar.sync.noEventsShort'),
+        t('calendar.sync.noEventsMessage'),
+        [{ text: t('common.ok') }]
       );
       return;
     }
@@ -173,9 +176,9 @@ export function CalendarSyncIconButton({
         const granted = await requestCalendarPermission();
         if (!granted) {
           Alert.alert(
-            'Permission Required',
-            'Calendar access is required. Please enable it in Settings.',
-            [{ text: 'OK' }]
+            t('calendar.sync.permissionTitle'),
+            t('calendar.sync.permissionShortMessage'),
+            [{ text: t('common.ok') }]
           );
           setSyncing(false);
           return;
@@ -188,26 +191,26 @@ export function CalendarSyncIconButton({
       const summary = getSyncSummary(results);
 
       if (summary.failed === 0) {
-        Alert.alert('Success', `Synced ${summary.success} event${summary.success > 1 ? 's' : ''}!`, [{ text: 'OK' }]);
+        Alert.alert(t('common.success'), t('calendar.sync.syncedCount', { count: summary.success }), [{ text: t('common.ok') }]);
         setSyncComplete(true);
       } else {
         Alert.alert(
-          summary.success > 0 ? 'Partial Sync' : 'Failed',
+          summary.success > 0 ? t('calendar.sync.partialTitle') : t('calendar.sync.failedShort'),
           summary.success > 0
-            ? `${summary.success}/${summary.total} synced`
-            : 'Could not sync events',
-          [{ text: 'OK' }]
+            ? t('calendar.sync.partialShort', { success: summary.success, total: summary.total })
+            : t('calendar.sync.couldNotSync'),
+          [{ text: t('common.ok') }]
         );
       }
 
       onSyncComplete?.(results);
     } catch (error) {
       console.error('Sync error:', error);
-      Alert.alert('Error', 'Failed to sync. Please try again.', [{ text: 'OK' }]);
+      Alert.alert(t('common.error'), t('calendar.sync.tryAgain'), [{ text: t('common.ok') }]);
     } finally {
       setSyncing(false);
     }
-  }, [birthdays, friendDates, onSyncComplete]);
+  }, [birthdays, friendDates, onSyncComplete, t]);
 
   return (
     <TouchableOpacity

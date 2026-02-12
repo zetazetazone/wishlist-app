@@ -9,6 +9,7 @@
 
 import React, { useState } from 'react';
 import { StyleSheet, Text, Modal, Linking, Alert, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import {
   VStack,
   HStack,
@@ -30,6 +31,7 @@ interface ExternalLinksSectionProps {
 }
 
 export function ExternalLinksSection({ links, onChange }: ExternalLinksSectionProps) {
+  const { t } = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
   const [urlInput, setUrlInput] = useState('');
   const [labelInput, setLabelInput] = useState('');
@@ -46,10 +48,10 @@ export function ExternalLinksSection({ links, onChange }: ExternalLinksSectionPr
     try {
       const urlObj = new URL(input);
       const isValid = urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
-      setUrlError(isValid ? '' : 'Please enter a valid URL (http or https)');
+      setUrlError(isValid ? '' : t('profile.personalDetails.urlErrorProtocol'));
       return isValid;
     } catch {
-      setUrlError('Please enter a valid URL');
+      setUrlError(t('profile.personalDetails.urlErrorInvalid'));
       return false;
     }
   };
@@ -81,11 +83,11 @@ export function ExternalLinksSection({ links, onChange }: ExternalLinksSectionPr
       if (canOpen) {
         await Linking.openURL(url);
       } else {
-        Alert.alert('Error', 'Cannot open this link');
+        Alert.alert(t('common.error'), t('profile.personalDetails.cannotOpenLink'));
       }
     } catch (error) {
       console.error('Error opening link:', error);
-      Alert.alert('Error', 'Failed to open link');
+      Alert.alert(t('common.error'), t('profile.personalDetails.failedOpenLink'));
     }
   };
 
@@ -101,9 +103,9 @@ export function ExternalLinksSection({ links, onChange }: ExternalLinksSectionPr
   return (
     <VStack space="md" style={styles.section}>
       <VStack space="xs">
-        <Heading size="sm">External Wishlists</Heading>
+        <Heading size="sm">{t('profile.personalDetails.externalWishlists')}</Heading>
         <Text style={styles.helperText}>
-          Link to wishlists on other sites (Amazon, Pinterest, etc.)
+          {t('profile.personalDetails.externalWishlistsHelper')}
         </Text>
       </VStack>
 
@@ -133,7 +135,7 @@ export function ExternalLinksSection({ links, onChange }: ExternalLinksSectionPr
             size={16}
             color={colors.burgundy[600]}
           />
-          <ButtonText>Add Link</ButtonText>
+          <ButtonText>{t('profile.personalDetails.addLink')}</ButtonText>
         </HStack>
       </Button>
 
@@ -147,14 +149,14 @@ export function ExternalLinksSection({ links, onChange }: ExternalLinksSectionPr
         <Pressable style={styles.modalOverlay} onPress={closeModal}>
           <Pressable style={styles.modalContent} onPress={(e) => e.stopPropagation()}>
             <VStack space="md">
-              <Heading size="md">Add External Wishlist</Heading>
+              <Heading size="md">{t('profile.personalDetails.addExternalWishlist')}</Heading>
 
               {/* URL Input */}
               <VStack space="xs">
-                <Text style={styles.label}>URL *</Text>
+                <Text style={styles.label}>{t('profile.personalDetails.urlRequired')}</Text>
                 <Input variant="outline" size="md">
                   <InputField
-                    placeholder="https://amazon.com/wishlist/..."
+                    placeholder={t('profile.personalDetails.urlPlaceholder')}
                     value={urlInput}
                     onChangeText={handleUrlChange}
                     autoCapitalize="none"
@@ -168,10 +170,10 @@ export function ExternalLinksSection({ links, onChange }: ExternalLinksSectionPr
 
               {/* Label Input */}
               <VStack space="xs">
-                <Text style={styles.label}>Label (optional)</Text>
+                <Text style={styles.label}>{t('profile.personalDetails.labelOptional')}</Text>
                 <Input variant="outline" size="md">
                   <InputField
-                    placeholder="My Amazon Wishlist"
+                    placeholder={t('profile.personalDetails.labelPlaceholder')}
                     value={labelInput}
                     onChangeText={setLabelInput}
                   />
@@ -181,10 +183,10 @@ export function ExternalLinksSection({ links, onChange }: ExternalLinksSectionPr
               {/* Action Buttons */}
               <HStack space="md" justifyContent="flex-end" marginTop="$2">
                 <Button variant="outline" onPress={closeModal}>
-                  <ButtonText>Cancel</ButtonText>
+                  <ButtonText>{t('common.cancel')}</ButtonText>
                 </Button>
                 <Button onPress={handleAdd} isDisabled={isAddDisabled}>
-                  <ButtonText>Add Link</ButtonText>
+                  <ButtonText>{t('profile.personalDetails.addLink')}</ButtonText>
                 </Button>
               </HStack>
             </VStack>

@@ -12,6 +12,7 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import * as ImagePicker from 'expo-image-picker';
 import { createGroup } from '../../utils/groups';
 import { uploadGroupPhotoFromUri } from '../../lib/storage';
@@ -27,6 +28,7 @@ interface CreateGroupModalProps {
 }
 
 export default function CreateGroupModal({ visible, onClose, onSuccess }: CreateGroupModalProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
@@ -47,7 +49,7 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
     // Request media library permissions
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission needed', 'Please grant photo library access to add a group photo.');
+      Alert.alert(t('alerts.titles.permissionNeeded'), t('groups.form.photoPermissionMessage'));
       return;
     }
 
@@ -66,7 +68,7 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
 
   const handleCreate = async () => {
     if (!name.trim()) {
-      Alert.alert('Error', 'Please enter a group name');
+      Alert.alert(t('alerts.titles.error'), t('groups.form.enterGroupName'));
       return;
     }
 
@@ -74,7 +76,7 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
     if (mode === 'gifts' && budgetApproach) {
       const budgetNum = parseFloat(budgetAmount);
       if (isNaN(budgetNum) || budgetNum <= 0) {
-        Alert.alert('Error', 'Please enter a valid budget amount');
+        Alert.alert(t('alerts.titles.error'), t('groups.form.enterValidBudget'));
         return;
       }
     }
@@ -100,8 +102,8 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
       console.error('Create group error:', error);
       const errorMessage = error instanceof Error
         ? error.message
-        : 'Failed to create group. Please try again.';
-      Alert.alert('Error', errorMessage);
+        : t('groups.form.failedToCreate');
+      Alert.alert(t('alerts.titles.error'), errorMessage);
       return;
     }
 
@@ -132,7 +134,7 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
     setBudgetApproach(null);
     setBudgetAmount('');
 
-    Alert.alert('Success!', `Group "${name}" created successfully`);
+    Alert.alert(t('common.success'), t('groups.form.groupCreatedSuccess', { name }));
     onSuccess();
     onClose();
   };
@@ -181,7 +183,7 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
           {/* Header */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
             <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#111827' }}>
-              Create Group
+              {t('groups.createGroup')}
             </Text>
             <TouchableOpacity onPress={handleClose}>
               <Text style={{ fontSize: 28, color: '#6B7280' }}>x</Text>
@@ -215,7 +217,7 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
               </TouchableOpacity>
               <TouchableOpacity onPress={handlePhotoUpload} disabled={loading}>
                 <Text style={{ color: '#0EA5E9', marginTop: 8, fontSize: 14 }}>
-                  {photoUri ? 'Change Photo' : 'Add Photo (Optional)'}
+                  {photoUri ? t('groups.form.changePhoto') : t('groups.form.addPhotoOptional')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -223,7 +225,7 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
             {/* Group Name */}
             <View style={{ marginBottom: 20 }}>
               <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 8 }}>
-                Group Name
+                {t('groups.groupName')}
               </Text>
               <TextInput
                 style={{
@@ -234,7 +236,7 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
                   fontSize: 16,
                   color: '#111827',
                 }}
-                placeholder="Friends & Family"
+                placeholder={t('groups.form.namePlaceholder')}
                 placeholderTextColor="#9CA3AF"
                 value={name}
                 onChangeText={setName}
@@ -246,7 +248,7 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
             {/* Description */}
             <View style={{ marginBottom: 20 }}>
               <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 8 }}>
-                Description (Optional)
+                {t('groups.form.descriptionOptional')}
               </Text>
               <TextInput
                 style={{
@@ -259,7 +261,7 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
                   minHeight: 100,
                   textAlignVertical: 'top',
                 }}
-                placeholder="What's this group about?"
+                placeholder={t('groups.form.descriptionPlaceholder')}
                 placeholderTextColor="#9CA3AF"
                 value={description}
                 onChangeText={setDescription}
@@ -269,14 +271,14 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
                 editable={!loading}
               />
               <Text style={{ fontSize: 12, color: '#6B7280', marginTop: 4 }}>
-                {description.length} / {MAX_DESCRIPTION} characters
+                {t('groups.form.characterCount', { current: description.length, max: MAX_DESCRIPTION })}
               </Text>
             </View>
 
             {/* Mode Selection */}
             <View style={{ marginBottom: 20 }}>
               <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 12 }}>
-                Group Mode
+                {t('groups.form.groupMode')}
               </Text>
 
               {/* Gifts Option */}
@@ -316,10 +318,10 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827' }}>
-                    Gifts
+                    {t('groups.modeCard.giftsTitle')}
                   </Text>
                   <Text style={{ fontSize: 13, color: '#6B7280', marginTop: 2 }}>
-                    Coordinate gifts with budget tracking and wishlists
+                    {t('groups.modeCard.giftsDescription')}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -360,10 +362,10 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={{ fontSize: 16, fontWeight: '600', color: '#111827' }}>
-                    Greetings Only
+                    {t('groups.modeCard.greetingsTitle')}
                   </Text>
                   <Text style={{ fontSize: 13, color: '#6B7280', marginTop: 2 }}>
-                    Collect digital birthday greetings without gifts
+                    {t('groups.modeCard.greetingsDescription')}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -373,7 +375,7 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
             {mode === 'gifts' && (
               <View style={{ marginBottom: 20 }}>
                 <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 12 }}>
-                  Budget Approach (Optional)
+                  {t('groups.budgetSection.approachOptional')}
                 </Text>
 
                 {/* Per Gift Option */}
@@ -412,10 +414,10 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={{ fontSize: 15, fontWeight: '500', color: '#111827' }}>
-                      Per Gift
+                      {t('groups.budgetSection.perGift')}
                     </Text>
                     <Text style={{ fontSize: 12, color: '#6B7280' }}>
-                      Set a budget for each birthday gift
+                      {t('groups.budgetSection.perGiftDescription')}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -456,10 +458,10 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={{ fontSize: 15, fontWeight: '500', color: '#111827' }}>
-                      Monthly
+                      {t('groups.budgetSection.monthly')}
                     </Text>
                     <Text style={{ fontSize: 12, color: '#6B7280' }}>
-                      Pool budget for all birthdays in a month
+                      {t('groups.budgetSection.monthlyDescription')}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -500,10 +502,10 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={{ fontSize: 15, fontWeight: '500', color: '#111827' }}>
-                      Yearly
+                      {t('groups.budgetSection.yearly')}
                     </Text>
                     <Text style={{ fontSize: 12, color: '#6B7280' }}>
-                      Set annual budget for all group celebrations
+                      {t('groups.budgetSection.yearlyDescription')}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -512,7 +514,7 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
                 {budgetApproach && (
                   <View style={{ marginTop: 16 }}>
                     <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 8 }}>
-                      Budget Amount ($)
+                      {t('groups.budgetSection.budgetAmount')}
                     </Text>
                     <TextInput
                       style={{
@@ -532,10 +534,10 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
                     />
                     <Text style={{ fontSize: 12, color: '#6B7280', marginTop: 4 }}>
                       {budgetApproach === 'per_gift'
-                        ? 'Spending limit per birthday gift'
+                        ? t('groups.budgetSection.perGiftHelper')
                         : budgetApproach === 'monthly'
-                        ? 'Total budget for all birthdays each month'
-                        : 'Total annual budget for all celebrations'}
+                        ? t('groups.budgetSection.monthlyHelper')
+                        : t('groups.budgetSection.yearlyHelper')}
                     </Text>
                   </View>
                 )}
@@ -559,7 +561,7 @@ export default function CreateGroupModal({ visible, onClose, onSuccess }: Create
                 <ActivityIndicator color="white" />
               ) : (
                 <Text style={{ color: 'white', fontSize: 16, fontWeight: '600' }}>
-                  Create Group
+                  {t('groups.createGroup')}
                 </Text>
               )}
             </TouchableOpacity>

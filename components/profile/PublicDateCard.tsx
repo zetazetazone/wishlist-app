@@ -1,7 +1,8 @@
 import { View, Text, TouchableOpacity } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { format } from 'date-fns';
+import { useLocalizedFormat } from '../../hooks/useLocalizedFormat';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 import { PublicDate } from '../../lib/publicDates';
 
@@ -29,6 +30,9 @@ interface PublicDateCardProps {
  * but database stores 1-indexed months (1-12).
  */
 export function PublicDateCard({ date, onEdit, onDelete, index = 0 }: PublicDateCardProps) {
+  const { t } = useTranslation();
+  const { format } = useLocalizedFormat();
+
   // Format date: Use any year (2000) for display since we only care about month/day
   // CRITICAL: month - 1 because Date constructor uses 0-indexed months
   const formattedDate = format(new Date(2000, date.month - 1, date.day), 'MMMM d');
@@ -36,7 +40,7 @@ export function PublicDateCard({ date, onEdit, onDelete, index = 0 }: PublicDate
   // Add year indicator
   const dateWithYear = date.year
     ? `${formattedDate} (${date.year})`
-    : `${formattedDate} (Annual)`;
+    : `${formattedDate} (${t('profile.personalDetails.annual')})`;
 
   return (
     <MotiView

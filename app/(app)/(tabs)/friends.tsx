@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, RefreshControl, ActivityIndicator, StatusBar, Alert, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -10,6 +11,7 @@ import { colors, spacing, borderRadius } from '../../../constants/theme';
 
 export default function FriendsScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [friends, setFriends] = useState<FriendWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -52,15 +54,15 @@ export default function FriendsScreen() {
 
   const handleRemoveFriend = (friendshipId: string, friendName: string) => {
     Alert.alert(
-      'Remove Friend',
-      `Are you sure you want to remove ${friendName} as a friend?`,
+      t('friends.removeFriend'),
+      t('friends.removeFriendConfirm', { name: friendName }),
       [
         {
-          text: 'Cancel',
+          text: t('common.cancel'),
           style: 'cancel',
         },
         {
-          text: 'Remove',
+          text: t('common.remove'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -69,7 +71,7 @@ export default function FriendsScreen() {
               loadFriends();
             } catch (error) {
               console.error('Failed to remove friend:', error);
-              Alert.alert('Error', 'Failed to remove friend. Please try again.');
+              Alert.alert(t('alerts.titles.error'), t('friends.failedToRemove'));
             }
           },
         },
@@ -138,7 +140,7 @@ export default function FriendsScreen() {
                   marginBottom: spacing.xs,
                 }}
               >
-                Friends
+                {t('friends.title')}
               </Text>
               <Text
                 style={{
@@ -147,7 +149,7 @@ export default function FriendsScreen() {
                   fontWeight: '400',
                 }}
               >
-                {friends.length} {friends.length === 1 ? 'friend' : 'friends'}
+                {friends.length} {t('friends.friend', { count: friends.length })}
               </Text>
             </View>
           </MotiView>
@@ -214,7 +216,7 @@ export default function FriendsScreen() {
                     textAlign: 'center',
                   }}
                 >
-                  No Friends Yet
+                  {t('friends.empty.noFriends')}
                 </Text>
 
                 <Text
@@ -225,7 +227,7 @@ export default function FriendsScreen() {
                     lineHeight: 24,
                   }}
                 >
-                  Add friends to see them here
+                  {t('friends.empty.noFriendsDescription')}
                 </Text>
               </View>
             </MotiView>

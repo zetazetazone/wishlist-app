@@ -1,6 +1,8 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useLocalizedFormat } from '../../hooks/useLocalizedFormat';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 import { FriendWithProfile } from '../../lib/friends';
 
@@ -23,6 +25,8 @@ interface FriendCardProps {
  * Uses staggered slide-in animation matching group member cards.
  */
 export function FriendCard({ friend, onPress, onRemove, index = 0 }: FriendCardProps) {
+  const { t } = useTranslation();
+  const { format } = useLocalizedFormat();
   const { friend: profile, created_at } = friend;
 
   // Get initials for avatar fallback
@@ -35,16 +39,13 @@ export function FriendCard({ friend, onPress, onRemove, index = 0 }: FriendCardP
       .join('');
   };
 
-  // Format "Friends since" date
+  // Format "Friends since" date with locale
   const formatFriendsSince = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      year: 'numeric',
-    });
+    return format(date, 'MMM yyyy');
   };
 
-  const displayName = profile?.display_name || 'Unknown';
+  const displayName = profile?.display_name || t('common.unknown');
   const avatarUrl = profile?.avatar_url;
   const friendsSince = formatFriendsSince(created_at);
 
@@ -134,7 +135,7 @@ export function FriendCard({ friend, onPress, onRemove, index = 0 }: FriendCardP
                   fontWeight: '500',
                 }}
               >
-                Friends since {friendsSince}
+                {t('friends.friendsSince', { date: friendsSince })}
               </Text>
             </View>
           </View>

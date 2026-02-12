@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, Alert, ActivityIndicator } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -28,6 +29,7 @@ interface MatchedContactCardProps {
  * Uses staggered fade-in animation for list rendering.
  */
 export function MatchedContactCard({ user, onStatusChange, index = 0 }: MatchedContactCardProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   // Optimistic UI: locally override status after successful action
@@ -61,8 +63,8 @@ export function MatchedContactCard({ user, onStatusChange, index = 0 }: MatchedC
       onStatusChange();
     } catch (error) {
       Alert.alert(
-        'Error',
-        error instanceof Error ? error.message : 'Failed to send friend request'
+        t('common.error'),
+        error instanceof Error ? error.message : t('friends.failedToSendRequest')
       );
     } finally {
       setLoading(false);
@@ -74,12 +76,12 @@ export function MatchedContactCard({ user, onStatusChange, index = 0 }: MatchedC
   // we direct user to the requests tab to accept
   const handleAccept = () => {
     Alert.alert(
-      'Accept Request',
-      'Go to Requests to accept this friend request?',
+      t('friends.acceptRequest'),
+      t('friends.goToRequestsQuestion'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Go to Requests',
+          text: t('friends.goToRequests'),
           onPress: () => router.push('/requests'),
         },
       ]
@@ -108,7 +110,7 @@ export function MatchedContactCard({ user, onStatusChange, index = 0 }: MatchedC
               <ActivityIndicator size="small" color={colors.white} />
             ) : (
               <Text style={{ color: colors.white, fontWeight: '600', fontSize: 14 }}>
-                Add
+                {t('common.add')}
               </Text>
             )}
           </TouchableOpacity>
@@ -125,7 +127,7 @@ export function MatchedContactCard({ user, onStatusChange, index = 0 }: MatchedC
             }}
           >
             <Text style={{ color: colors.gold[700], fontWeight: '600', fontSize: 14 }}>
-              Sent
+              {t('friends.sent')}
             </Text>
           </View>
         );
@@ -142,7 +144,7 @@ export function MatchedContactCard({ user, onStatusChange, index = 0 }: MatchedC
             }}
           >
             <Text style={{ color: colors.white, fontWeight: '600', fontSize: 14 }}>
-              Accept
+              {t('friends.accept')}
             </Text>
           </TouchableOpacity>
         );
@@ -166,7 +168,7 @@ export function MatchedContactCard({ user, onStatusChange, index = 0 }: MatchedC
               style={{ marginRight: spacing.xs }}
             />
             <Text style={{ color: colors.success, fontWeight: '600', fontSize: 14 }}>
-              Friends
+              {t('friends.friends')}
             </Text>
           </View>
         );

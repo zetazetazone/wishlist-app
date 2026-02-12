@@ -8,9 +8,10 @@
 
 import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, TextInput, Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { HStack, Avatar, AvatarImage, AvatarFallbackText } from '@gluestack-ui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { formatDistanceToNow } from 'date-fns';
+import { useLocalizedFormat } from '@/hooks/useLocalizedFormat';
 import type { NoteWithAuthor } from '@/lib/memberNotes';
 import { colors, spacing, borderRadius, shadows } from '@/constants/theme';
 
@@ -41,11 +42,13 @@ function getInitials(name: string | null | undefined): string {
  * NoteCard displays a single note with author info and optional edit/delete actions.
  */
 export function NoteCard({ note, isAuthor, onEdit, onDelete }: NoteCardProps) {
+  const { t } = useTranslation();
+  const { formatDistanceToNow } = useLocalizedFormat();
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(note.content);
   const [isSaving, setIsSaving] = useState(false);
 
-  const authorName = note.author?.display_name || 'Unknown';
+  const authorName = note.author?.display_name || t('common.unknown');
   const authorInitials = getInitials(note.author?.display_name);
   const avatarUrl = note.author?.avatar_url;
 
@@ -68,11 +71,11 @@ export function NoteCard({ note, isAuthor, onEdit, onDelete }: NoteCardProps) {
 
     const trimmedContent = editContent.trim();
     if (!trimmedContent) {
-      Alert.alert('Error', 'Note cannot be empty');
+      Alert.alert(t('common.error'), t('profile.secretNotes.noteCannotBeEmpty'));
       return;
     }
     if (trimmedContent.length > MAX_CHARS) {
-      Alert.alert('Error', `Note cannot exceed ${MAX_CHARS} characters`);
+      Alert.alert(t('common.error'), t('profile.secretNotes.noteExceedsLimit', { limit: MAX_CHARS }));
       return;
     }
 
@@ -81,7 +84,7 @@ export function NoteCard({ note, isAuthor, onEdit, onDelete }: NoteCardProps) {
       await onEdit(note.id, trimmedContent);
       setIsEditing(false);
     } catch (error) {
-      Alert.alert('Error', 'Failed to update note');
+      Alert.alert(t('common.error'), t('profile.secretNotes.failedToUpdate'));
     } finally {
       setIsSaving(false);
     }
@@ -91,18 +94,18 @@ export function NoteCard({ note, isAuthor, onEdit, onDelete }: NoteCardProps) {
     if (!onDelete) return;
 
     Alert.alert(
-      'Delete Note',
-      'Are you sure you want to delete this note?',
+      t('profile.secretNotes.deleteNote'),
+      t('profile.secretNotes.confirmDelete'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await onDelete(note.id);
             } catch (error) {
-              Alert.alert('Error', 'Failed to delete note');
+              Alert.alert(t('common.error'), t('profile.secretNotes.failedToDelete'));
             }
           },
         },
@@ -139,7 +142,7 @@ export function NoteCard({ note, isAuthor, onEdit, onDelete }: NoteCardProps) {
             multiline
             autoFocus
             maxLength={MAX_CHARS + 50} // Allow slight overflow to show error
-            placeholder="Enter your note..."
+            placeholder={t('profile.secretNotes.enterNote')}
             placeholderTextColor={colors.cream[400]}
           />
           <View style={styles.editFooter}>
@@ -158,7 +161,7 @@ export function NoteCard({ note, isAuthor, onEdit, onDelete }: NoteCardProps) {
                 onPress={handleCancelEdit}
                 disabled={isSaving}
               >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+                <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
               </Pressable>
               <Pressable
                 style={[
@@ -169,7 +172,7 @@ export function NoteCard({ note, isAuthor, onEdit, onDelete }: NoteCardProps) {
                 disabled={isOverLimit || isSaving}
               >
                 <Text style={styles.saveButtonText}>
-                  {isSaving ? 'Saving...' : 'Save'}
+                  {isSaving ? t('common.saving') : t('common.save')}
                 </Text>
               </Pressable>
             </View>

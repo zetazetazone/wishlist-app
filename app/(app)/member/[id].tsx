@@ -11,6 +11,7 @@
 import { useLocalSearchParams, Stack } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, View, Text, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import {
   VStack,
   Avatar,
@@ -41,6 +42,7 @@ interface MemberProfile {
 
 export default function MemberProfileScreen() {
   const { id, groupId } = useLocalSearchParams<{ id: string; groupId?: string }>();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
   const [memberProfile, setMemberProfile] = useState<MemberProfile | null>(null);
   const [personalDetails, setPersonalDetails] = useState<TypedPersonalDetails | null>(null);
@@ -139,9 +141,9 @@ export default function MemberProfileScreen() {
       setActionLoading(true);
       await sendFriendRequest(id);
       setRelationshipStatus('pending_outgoing');
-      Alert.alert('Success', 'Friend request sent!');
+      Alert.alert(t('common.success'), t('friends.requestSent'));
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to send request');
+      Alert.alert(t('alerts.titles.error'), error.message || t('friends.failedToSendRequest'));
     } finally {
       setActionLoading(false);
     }
@@ -153,9 +155,9 @@ export default function MemberProfileScreen() {
       const requestId = await getIncomingRequestId(id);
       await acceptFriendRequest(requestId);
       setRelationshipStatus('friends');
-      Alert.alert('Success', 'You are now friends!');
+      Alert.alert(t('common.success'), t('friends.nowFriends'));
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to accept request');
+      Alert.alert(t('alerts.titles.error'), error.message || t('friends.failedToAcceptRequest'));
     } finally {
       setActionLoading(false);
     }
@@ -163,12 +165,12 @@ export default function MemberProfileScreen() {
 
   const handleDecline = async () => {
     Alert.alert(
-      'Decline Request',
-      'Are you sure you want to decline this friend request?',
+      t('friends.declineRequest'),
+      t('friends.declineConfirm'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Decline',
+          text: t('friends.decline'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -177,7 +179,7 @@ export default function MemberProfileScreen() {
               await declineFriendRequest(requestId);
               setRelationshipStatus('none');
             } catch (error: any) {
-              Alert.alert('Error', error.message || 'Failed to decline request');
+              Alert.alert(t('alerts.titles.error'), error.message || t('friends.failedToDeclineRequest'));
             } finally {
               setActionLoading(false);
             }
@@ -196,7 +198,7 @@ export default function MemberProfileScreen() {
       <>
         <Stack.Screen
           options={{
-            title: 'Profile',
+            title: t('profile.title'),
             headerShown: true,
             headerStyle: { backgroundColor: '#ffffff' },
             headerTintColor: colors.burgundy[700],
@@ -214,14 +216,14 @@ export default function MemberProfileScreen() {
       <>
         <Stack.Screen
           options={{
-            title: 'Profile',
+            title: t('profile.title'),
             headerShown: true,
             headerStyle: { backgroundColor: '#ffffff' },
             headerTintColor: colors.burgundy[700],
           }}
         />
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Member not found</Text>
+          <Text style={styles.emptyText}>{t('profile.memberNotFound')}</Text>
         </View>
       </>
     );
@@ -231,7 +233,7 @@ export default function MemberProfileScreen() {
     <>
       <Stack.Screen
         options={{
-          title: memberProfile.display_name || 'Profile',
+          title: memberProfile.display_name || t('profile.title'),
           headerShown: true,
           headerStyle: { backgroundColor: '#ffffff' },
           headerTintColor: colors.burgundy[700],
@@ -243,15 +245,15 @@ export default function MemberProfileScreen() {
         <View style={styles.headerCard}>
           <Avatar size="xl" borderRadius="$full">
             {avatarUrl ? (
-              <AvatarImage source={{ uri: avatarUrl }} alt={memberProfile.display_name || 'Member'} />
+              <AvatarImage source={{ uri: avatarUrl }} alt={memberProfile.display_name || t('profile.member')} />
             ) : (
               <AvatarFallbackText>
-                {memberProfile.display_name || 'Member'}
+                {memberProfile.display_name || t('profile.member')}
               </AvatarFallbackText>
             )}
           </Avatar>
           <Text style={styles.displayName}>
-            {memberProfile.display_name || 'Member'}
+            {memberProfile.display_name || t('profile.member')}
           </Text>
         </View>
 
@@ -265,13 +267,13 @@ export default function MemberProfileScreen() {
                 disabled={actionLoading}
               >
                 <MaterialCommunityIcons name="account-plus" size={20} color={colors.white} />
-                <Text style={styles.friendButtonText}>Add Friend</Text>
+                <Text style={styles.friendButtonText}>{t('friends.addFriend')}</Text>
               </TouchableOpacity>
             )}
             {relationshipStatus === 'pending_outgoing' && (
               <View style={[styles.friendButton, styles.pendingButton]}>
                 <MaterialCommunityIcons name="clock-outline" size={20} color={colors.cream[600]} />
-                <Text style={styles.pendingText}>Request Pending</Text>
+                <Text style={styles.pendingText}>{t('friends.requestPending')}</Text>
               </View>
             )}
             {relationshipStatus === 'pending_incoming' && (
@@ -282,7 +284,7 @@ export default function MemberProfileScreen() {
                   disabled={actionLoading}
                 >
                   <MaterialCommunityIcons name="check" size={18} color={colors.white} />
-                  <Text style={styles.acceptText}>Accept</Text>
+                  <Text style={styles.acceptText}>{t('friends.accept')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={[styles.friendButton, styles.declineButton]}
@@ -290,14 +292,14 @@ export default function MemberProfileScreen() {
                   disabled={actionLoading}
                 >
                   <MaterialCommunityIcons name="close" size={18} color={colors.error} />
-                  <Text style={styles.declineText}>Decline</Text>
+                  <Text style={styles.declineText}>{t('friends.decline')}</Text>
                 </TouchableOpacity>
               </View>
             )}
             {relationshipStatus === 'friends' && (
               <View style={[styles.friendButton, styles.friendsIndicator]}>
                 <MaterialCommunityIcons name="account-check" size={20} color={colors.success} />
-                <Text style={styles.friendsText}>Friends</Text>
+                <Text style={styles.friendsText}>{t('friends.friends')}</Text>
               </View>
             )}
           </View>
@@ -324,7 +326,7 @@ export default function MemberProfileScreen() {
         ) : (
           <View style={styles.noDetailsCard}>
             <Text style={styles.noDetailsText}>
-              This member hasn't added personal details yet
+              {t('profile.noPersonalDetails')}
             </Text>
           </View>
         )}

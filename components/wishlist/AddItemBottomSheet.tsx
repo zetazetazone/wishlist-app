@@ -12,6 +12,7 @@ import {
   PanResponder,
   Dimensions,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import StarRating from '../ui/StarRating';
 
 interface AddItemBottomSheetProps {
@@ -33,6 +34,7 @@ export default function AddItemBottomSheet({
   onClose,
   onAdd,
 }: AddItemBottomSheetProps) {
+  const { t } = useTranslation();
   const [amazonUrl, setAmazonUrl] = useState('');
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
@@ -53,10 +55,10 @@ export default function AddItemBottomSheet({
     try {
       const urlObj = new URL(url);
       const isValid = urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
-      setUrlError(isValid ? '' : 'Please enter a valid URL');
+      setUrlError(isValid ? '' : t('wishlist.errors.invalidUrl'));
       return isValid;
     } catch {
-      setUrlError('Please enter a valid URL');
+      setUrlError(t('wishlist.errors.invalidUrl'));
       return false;
     }
   };
@@ -115,7 +117,7 @@ export default function AddItemBottomSheet({
   const handleSubmit = async () => {
     // Validation
     if (!amazonUrl.trim()) {
-      setUrlError('Please paste a product link');
+      setUrlError(t('wishlist.form.pasteProductLink'));
       return;
     }
 
@@ -124,7 +126,7 @@ export default function AddItemBottomSheet({
     }
 
     if (!title.trim()) {
-      setTitleError('Please enter a product name');
+      setTitleError(t('wishlist.form.enterProductName'));
       return;
     }
 
@@ -141,7 +143,7 @@ export default function AddItemBottomSheet({
       resetForm();
       handleClose();
     } catch (error) {
-      Alert.alert('Error', 'Failed to add item. Please try again.');
+      Alert.alert(t('alerts.titles.error'), t('wishlist.form.failedToAdd'));
       console.error('Error adding item:', error);
     } finally {
       setLoading(false);
@@ -200,7 +202,7 @@ export default function AddItemBottomSheet({
             <View className="px-6 pb-8">
               {/* Header */}
               <Text className="text-2xl font-bold text-gray-900 mb-6">
-                Add to Wishlist
+                {t('wishlist.form.addToWishlist')}
               </Text>
 
               {/* Product URL Input */}
@@ -209,7 +211,7 @@ export default function AddItemBottomSheet({
                   <Text className="text-xl mr-2">🔗</Text>
                   <TextInput
                     className="flex-1 text-base text-gray-900"
-                    placeholder="Paste product link here..."
+                    placeholder={t('wishlist.form.pasteProductLink')}
                     placeholderTextColor="#9ca3af"
                     value={amazonUrl}
                     onChangeText={(text) => {
@@ -238,7 +240,7 @@ export default function AddItemBottomSheet({
                   <TextInput
                     ref={titleInputRef}
                     className="flex-1 text-base text-gray-900"
-                    placeholder="Product name..."
+                    placeholder={t('wishlist.form.productName')}
                     placeholderTextColor="#9ca3af"
                     value={title}
                     onChangeText={(text) => {
@@ -272,7 +274,7 @@ export default function AddItemBottomSheet({
 
                 {/* Priority Stars */}
                 <View className="flex-1 ml-4">
-                  <Text className="text-gray-600 text-sm mb-1">Priority</Text>
+                  <Text className="text-gray-600 text-sm mb-1">{t('wishlist.itemPriority')}</Text>
                   <StarRating
                     rating={priority}
                     onRatingChange={setPriority}
@@ -291,7 +293,7 @@ export default function AddItemBottomSheet({
                 activeOpacity={0.8}
               >
                 <Text className="text-white text-center font-semibold text-lg">
-                  {loading ? 'Adding...' : 'Add to Wishlist'}
+                  {loading ? t('wishlist.form.adding') : t('wishlist.form.addToWishlist')}
                 </Text>
               </TouchableOpacity>
             </View>

@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { joinGroup } from '../../utils/groups';
 
 interface JoinGroupModalProps {
@@ -19,12 +20,13 @@ interface JoinGroupModalProps {
 }
 
 export default function JoinGroupModal({ visible, onClose, onSuccess }: JoinGroupModalProps) {
+  const { t } = useTranslation();
   const [inviteCode, setInviteCode] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleJoin = async () => {
     if (!inviteCode.trim()) {
-      Alert.alert('Error', 'Please enter an invite code');
+      Alert.alert(t('alerts.titles.error'), t('groups.form.enterInviteCode'));
       return;
     }
 
@@ -33,15 +35,15 @@ export default function JoinGroupModal({ visible, onClose, onSuccess }: JoinGrou
     setLoading(false);
 
     if (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to join group. Please check the invite code and try again.';
-      Alert.alert('Error', errorMessage);
+      const errorMessage = error instanceof Error ? error.message : t('groups.form.failedToJoin');
+      Alert.alert(t('alerts.titles.error'), errorMessage);
       return;
     }
 
     // Reset form
     setInviteCode('');
 
-    Alert.alert('Success!', `You've joined "${data?.name}"`);
+    Alert.alert(t('common.success'), t('groups.form.joinedSuccess', { name: data?.name }));
     onSuccess();
     onClose();
   };
@@ -78,7 +80,7 @@ export default function JoinGroupModal({ visible, onClose, onSuccess }: JoinGrou
           {/* Header */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
             <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#111827' }}>
-              Join Group
+              {t('groups.joinGroup')}
             </Text>
             <TouchableOpacity onPress={onClose}>
               <Text style={{ fontSize: 28, color: '#6B7280' }}>×</Text>
@@ -88,7 +90,7 @@ export default function JoinGroupModal({ visible, onClose, onSuccess }: JoinGrou
           {/* Invite Code */}
           <View style={{ marginBottom: 24 }}>
             <Text style={{ fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 8 }}>
-              Invite Code
+              {t('groups.inviteCode')}
             </Text>
             <TextInput
               style={{
@@ -102,7 +104,7 @@ export default function JoinGroupModal({ visible, onClose, onSuccess }: JoinGrou
                 textAlign: 'center',
                 letterSpacing: 2,
               }}
-              placeholder="Enter invite code"
+              placeholder={t('groups.form.inviteCodePlaceholder')}
               placeholderTextColor="#9CA3AF"
               value={inviteCode}
               onChangeText={setInviteCode}
@@ -110,7 +112,7 @@ export default function JoinGroupModal({ visible, onClose, onSuccess }: JoinGrou
               editable={!loading}
             />
             <Text style={{ fontSize: 12, color: '#6B7280', marginTop: 8, textAlign: 'center' }}>
-              Ask a group member for the invite code
+              {t('groups.form.inviteCodeHint')}
             </Text>
           </View>
 
@@ -130,7 +132,7 @@ export default function JoinGroupModal({ visible, onClose, onSuccess }: JoinGrou
               <ActivityIndicator color="white" />
             ) : (
               <Text style={{ color: 'white', fontSize: 16, fontWeight: '600' }}>
-                Join Group
+                {t('groups.joinGroup')}
               </Text>
             )}
           </TouchableOpacity>

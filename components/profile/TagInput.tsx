@@ -14,6 +14,7 @@
 
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { VStack } from '@gluestack-ui/themed';
 import { Input, InputField } from '@gluestack-ui/themed';
 import type { PreferenceTag } from '../../types/database.types';
@@ -32,10 +33,12 @@ export function TagInput({
   tags,
   onChange,
   predefinedOptions = [],
-  placeholder = 'Add custom...',
+  placeholder,
   maxTags = 20,
 }: TagInputProps) {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
+  const placeholderText = placeholder || t('profile.personalDetails.addCustom');
 
   const addTag = (label: string, isCustom: boolean) => {
     const normalized = label.trim();
@@ -107,7 +110,7 @@ export function TagInput({
       {/* Custom input */}
       <Input variant="outline" size="sm">
         <InputField
-          placeholder={placeholder}
+          placeholder={placeholderText}
           value={inputValue}
           onChangeText={setInputValue}
           onSubmitEditing={handleCustomSubmit}

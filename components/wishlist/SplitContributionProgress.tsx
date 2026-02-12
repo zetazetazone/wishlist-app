@@ -8,6 +8,7 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius } from '../../constants/theme';
 
@@ -42,6 +43,7 @@ export function SplitContributionProgress({
   isFullyFunded,
   isCelebrant = false,
 }: SplitContributionProgressProps) {
+  const { t } = useTranslation();
   // Calculate total target (item price + additional costs)
   const additionalAmount = additionalCosts ?? 0;
   const totalTarget = itemPrice + additionalAmount;
@@ -66,7 +68,7 @@ export function SplitContributionProgress({
             isFullyFunded && styles.celebrantTextComplete,
           ]}
         >
-          {isFullyFunded ? 'Taken' : 'In Progress'}
+          {isFullyFunded ? t('wishlist.split.taken') : t('wishlist.split.inProgress')}
         </Text>
       </View>
     );
@@ -96,17 +98,17 @@ export function SplitContributionProgress({
           <Text style={styles.fundedAmount}>
             {formatCurrency(totalPledged)}
           </Text>
-          <Text style={styles.ofText}> of </Text>
+          <Text style={styles.ofText}> {t('common.of')} </Text>
           <Text style={styles.targetAmount}>
             {formatCurrency(totalTarget)}
           </Text>
-          <Text style={styles.fundedLabel}> funded</Text>
+          <Text style={styles.fundedLabel}> {t('wishlist.split.funded')}</Text>
         </View>
 
         {/* Cost breakdown if additional costs exist */}
         {additionalAmount > 0 && (
           <Text style={styles.breakdownText}>
-            Item: {formatCurrency(itemPrice)} + Shipping: {formatCurrency(additionalAmount)}
+            {t('wishlist.split.item')}: {formatCurrency(itemPrice)} + {t('wishlist.split.shipping')}: {formatCurrency(additionalAmount)}
           </Text>
         )}
       </View>
@@ -119,7 +121,7 @@ export function SplitContributionProgress({
             size={14}
             color={colors.success}
           />
-          <Text style={styles.completeText}>Fully funded!</Text>
+          <Text style={styles.completeText}>{t('wishlist.split.fullyFunded')}</Text>
         </View>
       )}
     </View>

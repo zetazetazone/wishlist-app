@@ -5,7 +5,9 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useLocalizedFormat } from '../../hooks/useLocalizedFormat';
 import { GiftLeaderBadge } from './GiftLeaderBadge';
 import type { Celebration } from '../../lib/celebrations';
 
@@ -17,44 +19,33 @@ interface CelebrationCardProps {
   onPress: () => void;
 }
 
-/**
- * Format date as "Month Day" (e.g., "March 15")
- */
-function formatEventDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-  });
-}
-
-/**
- * Get status badge info
- */
-function getStatusInfo(status: string): { label: string; color: string } {
-  switch (status) {
-    case 'active':
-      return { label: 'Active', color: '#22c55e' }; // Green
-    case 'completed':
-      return { label: 'Completed', color: '#6b7280' }; // Gray
-    case 'upcoming':
-    default:
-      return { label: 'Upcoming', color: '#3b82f6' }; // Blue
-  }
-}
-
 export function CelebrationCard({
   celebration,
   isGiftLeader,
   onPress,
 }: CelebrationCardProps) {
+  const { t } = useTranslation();
+  const { format } = useLocalizedFormat();
+
   const celebrantName = celebration.celebrant?.display_name ||
     celebration.celebrant?.full_name ||
-    'Unknown';
+    t('common.unknown');
   const celebrantAvatar = celebration.celebrant?.avatar_url;
-  const eventDate = formatEventDate(celebration.event_date);
+  const eventDate = format(new Date(celebration.event_date), 'MMMM d');
+  const groupName = celebration.group?.name || t('common.unknown');
+
+  const getStatusInfo = (status: string): { label: string; color: string } => {
+    switch (status) {
+      case 'active':
+        return { label: t('celebrations.status.active'), color: '#22c55e' };
+      case 'completed':
+        return { label: t('celebrations.status.completed'), color: '#6b7280' };
+      case 'upcoming':
+      default:
+        return { label: t('celebrations.status.upcoming'), color: '#3b82f6' };
+    }
+  };
   const statusInfo = getStatusInfo(celebration.status);
-  const groupName = celebration.group?.name || 'Unknown Group';
 
   return (
     <Pressable
@@ -81,7 +72,7 @@ export function CelebrationCard({
         {/* Info */}
         <View style={styles.info}>
           <Text style={styles.name} numberOfLines={1}>
-            {celebrantName}'s Birthday
+            {t('celebrations.usersBirthday', { name: celebrantName })}
           </Text>
           <View style={styles.metaRow}>
             <MaterialCommunityIcons name="calendar" size={14} color="#6b7280" />

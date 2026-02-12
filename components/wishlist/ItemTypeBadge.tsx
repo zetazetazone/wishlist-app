@@ -1,4 +1,5 @@
 import { View, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius } from '../../constants/theme';
 
@@ -8,20 +9,22 @@ interface ItemTypeBadgeProps {
 }
 
 export function ItemTypeBadge({ itemType, tier }: ItemTypeBadgeProps) {
+  const { t } = useTranslation();
+
   // Standard items show no badge
   if (itemType === 'standard') return null;
 
   const config = {
     surprise_me: {
       icon: 'help-circle' as const,
-      text: 'Surprise Me',
+      text: t('wishlist.itemType.surpriseMe'),
       bgColor: colors.burgundy[100],
       textColor: colors.burgundy[700],
       iconColor: colors.burgundy[600],
     },
     mystery_box: {
       icon: 'gift' as const,
-      text: tier ? `€${tier} Mystery Box` : 'Mystery Box',
+      text: tier ? t('wishlist.itemType.mysteryBoxTier', { tier }) : t('wishlist.itemType.mysteryBox'),
       bgColor: colors.gold[100],
       textColor: colors.gold[700],
       iconColor: colors.gold[600],

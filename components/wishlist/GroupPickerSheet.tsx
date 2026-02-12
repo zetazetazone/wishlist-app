@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, Pressable, ScrollView } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius } from '../../constants/theme';
 
@@ -26,6 +27,7 @@ export function GroupPickerSheet({
   itemTitle,
   itemType,
 }: GroupPickerSheetProps) {
+  const { t } = useTranslation();
   const isSpecialItem = itemType === 'surprise_me' || itemType === 'mystery_box';
   const currentGroupId = selectedGroupIds[0] || null; // For standard items
 
@@ -79,15 +81,15 @@ export function GroupPickerSheet({
   const getHeaderText = () => {
     if (isSpecialItem) {
       return itemType === 'surprise_me'
-        ? 'Select Groups for Surprise Me'
-        : 'Select Groups for Mystery Box';
+        ? t('wishlist.groupPicker.selectGroupsSurprise')
+        : t('wishlist.groupPicker.selectGroupsMystery');
     }
-    return 'Mark as Most Wanted';
+    return t('wishlist.groupPicker.markAsMostWanted');
   };
 
   const getSubtitle = () => {
     if (isSpecialItem) {
-      return 'Can be selected in multiple groups';
+      return t('wishlist.groupPicker.multipleGroupsHint');
     }
     return itemTitle;
   };
@@ -259,7 +261,7 @@ export function GroupPickerSheet({
                     fontWeight: '600',
                     color: colors.white,
                   }}>
-                    Confirm Selection
+                    {t('wishlist.groupPicker.confirmSelection')}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -278,7 +280,7 @@ export function GroupPickerSheet({
                     fontWeight: '600',
                     color: colors.burgundy[600],
                   }}>
-                    Cancel
+                    {t('common.cancel')}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -304,7 +306,7 @@ export function GroupPickerSheet({
                   color: colors.burgundy[300],
                   textAlign: 'center',
                 }}>
-                  Standard items can only be Most Wanted in one group
+                  {t('wishlist.groupPicker.singleGroupHint')}
                 </Text>
               </View>
             )}

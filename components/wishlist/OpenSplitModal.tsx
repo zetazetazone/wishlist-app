@@ -18,6 +18,7 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   BottomSheetModal,
@@ -45,6 +46,7 @@ export function OpenSplitModal({
   itemTitle,
   loading = false,
 }: OpenSplitModalProps) {
+  const { t } = useTranslation();
   const [amount, setAmount] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -95,7 +97,7 @@ export function OpenSplitModal({
 
     // If entered, must be a positive number
     if (isNaN(numAmount) || numAmount < 0) {
-      setError('Enter a valid positive amount');
+      setError(t('wishlist.split.enterValidPositiveAmount'));
       return;
     }
 
@@ -144,7 +146,7 @@ export function OpenSplitModal({
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title} numberOfLines={2}>
-            Open for Split
+            {t('wishlist.split.openForSplit')}
           </Text>
           <Pressable onPress={onClose} style={styles.closeButton}>
             <MaterialCommunityIcons
@@ -162,7 +164,7 @@ export function OpenSplitModal({
 
         {/* Subtitle */}
         <Text style={styles.subtitle}>
-          Add shipping or other costs? (optional)
+          {t('wishlist.split.addShippingCosts')}
         </Text>
 
         {/* Amount Input - Using BottomSheetTextInput for proper keyboard handling */}
@@ -189,7 +191,7 @@ export function OpenSplitModal({
             onPress={onClose}
             disabled={loading}
           >
-            <Text style={styles.cancelButtonText}>Cancel</Text>
+            <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
           </Pressable>
 
           <Pressable
@@ -209,7 +211,7 @@ export function OpenSplitModal({
                   size={18}
                   color={colors.white}
                 />
-                <Text style={styles.confirmButtonText}>Open Split</Text>
+                <Text style={styles.confirmButtonText}>{t('wishlist.split.openSplit')}</Text>
               </>
             )}
           </Pressable>

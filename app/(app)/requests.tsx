@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Stack, useFocusEffect } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -34,6 +35,7 @@ import { colors, spacing, borderRadius } from '../../constants/theme';
  * Accessible via /requests route, linked from Friends tab header.
  */
 export default function RequestsScreen() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'incoming' | 'outgoing'>('incoming');
   const [incoming, setIncoming] = useState<FriendRequestWithProfile[]>([]);
   const [outgoing, setOutgoing] = useState<FriendRequestWithProfile[]>([]);
@@ -68,28 +70,28 @@ export default function RequestsScreen() {
   const handleAccept = async (requestId: string) => {
     try {
       await acceptFriendRequest(requestId);
-      Alert.alert('Success', 'Friend request accepted!');
+      Alert.alert(t('common.success'), t('friends.requestAccepted'));
       loadRequests();
     } catch (error) {
       console.error('Failed to accept request:', error);
       Alert.alert(
-        'Error',
-        error instanceof Error ? error.message : 'Failed to accept request'
+        t('alerts.titles.error'),
+        error instanceof Error ? error.message : t('friends.failedToAcceptRequest')
       );
     }
   };
 
   const handleDecline = (requestId: string, fromUserId: string) => {
     Alert.alert(
-      'Decline Request',
-      'What would you like to do?',
+      t('friends.declineRequest'),
+      t('friends.whatWouldYouLikeToDo'),
       [
         {
-          text: 'Cancel',
+          text: t('common.cancel'),
           style: 'cancel',
         },
         {
-          text: 'Decline',
+          text: t('friends.decline'),
           onPress: async () => {
             try {
               await declineFriendRequest(requestId);
@@ -97,14 +99,14 @@ export default function RequestsScreen() {
             } catch (error) {
               console.error('Failed to decline request:', error);
               Alert.alert(
-                'Error',
-                error instanceof Error ? error.message : 'Failed to decline request'
+                t('alerts.titles.error'),
+                error instanceof Error ? error.message : t('friends.failedToDeclineRequest')
               );
             }
           },
         },
         {
-          text: 'Block & Decline',
+          text: t('friends.blockAndDecline'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -113,8 +115,8 @@ export default function RequestsScreen() {
             } catch (error) {
               console.error('Failed to block user:', error);
               Alert.alert(
-                'Error',
-                error instanceof Error ? error.message : 'Failed to block user'
+                t('alerts.titles.error'),
+                error instanceof Error ? error.message : t('friends.failedToBlockUser')
               );
             }
           },
@@ -125,15 +127,15 @@ export default function RequestsScreen() {
 
   const handleCancel = (requestId: string) => {
     Alert.alert(
-      'Cancel Request',
-      'Are you sure you want to cancel this friend request?',
+      t('friends.cancelRequest'),
+      t('friends.cancelRequestConfirm'),
       [
         {
-          text: 'No',
+          text: t('common.no'),
           style: 'cancel',
         },
         {
-          text: 'Yes, Cancel',
+          text: t('friends.yesCancel'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -142,8 +144,8 @@ export default function RequestsScreen() {
             } catch (error) {
               console.error('Failed to cancel request:', error);
               Alert.alert(
-                'Error',
-                error instanceof Error ? error.message : 'Failed to cancel request'
+                t('alerts.titles.error'),
+                error instanceof Error ? error.message : t('friends.failedToCancelRequest')
               );
             }
           },
@@ -159,7 +161,7 @@ export default function RequestsScreen() {
       <>
         <Stack.Screen
           options={{
-            title: 'Friend Requests',
+            title: t('friends.friendRequests'),
             headerShown: true,
             headerStyle: { backgroundColor: colors.white },
             headerTintColor: colors.burgundy[700],
@@ -183,7 +185,7 @@ export default function RequestsScreen() {
     <>
       <Stack.Screen
         options={{
-          title: 'Friend Requests',
+          title: t('friends.friendRequests'),
           headerShown: true,
           headerStyle: { backgroundColor: colors.white },
           headerTintColor: colors.burgundy[700],
@@ -216,7 +218,7 @@ export default function RequestsScreen() {
                   marginBottom: spacing.xs,
                 }}
               >
-                Friend Requests
+                {t('friends.friendRequests')}
               </Text>
               <Text
                 style={{
@@ -225,8 +227,7 @@ export default function RequestsScreen() {
                   fontWeight: '400',
                 }}
               >
-                {incoming.length + outgoing.length} pending{' '}
-                {incoming.length + outgoing.length === 1 ? 'request' : 'requests'}
+                {t('friends.pendingRequestCount', { count: incoming.length + outgoing.length })}
               </Text>
             </View>
           </MotiView>
@@ -269,7 +270,7 @@ export default function RequestsScreen() {
                         : colors.white,
                   }}
                 >
-                  Incoming ({incoming.length})
+                  {t('friends.incoming')} ({incoming.length})
                 </Text>
               </TouchableOpacity>
 
@@ -296,7 +297,7 @@ export default function RequestsScreen() {
                         : colors.white,
                   }}
                 >
-                  Outgoing ({outgoing.length})
+                  {t('friends.outgoing')} ({outgoing.length})
                 </Text>
               </TouchableOpacity>
             </View>
@@ -369,8 +370,8 @@ export default function RequestsScreen() {
                   }}
                 >
                   {activeTab === 'incoming'
-                    ? 'No Pending Requests'
-                    : 'No Sent Requests'}
+                    ? t('friends.noPendingRequests')
+                    : t('friends.noSentRequests')}
                 </Text>
 
                 <Text
@@ -382,8 +383,8 @@ export default function RequestsScreen() {
                   }}
                 >
                   {activeTab === 'incoming'
-                    ? 'When someone sends you a friend request, it will appear here.'
-                    : 'Requests you send to others will appear here until they respond.'}
+                    ? t('friends.noPendingRequestsDescription')
+                    : t('friends.noSentRequestsDescription')}
                 </Text>
               </View>
             </MotiView>

@@ -16,6 +16,7 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   BottomSheetModal,
@@ -43,6 +44,7 @@ export function AddNoteSheet({
   onSubmit,
   memberName,
 }: AddNoteSheetProps) {
+  const { t } = useTranslation();
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -131,8 +133,8 @@ export function AddNoteSheet({
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerText}>
-            <Text style={styles.title}>Add Note</Text>
-            <Text style={styles.subtitle}>About {memberName}</Text>
+            <Text style={styles.title}>{t('profile.secretNotes.addNote')}</Text>
+            <Text style={styles.subtitle}>{t('profile.secretNotes.aboutMember', { name: memberName })}</Text>
           </View>
           <Pressable onPress={onClose} style={styles.closeButton}>
             <MaterialCommunityIcons
@@ -149,7 +151,7 @@ export function AddNoteSheet({
             style={styles.input}
             value={content}
             onChangeText={handleContentChange}
-            placeholder="What would help others pick the perfect gift?"
+            placeholder={t('profile.secretNotes.placeholder')}
             placeholderTextColor={colors.cream[400]}
             multiline
             autoFocus
@@ -187,7 +189,7 @@ export function AddNoteSheet({
                 size={18}
                 color={colors.white}
               />
-              <Text style={styles.submitButtonText}>Add Note</Text>
+              <Text style={styles.submitButtonText}>{t('profile.secretNotes.addNote')}</Text>
             </>
           )}
         </Pressable>

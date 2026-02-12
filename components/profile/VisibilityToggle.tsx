@@ -9,6 +9,7 @@
 
 import React from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { HStack } from '@gluestack-ui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { VisibilitySetting } from '../../types/database.types';
@@ -25,6 +26,7 @@ export function VisibilityToggle({
   value,
   onChange,
 }: VisibilityToggleProps) {
+  const { t } = useTranslation();
   const isFriendsOnly = value === 'friends_only';
 
   return (
@@ -51,7 +53,7 @@ export function VisibilityToggle({
               isFriendsOnly && styles.optionTextSelected,
             ]}
           >
-            Friends Only
+            {t('profile.personalDetails.friendsOnly')}
           </Text>
         </Pressable>
 
@@ -75,14 +77,14 @@ export function VisibilityToggle({
               !isFriendsOnly && styles.optionTextSelected,
             ]}
           >
-            Public
+            {t('profile.personalDetails.public')}
           </Text>
         </Pressable>
       </HStack>
       <Text style={styles.hint}>
         {isFriendsOnly
-          ? 'Visible only to members of your groups'
-          : 'Visible to all authenticated users'}
+          ? t('profile.personalDetails.friendsOnlyHint')
+          : t('profile.personalDetails.publicHint')}
       </Text>
     </View>
   );

@@ -1,4 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -24,6 +25,8 @@ export function GroupViewHeader({
   onBack,
   onSettings,
 }: GroupViewHeaderProps) {
+  const { t } = useTranslation();
+
   return (
     <LinearGradient
       colors={[colors.burgundy[800], colors.burgundy[600]]}
@@ -145,7 +148,7 @@ export function GroupViewHeader({
                 fontWeight: '500',
               }}
             >
-              {memberCount} {memberCount === 1 ? 'member' : 'members'}
+              {t('groups.memberCount', { count: memberCount })}
             </Text>
           </View>
         </View>
