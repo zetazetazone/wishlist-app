@@ -10,13 +10,13 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 ## Current Position
 
 Phase: 34 (Grid Layout Implementation) - IN PROGRESS
-Plan: 1 of 5 complete
-Status: In progress - WishlistGridCard component created
-Last activity: 2026-02-12 — Completed 34-01-PLAN.md (Grid Card Component)
+Plan: 2 of 5 complete
+Status: In progress - WishlistGrid wrapper created
+Last activity: 2026-02-12 — Completed 34-02-PLAN.md (Grid Wrapper Component)
 
 Progress: 1/4 phases complete
 Phase 33 Progress: ████ 2/2 complete
-Phase 34 Progress: █░░░░ 1/5 plans complete
+Phase 34 Progress: ██░░░ 2/5 plans complete
 
 ## Milestone History
 
@@ -50,6 +50,10 @@ v1.5 decisions archived in `.planning/milestones/v1.5-ROADMAP.md`.
 | TD-34-01-002 | Non-null assertion on image_url after hasImage check | hasImage already validates image_url exists and is standard item type | 34-01 |
 | TD-34-01-003 | Action button separate Pressable with stopPropagation | Prevents touch conflicts on nested pressables, works consistently iOS/Android | 34-01 |
 | TD-34-01-004 | Single default blurhash for all images | Simpler implementation, acceptable UX for v1.6 | 34-01 |
+| TD-34-02-001 | FlashList v2 masonry prop pattern | Use masonry prop instead of deprecated MasonryFlashList component | 34-02 |
+| TD-34-02-002 | Omit estimatedItemSize in FlashList v2 | v2 auto-measures items for better accuracy | 34-02 |
+| TD-34-02-003 | View-context-aware rendering logic | Three branches: owner, celebrant, non-celebrant for correct prop routing | 34-02 |
+| TD-34-02-004 | Conditional RefreshControl | Only render if onRefresh prop provided for flexible reuse | 34-02 |
 
 ### Pending Todos (Manual Setup)
 
@@ -80,6 +84,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-12
-Stopped at: Phase 34 Plan 01 complete (Grid Card Component)
-Resume file: .planning/phases/34-grid-layout-implementation/34-01-SUMMARY.md
-Next: Phase 34 Plan 02 (Grid Wrapper Component)
+Stopped at: Phase 34 Plan 02 complete (Grid Wrapper Component)
+Resume file: .planning/phases/34-grid-layout-implementation/34-02-SUMMARY.md
+Next: Phase 34 Plan 03 (My Wishlist Integration)
