@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -17,7 +17,7 @@ import { supabase } from '../../../lib/supabase';
 import { WishlistItem } from '../../../types/database.types';
 import AddItemModal from '../../../components/wishlist/AddItemModal';
 import LuxuryWishlistCard from '../../../components/wishlist/LuxuryWishlistCard';
-import { WishlistGrid } from '../../../components/wishlist';
+import { WishlistGrid, OptionsSheet, OptionsSheetRef } from '../../../components/wishlist';
 import { colors, spacing, borderRadius, shadows } from '../../../constants/theme';
 import { getAvatarUrl } from '../../../lib/storage';
 import {
@@ -55,6 +55,7 @@ export default function LuxuryWishlistScreen() {
     avatar_url: null,
   });
   const [missingSpecialItems, setMissingSpecialItems] = useState<Array<'surprise_me' | 'mystery_box'>>([]);
+  const optionsSheetRef = useRef<OptionsSheetRef>(null);
 
   useEffect(() => {
     getCurrentUser();
@@ -423,6 +424,18 @@ export default function LuxuryWishlistScreen() {
     }
   };
 
+  const isFavorite = useCallback((itemId: string) => {
+    return favorites.some(f => f.itemId === itemId);
+  }, [favorites]);
+
+  const handleOptionsDelete = useCallback(async (itemId: string) => {
+    await handleDeleteItem(itemId);
+  }, [handleDeleteItem]);
+
+  const handleFavoriteToggle = useCallback((item: WishlistItem) => {
+    handleHeartPress(item);
+  }, [handleHeartPress]);
+
   const selectedItemType = (selectedItemForPicker?.item_type || 'standard') as ItemType;
   const selectedItemGroupIds = selectedItemForPicker
     ? favorites.filter(f => f.itemId === selectedItemForPicker.id).map(f => f.groupId)
@@ -435,9 +448,9 @@ export default function LuxuryWishlistScreen() {
   }, [router]);
 
   const handleItemAction = useCallback((item: WishlistItem) => {
-    // Owner view: action button opens detail page (options sheet in Phase 36)
-    router.push(`/wishlist/${item.id}`);
-  }, [router]);
+    // Owner view: open options sheet
+    optionsSheetRef.current?.open(item);
+  }, []);
 
   // Sort items: favorited items first (any group), then by priority
   const sortedItems = useMemo(() => {
@@ -788,6 +801,14 @@ export default function LuxuryWishlistScreen() {
         }}
         itemTitle={selectedItemForPicker?.title || ''}
         itemType={selectedItemType}
+      />
+
+      <OptionsSheet
+        ref={optionsSheetRef}
+        onFavoriteToggle={handleFavoriteToggle}
+        onPriorityChange={handlePriorityChange}
+        onDelete={handleOptionsDelete}
+        isFavorite={isFavorite}
       />
     </>
   );
