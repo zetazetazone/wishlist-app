@@ -364,7 +364,8 @@
       "yourSplit": "Tu parte",
       "yourClaim": "Tu reclamo",
       "tapToShowClaimTime": "Toca para ver la hora del reclamo",
-      "itemsTaken": "{{taken}} de {{total}} artículos tomados"
+      "itemsTaken": "{{taken}} de {{total}} artículos tomados",
+      "notClaimable": "Este tipo de artículo no se puede reclamar"
     },
     "split": {
       "title": "Pago dividido",

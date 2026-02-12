@@ -364,7 +364,8 @@
       "yourSplit": "Your split",
       "yourClaim": "Your claim",
       "tapToShowClaimTime": "Tap to show claim time",
-      "itemsTaken": "{{taken}} of {{total}} items taken"
+      "itemsTaken": "{{taken}} of {{total}} items taken",
+      "notClaimable": "This item type cannot be claimed"
     },
     "split": {
       "title": "Split Payment",
