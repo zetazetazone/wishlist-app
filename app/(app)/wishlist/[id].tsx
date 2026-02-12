@@ -649,6 +649,20 @@ export default function ItemDetailScreen() {
     );
   };
 
+  // Invalid item ID error boundary
+  if (!id) {
+    return (
+      <View style={styles.centered}>
+        <Stack.Screen options={{ title: t('common.error') }} />
+        <MaterialCommunityIcons name="alert-circle-outline" size={48} color={colors.error} />
+        <Text style={styles.errorText}>{t('wishlist.errors.invalidItemId')}</Text>
+        <Pressable onPress={() => router.back()} style={styles.backButton}>
+          <Text style={styles.backButtonText}>{t('common.back')}</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
   // Loading state
   if (loading) {
     return (

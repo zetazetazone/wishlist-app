@@ -417,7 +417,8 @@
       "titleRequired": "Item title is required",
       "invalidUrl": "Please enter a valid URL",
       "invalidPrice": "Please enter a valid price",
-      "itemNotFound": "Item not found"
+      "itemNotFound": "Item not found",
+      "invalidItemId": "Invalid item ID"
     },
     "detail": {
       "goToStore": "Go to Store"

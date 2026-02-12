@@ -417,7 +417,8 @@
       "titleRequired": "El titulo del articulo es obligatorio",
       "invalidUrl": "Por favor ingresa una URL valida",
       "invalidPrice": "Por favor ingresa un precio valido",
-      "itemNotFound": "Articulo no encontrado"
+      "itemNotFound": "Articulo no encontrado",
+      "invalidItemId": "ID de articulo invalido"
     },
     "detail": {
       "goToStore": "Ir a la tienda"
