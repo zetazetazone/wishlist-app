@@ -406,7 +406,9 @@
       "removeFavorite": "Quitar favorito",
       "mostWanted": "MÁS DESEADO",
       "mostWantedInGroup": "MÁS DESEADO en {{group}}",
-      "mostWantedAllGroups": "MÁS DESEADO en todos los grupos"
+      "mostWantedAllGroups": "MÁS DESEADO en todos los grupos",
+      "changeFromList": "Cambiar desde Mi Lista",
+      "changeFromListMessage": "Para cambiar tu articulo mas deseado, ve a Mi Lista y toca el icono de corazon."
     },
     "empty": {
       "noItems": "Aun no hay articulos",

@@ -406,7 +406,9 @@
       "removeFavorite": "Remove Favorite",
       "mostWanted": "MOST WANTED",
       "mostWantedInGroup": "MOST WANTED in {{group}}",
-      "mostWantedAllGroups": "MOST WANTED in all groups"
+      "mostWantedAllGroups": "MOST WANTED in all groups",
+      "changeFromList": "Change from My Wishlist",
+      "changeFromListMessage": "To change your Most Wanted item, go to My Wishlist and tap the heart icon."
     },
     "empty": {
       "noItems": "No items yet",
