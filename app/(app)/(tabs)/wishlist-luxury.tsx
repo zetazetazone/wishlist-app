@@ -2,10 +2,8 @@ import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
-  ScrollView,
   TouchableOpacity,
   Alert,
-  RefreshControl,
   StatusBar,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -20,6 +18,7 @@ import LuxuryBottomSheet, {
 } from '../../../components/wishlist/LuxuryBottomSheet';
 import LuxuryWishlistCard from '../../../components/wishlist/LuxuryWishlistCard';
 import { TakenCounter } from '../../../components/wishlist/TakenCounter';
+import { WishlistGrid } from '../../../components/wishlist';
 import { colors, spacing, borderRadius, shadows } from '../../../constants/theme';
 
 export default function LuxuryWishlistScreen() {
@@ -28,6 +27,7 @@ export default function LuxuryWishlistScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [claimStatuses, setClaimStatuses] = useState<Map<string, boolean>>(new Map());
+  const [favoriteItemIds, setFavoriteItemIds] = useState<Set<string>>(new Set());
   const bottomSheetRef = useRef<LuxuryBottomSheetRef>(null);
 
   useEffect(() => {
@@ -122,6 +122,18 @@ export default function LuxuryWishlistScreen() {
     await fetchWishlistItems();
     setRefreshing(false);
   };
+
+  const handleItemPress = useCallback((item: WishlistItem) => {
+    // For Phase 34: Navigate to item detail (placeholder)
+    // Phase 35 will add actual detail navigation
+    console.log('Item pressed:', item.id);
+    // TODO: router.push(`/wishlist/${item.id}`) in Phase 35
+  }, []);
+
+  const handleItemAction = useCallback((item: WishlistItem) => {
+    // For Phase 34: Open bottom sheet (existing behavior)
+    bottomSheetRef.current?.open();
+  }, []);
 
   const handleAddItem = async (itemData: {
     amazon_url: string;
@@ -276,22 +288,7 @@ export default function LuxuryWishlistScreen() {
         </LinearGradient>
 
         {/* Content */}
-        <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={{
-            padding: spacing.lg,
-            paddingTop: spacing.md,
-          }}
-          showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              tintColor={colors.burgundy[600]}
-              colors={[colors.burgundy[600]]}
-            />
-          }
-        >
+        <View style={{ flex: 1 }}>
           {loading ? (
             <View style={{ paddingVertical: spacing.xxl }}>
               <Text
@@ -304,84 +301,79 @@ export default function LuxuryWishlistScreen() {
                 Loading...
               </Text>
             </View>
-          ) : items.length === 0 ? (
-            <MotiView
-              from={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ type: 'spring', delay: 200 }}
-            >
-              <View
-                style={{
-                  backgroundColor: colors.white,
-                  borderRadius: borderRadius.xl,
-                  padding: spacing.xxl,
-                  alignItems: 'center',
-                  marginTop: spacing.xxl,
-                  borderWidth: 2,
-                  borderColor: colors.gold[100],
-                  borderStyle: 'dashed',
-                }}
-              >
-                <View
-                  style={{
-                    width: 100,
-                    height: 100,
-                    borderRadius: 50,
-                    backgroundColor: colors.burgundy[50],
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: spacing.lg,
-                  }}
-                >
-                  <MaterialCommunityIcons
-                    name="gift-outline"
-                    size={60}
-                    color={colors.burgundy[400]}
-                  />
-                </View>
-
-                <Text
-                  style={{
-                    fontSize: 24,
-                    fontWeight: '700',
-                    color: colors.burgundy[800],
-                    marginBottom: spacing.sm,
-                    textAlign: 'center',
-                  }}
-                >
-                  Start Your Wishlist
-                </Text>
-
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: colors.burgundy[400],
-                    textAlign: 'center',
-                    lineHeight: 24,
-                  }}
-                >
-                  Tap the golden + button above to add{'\n'}gifts you're wishing for
-                </Text>
-              </View>
-            </MotiView>
           ) : (
-            sortedItems.map((item, index) => {
-              const isTaken = claimStatuses.get(item.id) || false;
+            <WishlistGrid
+              items={sortedItems}
+              onItemPress={handleItemPress}
+              onItemAction={handleItemAction}
+              isOwner={true}
+              favoriteItemIds={favoriteItemIds}
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              ListEmptyComponent={
+                <MotiView
+                  from={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: 'spring', delay: 200 }}
+                >
+                  <View
+                    style={{
+                      backgroundColor: colors.white,
+                      borderRadius: borderRadius.xl,
+                      padding: spacing.xxl,
+                      alignItems: 'center',
+                      marginTop: spacing.xxl,
+                      borderWidth: 2,
+                      borderColor: colors.gold[100],
+                      borderStyle: 'dashed',
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: 100,
+                        height: 100,
+                        borderRadius: 50,
+                        backgroundColor: colors.burgundy[50],
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: spacing.lg,
+                      }}
+                    >
+                      <MaterialCommunityIcons
+                        name="gift-outline"
+                        size={60}
+                        color={colors.burgundy[400]}
+                      />
+                    </View>
 
-              return (
-                <LuxuryWishlistCard
-                  key={item.id}
-                  item={item}
-                  onDelete={handleDeleteItem}
-                  index={index}
-                  // Celebrant taken view props
-                  isTaken={isTaken}
-                  dimmed={isTaken}  // Per CONTEXT: "Taken items appear dimmed/faded"
-                />
-              );
-            })
+                    <Text
+                      style={{
+                        fontSize: 24,
+                        fontWeight: '700',
+                        color: colors.burgundy[800],
+                        marginBottom: spacing.sm,
+                        textAlign: 'center',
+                      }}
+                    >
+                      Start Your Wishlist
+                    </Text>
+
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: colors.burgundy[400],
+                        textAlign: 'center',
+                        lineHeight: 24,
+                      }}
+                    >
+                      Tap the golden + button above to add{'\n'}gifts you're wishing for
+                    </Text>
+                  </View>
+                </MotiView>
+              }
+            />
           )}
-        </ScrollView>
+        </View>
       </View>
 
       <LuxuryBottomSheet ref={bottomSheetRef} onAdd={handleAddItem} />
