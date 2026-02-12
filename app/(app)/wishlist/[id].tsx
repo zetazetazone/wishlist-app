@@ -93,15 +93,17 @@ export default function ItemDetailScreen() {
   const [splitModalVisible, setSplitModalVisible] = useState(false);
   const [openSplitModalVisible, setOpenSplitModalVisible] = useState(false);
 
-  // Load item data
+  // Load item data with performance monitoring
   const loadItem = useCallback(async () => {
     if (!id) return;
+
+    const startTime = performance.now();
 
     try {
       setLoading(true);
       setError(null);
 
-      // Get current user
+      // Get current user first (required for context)
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         setError(t('celebrations.notAuthenticated'));
@@ -109,22 +111,48 @@ export default function ItemDetailScreen() {
       }
       setCurrentUserId(user.id);
 
-      // Fetch item
-      const itemData = await getWishlistItem(id);
+      // Parallel fetch: item + celebration (if context provided)
+      const promises: Promise<any>[] = [getWishlistItem(id)];
+
+      if (celebrationId) {
+        promises.push(
+          supabase
+            .from('celebrations')
+            .select('celebrant_id')
+            .eq('id', celebrationId)
+            .single()
+        );
+      }
+
+      const [itemData, celebrationData] = await Promise.all(promises);
+
       if (!itemData) {
         setError(t('wishlist.errors.itemNotFound'));
         return;
       }
 
       setItem(itemData);
-      setIsOwner(itemData.user_id === user.id);
+      const isItemOwner = itemData.user_id === user.id;
+      setIsOwner(isItemOwner);
+
+      // Set celebrant status from parallel fetch
+      if (celebrationData?.data) {
+        setIsCelebrant(celebrationData.data.celebrant_id === user.id);
+      }
     } catch (err) {
       console.error('Failed to load item:', err);
       setError(err instanceof Error ? err.message : t('common.errors.generic'));
     } finally {
       setLoading(false);
+
+      const loadTime = performance.now() - startTime;
+      console.log(`[Performance] Item detail loaded in ${loadTime.toFixed(0)}ms`);
+
+      if (loadTime > 200) {
+        console.warn(`[Performance] Load time exceeded 200ms target: ${loadTime.toFixed(0)}ms`);
+      }
     }
-  }, [id, t]);
+  }, [id, celebrationId, t]);
 
   useEffect(() => {
     loadItem();
@@ -135,22 +163,12 @@ export default function ItemDetailScreen() {
     if (!id || !currentUserId || isOwner) return;
 
     try {
-      // If accessing via celebration, determine if user is celebrant
-      if (celebrationId) {
-        const { data: celebration } = await supabase
-          .from('celebrations')
-          .select('celebrant_id')
-          .eq('id', celebrationId)
-          .single();
-
-        if (celebration?.celebrant_id === currentUserId) {
-          setIsCelebrant(true);
-          // Celebrant view: only get boolean status
-          const statuses = await getItemClaimStatus([id]);
-          const status = statuses.find(s => s.wishlist_item_id === id);
-          setIsTaken(status?.is_claimed ?? false);
-          return;
-        }
+      // Celebrant view: only get boolean status (isCelebrant set in loadItem from parallel fetch)
+      if (isCelebrant) {
+        const statuses = await getItemClaimStatus([id]);
+        const status = statuses.find(s => s.wishlist_item_id === id);
+        setIsTaken(status?.is_claimed ?? false);
+        return;
       }
 
       // Non-celebrant view: get full claim data
@@ -177,13 +195,75 @@ export default function ItemDetailScreen() {
     } catch (err) {
       console.error('Failed to load claim context:', err);
     }
-  }, [id, currentUserId, isOwner, celebrationId]);
+  }, [id, currentUserId, isOwner, isCelebrant]);
 
   useEffect(() => {
     if (item && currentUserId) {
       loadClaimContext();
     }
   }, [item, currentUserId, loadClaimContext]);
+
+  // Realtime subscription for claim changes
+  useEffect(() => {
+    // Only subscribe if we're in a claim-relevant context
+    if (!id || isOwner) return;
+
+    const channel = supabase
+      .channel(`item-claim-${id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // INSERT, UPDATE, DELETE
+          schema: 'public',
+          table: 'gift_claims',
+          filter: `wishlist_item_id=eq.${id}`,
+        },
+        (payload) => {
+          console.log('[Realtime] Claim change detected:', payload.eventType);
+          // Refresh claim data when any change occurs
+          loadClaimContext();
+        }
+      )
+      .subscribe((status) => {
+        console.log('[Realtime] Claim subscription status:', status);
+      });
+
+    return () => {
+      console.log('[Realtime] Unsubscribing from claim channel');
+      supabase.removeChannel(channel);
+    };
+  }, [id, isOwner, loadClaimContext]);
+
+  // Realtime subscription for split contribution changes
+  useEffect(() => {
+    if (!id || isOwner || isCelebrant) return;
+    if (!splitStatus?.isOpen) return;
+
+    const channel = supabase
+      .channel(`split-contrib-${id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'split_contributions',
+          filter: `wishlist_item_id=eq.${id}`,
+        },
+        (payload) => {
+          console.log('[Realtime] Split contribution change:', payload.eventType);
+          // Refresh split data
+          loadClaimContext();
+        }
+      )
+      .subscribe((status) => {
+        console.log('[Realtime] Split subscription status:', status);
+      });
+
+    return () => {
+      console.log('[Realtime] Unsubscribing from split channel');
+      supabase.removeChannel(channel);
+    };
+  }, [id, isOwner, isCelebrant, splitStatus?.isOpen, loadClaimContext]);
 
   // Claim item handler
   const handleClaim = useCallback(async () => {
