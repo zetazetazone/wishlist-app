@@ -81,17 +81,15 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 - ✓ User can block another user (prevents future friend requests) — v1.4
 - ✓ User can search for other users by name or email — v1.4
 
+- ✓ App auto-detects device language on first launch (fallback to English) — v1.5
+- ✓ App supports English and Spanish languages — v1.5
+- ✓ All UI strings are localized (buttons, labels, navigation, error messages) — v1.5
+- ✓ System messages are localized (push notifications, reminders, auto-generated content) — v1.5
+- ✓ User's language preference is stored server-side in profile — v1.5
+- ✓ User can change language in profile settings — v1.5
+- ✓ Localization architecture supports adding more languages in the future — v1.5
+
 ### Active
-
-**v1.5 — Localization**
-
-- [ ] App auto-detects device language on first launch (fallback to English)
-- [ ] App supports English and Spanish languages
-- [ ] All UI strings are localized (buttons, labels, navigation, error messages)
-- [ ] System messages are localized (push notifications, reminders, auto-generated content)
-- [ ] User's language preference is stored server-side in profile
-- [ ] User can change language in profile settings
-- [ ] Localization architecture supports adding more languages in the future
 
 **v1.6+ — Future Enhancements**
 
@@ -123,13 +121,14 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 
 ## Context
 
-**Shipped v1.4 with:**
-- ~30,000 lines of TypeScript across 140+ files
+**Shipped v1.5 with:**
+- ~47,000 lines of TypeScript across 200+ files
 - React Native 0.81.5 with Expo 54
 - Supabase for auth, database, realtime, edge functions, and storage
-- 14 database migrations, 2 pg_cron jobs, 1 Edge Function
-- Friends system with bidirectional relationships and contact matching
-- Comprehensive RLS security with celebrant exclusion, subject exclusion, and friends-only patterns
+- 15 database migrations, 2 pg_cron jobs, 1 Edge Function
+- Complete i18n infrastructure with i18next, react-i18next, expo-localization
+- 956 translation keys in English and Spanish with TypeScript-safe keys
+- Server-synced language preference with localized push notifications
 
 **Tech stack:**
 - React Native + Expo 54 (managed workflow)
@@ -137,6 +136,8 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 - expo-notifications for push delivery
 - expo-calendar for device sync
 - expo-contacts for contact import (v1.4)
+- expo-localization for device language detection (v1.5)
+- i18next + react-i18next for localization (v1.5)
 - libphonenumber-js for E.164 phone normalization (v1.4)
 - react-native-calendars for in-app calendar
 - @shopify/flash-list for performant lists
@@ -174,18 +175,12 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 | E.164 phone normalization | Cross-platform contact matching works reliably | ✓ Good - consistent matching |
 | Friend dates in teal (#0D9488) | Visual distinction from group birthday colors | ✓ Good - clear differentiation |
 | Month/day storage for public dates | Enables efficient annual recurrence queries | ✓ Good - flexible design |
-
-## Current Milestone: v1.5 Localization
-
-**Goal:** Enable users to use the app in their preferred language, starting with English and Spanish.
-
-**Target features:**
-- Auto-detect device language on first launch
-- English and Spanish language support
-- Localized UI strings and system messages (push notifications, reminders)
-- Server-side language preference in user profile
-- Language change option in profile settings
-- Extensible architecture for future languages
+| i18next + react-i18next stack | Expo official recommendation, 25M+ weekly downloads, TypeScript support | ✓ Good - mature ecosystem |
+| Three-tier language hierarchy | Server > Local > Device enables cross-device sync and push localization | ✓ Good - flexible and reliable |
+| preferred_language in users table | Edge Function service role can access (unlike auth metadata) | ✓ Good - enables localized push |
+| Neutral Latin American Spanish | Broader audience (ustedes vs vosotros), avoids regional specificity | ✓ Good - inclusive |
+| Single translation namespace | Simpler than separate files, easier maintenance, works with nested keys | ✓ Good - maintainable |
+| ESLint v8 for i18n linting | Required for .eslintrc.js compatibility with Expo config | ✓ Good - tooling works |
 
 ---
-*Last updated: 2026-02-11 after v1.5 milestone start*
+*Last updated: 2026-02-12 after v1.5 milestone*

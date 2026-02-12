@@ -1,5 +1,33 @@
 # Project Milestones: Wishlist Group Gifting App
 
+## v1.5 Localization (Shipped: 2026-02-12)
+
+**Delivered:** Complete English and Spanish localization with instant language switching.
+
+**Phases completed:** 29-32 (13 plans total)
+
+**Key accomplishments:**
+
+- Complete i18n infrastructure with i18next, react-i18next, and expo-localization for device language detection and TypeScript-safe translation keys
+- Server-side language preference storage in Supabase with cross-device sync and three-tier hierarchy (Server > Local > Device)
+- Localized push notification system via Edge Function with 24 notification templates in English and Spanish
+- 956 translation keys across 15 namespaces with neutral Latin American Spanish translations
+- Language settings UI with radio card selection and instant switching without app restart
+- All 73+ UI files migrated to use useTranslation hook with localized date formatting via useLocalizedFormat
+
+**Stats:**
+
+- 134 files created/modified
+- 17,171 lines added, 1,052 removed
+- 4 phases, 13 plans, 44 commits
+- 2 days from start to ship (2026-02-11 → 2026-02-12)
+
+**Git range:** `docs(29)` → `feat(i18n)`
+
+**What's next:** Additional languages (Portuguese, French), notification preferences, chat read receipts/reactions, Gift Leader dashboard
+
+---
+
 ## v1.4 Friends System (Shipped: 2026-02-10)
 
 **Delivered:** Friends network outside of groups with contact discovery, friend requests, public dates, and calendar integration.
