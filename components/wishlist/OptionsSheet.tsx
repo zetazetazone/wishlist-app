@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useState, useCallback } from 'react';
+import { forwardRef, useImperativeHandle, useState, useCallback, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,18 +7,21 @@ import {
   Alert,
   Share,
   Modal,
-  TouchableWithoutFeedback,
+  Animated,
+  PanResponder,
   Dimensions,
 } from 'react-native';
 import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { colors, spacing, borderRadius, shadows } from '@/constants/theme';
+import { colors, spacing, borderRadius } from '@/constants/theme';
 import { formatItemPrice, getImagePlaceholder } from '@/utils/wishlist';
 import StarRating from '@/components/ui/StarRating';
 import { WishlistItem } from '@/types/database.types';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const SHEET_HEIGHT = SCREEN_HEIGHT * 0.55;
+const DRAG_THRESHOLD = 50; // Minimum drag distance to trigger close
 
 interface OptionsSheetProps {
   onFavoriteToggle: (item: WishlistItem) => void;
@@ -38,28 +41,104 @@ export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
     const [visible, setVisible] = useState(false);
     const [item, setItem] = useState<WishlistItem | null>(null);
 
+    // Animation values
+    const backdropOpacity = useRef(new Animated.Value(0)).current;
+    const sheetTranslateY = useRef(new Animated.Value(SHEET_HEIGHT)).current;
+    const dragY = useRef(new Animated.Value(0)).current;
+
+    // Combined transform for sheet (base position + drag offset)
+    const sheetTransform = Animated.add(sheetTranslateY, dragY);
+
+    // Pan responder for drag-to-close
+    const panResponder = useRef(
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: (_, gestureState) => {
+          // Only respond to downward drags
+          return gestureState.dy > 5;
+        },
+        onPanResponderMove: (_, gestureState) => {
+          // Only allow dragging down (positive dy)
+          if (gestureState.dy > 0) {
+            dragY.setValue(gestureState.dy);
+          }
+        },
+        onPanResponderRelease: (_, gestureState) => {
+          if (gestureState.dy > DRAG_THRESHOLD) {
+            // Close the sheet
+            closeWithAnimation();
+          } else {
+            // Snap back
+            Animated.spring(dragY, {
+              toValue: 0,
+              useNativeDriver: true,
+              tension: 100,
+              friction: 10,
+            }).start();
+          }
+        },
+      })
+    ).current;
+
+    const openWithAnimation = useCallback(() => {
+      setVisible(true);
+      dragY.setValue(0);
+      // Animate backdrop fade in and sheet slide up simultaneously
+      Animated.parallel([
+        Animated.timing(backdropOpacity, {
+          toValue: 1,
+          duration: 250,
+          useNativeDriver: true,
+        }),
+        Animated.spring(sheetTranslateY, {
+          toValue: 0,
+          useNativeDriver: true,
+          tension: 65,
+          friction: 11,
+        }),
+      ]).start();
+    }, [backdropOpacity, sheetTranslateY, dragY]);
+
+    const closeWithAnimation = useCallback(() => {
+      Animated.parallel([
+        Animated.timing(backdropOpacity, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(sheetTranslateY, {
+          toValue: SHEET_HEIGHT,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setVisible(false);
+        dragY.setValue(0);
+      });
+    }, [backdropOpacity, sheetTranslateY, dragY]);
+
     useImperativeHandle(ref, () => ({
       open: (newItem: WishlistItem) => {
         setItem(newItem);
-        setVisible(true);
+        // Reset animation values before opening
+        sheetTranslateY.setValue(SHEET_HEIGHT);
+        backdropOpacity.setValue(0);
+        // Small delay to ensure state is set before animation
+        setTimeout(() => openWithAnimation(), 10);
       },
       close: () => {
-        setVisible(false);
+        closeWithAnimation();
       },
     }));
 
     const handleClose = useCallback(() => {
-      setVisible(false);
-    }, []);
+      closeWithAnimation();
+    }, [closeWithAnimation]);
 
     const handlePriorityChange = useCallback(
       (newPriority: number) => {
         if (!item) return;
-
-        // Update local state immediately for smooth UI
         setItem({ ...item, priority: newPriority });
-
-        // Propagate change to parent
         onPriorityChange(item.id, newPriority);
       },
       [item, onPriorityChange]
@@ -73,27 +152,18 @@ export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
 
     const handleShare = useCallback(async () => {
       if (!item) return;
-
       try {
         let message = item.title;
-
-        // Include amazon_url if it exists
         if (item.amazon_url) {
           message += `\n\n${item.amazon_url}`;
         }
-
-        await Share.share({
-          message,
-          title: item.title,
-        });
+        await Share.share({ message, title: item.title });
       } catch (error) {
-        // User cancelled or error occurred - silently ignore
         console.log('Share cancelled or failed:', error);
       }
     }, [item]);
 
     const handleEdit = useCallback(() => {
-      // Edit form doesn't exist yet - show temporary alert
       Alert.alert(
         t('common.edit'),
         'Edit feature coming soon. You can delete and re-add the item for now.',
@@ -103,15 +173,11 @@ export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
 
     const handleDelete = useCallback(() => {
       if (!item) return;
-
       Alert.alert(
         t('common.delete'),
         t('wishlist.card.confirmDelete'),
         [
-          {
-            text: t('common.cancel'),
-            style: 'cancel',
-          },
+          { text: t('common.cancel'), style: 'cancel' },
           {
             text: t('common.delete'),
             style: 'destructive',
@@ -138,174 +204,187 @@ export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
       <Modal
         visible={visible}
         transparent
-        animationType="slide"
+        statusBarTranslucent
+        animationType="none"
         onRequestClose={handleClose}
       >
-        <TouchableWithoutFeedback onPress={handleClose}>
-          <View style={styles.overlay}>
-            <TouchableWithoutFeedback>
-              <View style={styles.sheet}>
-                {/* Handle indicator */}
-                <View style={styles.handleContainer}>
-                  <View style={styles.handle} />
-                </View>
+        <View style={styles.container}>
+          {/* Animated backdrop */}
+          <Animated.View
+            style={[styles.backdrop, { opacity: backdropOpacity }]}
+          >
+            <Pressable style={styles.backdropPressable} onPress={handleClose} />
+          </Animated.View>
 
-                {/* Item Preview Section */}
-                <View style={styles.previewSection}>
-                  {item.image_url ? (
-                    <Image
-                      source={{ uri: item.image_url }}
-                      style={styles.image}
-                      contentFit="cover"
-                      cachePolicy="memory-disk"
-                      transition={200}
-                    />
-                  ) : (
-                    <View
-                      style={[
-                        styles.imagePlaceholder,
-                        { backgroundColor: placeholder.backgroundColor },
-                      ]}
-                    >
-                      <MaterialCommunityIcons
-                        name={placeholder.iconName}
-                        size={32}
-                        color={placeholder.iconColor}
-                      />
-                    </View>
-                  )}
+          {/* Animated sheet */}
+          <Animated.View
+            style={[
+              styles.sheet,
+              { transform: [{ translateY: sheetTransform }] },
+            ]}
+          >
+            {/* Drag handle */}
+            <View {...panResponder.panHandlers} style={styles.handleContainer}>
+              <View style={styles.handle} />
+            </View>
 
-                  <View style={styles.previewText}>
-                    <Text style={styles.title} numberOfLines={2}>
-                      {item.title}
-                    </Text>
-                    {formattedPrice && (
-                      <Text style={styles.price}>{formattedPrice}</Text>
-                    )}
-                  </View>
-                </View>
-
-                {/* Divider */}
-                <View style={styles.divider} />
-
-                {/* Priority Section */}
-                <View style={styles.prioritySection}>
-                  <Text style={styles.priorityLabel}>
-                    {t('wishlist.itemPriority')}
-                  </Text>
-                  <StarRating
-                    rating={item.priority}
-                    onRatingChange={handlePriorityChange}
-                    size={28}
+            {/* Item Preview Section */}
+            <View style={styles.previewSection}>
+              {item.image_url ? (
+                <Image
+                  source={{ uri: item.image_url }}
+                  style={styles.image}
+                  contentFit="cover"
+                  cachePolicy="memory-disk"
+                  transition={200}
+                />
+              ) : (
+                <View
+                  style={[
+                    styles.imagePlaceholder,
+                    { backgroundColor: placeholder.backgroundColor },
+                  ]}
+                >
+                  <MaterialCommunityIcons
+                    name={placeholder.iconName}
+                    size={32}
+                    color={placeholder.iconColor}
                   />
                 </View>
+              )}
 
-                {/* Divider */}
-                <View style={styles.divider} />
-
-                {/* Action Buttons */}
-                <View style={styles.actionsSection}>
-                  {/* Favorite */}
-                  <Pressable
-                    style={({ pressed }) => [
-                      styles.actionButton,
-                      pressed && styles.actionButtonPressed,
-                    ]}
-                    onPress={handleFavorite}
-                  >
-                    <MaterialCommunityIcons
-                      name={favorite ? 'heart' : 'heart-outline'}
-                      size={24}
-                      color={favorite ? colors.burgundy[600] : colors.burgundy[400]}
-                    />
-                    <Text style={styles.actionText}>
-                      {favorite
-                        ? t('wishlist.favorite.removeFavorite')
-                        : t('wishlist.favorite.markFavorite')}
-                    </Text>
-                  </Pressable>
-
-                  {/* Share */}
-                  <Pressable
-                    style={({ pressed }) => [
-                      styles.actionButton,
-                      pressed && styles.actionButtonPressed,
-                    ]}
-                    onPress={handleShare}
-                  >
-                    <MaterialCommunityIcons
-                      name="share-variant"
-                      size={24}
-                      color={colors.burgundy[400]}
-                    />
-                    <Text style={styles.actionText}>{t('common.share')}</Text>
-                  </Pressable>
-
-                  {/* Edit */}
-                  <Pressable
-                    style={({ pressed }) => [
-                      styles.actionButton,
-                      pressed && styles.actionButtonPressed,
-                    ]}
-                    onPress={handleEdit}
-                  >
-                    <MaterialCommunityIcons
-                      name="pencil"
-                      size={24}
-                      color={colors.burgundy[400]}
-                    />
-                    <Text style={styles.actionText}>{t('common.edit')}</Text>
-                  </Pressable>
-
-                  {/* Delete */}
-                  <Pressable
-                    style={({ pressed }) => [
-                      styles.actionButton,
-                      pressed && styles.actionButtonPressed,
-                    ]}
-                    onPress={handleDelete}
-                  >
-                    <MaterialCommunityIcons
-                      name="delete"
-                      size={24}
-                      color={colors.error}
-                    />
-                    <Text style={[styles.actionText, styles.deleteText]}>
-                      {t('common.delete')}
-                    </Text>
-                  </Pressable>
-                </View>
+              <View style={styles.previewText}>
+                <Text style={styles.title} numberOfLines={2}>
+                  {item.title}
+                </Text>
+                {formattedPrice && (
+                  <Text style={styles.price}>{formattedPrice}</Text>
+                )}
               </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
+            </View>
+
+            <View style={styles.divider} />
+
+            {/* Priority Section */}
+            <View style={styles.prioritySection}>
+              <Text style={styles.priorityLabel}>
+                {t('wishlist.itemPriority')}
+              </Text>
+              <StarRating
+                rating={item.priority}
+                onRatingChange={handlePriorityChange}
+                size={28}
+              />
+            </View>
+
+            <View style={styles.divider} />
+
+            {/* Action Buttons */}
+            <View style={styles.actionsSection}>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.actionButton,
+                  pressed && styles.actionButtonPressed,
+                ]}
+                onPress={handleFavorite}
+              >
+                <MaterialCommunityIcons
+                  name={favorite ? 'heart' : 'heart-outline'}
+                  size={24}
+                  color={favorite ? colors.burgundy[600] : colors.burgundy[400]}
+                />
+                <Text style={styles.actionText}>
+                  {favorite
+                    ? t('wishlist.favorite.removeFavorite')
+                    : t('wishlist.favorite.markFavorite')}
+                </Text>
+              </Pressable>
+
+              <Pressable
+                style={({ pressed }) => [
+                  styles.actionButton,
+                  pressed && styles.actionButtonPressed,
+                ]}
+                onPress={handleShare}
+              >
+                <MaterialCommunityIcons
+                  name="share-variant"
+                  size={24}
+                  color={colors.burgundy[400]}
+                />
+                <Text style={styles.actionText}>{t('common.share')}</Text>
+              </Pressable>
+
+              <Pressable
+                style={({ pressed }) => [
+                  styles.actionButton,
+                  pressed && styles.actionButtonPressed,
+                ]}
+                onPress={handleEdit}
+              >
+                <MaterialCommunityIcons
+                  name="pencil"
+                  size={24}
+                  color={colors.burgundy[400]}
+                />
+                <Text style={styles.actionText}>{t('common.edit')}</Text>
+              </Pressable>
+
+              <Pressable
+                style={({ pressed }) => [
+                  styles.actionButton,
+                  pressed && styles.actionButtonPressed,
+                ]}
+                onPress={handleDelete}
+              >
+                <MaterialCommunityIcons
+                  name="delete"
+                  size={24}
+                  color={colors.error}
+                />
+                <Text style={[styles.actionText, styles.deleteText]}>
+                  {t('common.delete')}
+                </Text>
+              </Pressable>
+            </View>
+          </Animated.View>
+        </View>
       </Modal>
     );
   }
 );
 
 const styles = StyleSheet.create({
-  overlay: {
+  container: {
     flex: 1,
+  },
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+  },
+  backdropPressable: {
+    flex: 1,
   },
   sheet: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: SHEET_HEIGHT,
     backgroundColor: colors.cream[50],
     borderTopLeftRadius: borderRadius.xl,
     borderTopRightRadius: borderRadius.xl,
-    paddingBottom: 40, // Safe area padding
-    maxHeight: SCREEN_HEIGHT * 0.7,
+    paddingBottom: 40,
   },
   handleContainer: {
     alignItems: 'center',
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.md,
   },
   handle: {
     width: 48,
-    height: 4,
+    height: 5,
     backgroundColor: colors.burgundy[300],
-    borderRadius: 2,
+    borderRadius: 2.5,
   },
   previewSection: {
     flexDirection: 'row',
