@@ -27,3 +27,21 @@ export async function getWishlistItemsByUserId(userId: string): Promise<Wishlist
 
   return data || [];
 }
+
+/**
+ * Get a single wishlist item by ID
+ */
+export async function getWishlistItem(itemId: string): Promise<WishlistItem | null> {
+  const { data, error } = await supabase
+    .from('wishlist_items')
+    .select('*')
+    .eq('id', itemId)
+    .single();
+
+  if (error) {
+    console.error('Failed to fetch wishlist item:', error);
+    return null;
+  }
+
+  return data;
+}
