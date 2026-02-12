@@ -59,6 +59,7 @@ import { ChatInput } from '../../../components/chat/ChatInput';
 import { getFavoriteForGroup } from '../../../lib/favorites';
 import { getWishlistItemsByUserId, WishlistItem } from '../../../lib/wishlistItems';
 import LuxuryWishlistCard from '../../../components/wishlist/LuxuryWishlistCard';
+import { WishlistGrid } from '../../../components/wishlist';
 import { GroupModeBadge } from '../../../components/groups/GroupModeBadge';
 import {
   getClaimsForItems,
@@ -462,6 +463,20 @@ export default function CelebrationDetailScreen() {
     router.push(`/wishlist/${itemId}`);
   };
 
+  const handleWishlistItemPress = useCallback((item: WishlistItem) => {
+    // For Phase 34: Navigate to item detail (placeholder)
+    // Phase 35 will add actual detail navigation with claim UI
+    console.log('Wishlist item pressed:', item.id, 'on celebration');
+    // TODO: router.push(`/celebration/${id}/item/${item.id}`) in Phase 35
+  }, [id]);
+
+  const handleWishlistItemAction = useCallback((item: WishlistItem) => {
+    // Non-owner action: show claim options or status
+    // For Phase 34: Log only
+    // Phase 35 will add claim sheet or navigation
+    console.log('Wishlist item action:', item.id);
+  }, []);
+
   // Check if current user is the Gift Leader
   const isCurrentUserGiftLeader =
     currentUserId !== null && celebration?.gift_leader_id === currentUserId;
@@ -473,6 +488,28 @@ export default function CelebrationDetailScreen() {
 
   // Calculate contribution totals
   const totalContributed = contributions.reduce((sum, c) => sum + c.amount, 0);
+
+  // Create claimsMap from claims array
+  const claimsMap = useMemo(() => {
+    const map = new Map<string, ClaimWithUser>();
+    claims.forEach(claim => {
+      if (claim.wishlist_item_id) {
+        map.set(claim.wishlist_item_id, claim);
+      }
+    });
+    return map;
+  }, [claims]);
+
+  // Create claimStatusesMap for celebrant view
+  const claimStatusesMap = useMemo(() => {
+    const map = new Map<string, boolean>();
+    claims.forEach(claim => {
+      if (claim.wishlist_item_id) {
+        map.set(claim.wishlist_item_id, true);
+      }
+    });
+    return map;
+  }, [claims]);
 
   // Sort celebrant items: favorite first, then unclaimed (non-celebrant), then by priority
   const sortedCelebrantItems = useMemo(() => {
@@ -896,53 +933,23 @@ export default function CelebrationDetailScreen() {
                       <Text style={styles.emptyText}>{t('wishlist.empty.noItems')}</Text>
                     </View>
                   ) : (
-                    <View style={styles.wishlistContainer}>
-                      {sortedCelebrantItems.map((item, index) => {
-                        const claim = getClaimForItem(item.id);
-                        const isYourClaim = claim?.claimed_by === currentUserId;
-                        const isCelebrant = currentUserId === celebration?.celebrant_id;
-                        const isStandardItem = item.item_type === 'standard' || !item.item_type;
-
-                        // Get split data for this item
-                        const splitStatus = splitStatusMap.get(item.id);
-                        const splitContributors = contributorsMap.get(item.id);
-                        const suggestedShare = suggestedShareMap.get(item.id);
-                        const userPledge = userPledgesMap.get(item.id);
-
-                        return (
-                          <LuxuryWishlistCard
-                            key={item.id}
-                            item={item}
-                            index={index}
-                            favoriteGroups={item.id === celebrantFavoriteId ? [{ groupId: celebration.group_id, groupName: '' }] : []}
-                            showFavoriteHeart={false}
-                            // Claim props (only for non-celebrant view)
-                            claimable={!isCelebrant && !claim && isStandardItem}
-                            onClaim={() => handleClaimItem(item)}
-                            onUnclaim={() => claim && handleUnclaimItem(item, claim.id)}
-                            claiming={claimingItemId === item.id}
-                            claim={!isCelebrant ? claim : null}  // Don't pass claim to celebrant
-                            isYourClaim={isYourClaim}
-                            isTaken={isCelebrant && !!claim}  // Celebrant sees "Taken" badge when claimed
-                            dimmed={isCelebrant && !!claim}   // Celebrant sees dimmed taken items
-                            isCelebrant={isCelebrant}
-                            // Split contribution props
-                            splitStatus={splitStatus ? {
-                              itemPrice: splitStatus.item_price,
-                              additionalCosts: splitStatus.additional_costs,
-                              totalPledged: splitStatus.total_pledged,
-                              isFullyFunded: splitStatus.is_fully_funded,
-                              isOpen: splitStatus.is_open,
-                            } : null}
-                            contributors={splitContributors}
-                            userPledgeAmount={userPledge}
-                            suggestedShare={suggestedShare}
-                            onOpenSplit={handleOpenSplit}
-                            onPledge={handlePledge}
-                            onCloseSplit={handleCloseSplit}
-                          />
-                        );
-                      })}
+                    <View style={{ minHeight: 400 }}>
+                      <WishlistGrid
+                        items={sortedCelebrantItems}
+                        onItemPress={handleWishlistItemPress}
+                        onItemAction={handleWishlistItemAction}
+                        isOwner={false}
+                        isCelebrant={currentUserId === celebration?.celebrant_id}
+                        claimStatuses={claimStatusesMap}
+                        claims={claimsMap}
+                        currentUserId={currentUserId || undefined}
+                        favoriteItemIds={celebrantFavoriteId ? new Set([celebrantFavoriteId]) : undefined}
+                        ListEmptyComponent={
+                          <View style={styles.emptyCard}>
+                            <Text style={styles.emptyText}>{t('wishlist.empty.noItems')}</Text>
+                          </View>
+                        }
+                      />
                     </View>
                   )}
                 </View>
