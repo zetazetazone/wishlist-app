@@ -430,16 +430,14 @@ export default function LuxuryWishlistScreen() {
 
   // Grid handlers
   const handleItemPress = useCallback((item: WishlistItem) => {
-    // For Phase 34: Navigate to item detail (placeholder)
-    // Phase 35 will add actual detail navigation
-    console.log('Item pressed:', item.id);
-    // TODO: router.push(`/wishlist/${item.id}`) in Phase 35
-  }, []);
+    // Navigate to item detail page (owner view - no celebrationId)
+    router.push(`/wishlist/${item.id}`);
+  }, [router]);
 
   const handleItemAction = useCallback((item: WishlistItem) => {
-    // Open group picker to set favorite (heart action)
-    handleHeartPress(item);
-  }, [handleHeartPress]);
+    // Owner view: action button opens detail page (options sheet in Phase 36)
+    router.push(`/wishlist/${item.id}`);
+  }, [router]);
 
   // Sort items: favorited items first (any group), then by priority
   const sortedItems = useMemo(() => {
