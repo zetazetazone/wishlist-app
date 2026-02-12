@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 ## Current Position
 
 Phase: 33 (Foundation & Feature Inventory)
-Plan: 2 of 4 complete
+Plan: 1 of 4 complete
 Status: In progress
-Last activity: 2026-02-12 — Completed 33-02-PLAN.md (Shared Types & Utilities)
+Last activity: 2026-02-12 — Completed 33-01-PLAN.md (Foundation & Feature Inventory)
 
 Progress: 0/4 phases complete
-Phase 33 Progress: ██░░ 2/4 plans complete
+Phase 33 Progress: █░░░ 1/4 plans complete
 
 ## Milestone History
 
@@ -33,6 +33,13 @@ Phase 33 Progress: ██░░ 2/4 plans complete
 Key decisions from all milestones archived in PROJECT.md Key Decisions table.
 
 v1.5 decisions archived in `.planning/milestones/v1.5-ROADMAP.md`.
+
+**v1.6 Phase 33 Decisions**:
+
+| ID | Decision | Rationale | Phase-Plan |
+|---|----------|-----------|------------|
+| D33-01-001 | Use expo-image for image handling | High-performance caching, SDK 54 compatible, built-in loading states | 33-01 |
+| D33-01-002 | Comprehensive upfront documentation | 603-line monolithic component needs clear migration path to prevent feature loss | 33-01 |
 
 ### Pending Todos (Manual Setup)
 
@@ -63,6 +70,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-12
-Stopped at: Phase 33 Plan 02 complete
-Resume file: .planning/phases/33-foundation-feature-inventory/33-02-SUMMARY.md
-Next: Execute 33-03-PLAN.md (WishlistGridCard Component)
+Stopped at: Phase 33 Plan 01 complete
+Resume file: .planning/phases/33-foundation-feature-inventory/33-01-SUMMARY.md
+Next: Execute 33-02-PLAN.md (Shared Types & Utilities)
