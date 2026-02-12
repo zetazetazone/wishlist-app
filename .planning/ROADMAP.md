@@ -2,7 +2,7 @@
 
 **Status:** In Progress
 **Phases:** 33-36
-**Total Plans:** 2 (Phase 33) + TBD (Phases 34-36)
+**Total Plans:** 2 (Phase 33) + 3 (Phase 34) + TBD (Phases 35-36)
 
 ## Overview
 
@@ -39,10 +39,12 @@ Plans:
   5. expo-image caching works with blur placeholder
   6. Grid scrolls at 60fps on mid-range devices
   7. Grid layout identical on My Wishlist and celebration page
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD
+- [ ] 34-01-PLAN.md — Create WishlistGridCard component with expo-image and action button
+- [ ] 34-02-PLAN.md — Create WishlistGrid FlashList wrapper with masonry configuration
+- [ ] 34-03-PLAN.md — Integrate WishlistGrid into My Wishlist and Celebration screens
 
 ### Phase 35: Detail Page & Claim UI
 **Goal**: Create item detail page with full-bleed hero, claim UI for group members, real-time state sync
