@@ -5,3 +5,4 @@
  */
 
 export { WishlistGridCard } from './WishlistGridCard';
+export { WishlistGrid } from './WishlistGrid';
