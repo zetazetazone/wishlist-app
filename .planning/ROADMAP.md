@@ -2,7 +2,7 @@
 
 **Status:** In Progress
 **Phases:** 33-36
-**Total Plans:** 2 (Phase 33) + 3 (Phase 34) + TBD (Phases 35-36)
+**Total Plans:** 2 (Phase 33) + 3 (Phase 34) + 3 (Phase 35) + 3 (Phase 36) = 11 plans
 
 ## Overview
 
@@ -83,10 +83,12 @@ Plans:
   6. Edit action navigates to edit form
   7. Delete action shows confirmation and removes item
   8. All existing wishlist functionality verified working (regression test)
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD
+- [ ] 36-01-PLAN.md — Create OptionsSheet component with preview and actions
+- [ ] 36-02-PLAN.md — Wire OptionsSheet to My Wishlist and Detail page
+- [ ] 36-03-PLAN.md — Final verification and regression testing
 
 ---
 
