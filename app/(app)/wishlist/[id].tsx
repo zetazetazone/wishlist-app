@@ -120,6 +120,61 @@ export default function ItemDetailScreen() {
     loadItem();
   }, [loadItem]);
 
+  // Load claim context based on user role
+  const loadClaimContext = useCallback(async () => {
+    if (!id || !currentUserId || isOwner) return;
+
+    try {
+      // If accessing via celebration, determine if user is celebrant
+      if (celebrationId) {
+        const { data: celebration } = await supabase
+          .from('celebrations')
+          .select('celebrant_id')
+          .eq('id', celebrationId)
+          .single();
+
+        if (celebration?.celebrant_id === currentUserId) {
+          setIsCelebrant(true);
+          // Celebrant view: only get boolean status
+          const statuses = await getItemClaimStatus([id]);
+          const status = statuses.find(s => s.wishlist_item_id === id);
+          setIsTaken(status?.is_claimed ?? false);
+          return;
+        }
+      }
+
+      // Non-celebrant view: get full claim data
+      const claims = await getClaimsForItems([id]);
+      const itemClaim = claims.find(c => c.wishlist_item_id === id);
+      setClaim(itemClaim || null);
+
+      // Load split data if claim exists and is split type
+      if (itemClaim?.claim_type === 'split') {
+        const [status, contribs, suggested] = await Promise.all([
+          getSplitStatus(id),
+          getContributors(id),
+          getSuggestedShare(id),
+        ]);
+        setSplitStatus(status);
+        setContributors(contribs);
+        if (suggested) {
+          setSuggestedShare(suggested.suggested_amount);
+        }
+        // Check user's pledge
+        const userContrib = contribs.find(c => c.id === currentUserId);
+        setUserPledgeAmount(userContrib?.amount ?? 0);
+      }
+    } catch (err) {
+      console.error('Failed to load claim context:', err);
+    }
+  }, [id, currentUserId, isOwner, celebrationId]);
+
+  useEffect(() => {
+    if (item && currentUserId) {
+      loadClaimContext();
+    }
+  }, [item, currentUserId, loadClaimContext]);
+
   // Parse brand from title
   const brand = item ? parseBrandFromTitle(item.title) : null;
   const priceDisplay = item ? formatItemPrice(item) : null;
