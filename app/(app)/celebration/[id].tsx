@@ -460,23 +460,21 @@ export default function CelebrationDetailScreen() {
 
   // Navigate to wishlist item (from linked item in chat)
   const handleLinkedItemPress = (itemId: string) => {
-    // Navigate to wishlist item detail
-    router.push(`/wishlist/${itemId}`);
+    // Navigate to wishlist item detail with celebration context
+    router.push(`/wishlist/${itemId}?celebrationId=${id}`);
   };
 
   const handleWishlistItemPress = useCallback((item: WishlistItem) => {
-    // For Phase 34: Navigate to item detail (placeholder)
-    // Phase 35 will add actual detail navigation with claim UI
-    console.log('Wishlist item pressed:', item.id, 'on celebration');
-    // TODO: router.push(`/celebration/${id}/item/${item.id}`) in Phase 35
-  }, [id]);
+    // Navigate to item detail page with celebration context
+    // celebrationId enables claim UI and context detection
+    router.push(`/wishlist/${item.id}?celebrationId=${id}`);
+  }, [router, id]);
 
   const handleWishlistItemAction = useCallback((item: WishlistItem) => {
-    // Non-owner action: show claim options or status
-    // For Phase 34: Log only
-    // Phase 35 will add claim sheet or navigation
-    console.log('Wishlist item action:', item.id);
-  }, []);
+    // Navigate to detail page with celebration context
+    // Detail page shows claim UI
+    router.push(`/wishlist/${item.id}?celebrationId=${id}`);
+  }, [router, id]);
 
   // Check if current user is the Gift Leader
   const isCurrentUserGiftLeader =
