@@ -1,7 +1,7 @@
 /**
  * WishlistGridCard Component
  *
- * Compact grid card for wishlist items in masonry layout.
+ * Compact grid card for wishlist items in 2-column grid layout.
  * Displays image (with expo-image caching), title, price, and action button.
  * Handles special item types (Surprise Me, Mystery Box) with distinct placeholders.
  *
@@ -46,9 +46,13 @@ export interface WishlistGridCardProps {
   isYourClaim?: boolean;
 }
 
-// Calculate card width for 2-column grid
+// Calculate card width for 2-column grid with 8px gap
+// Each card has 4px horizontal margin (4px left + 4px right = 8px gap between cards)
+// Container has 12px padding on each side (16px - 4px card margin)
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const CARD_WIDTH = (SCREEN_WIDTH - spacing.md * 2 - spacing.sm) / 2;
+const CARD_MARGIN = spacing.sm / 2; // 4px margin on each side of card
+const CONTAINER_PADDING = spacing.md - CARD_MARGIN; // 12px container padding
+const CARD_WIDTH = (SCREEN_WIDTH - CONTAINER_PADDING * 2 - CARD_MARGIN * 4) / 2;
 
 // Default blurhash for image placeholder (warm gold tone matching theme)
 const DEFAULT_BLURHASH = 'L6PZfSi_.AyE_3t7t7R**0o#DgR4';
@@ -190,7 +194,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: borderRadius.md,
     overflow: 'hidden',
-    marginBottom: spacing.sm,
+    marginHorizontal: CARD_MARGIN,  // 4px on each side = 8px gap between columns
+    marginBottom: spacing.sm,       // 8px gap between rows
     ...shadows.sm,
   },
   cardDimmed: {

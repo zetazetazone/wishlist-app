@@ -1,12 +1,12 @@
 /**
  * WishlistGrid Component
  *
- * FlashList masonry grid wrapper for wishlist items.
+ * FlashList grid wrapper for wishlist items.
  * Encapsulates FlashList configuration, renderItem logic, and refresh handling.
  * Provides consistent grid layout across My Wishlist and celebration pages.
  *
  * Features:
- * - 2-column masonry layout (FlashList v2 with masonry prop)
+ * - 2-column uniform grid layout (8px gap between columns)
  * - Virtualization for 60fps scrolling
  * - Pull-to-refresh support
  * - View-context-aware rendering (owner, celebrant, non-celebrant)
@@ -169,11 +169,8 @@ export function WishlistGrid({
       data={items}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
-      // FlashList v2 masonry configuration
-      masonry                        // Enable masonry layout (Pinterest-style)
-      numColumns={2}                 // 2-column grid
-      optimizeItemArrangement        // Default true; reduces column height differences
-      // NO estimatedItemSize - v2 auto-measures items
+      // Standard 2-column grid (uniform row heights)
+      numColumns={2}
       contentContainerStyle={styles.listContent}
       // Pull-to-refresh (conditional)
       refreshControl={
@@ -198,8 +195,8 @@ export function WishlistGrid({
 
 const styles = StyleSheet.create({
   listContent: {
-    paddingHorizontal: spacing.md,  // 16px horizontal padding
-    paddingTop: spacing.md,          // 16px top padding
-    paddingBottom: 100,              // Space for FAB at bottom
+    paddingHorizontal: spacing.md - spacing.sm / 2,  // 12px (16 - 4) to account for card margins
+    paddingTop: spacing.md,                          // 16px top padding
+    paddingBottom: 100,                              // Space for FAB at bottom
   },
 });
