@@ -510,27 +510,17 @@ export default function CelebrationDetailScreen() {
     return map;
   }, [claims]);
 
-  // Sort celebrant items: favorite first, then unclaimed (non-celebrant), then by priority
+  // Sort celebrant items: favorite first, then by priority
   const sortedCelebrantItems = useMemo(() => {
-    const isCelebrant = currentUserId === celebration?.celebrant_id;
-
     return [...celebrantItems].sort((a, b) => {
       // Favorite always first
       if (a.id === celebrantFavoriteId) return -1;
       if (b.id === celebrantFavoriteId) return 1;
 
-      // For non-celebrant: claimed items to bottom (per CONTEXT: "Claimed items move to bottom")
-      if (!isCelebrant) {
-        const aIsClaimed = claims.some(c => c.wishlist_item_id === a.id);
-        const bIsClaimed = claims.some(c => c.wishlist_item_id === b.id);
-        if (aIsClaimed && !bIsClaimed) return 1;
-        if (!aIsClaimed && bIsClaimed) return -1;
-      }
-
-      // Within same category, sort by priority
+      // Sort by priority (claimed items stay in place)
       return (b.priority || 0) - (a.priority || 0);
     });
-  }, [celebrantItems, celebrantFavoriteId, claims, currentUserId, celebration?.celebrant_id]);
+  }, [celebrantItems, celebrantFavoriteId]);
 
   // Calculate grid height for WishlistGrid when nested in ScrollView
   // Card width: (screenWidth - padding*2 - gap) / 2
@@ -944,7 +934,7 @@ export default function CelebrationDetailScreen() {
                       <Text style={styles.emptyText}>{t('wishlist.empty.noItems')}</Text>
                     </View>
                   ) : (
-                    <View style={{ height: wishlistGridHeight }}>
+                    <View style={{ height: wishlistGridHeight, marginHorizontal: -16 }}>
                       <WishlistGrid
                         items={sortedCelebrantItems}
                         onItemPress={handleWishlistItemPress}
