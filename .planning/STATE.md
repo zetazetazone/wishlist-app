@@ -85,6 +85,7 @@ From v1.4:
 | 002 | Fix per-gift budget amount not persisted | 2026-02-05 | 84bb2fa | [002-fix-per-gift-budget-not-persisted](./quick/002-fix-per-gift-budget-not-persisted/) |
 | 003 | Fix budget display stale after settings save | 2026-02-05 | 6809669 | [003-fix-budget-display-stale-on-nav](./quick/003-fix-budget-display-stale-on-nav/) |
 | 004 | Add delivery address and bank details to personal details | 2026-02-09 | 2bfe625 | [004-add-delivery-address-and-bank-details-to](./quick/004-add-delivery-address-and-bank-details-to/) |
+| 005 | Fix i18n translation keys returning [object Object] | 2026-02-12 | 2cde090 | [005-fix-i18n-translation-keys-returning-obje](./quick/005-fix-i18n-translation-keys-returning-obje/) |
 
 ## Session Continuity
 
