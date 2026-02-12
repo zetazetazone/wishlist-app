@@ -2,6 +2,7 @@ import { forwardRef, useImperativeHandle, useRef, useCallback, useState } from '
 import { View, Text, StyleSheet, Pressable, Alert, Share } from 'react-native';
 import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { useRouter } from 'expo-router';
 import BottomSheet, { BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -129,13 +130,8 @@ export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
       );
     }, [item, onDelete, t]);
 
-    // Early return if no item
-    if (!item) return null;
-
-    const placeholder = getImagePlaceholder(item.item_type);
-    const formattedPrice = formatItemPrice(item);
-    const favorite = isFavorite(item.id);
-
+    // BottomSheet MUST always be mounted for ref to work
+    // Content is conditionally rendered inside
     return (
       <BottomSheet
         ref={bottomSheetRef}
@@ -153,6 +149,52 @@ export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
           width: 48,
         }}
       >
+        {item ? (
+        <OptionsSheetContent
+          item={item}
+          isFavorite={isFavorite(item.id)}
+          formattedPrice={formatItemPrice(item)}
+          placeholder={getImagePlaceholder(item.item_type)}
+          onFavorite={handleFavorite}
+          onPriorityChange={handlePriorityChange}
+          onShare={handleShare}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          t={t}
+        />
+        ) : (
+          <View style={styles.container} />
+        )}
+      </BottomSheet>
+    );
+  }
+);
+
+// Extracted content component to avoid null checks
+function OptionsSheetContent({
+  item,
+  isFavorite: favorite,
+  formattedPrice,
+  placeholder,
+  onFavorite,
+  onPriorityChange,
+  onShare,
+  onEdit,
+  onDelete,
+  t,
+}: {
+  item: WishlistItem;
+  isFavorite: boolean;
+  formattedPrice: string | null;
+  placeholder: ReturnType<typeof getImagePlaceholder>;
+  onFavorite: () => void;
+  onPriorityChange: (priority: number) => void;
+  onShare: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  t: TFunction;
+}) {
+  return (
         <View style={styles.container}>
           {/* Item Preview Section */}
           <View style={styles.previewSection}>
@@ -199,7 +241,7 @@ export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
             </Text>
             <StarRating
               rating={item.priority}
-              onRatingChange={handlePriorityChange}
+              onRatingChange={onPriorityChange}
               size={28}
             />
           </View>
@@ -215,7 +257,7 @@ export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
                 styles.actionButton,
                 pressed && styles.actionButtonPressed,
               ]}
-              onPress={handleFavorite}
+              onPress={onFavorite}
             >
               <MaterialCommunityIcons
                 name={favorite ? 'heart' : 'heart-outline'}
@@ -235,7 +277,7 @@ export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
                 styles.actionButton,
                 pressed && styles.actionButtonPressed,
               ]}
-              onPress={handleShare}
+              onPress={onShare}
             >
               <MaterialCommunityIcons
                 name="share-variant"
@@ -251,7 +293,7 @@ export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
                 styles.actionButton,
                 pressed && styles.actionButtonPressed,
               ]}
-              onPress={handleEdit}
+              onPress={onEdit}
             >
               <MaterialCommunityIcons
                 name="pencil"
@@ -267,7 +309,7 @@ export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
                 styles.actionButton,
                 pressed && styles.actionButtonPressed,
               ]}
-              onPress={handleDelete}
+              onPress={onDelete}
             >
               <MaterialCommunityIcons
                 name="delete"
@@ -280,10 +322,8 @@ export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
             </Pressable>
           </View>
         </View>
-      </BottomSheet>
-    );
-  }
-);
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
