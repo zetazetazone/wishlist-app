@@ -625,7 +625,7 @@ export default function CelebrationDetailScreen() {
               color={viewMode === 'chat' ? '#8B1538' : '#6b7280'}
             />
             <Text style={[styles.toggleText, viewMode === 'chat' && styles.toggleTextActive]}>
-              {t('celebrations.chat')}
+              {t('celebrations.chatTab')}
             </Text>
           </Pressable>
         </View>
@@ -782,7 +782,7 @@ export default function CelebrationDetailScreen() {
                 <View style={styles.section}>
                   <View style={styles.sectionHeader}>
                     <MaterialCommunityIcons name="crown" size={22} color="#8B1538" />
-                    <Text style={styles.sectionTitle}>{t('celebrations.giftLeader')}</Text>
+                    <Text style={styles.sectionTitle}>{t('celebrations.giftLeader.title')}</Text>
                   </View>
 
                   <View style={styles.giftLeaderCard}>
@@ -835,7 +835,7 @@ export default function CelebrationDetailScreen() {
                 <View style={styles.section}>
                   <View style={styles.sectionHeader}>
                     <MaterialCommunityIcons name="cash-multiple" size={22} color="#22c55e" />
-                    <Text style={styles.sectionTitle}>{t('celebrations.contributions')}</Text>
+                    <Text style={styles.sectionTitle}>{t('celebrations.contributions.title')}</Text>
                   </View>
 
                   {contributionsLoading ? (
