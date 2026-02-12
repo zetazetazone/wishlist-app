@@ -31,7 +31,6 @@ import {
   claimItem,
   unclaimItem,
   type ClaimWithUser,
-  type ItemClaimStatus,
 } from '@/lib/claims';
 import {
   getSplitStatus,
@@ -89,7 +88,6 @@ export default function ItemDetailScreen() {
 
   // Derived state
   const isYourClaim = claim?.claimed_by === currentUserId;
-  const isClaimed = !!claim || isTaken;
 
   // Modal state
   const [splitModalVisible, setSplitModalVisible] = useState(false);
