@@ -677,8 +677,7 @@
   "celebrations": {
     "title": "Celebraciones",
     "loading": "Cargando celebraciones...",
-    "chat": "Chat",
-    "contributions": "Contribuciones",
+    "chatTab": "Chat",
     "leading": "Liderando {{count}}",
     "leading_plural": "Liderando {{count}}",
     "giftLeaderFor": "Eres el Lider de Regalos de {{count}} celebracion",
