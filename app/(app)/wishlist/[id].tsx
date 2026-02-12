@@ -643,6 +643,27 @@ export default function ItemDetailScreen() {
         {/* Claim UI Section */}
         {renderClaimSection()}
       </ScrollView>
+
+      {/* Split Modal - for pledging contribution */}
+      <SplitModal
+        visible={splitModalVisible}
+        onClose={() => setSplitModalVisible(false)}
+        onConfirm={handlePledge}
+        itemTitle={item?.title || ''}
+        itemPrice={item?.price || 0}
+        additionalCosts={splitStatus?.additionalCosts}
+        totalPledged={splitStatus?.totalPledged || 0}
+        suggestedAmount={suggestedShare}
+        loading={claimLoading}
+      />
+
+      {/* Open Split Modal - for opening item to split */}
+      <OpenSplitModal
+        visible={openSplitModalVisible}
+        onClose={() => setOpenSplitModalVisible(false)}
+        onConfirm={handleOpenSplit}
+        itemTitle={item?.title || ''}
+      />
     </View>
   );
 }
