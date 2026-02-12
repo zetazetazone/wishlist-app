@@ -16,6 +16,7 @@ import {
   Linking,
   Dimensions,
   StatusBar,
+  Alert,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -174,6 +175,77 @@ export default function ItemDetailScreen() {
       loadClaimContext();
     }
   }, [item, currentUserId, loadClaimContext]);
+
+  // Claim item handler
+  const handleClaim = useCallback(async () => {
+    if (!id || !item) return;
+
+    Alert.alert(
+      t('wishlist.claim.confirmTitle'),
+      t('wishlist.claim.confirmMessage', { title: item.title }),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('wishlist.claim.claim'),
+          onPress: async () => {
+            setClaimLoading(true);
+            try {
+              const result = await claimItem(id, 'full');
+              if (result.success) {
+                await loadClaimContext();
+              } else {
+                Alert.alert(
+                  t('alerts.titles.unableToClaim'),
+                  result.error || t('common.errors.generic')
+                );
+              }
+            } catch (err) {
+              Alert.alert(t('alerts.titles.error'), t('wishlist.claim.failedToClaim'));
+            } finally {
+              setClaimLoading(false);
+            }
+          },
+        },
+      ]
+    );
+  }, [id, item, t, loadClaimContext]);
+
+  // Unclaim item handler
+  const handleUnclaim = useCallback(async () => {
+    if (!claim) return;
+
+    Alert.alert(
+      t('wishlist.claim.unclaimTitle'),
+      t('wishlist.claim.unclaimMessage', { title: item?.title }),
+      [
+        { text: t('wishlist.claim.keepClaim'), style: 'cancel' },
+        {
+          text: t('wishlist.claim.unclaim'),
+          style: 'destructive',
+          onPress: async () => {
+            setClaimLoading(true);
+            try {
+              const result = await unclaimItem(claim.id);
+              if (result.success) {
+                setClaim(null);
+                setSplitStatus(null);
+                setContributors([]);
+              } else {
+                Alert.alert(
+                  t('alerts.titles.unableToUnclaim'),
+                  result.error || t('common.errors.generic')
+                );
+              }
+            } catch (err) {
+              Alert.alert(t('alerts.titles.error'), t('wishlist.claim.failedToUnclaim'));
+            } finally {
+              setClaimLoading(false);
+            }
+          },
+        },
+      ]
+    );
+  }, [claim, item, t]);
 
   // Parse brand from title
   const brand = item ? parseBrandFromTitle(item.title) : null;
