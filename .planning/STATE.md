@@ -9,13 +9,14 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 
 ## Current Position
 
-Phase: 33 (Foundation & Feature Inventory) ✓ COMPLETE
-Plan: 2 of 2 complete
-Status: Phase 33 verified and complete
-Last activity: 2026-02-12 — Phase 33 execution complete, verification passed (8/8 must-haves)
+Phase: 34 (Grid Layout Implementation) - IN PROGRESS
+Plan: 1 of 5 complete
+Status: In progress - WishlistGridCard component created
+Last activity: 2026-02-12 — Completed 34-01-PLAN.md (Grid Card Component)
 
 Progress: 1/4 phases complete
-Phase 33 Progress: ████ 2/2 plans complete
+Phase 33 Progress: ████ 2/2 complete
+Phase 34 Progress: █░░░░ 1/5 plans complete
 
 ## Milestone History
 
@@ -40,6 +41,15 @@ v1.5 decisions archived in `.planning/milestones/v1.5-ROADMAP.md`.
 |---|----------|-----------|------------|
 | D33-01-001 | Use expo-image for image handling | High-performance caching, SDK 54 compatible, built-in loading states | 33-01 |
 | D33-01-002 | Comprehensive upfront documentation | 603-line monolithic component needs clear migration path to prevent feature loss | 33-01 |
+
+**v1.6 Phase 34 Decisions**:
+
+| ID | Decision | Rationale | Phase-Plan |
+|---|----------|-----------|------------|
+| TD-34-01-001 | Use Pressable instead of TouchableOpacity | Future-proof, officially recommended by React Native, consistent cross-platform behavior | 34-01 |
+| TD-34-01-002 | Non-null assertion on image_url after hasImage check | hasImage already validates image_url exists and is standard item type | 34-01 |
+| TD-34-01-003 | Action button separate Pressable with stopPropagation | Prevents touch conflicts on nested pressables, works consistently iOS/Android | 34-01 |
+| TD-34-01-004 | Single default blurhash for all images | Simpler implementation, acceptable UX for v1.6 | 34-01 |
 
 ### Pending Todos (Manual Setup)
 
@@ -70,6 +80,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-12
-Stopped at: Phase 33 complete
-Resume file: .planning/phases/33-foundation-feature-inventory/33-VERIFICATION.md
-Next: `/gsd:plan-phase 34` (Grid Layout Implementation)
+Stopped at: Phase 34 Plan 01 complete (Grid Card Component)
+Resume file: .planning/phases/34-grid-layout-implementation/34-01-SUMMARY.md
+Next: Phase 34 Plan 02 (Grid Wrapper Component)
