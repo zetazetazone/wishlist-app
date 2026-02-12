@@ -14,7 +14,7 @@
  * - Pressable touch handling with pressed state
  */
 
-import { View, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Pressable, TouchableOpacity, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, shadows } from '@/constants/theme';
@@ -158,21 +158,18 @@ export function WishlistGridCard({
         )}
 
         {/* Action Button - Bottom-right of image */}
-        <Pressable
-          onPress={(e) => {
-            // Prevent parent press event from triggering
-            e.stopPropagation?.();
-            onActionPress();
-          }}
+        <TouchableOpacity
+          onPress={onActionPress}
           style={styles.actionButton}
-          hitSlop={8}  // Increase touch target for better UX
+          activeOpacity={0.7}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
           <MaterialCommunityIcons
             name={getActionIcon()}
             size={18}
             color={colors.burgundy[600]}
           />
-        </Pressable>
+        </TouchableOpacity>
       </View>
 
       {/* Content Section - Title and Price (no background) */}
