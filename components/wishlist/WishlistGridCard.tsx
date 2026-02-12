@@ -156,9 +156,26 @@ export function WishlistGridCard({
             <Text style={styles.takenText}>Taken</Text>
           </View>
         )}
+
+        {/* Action Button - Bottom-right of image */}
+        <Pressable
+          onPress={(e) => {
+            // Prevent parent press event from triggering
+            e.stopPropagation?.();
+            onActionPress();
+          }}
+          style={styles.actionButton}
+          hitSlop={8}  // Increase touch target for better UX
+        >
+          <MaterialCommunityIcons
+            name={getActionIcon()}
+            size={18}
+            color={colors.burgundy[600]}
+          />
+        </Pressable>
       </View>
 
-      {/* Content Section - Title and Price */}
+      {/* Content Section - Title and Price (no background) */}
       <View style={styles.content}>
         <Text numberOfLines={2} style={styles.title}>
           {item.title}
@@ -167,23 +184,6 @@ export function WishlistGridCard({
           <Text style={styles.price}>{priceDisplay}</Text>
         )}
       </View>
-
-      {/* Action Button - Bottom-right positioned absolutely */}
-      <Pressable
-        onPress={(e) => {
-          // Prevent parent press event from triggering
-          e.stopPropagation?.();
-          onActionPress();
-        }}
-        style={styles.actionButton}
-        hitSlop={8}  // Increase touch target for better UX
-      >
-        <MaterialCommunityIcons
-          name={getActionIcon()}
-          size={18}
-          color={colors.burgundy[600]}
-        />
-      </Pressable>
     </Pressable>
   );
 }
@@ -191,12 +191,8 @@ export function WishlistGridCard({
 const styles = StyleSheet.create({
   card: {
     width: CARD_WIDTH,
-    backgroundColor: colors.white,
-    borderRadius: borderRadius.md,
-    overflow: 'hidden',
     marginHorizontal: CARD_MARGIN,  // 4px on each side = 8px gap between columns
     marginBottom: spacing.sm,       // 8px gap between rows
-    ...shadows.sm,
   },
   cardDimmed: {
     opacity: 0.6,
@@ -214,6 +210,9 @@ const styles = StyleSheet.create({
     width: '100%',
     aspectRatio: 1,  // Square image container
     backgroundColor: colors.cream[100],
+    borderRadius: borderRadius.md,
+    overflow: 'hidden',
+    ...shadows.sm,
   },
   image: {
     width: '100%',
