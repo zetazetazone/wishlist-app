@@ -70,25 +70,26 @@ Plans:
 - [x] 35-02-PLAN.md — Add claim UI (claim/unclaim, split contribution) to detail
 - [x] 35-03-PLAN.md — Integrate navigation and realtime sync
 
-### Phase 36: Options Sheet & Polish
+### Phase 36: Options Sheet & Polish ✓
 **Goal**: Implement options bottom sheet with item preview and actions, final polish and regression testing
 **Depends on**: Phase 35
 **Requirements**: OPTIONS-01, OPTIONS-02, OPTIONS-03, OPTIONS-04, OPTIONS-05, OPTIONS-06, OPTIONS-07
+**Status**: Complete (2026-02-12)
 **Success Criteria** (what must be TRUE):
-  1. Options sheet opens from grid card action button (owner) and detail page
-  2. Sheet shows item preview (image, title, price)
-  3. Favorite toggle works and updates UI immediately
-  4. Priority (star rating) adjustment works
-  5. Share action works (native share sheet)
-  6. Edit action shows placeholder (edit form deferred to future)
-  7. Delete action shows confirmation and removes item
-  8. All existing wishlist functionality verified working (regression test)
+  1. Options sheet opens from grid card action button (owner) and detail page ✓
+  2. Sheet shows item preview (image, title, price) ✓
+  3. Favorite toggle works and updates UI immediately ✓
+  4. Priority (star rating) adjustment works ✓
+  5. Share action works (native share sheet) ✓
+  6. Edit action shows placeholder (edit form deferred to future) ✓
+  7. Delete action shows confirmation and removes item ✓
+  8. All existing wishlist functionality verified working (regression test) ✓
 **Plans:** 3 plans
 
 Plans:
-- [ ] 36-01-PLAN.md — Create OptionsSheet component with preview and actions
-- [ ] 36-02-PLAN.md — Wire OptionsSheet to My Wishlist and Detail page
-- [ ] 36-03-PLAN.md — Final verification and regression testing
+- [x] 36-01-PLAN.md — Create OptionsSheet component with preview and actions
+- [x] 36-02-PLAN.md — Wire OptionsSheet to My Wishlist and Detail page
+- [x] 36-03-PLAN.md — Final verification and regression testing
 
 ---
 
@@ -121,13 +122,13 @@ Plans:
 | CLAIM-05 | 35 | ✓ Complete |
 | CLAIM-06 | 35 | ✓ Complete |
 | PERF-03 | 35 | ✓ Complete |
-| OPTIONS-01 | 36 | Pending |
-| OPTIONS-02 | 36 | Pending |
-| OPTIONS-03 | 36 | Pending |
-| OPTIONS-04 | 36 | Pending |
-| OPTIONS-05 | 36 | Pending |
-| OPTIONS-06 | 36 | Pending |
-| OPTIONS-07 | 36 | Pending |
+| OPTIONS-01 | 36 | ✓ Complete |
+| OPTIONS-02 | 36 | ✓ Complete |
+| OPTIONS-03 | 36 | ✓ Complete |
+| OPTIONS-04 | 36 | ✓ Complete |
+| OPTIONS-05 | 36 | ✓ Complete |
+| OPTIONS-06 | 36 | ✓ Complete |
+| OPTIONS-07 | 36 | ✓ Complete |
 
 ---
 

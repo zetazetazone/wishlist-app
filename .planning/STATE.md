@@ -9,16 +9,16 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 
 ## Current Position
 
-Phase: 36 (Options Sheet & Polish) - IN PROGRESS
-Plan: 2 of 3 complete
-Status: In progress
-Last activity: 2026-02-12 — Completed 36-02-PLAN.md (WishlistGridCard Integration)
+Phase: 36 (Options Sheet & Polish) - COMPLETE
+Plan: 3 of 3 complete
+Status: Milestone complete
+Last activity: 2026-02-12 — Completed 36-03-PLAN.md (Final Verification)
 
-Progress: 3/4 phases complete, 1 in progress
+Progress: 4/4 phases complete ✓
 Phase 33 Progress: ████ 2/2 complete
 Phase 34 Progress: ████ 3/3 complete
 Phase 35 Progress: ████ 3/3 complete
-Phase 36 Progress: ██░ 2/3 complete
+Phase 36 Progress: ████ 3/3 complete
 
 ## Milestone History
 
@@ -85,6 +85,10 @@ v1.5 decisions archived in `.planning/milestones/v1.5-ROADMAP.md`.
 | D36-02-001 | My Wishlist action button opens OptionsSheet | Provides quick access to item options without navigation, better UX for owner managing list | 36-02 |
 | D36-02-002 | Favorite toggle shows alert in detail page | GroupPickerSheet requires full group context (userGroups state) not available in detail page | 36-02 |
 | D36-02-003 | Delete navigates back from detail page | Prevents showing deleted item after successful deletion | 36-02 |
+| D36-03-001 | Use Modal + Animated instead of @gorhom/bottom-sheet | More reliable cross-device behavior, consistent ref handling | 36-03 |
+| D36-03-002 | PanResponder for drag-to-close gesture | Native gesture handling, smooth snap-back animation on partial drag | 36-03 |
+| D36-03-003 | 65% sheet height with safe area insets | Ensures all buttons visible on devices with home indicators | 36-03 |
+| D36-03-004 | Remove claimed-to-bottom sorting | User preference - items should stay in original position by priority | 36-03 |
 
 ### Pending Todos (Manual Setup)
 
@@ -116,6 +120,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-12
-Stopped at: Phase 36-02 complete (WishlistGridCard Integration)
-Resume file: .planning/phases/36-options-sheet-polish/36-03-PLAN.md
-Next: Plan 36-03 (Grid Card Component)
+Stopped at: Phase 36 complete, Milestone v1.6 complete
+Resume file: N/A (milestone complete)
+Next: `/gsd:complete-milestone v1.6` to archive and prepare for next version
