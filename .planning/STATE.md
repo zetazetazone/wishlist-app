@@ -10,14 +10,14 @@ See: .planning/PROJECT.md (updated 2026-02-12)
 ## Current Position
 
 Phase: 35 (Detail Page & Claim UI) - IN PROGRESS
-Plan: 1 of 3 complete
+Plan: 2 of 3 complete
 Status: In progress
-Last activity: 2026-02-12 — Completed 35-01-PLAN.md (ItemDetailScreen Foundation)
+Last activity: 2026-02-12 — Completed 35-02-PLAN.md (Claim UI Integration)
 
 Progress: 2/4 phases complete
 Phase 33 Progress: ████ 2/2 complete
 Phase 34 Progress: ████ 3/3 complete
-Phase 35 Progress: █░░░ 1/3 complete
+Phase 35 Progress: ██░░ 2/3 complete
 
 ## Milestone History
 
@@ -68,6 +68,7 @@ v1.5 decisions archived in `.planning/milestones/v1.5-ROADMAP.md`.
 | TD-35-01-001 | Use expo-linear-gradient for header overlay | CSS linear-gradient not supported in React Native | 35-01 |
 | TD-35-01-002 | Use celebrations.notAuthenticated key | Key already exists, consistent with codebase | 35-01 |
 | TD-35-01-003 | Remove description display | WishlistItem type does not have description field | 35-01 |
+| 35-02-D01 | Direct claimer object mapping | Map claim.claimer to ClaimerAvatar props directly | 35-02 |
 
 ### Pending Todos (Manual Setup)
 
@@ -99,6 +100,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-12
-Stopped at: Phase 35 Plan 01 complete
-Resume file: .planning/phases/35-detail-page-claim-ui/35-02-PLAN.md
-Next: Execute Phase 35 Plan 35-02 (Claim UI Components)
+Stopped at: Phase 35 Plan 02 complete
+Resume file: .planning/phases/35-detail-page-claim-ui/35-03-PLAN.md
+Next: Execute Phase 35 Plan 35-03 (Realtime Sync & Polish)
