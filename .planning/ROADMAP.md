@@ -61,9 +61,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 38-01-PLAN.md — Types and Edge Function (cheerio-based metadata extraction)
-- [ ] 38-02-PLAN.md — Client service layer (scrapeUrl with URL normalization)
-- [ ] 38-03-PLAN.md — UI integration (add-from-url screen with loading/editing/fallback)
+- [x] 38-01-PLAN.md — Types and Edge Function (cheerio-based metadata extraction) ✓
+- [x] 38-02-PLAN.md — Client service layer (scrapeUrl with URL normalization) ✓
+- [x] 38-03-PLAN.md — UI integration (add-from-url screen with loading/editing/fallback) ✓
 
 ### Phase 39: Share Intent
 **Goal**: Receive shared URLs from browser and store apps
@@ -147,7 +147,7 @@ Phases execute in numeric order: 37 -> 38 -> 39 -> 40 -> 41 -> 42 -> 43
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 37. Database Foundation | v1.7 | 1/1 | ✓ Complete | 2026-02-16 |
-| 38. URL Scraping | v1.7 | 0/3 | Not started | - |
+| 38. URL Scraping | v1.7 | 3/3 | ✓ Complete | 2026-02-16 |
 | 39. Share Intent | v1.7 | 0/? | Not started | - |
 | 40. Multi-Wishlist UI | v1.7 | 0/? | Not started | - |
 | 41. Column Rename | v1.7 | 0/? | Not started | - |

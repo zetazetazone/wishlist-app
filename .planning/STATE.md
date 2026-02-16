@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** Phase 38 - URL Scraping (v1.7 Global Wishlist)
+**Current focus:** Phase 38 complete - URL Scraping (v1.7 Global Wishlist)
 
 ## Current Position
 
 Phase: 38 of 43 (URL Scraping)
-Plan: 2 of 3 in current phase (complete)
-Status: In progress
-Last activity: 2026-02-16 — Completed 38-02-PLAN.md (URL scraper client service)
+Plan: 3 of 3 in current phase (complete)
+Status: Phase 38 complete
+Last activity: 2026-02-16 — Completed 38-03-PLAN.md (Add from URL screen)
 
 Progress: [==================================] 88% (38/43 phases)
 
@@ -52,6 +52,11 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 - Normalize URL on client before sending to server (consistent format, better caching)
 - Re-export types from lib/urlScraper.ts (component convenience)
 
+**From Phase 38-03:**
+- Show form immediately on scrape failure (no extra tap required)
+- Display source URL in preview section for user reference
+- Save to default wishlist (group_id null until Phase 42)
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -65,7 +70,7 @@ From v1.4:
 6. Run `npx supabase db reset` to apply all migrations
 
 From Phase 38-01:
-7. Deploy scrape-url Edge Function: `npx supabase functions deploy scrape-url`
+7. ~~Deploy scrape-url Edge Function~~ DONE (deployed during 38-03 verification)
 
 ### Blockers/Concerns
 
@@ -96,6 +101,6 @@ From Phase 38-01:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Phase 38-02 complete (URL scraper client service)
-Resume file: .planning/phases/38-url-scraping/38-02-SUMMARY.md
-Next: Execute 38-03-PLAN.md (URL scraper UI integration)
+Stopped at: Phase 38 complete (URL Scraping)
+Resume file: .planning/phases/38-url-scraping/38-03-SUMMARY.md
+Next: `/gsd:plan-phase 39` (Share Intent)
