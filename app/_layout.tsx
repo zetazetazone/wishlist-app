@@ -7,11 +7,14 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { GluestackUIProvider } from '@gluestack-ui/themed';
 import { ShareIntentProvider } from 'expo-share-intent';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { config } from '../gluestack-ui.config';
 import './global.css';
 import { supabase } from '../lib/supabase';
 import { syncLanguageFromServer } from '../lib/language';
 import { initI18n } from '../src/i18n';
+
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const router = useRouter();
@@ -112,19 +115,21 @@ export default function RootLayout() {
   if (!i18nReady) return null;
 
   return (
-    <ShareIntentProvider>
-      <GluestackUIProvider config={config}>
-        <KeyboardProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <BottomSheetModalProvider>
-              <SafeAreaProvider>
-                <StatusBar style="light" />
-                <Slot />
-              </SafeAreaProvider>
-            </BottomSheetModalProvider>
-          </GestureHandlerRootView>
-        </KeyboardProvider>
-      </GluestackUIProvider>
-    </ShareIntentProvider>
+    <QueryClientProvider client={queryClient}>
+      <ShareIntentProvider>
+        <GluestackUIProvider config={config}>
+          <KeyboardProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <BottomSheetModalProvider>
+                <SafeAreaProvider>
+                  <StatusBar style="light" />
+                  <Slot />
+                </SafeAreaProvider>
+              </BottomSheetModalProvider>
+            </GestureHandlerRootView>
+          </KeyboardProvider>
+        </GluestackUIProvider>
+      </ShareIntentProvider>
+    </QueryClientProvider>
   );
 }
