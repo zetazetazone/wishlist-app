@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** Phase 37 - Database Foundation (v1.7 Global Wishlist)
+**Current focus:** Phase 38 - URL Scraping (v1.7 Global Wishlist)
 
 ## Current Position
 
-Phase: 37 of 43 (Database Foundation)
-Plan: 1 of 1 in current phase (complete)
-Status: Phase 37 complete
-Last activity: 2026-02-16 — Completed 37-01-PLAN.md (multi-wishlist database foundation)
+Phase: 38 of 43 (URL Scraping)
+Plan: 1 of 3 in current phase (complete)
+Status: In progress
+Last activity: 2026-02-16 — Completed 38-01-PLAN.md (URL scraping Edge Function)
 
-Progress: [================================] 86% (37/43 phases)
+Progress: [==================================] 88% (38/43 phases)
 
 ## Milestone History
 
@@ -41,6 +41,12 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 - dual-access RLS preserves legacy group_id access while adding wishlist_id
 - gift_claims RLS unchanged - celebrant exclusion uses wi.group_id only
 
+**From Phase 38-01:**
+- npm:cheerio@1.0.0 specifier avoids import map configuration in Deno
+- Scrape failures return 200 (not 500) for graceful degradation
+- 10-second timeout balances slow sites vs user experience
+- Fallback chain: OG tags → JSON-LD → HTML selectors for maximum compatibility
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -52,6 +58,9 @@ From v1.0/v1.1:
 
 From v1.4:
 6. Run `npx supabase db reset` to apply all migrations
+
+From Phase 38-01:
+7. Deploy scrape-url Edge Function: `npx supabase functions deploy scrape-url`
 
 ### Blockers/Concerns
 
@@ -82,6 +91,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Phase 37 complete (database foundation for multi-wishlist)
-Resume file: .planning/phases/37-database-foundation/37-01-SUMMARY.md
-Next: `/gsd:plan-phase 38` (Core API for wishlist management)
+Stopped at: Phase 38-01 complete (URL scraping Edge Function)
+Resume file: .planning/phases/38-url-scraping/38-01-SUMMARY.md
+Next: Execute 38-02-PLAN.md (Share intent handling) or 38-03-PLAN.md (URL scraper UI)
