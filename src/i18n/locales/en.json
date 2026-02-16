@@ -945,7 +945,9 @@
     "noDefaultWishlist": "No default wishlist found",
     "noImage": "No image available",
     "reviewDetails": "Review & Edit Details",
-    "enterDetails": "Enter Item Details"
+    "enterDetails": "Enter Item Details",
+    "addToWishlist": "Add to wishlist",
+    "defaultWishlist": "Default Wishlist"
   },
   "alerts": {
     "titles": {

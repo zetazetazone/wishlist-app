@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -17,6 +17,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 import { scrapeUrl } from '../../lib/urlScraper';
+import { WishlistPickerSheet } from '../../components/wishlist/WishlistPickerSheet';
+import { useDefaultWishlist, useWishlists } from '../../hooks/useWishlists';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 
 export default function AddFromUrlScreen() {
@@ -39,6 +41,19 @@ export default function AddFromUrlScreen() {
 
   // Track if we've scraped/shown preview
   const [showPreview, setShowPreview] = useState(false);
+
+  // Wishlist selection
+  const [selectedWishlistId, setSelectedWishlistId] = useState<string | null>(null);
+  const [showWishlistPicker, setShowWishlistPicker] = useState(false);
+  const { data: defaultWishlist } = useDefaultWishlist();
+  const { data: wishlists = [] } = useWishlists();
+
+  // Set default wishlist on load
+  useEffect(() => {
+    if (defaultWishlist?.id && !selectedWishlistId) {
+      setSelectedWishlistId(defaultWishlist.id);
+    }
+  }, [defaultWishlist?.id, selectedWishlistId]);
 
   const handleScrape = async () => {
     if (!url.trim()) {
@@ -115,15 +130,9 @@ export default function AddFromUrlScreen() {
         return;
       }
 
-      // Get user's default wishlist
-      const { data: defaultWishlist, error: wishlistError } = await supabase
-        .from('wishlists')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('is_default', true)
-        .single();
-
-      if (wishlistError || !defaultWishlist) {
+      // Use selected wishlist or fall back to default
+      const targetWishlistId = selectedWishlistId || defaultWishlist?.id;
+      if (!targetWishlistId) {
         Alert.alert(t('alerts.titles.error'), t('addFromUrl.noDefaultWishlist'));
         return;
       }
@@ -133,7 +142,7 @@ export default function AddFromUrlScreen() {
         .from('wishlist_items')
         .insert({
           user_id: user.id,
-          wishlist_id: defaultWishlist.id,
+          wishlist_id: targetWishlistId,
           group_id: null, // Will be set when sharing (Phase 42)
           name: title.trim(),
           description: description.trim() || null,
@@ -457,6 +466,56 @@ export default function AddFromUrlScreen() {
                 />
               </View>
 
+              {/* Wishlist Selector */}
+              <View style={{ marginBottom: spacing.md }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '600',
+                    color: colors.burgundy[700],
+                    marginBottom: spacing.xs,
+                  }}
+                >
+                  {t('addFromUrl.addToWishlist')}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => setShowWishlistPicker(true)}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    backgroundColor: colors.cream[100],
+                    padding: spacing.md,
+                    borderRadius: borderRadius.md,
+                    borderWidth: 1,
+                    borderColor: colors.gold[100],
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="clipboard-list"
+                    size={20}
+                    color={colors.burgundy[600]}
+                  />
+                  <Text
+                    style={{
+                      flex: 1,
+                      marginLeft: spacing.sm,
+                      fontSize: 16,
+                      color: colors.burgundy[700],
+                    }}
+                  >
+                    {selectedWishlistId
+                      ? wishlists.find((w) => w.id === selectedWishlistId)?.name ||
+                        t('wishlists.defaultWishlist')
+                      : t('wishlists.defaultWishlist')}
+                  </Text>
+                  <MaterialCommunityIcons
+                    name="chevron-right"
+                    size={20}
+                    color={colors.burgundy[400]}
+                  />
+                </TouchableOpacity>
+              </View>
+
               {/* Source URL (non-editable display) */}
               {sourceUrl && (
                 <View style={{ marginBottom: spacing.md }}>
@@ -567,6 +626,16 @@ export default function AddFromUrlScreen() {
           </View>
         )}
       </ScrollView>
+
+      <WishlistPickerSheet
+        visible={showWishlistPicker}
+        onClose={() => setShowWishlistPicker(false)}
+        onSelect={(wishlistId) => {
+          setSelectedWishlistId(wishlistId);
+          setShowWishlistPicker(false);
+        }}
+        selectedWishlistId={selectedWishlistId || undefined}
+      />
     </KeyboardAvoidingView>
   );
 }

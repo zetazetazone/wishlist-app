@@ -21,6 +21,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { scrapeUrl } from '../../lib/urlScraper';
 import { quickAddToDefaultWishlist } from '../../lib/shareIntent';
 import { supabase } from '../../lib/supabase';
+import { WishlistPickerSheet } from '../../components/wishlist/WishlistPickerSheet';
+import { useDefaultWishlist, useWishlists } from '../../hooks/useWishlists';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 import type { ScrapedMetadata } from '../../types/scraping.types';
 
@@ -33,6 +35,17 @@ export default function SharedUrlScreen() {
   const [metadata, setMetadata] = useState<ScrapedMetadata | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [selectedWishlistId, setSelectedWishlistId] = useState<string | null>(null);
+  const [showWishlistPicker, setShowWishlistPicker] = useState(false);
+  const { data: defaultWishlist } = useDefaultWishlist();
+  const { data: wishlists = [] } = useWishlists();
+
+  // Set default wishlist on load
+  useEffect(() => {
+    if (defaultWishlist?.id && !selectedWishlistId) {
+      setSelectedWishlistId(defaultWishlist.id);
+    }
+  }, [defaultWishlist?.id, selectedWishlistId]);
 
   // Auto-scrape on mount
   useEffect(() => {
@@ -72,24 +85,58 @@ export default function SharedUrlScreen() {
   async function handleQuickAdd() {
     if (!metadata) return;
 
-    setIsSaving(true);
-    const result = await quickAddToDefaultWishlist(metadata, supabase);
-    setIsSaving(false);
+    // Use selected wishlist or fall back to default
+    const targetWishlistId = selectedWishlistId || defaultWishlist?.id;
+    if (!targetWishlistId) {
+      setError(t('addFromUrl.noDefaultWishlist'));
+      return;
+    }
 
-    if (result.success) {
-      // Show success alert and navigate to main app
-      Alert.alert(
-        t('alerts.titles.success'),
-        t('sharedUrl.saved'),
-        [
-          {
-            text: t('common.ok'),
-            onPress: () => router.replace('/(app)/(tabs)'),
-          },
-        ]
-      );
-    } else {
-      setError(result.error || t('sharedUrl.saveFailed'));
+    setIsSaving(true);
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setError(t('wishlist.mustBeLoggedIn'));
+        setIsSaving(false);
+        return;
+      }
+
+      const { error: insertError } = await supabase.from('wishlist_items').insert({
+        user_id: user.id,
+        wishlist_id: targetWishlistId,
+        group_id: null,
+        name: metadata.title || 'Untitled',
+        description: metadata.description || null,
+        price: metadata.price || null,
+        image_url: metadata.imageUrl || null,
+        amazon_url: metadata.sourceUrl || null,
+        priority: 0,
+        status: 'active',
+        item_type: 'standard',
+      });
+
+      setIsSaving(false);
+
+      if (!insertError) {
+        // Show success alert and navigate to main app
+        Alert.alert(
+          t('alerts.titles.success'),
+          t('sharedUrl.saved'),
+          [
+            {
+              text: t('common.ok'),
+              onPress: () => router.replace('/(app)/(tabs)'),
+            },
+          ]
+        );
+      } else {
+        setError(t('sharedUrl.saveFailed'));
+      }
+    } catch (err) {
+      console.error('Error saving item:', err);
+      setError(t('sharedUrl.saveFailed'));
+      setIsSaving(false);
     }
   }
 
@@ -386,6 +433,58 @@ export default function SharedUrlScreen() {
         </View>
       )}
 
+      {/* Wishlist Selector */}
+      {metadata && (
+        <View style={{ paddingHorizontal: spacing.lg, marginTop: spacing.lg }}>
+          <Text
+            style={{
+              fontSize: 14,
+              fontWeight: '600',
+              color: colors.burgundy[700],
+              marginBottom: spacing.xs,
+            }}
+          >
+            {t('addFromUrl.addToWishlist')}
+          </Text>
+          <TouchableOpacity
+            onPress={() => setShowWishlistPicker(true)}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: colors.white,
+              padding: spacing.md,
+              borderRadius: borderRadius.md,
+              borderWidth: 1,
+              borderColor: colors.gold[100],
+            }}
+          >
+            <MaterialCommunityIcons
+              name="clipboard-list"
+              size={20}
+              color={colors.burgundy[600]}
+            />
+            <Text
+              style={{
+                flex: 1,
+                marginLeft: spacing.sm,
+                fontSize: 16,
+                color: colors.burgundy[700],
+              }}
+            >
+              {selectedWishlistId
+                ? wishlists.find((w) => w.id === selectedWishlistId)?.name ||
+                  t('addFromUrl.defaultWishlist')
+                : t('addFromUrl.defaultWishlist')}
+            </Text>
+            <MaterialCommunityIcons
+              name="chevron-right"
+              size={20}
+              color={colors.burgundy[400]}
+            />
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* Action Buttons */}
       <View style={{ paddingHorizontal: spacing.lg, marginTop: spacing.xl }}>
         {/* Quick Add Button (SHARE-06) */}
@@ -484,6 +583,16 @@ export default function SharedUrlScreen() {
           </Text>
         </TouchableOpacity>
       </View>
+
+      <WishlistPickerSheet
+        visible={showWishlistPicker}
+        onClose={() => setShowWishlistPicker(false)}
+        onSelect={(wishlistId) => {
+          setSelectedWishlistId(wishlistId);
+          setShowWishlistPicker(false);
+        }}
+        selectedWishlistId={selectedWishlistId || undefined}
+      />
     </ScrollView>
   );
 }
