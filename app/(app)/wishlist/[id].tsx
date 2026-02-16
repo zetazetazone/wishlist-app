@@ -703,10 +703,10 @@ export default function ItemDetailScreen() {
         )}
 
         {/* Go to Store button - only for standard items with URL */}
-        {item.item_type === 'standard' && item.amazon_url && (
+        {item.item_type === 'standard' && item.source_url && (
           <Pressable
             style={styles.storeButton}
-            onPress={() => Linking.openURL(item.amazon_url!)}
+            onPress={() => Linking.openURL(item.source_url!)}
           >
             <MaterialCommunityIcons name="open-in-new" size={20} color={colors.white} />
             <Text style={styles.storeButtonText}>{t('wishlist.detail.goToStore')}</Text>

@@ -87,7 +87,7 @@ export async function quickAddToDefaultWishlist(
         description: metadata.description || null,
         price: metadata.price,
         image_url: metadata.imageUrl,
-        amazon_url: metadata.sourceUrl, // Legacy column name
+        source_url: metadata.sourceUrl,
         priority: 0,
         status: 'active',
         item_type: 'standard',

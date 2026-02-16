@@ -110,7 +110,7 @@ export default function SharedUrlScreen() {
         description: metadata.description || null,
         price: metadata.price || null,
         image_url: metadata.imageUrl || null,
-        amazon_url: metadata.sourceUrl || null,
+        source_url: metadata.sourceUrl || null,
         priority: 0,
         status: 'active',
         item_type: 'standard',

@@ -148,7 +148,7 @@ export default function AddFromUrlScreen() {
           description: description.trim() || null,
           price: price ? parseFloat(price) : null,
           image_url: imageUrl || null,
-          amazon_url: sourceUrl || null, // Legacy column, will be renamed in Phase 41
+          source_url: sourceUrl || null,
           priority: 0,
           status: 'active',
           item_type: 'standard',

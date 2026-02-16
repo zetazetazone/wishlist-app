@@ -315,7 +315,7 @@ export default function LuxuryWishlistScreen() {
   };
 
   const handleAddItem = async (itemData: {
-    amazon_url: string | null;
+    source_url: string | null;
     title: string;
     price?: number;
     priority: number;
@@ -332,7 +332,7 @@ export default function LuxuryWishlistScreen() {
         .insert([
           {
             user_id: userId,
-            amazon_url: itemData.amazon_url,
+            source_url: itemData.source_url,
             title: itemData.title,
             price: itemData.price,
             priority: itemData.priority,

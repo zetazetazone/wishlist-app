@@ -20,7 +20,7 @@ interface AddItemModalProps {
   visible: boolean;
   onClose: () => void;
   onAdd: (item: {
-    amazon_url: string | null;
+    source_url: string | null;
     title: string;
     price?: number;
     priority: number;
@@ -66,7 +66,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
     setLoading(true);
     try {
       const payload = {
-        amazon_url: amazonUrl.trim(),
+        source_url: amazonUrl.trim(),
         title: title.trim(),
         price: price ? parseFloat(price) : undefined,
         priority,

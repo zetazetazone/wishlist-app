@@ -157,8 +157,8 @@ export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
       if (!item) return;
       try {
         let message = item.title;
-        if (item.amazon_url) {
-          message += `\n\n${item.amazon_url}`;
+        if (item.source_url) {
+          message += `\n\n${item.source_url}`;
         }
         await Share.share({ message, title: item.title });
       } catch (error) {
