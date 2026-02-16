@@ -27,7 +27,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 38: URL Scraping** - Edge Function for metadata extraction ✓
 - [x] **Phase 39: Share Intent** - Receive shared URLs from browser/apps ✓
 - [x] **Phase 40: Multi-Wishlist UI** - Wishlist management screens and picker ✓
-- [ ] **Phase 41: Column Rename** - amazon_url to source_url migration
+- [x] **Phase 41: Column Rename** - amazon_url to source_url migration ✓
 - [ ] **Phase 42: Wishlist Visibility** - Public/private and for-others sharing
 - [ ] **Phase 43: Enforcement** - NOT NULL constraints and cleanup
 
@@ -112,8 +112,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 41-01-PLAN.md — Database migration and type regeneration
-- [ ] 41-02-PLAN.md — Source file updates (12 files)
+- [x] 41-01-PLAN.md — Database migration and type regeneration ✓
+- [x] 41-02-PLAN.md — Source file updates (12 files) ✓
 
 ### Phase 42: Wishlist Visibility
 **Goal**: Public/private visibility and for-others wishlist sharing
@@ -156,7 +156,7 @@ Phases execute in numeric order: 37 -> 38 -> 39 -> 40 -> 41 -> 42 -> 43
 | 38. URL Scraping | v1.7 | 3/3 | ✓ Complete | 2026-02-16 |
 | 39. Share Intent | v1.7 | 3/3 | ✓ Complete | 2026-02-16 |
 | 40. Multi-Wishlist UI | v1.7 | 4/4 | ✓ Complete | 2026-02-16 |
-| 41. Column Rename | v1.7 | 0/2 | Not started | - |
+| 41. Column Rename | v1.7 | 2/2 | ✓ Complete | 2026-02-16 |
 | 42. Wishlist Visibility | v1.7 | 0/? | Not started | - |
 | 43. Enforcement | v1.7 | 0/? | Not started | - |
 
