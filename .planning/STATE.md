@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 
 ## Current Position
 
-Phase: 39 of 43 (Share Intent)
-Plan: 3 of 3 in current phase (complete)
-Status: Phase 39 complete
-Last activity: 2026-02-16 — Completed 39-03-PLAN.md (Share handler screen)
+Phase: 40 of 43 (Multi-Wishlist UI)
+Plan: 1 of 4 in current phase
+Status: In progress
+Last activity: 2026-02-16 — Completed 40-01-PLAN.md (Wishlists data layer)
 
-Progress: [===================================] 90% (39/43 phases)
+Progress: [====================================] 93% (40/43 phases)
 
 ## Milestone History
 
@@ -67,6 +67,13 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 - ShareIntentProvider at outermost level for cold start capture (SHARE-04)
 - quickAddToDefaultWishlist returns inserted item ID for navigation
 
+**From Phase 40-01:**
+- CRUD functions accept userId parameter for flexibility (not auto-detect from session)
+- Export WishlistInsert and WishlistUpdate types for type safety
+- Optimistic updates in useReorderWishlists for instant drag feedback
+- Added getDefaultWishlist() and getWishlistItemCount() helper functions
+- Query hooks use user?.id in queryKey for proper cache isolation
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -111,6 +118,6 @@ From Phase 38-01:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Phase 39 complete (Share Intent)
-Resume file: .planning/phases/39-share-intent/39-03-SUMMARY.md
-Next: `/gsd:plan-phase 40` (Multi-Wishlist UI)
+Stopped at: Phase 40, Plan 1 complete (Wishlists data layer)
+Resume file: .planning/phases/40-multi-wishlist-ui/40-01-SUMMARY.md
+Next: `/gsd:execute-plan 40-02` (WishlistCard component)
