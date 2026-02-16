@@ -22,7 +22,9 @@ result: pass
 
 ### 2. Add Item with URL
 expected: Adding a wishlist item with a URL saves successfully and the URL displays when viewing the item
-result: [pending]
+result: issue
+reported: "No default wishlist found error, translation key showing as raw string"
+severity: blocker
 
 ### 3. Share URL to App
 expected: Sharing a URL from browser to app creates item with URL preserved and displayed
@@ -36,8 +38,8 @@ result: [pending]
 
 total: 4
 passed: 1
-issues: 0
-pending: 3
+issues: 1
+pending: 2
 skipped: 0
 
 ## Gaps
@@ -69,3 +71,24 @@ skipped: 0
   missing:
     - "Add QueryClientProvider at app root"
   debug_session: ""
+  fix_commit: "4f6bee2"
+
+- truth: "Default wishlist exists for user when adding items"
+  status: failed
+  reason: "User reported: No default wishlist found error, translation key showing as raw string"
+  severity: blocker
+  test: 2
+  root_cause: |
+    1. Translation key wishlists.defaultWishlist missing from locale files
+    2. getDefaultWishlist() doesn't auto-create if missing
+    3. Database trigger may not have fired on remote DB
+  artifacts:
+    - path: "src/i18n/locales/en.json"
+      issue: "Missing wishlists.defaultWishlist key"
+    - path: "lib/wishlists.ts"
+      issue: "No fallback when default wishlist missing"
+  missing:
+    - "Add wishlists.defaultWishlist translation key"
+    - "Auto-create default wishlist in getDefaultWishlist()"
+  debug_session: ""
+  fix_commit: "f23399d"

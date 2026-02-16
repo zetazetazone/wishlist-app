@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../providers/AuthProvider';
 import {
@@ -28,15 +29,29 @@ export function useWishlists() {
 
 /**
  * Hook to get the default wishlist
+ * Invalidates wishlists cache when default is fetched (in case it was auto-created)
  */
 export function useDefaultWishlist() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const hasInvalidated = useRef(false);
 
-  return useQuery({
+  const query = useQuery({
     queryKey: ['wishlists', 'default', user?.id],
     queryFn: () => getDefaultWishlist(user!.id),
     enabled: !!user,
   });
+
+  // When default wishlist is fetched, invalidate the main wishlists cache once
+  // This ensures the picker sees any newly created default wishlist
+  useEffect(() => {
+    if (query.data && user && !hasInvalidated.current) {
+      hasInvalidated.current = true;
+      queryClient.invalidateQueries({ queryKey: ['wishlists', user.id] });
+    }
+  }, [query.data, user, queryClient]);
+
+  return query;
 }
 
 /**
