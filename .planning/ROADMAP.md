@@ -24,7 +24,7 @@ v1.7 transforms wishlist management from group-centric to user-owned architectur
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 37: Database Foundation** - Multi-wishlist schema with RLS and migration backfill ✓
-- [ ] **Phase 38: URL Scraping** - Edge Function for metadata extraction
+- [x] **Phase 38: URL Scraping** - Edge Function for metadata extraction ✓
 - [ ] **Phase 39: Share Intent** - Receive shared URLs from browser/apps
 - [ ] **Phase 40: Multi-Wishlist UI** - Wishlist management screens and picker
 - [ ] **Phase 41: Column Rename** - amazon_url to source_url migration
@@ -75,10 +75,12 @@ Plans:
   3. Share works on cold start (app not running) and warm start (app in background)
   4. User sees scraped preview after sharing URL
   5. User can quick-add to default wishlist with one tap
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 39-01: TBD
+- [ ] 39-01-PLAN.md — Configuration and patch setup (expo-share-intent, xcode patch, app.json)
+- [ ] 39-02-PLAN.md — Provider integration (ShareIntentProvider, URL extraction utilities)
+- [ ] 39-03-PLAN.md — Share handler screen (detection, scraping, quick-add)
 
 ### Phase 40: Multi-Wishlist UI
 **Goal**: User interface for managing multiple wishlists
@@ -148,7 +150,7 @@ Phases execute in numeric order: 37 -> 38 -> 39 -> 40 -> 41 -> 42 -> 43
 |-------|-----------|----------------|--------|-----------|
 | 37. Database Foundation | v1.7 | 1/1 | ✓ Complete | 2026-02-16 |
 | 38. URL Scraping | v1.7 | 3/3 | ✓ Complete | 2026-02-16 |
-| 39. Share Intent | v1.7 | 0/? | Not started | - |
+| 39. Share Intent | v1.7 | 0/3 | Planned | - |
 | 40. Multi-Wishlist UI | v1.7 | 0/? | Not started | - |
 | 41. Column Rename | v1.7 | 0/? | Not started | - |
 | 42. Wishlist Visibility | v1.7 | 0/? | Not started | - |
