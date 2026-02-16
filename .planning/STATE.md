@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** v1.7 Global Wishlist
+**Current focus:** Phase 37 - Database Foundation (v1.7 Global Wishlist)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-02-16 — Milestone v1.7 started
+Phase: 37 of 43 (Database Foundation)
+Plan: 0 of ? in current phase
+Status: Ready to plan
+Last activity: 2026-02-16 — Roadmap created for v1.7 Global Wishlist
 
-Progress: Milestone v1.7 in planning
+Progress: [==============================] 84% (36/43 phases)
 
 ## Milestone History
 
@@ -25,6 +25,7 @@ Progress: Milestone v1.7 in planning
 - **v1.4 Friends System** - Shipped 2026-02-10 (6 phases, 12 plans)
 - **v1.5 Localization** - Shipped 2026-02-12 (4 phases, 13 plans)
 - **v1.6 Wishlist UI Redesign** - Shipped 2026-02-12 (4 phases, 11 plans)
+- **v1.7 Global Wishlist** - In progress (7 phases, Phases 37-43)
 
 ## Accumulated Context
 
@@ -48,7 +49,18 @@ From v1.4:
 
 ### Blockers/Concerns
 
-- Pre-existing TypeScript errors (type exports for Group, WishlistItem, FlashList estimatedItemSize) - non-blocking
+**From research (2026-02-16):**
+- RLS policy conflicts with existing claim_item() when adding wishlist_id
+- Share intent cold start data loss if getInitialURL() not implemented
+- URL scraper brittleness for JavaScript-rendered sites
+
+**Mitigations documented in research/SUMMARY.md:**
+- can_view_wishlist_item() helper before schema migration
+- Both getInitialURL() and addEventListener patterns
+- Graceful fallback with manual entry option
+
+**Pre-existing:**
+- TypeScript errors (type exports for Group, WishlistItem, FlashList estimatedItemSize) - non-blocking
 - npm peer dependency workaround (--legacy-peer-deps) for React 19 - acceptable
 
 ### Quick Tasks Completed
@@ -64,6 +76,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: v1.7 milestone started, defining requirements
-Resume file: N/A
-Next: Complete requirements definition → roadmap creation
+Stopped at: Roadmap created for v1.7 milestone (7 phases, 33 requirements)
+Resume file: None — ready to plan Phase 37
+Next: `/gsd:plan-phase 37`

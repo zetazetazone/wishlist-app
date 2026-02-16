@@ -99,49 +99,49 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| WISH-01 | — | Pending |
-| WISH-02 | — | Pending |
-| WISH-03 | — | Pending |
-| WISH-04 | — | Pending |
-| WISH-05 | — | Pending |
-| WISH-06 | — | Pending |
-| WISH-07 | — | Pending |
-| VIS-01 | — | Pending |
-| VIS-02 | — | Pending |
-| VIS-03 | — | Pending |
-| VIS-04 | — | Pending |
-| VIS-05 | — | Pending |
-| VIS-06 | — | Pending |
-| VIS-07 | — | Pending |
-| SCRAPE-01 | — | Pending |
-| SCRAPE-02 | — | Pending |
-| SCRAPE-03 | — | Pending |
-| SCRAPE-04 | — | Pending |
-| SCRAPE-05 | — | Pending |
-| SCRAPE-06 | — | Pending |
-| SCRAPE-07 | — | Pending |
-| SCRAPE-08 | — | Pending |
-| SCRAPE-09 | — | Pending |
-| SCRAPE-10 | — | Pending |
-| SHARE-01 | — | Pending |
-| SHARE-02 | — | Pending |
-| SHARE-03 | — | Pending |
-| SHARE-04 | — | Pending |
-| SHARE-05 | — | Pending |
-| SHARE-06 | — | Pending |
-| SHARE-07 | — | Pending |
-| SHARE-08 | — | Pending |
-| MIG-01 | — | Pending |
-| MIG-02 | — | Pending |
-| MIG-03 | — | Pending |
-| MIG-04 | — | Pending |
-| MIG-05 | — | Pending |
+| WISH-01 | Phase 40 | Pending |
+| WISH-02 | Phase 40 | Pending |
+| WISH-03 | Phase 40 | Pending |
+| WISH-04 | Phase 37 | Pending |
+| WISH-05 | Phase 40 | Pending |
+| WISH-06 | Phase 40 | Pending |
+| WISH-07 | Phase 40 | Pending |
+| VIS-01 | Phase 42 | Pending |
+| VIS-02 | Phase 42 | Pending |
+| VIS-03 | Phase 42 | Pending |
+| VIS-04 | Phase 42 | Pending |
+| VIS-05 | Phase 42 | Pending |
+| VIS-06 | Phase 42 | Pending |
+| VIS-07 | Phase 42 | Pending |
+| SCRAPE-01 | Phase 38 | Pending |
+| SCRAPE-02 | Phase 38 | Pending |
+| SCRAPE-03 | Phase 38 | Pending |
+| SCRAPE-04 | Phase 38 | Pending |
+| SCRAPE-05 | Phase 38 | Pending |
+| SCRAPE-06 | Phase 38 | Pending |
+| SCRAPE-07 | Phase 38 | Pending |
+| SCRAPE-08 | Phase 38 | Pending |
+| SCRAPE-09 | Phase 38 | Pending |
+| SCRAPE-10 | Phase 40 | Pending |
+| SHARE-01 | Phase 39 | Pending |
+| SHARE-02 | Phase 39 | Pending |
+| SHARE-03 | Phase 39 | Pending |
+| SHARE-04 | Phase 39 | Pending |
+| SHARE-05 | Phase 39 | Pending |
+| SHARE-06 | Phase 39 | Pending |
+| SHARE-07 | Phase 39 | Pending |
+| SHARE-08 | Phase 39 | Pending |
+| MIG-01 | Phase 37 | Pending |
+| MIG-02 | Phase 37 | Pending |
+| MIG-03 | Phase 37 | Pending |
+| MIG-04 | Phase 37 | Pending |
+| MIG-05 | Phase 41 | Pending |
 
 **Coverage:**
 - v1.7 requirements: 33 total
-- Mapped to phases: 0
-- Unmapped: 33
+- Mapped to phases: 33
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-16*
-*Last updated: 2026-02-16 after initial definition*
+*Last updated: 2026-02-16 after roadmap creation*
