@@ -899,6 +899,25 @@
     "errorSaving": "Error al guardar la informacion del perfil",
     "errorGettingUser": "No se pudo obtener la informacion del usuario"
   },
+  "sharedUrl": {
+    "title": "Agregar elemento compartido",
+    "subtitle": "Agrega este articulo a tu lista de deseos",
+    "loadingSubtitle": "Cargando informacion del producto...",
+    "errorSubtitle": "No pudimos obtener todos los detalles",
+    "loading": "Obteniendo informacion del producto...",
+    "noUrl": "No se proporciono URL",
+    "scrapeFailed": "No se pudieron obtener los detalles del producto",
+    "scrapeFailedHint": "Aun puedes agregar este articulo o editar los detalles",
+    "noImage": "Sin imagen disponible",
+    "untitled": "Articulo sin titulo",
+    "from": "Desde",
+    "addToWishlist": "Agregar a la lista",
+    "saving": "Guardando...",
+    "editDetails": "Editar detalles",
+    "cancel": "Cancelar",
+    "saved": "Articulo agregado a tu lista de deseos!",
+    "saveFailed": "Error al guardar el articulo"
+  },
   "addFromUrl": {
     "title": "Add from URL",
     "subtitle": "Paste a product link to quickly add it to your wishlist",

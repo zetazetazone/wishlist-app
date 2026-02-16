@@ -899,6 +899,25 @@
     "errorSaving": "Failed to save profile information",
     "errorGettingUser": "Could not get user information"
   },
+  "sharedUrl": {
+    "title": "Add Shared Item",
+    "subtitle": "Add this item to your wishlist",
+    "loadingSubtitle": "Loading product information...",
+    "errorSubtitle": "We could not fetch all details",
+    "loading": "Fetching product info...",
+    "noUrl": "No URL provided",
+    "scrapeFailed": "Could not fetch product details",
+    "scrapeFailedHint": "You can still add this item or edit the details",
+    "noImage": "No image available",
+    "untitled": "Untitled Item",
+    "from": "From",
+    "addToWishlist": "Add to Wishlist",
+    "saving": "Saving...",
+    "editDetails": "Edit Details",
+    "cancel": "Cancel",
+    "saved": "Item added to your wishlist!",
+    "saveFailed": "Failed to save item"
+  },
   "addFromUrl": {
     "title": "Add from URL",
     "subtitle": "Paste a product link to quickly add it to your wishlist",
