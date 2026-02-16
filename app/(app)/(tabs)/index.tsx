@@ -559,8 +559,27 @@ export default function LuxuryWishlistScreen() {
                 </View>
               </View>
 
-              {/* Right: Notification Icon */}
-              <NotificationIconButton size={28} />
+              {/* Right: Icons */}
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+                <TouchableOpacity
+                  onPress={() => router.push('/wishlist-manager')}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="playlist-edit"
+                    size={24}
+                    color={colors.white}
+                  />
+                </TouchableOpacity>
+                <NotificationIconButton size={28} />
+              </View>
             </View>
           </MotiView>
         </LinearGradient>
