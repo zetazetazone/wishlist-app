@@ -52,6 +52,10 @@ export default function AddFromUrlScreen() {
     try {
       const result = await scrapeUrl(url.trim());
 
+      // Always show the preview form after attempting to scrape
+      setShowPreview(true);
+      setSourceUrl(url.trim());
+
       if (result.success && result.data) {
         // Populate fields from scraped data
         setTitle(result.data.title || '');
@@ -60,12 +64,20 @@ export default function AddFromUrlScreen() {
         setPrice(result.data.price ? result.data.price.toString() : '');
         setSiteName(result.data.siteName || '');
         setSourceUrl(result.data.sourceUrl);
-        setShowPreview(true);
         setShowManualEntry(false);
+        setScrapeError(null);
       } else {
-        // Scrape failed
+        // Scrape failed - show form for manual entry with error message
         setScrapeError(result.error || t('addFromUrl.scrapeFailed'));
-        setShowPreview(false);
+        setShowManualEntry(true);
+        // Keep any partial data that might exist
+        if (result.data) {
+          setTitle(result.data.title || '');
+          setDescription(result.data.description || '');
+          setImageUrl(result.data.imageUrl || '');
+          setPrice(result.data.price ? result.data.price.toString() : '');
+          setSiteName(result.data.siteName || '');
+        }
       }
     } catch (error) {
       console.error('Error during scrape:', error);
@@ -271,67 +283,32 @@ export default function AddFromUrlScreen() {
           </View>
         </View>
 
-        {/* Error Message with Manual Entry Option */}
-        {scrapeError && (
+        {/* Error/Info Message - shows inline when scraping fails */}
+        {scrapeError && showPreview && (
           <View
             style={{
               marginHorizontal: spacing.lg,
               marginTop: spacing.lg,
-              backgroundColor: colors.burgundy[50],
+              backgroundColor: colors.gold[50],
               borderRadius: borderRadius.lg,
               padding: spacing.md,
               borderWidth: 1,
-              borderColor: colors.burgundy[200],
+              borderColor: colors.gold[200],
+              flexDirection: 'row',
+              alignItems: 'center',
             }}
           >
+            <MaterialCommunityIcons name="information-outline" size={24} color={colors.gold[600]} />
             <Text
               style={{
                 fontSize: 14,
-                fontWeight: '600',
-                color: colors.burgundy[700],
-                marginBottom: spacing.sm,
-              }}
-            >
-              {t('addFromUrl.scrapeFailed')}
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                color: colors.burgundy[600],
-                marginBottom: spacing.md,
-              }}
-            >
-              {scrapeError}
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                color: colors.burgundy[600],
-                marginBottom: spacing.md,
+                color: colors.gold[700],
+                marginLeft: spacing.sm,
+                flex: 1,
               }}
             >
               {t('addFromUrl.scrapeFailedHint')}
             </Text>
-            <TouchableOpacity
-              onPress={handleEnterManually}
-              activeOpacity={0.7}
-              style={{
-                backgroundColor: colors.burgundy[600],
-                borderRadius: borderRadius.md,
-                padding: spacing.sm,
-                alignItems: 'center',
-              }}
-            >
-              <Text
-                style={{
-                  color: colors.white,
-                  fontSize: 14,
-                  fontWeight: '600',
-                }}
-              >
-                {t('addFromUrl.enterManually')}
-              </Text>
-            </TouchableOpacity>
           </View>
         )}
 
