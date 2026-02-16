@@ -12,9 +12,12 @@ CHECK (preferred_language IN ('en', 'es'));
 
 -- ============================================
 -- UPDATE USER_PROFILES VIEW
+-- Must DROP and CREATE due to column reordering
 -- ============================================
 
-CREATE OR REPLACE VIEW public.user_profiles AS
+DROP VIEW IF EXISTS public.user_profiles;
+
+CREATE VIEW public.user_profiles AS
 SELECT
   id,
   email,
