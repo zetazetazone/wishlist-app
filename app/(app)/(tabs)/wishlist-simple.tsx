@@ -62,7 +62,7 @@ export default function WishlistScreenSimple() {
   };
 
   const handleAddItem = async (itemData: {
-    amazon_url: string;
+    source_url: string;
     title: string;
     price?: number;
     priority: number;
@@ -78,7 +78,7 @@ export default function WishlistScreenSimple() {
         .insert([
           {
             user_id: userId,
-            amazon_url: itemData.amazon_url,
+            source_url: itemData.source_url,
             title: itemData.title,
             price: itemData.price,
             priority: itemData.priority,

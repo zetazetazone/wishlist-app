@@ -53,10 +53,11 @@ export default function WishlistScreen() {
   };
 
   const handleAddItem = async (itemData: {
-    amazon_url: string;
+    source_url: string | null;
     title: string;
     price?: number;
     priority: number;
+    item_type: 'standard';
   }) => {
     if (!userId) {
       Alert.alert('Error', 'You must be logged in to add items');
@@ -69,7 +70,7 @@ export default function WishlistScreen() {
         .insert([
           {
             user_id: userId,
-            amazon_url: itemData.amazon_url,
+            source_url: itemData.source_url,
             title: itemData.title,
             price: itemData.price,
             priority: itemData.priority,

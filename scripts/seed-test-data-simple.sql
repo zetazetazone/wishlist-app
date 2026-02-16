@@ -59,7 +59,7 @@ VALUES ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'CARLOS_ID_HERE', 'member');
 -- ============================================
 
 -- Standard items (CAN be claimed)
-INSERT INTO public.wishlist_items (user_id, group_id, title, amazon_url, image_url, price, priority, item_type, status)
+INSERT INTO public.wishlist_items (user_id, group_id, title, source_url, image_url, price, priority, item_type, status)
 VALUES
   ('CARLOS_ID_HERE', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Sony WH-1000XM5 Headphones', 'https://amazon.com/dp/B09XS7JWHH', 'https://picsum.photos/seed/headphones/400/400', 348.00, 5, 'standard', 'active'),
   ('CARLOS_ID_HERE', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Kindle Paperwhite', 'https://amazon.com/dp/B08KTZ8249', 'https://picsum.photos/seed/kindle/400/400', 139.99, 4, 'standard', 'active'),
@@ -69,14 +69,14 @@ VALUES
   ('CARLOS_ID_HERE', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Yeti Tumbler 30oz', 'https://amazon.com/dp/B073WJT77K', 'https://picsum.photos/seed/yeti/400/400', 35.00, 2, 'standard', 'active');
 
 -- Surprise Me item (CANNOT be claimed - no claim button should appear)
--- Note: Special items must have amazon_url = NULL per database constraint
-INSERT INTO public.wishlist_items (user_id, group_id, title, amazon_url, image_url, price, priority, item_type, status)
+-- Note: Special items must have source_url = NULL per database constraint
+INSERT INTO public.wishlist_items (user_id, group_id, title, source_url, image_url, price, priority, item_type, status)
 VALUES
   ('CARLOS_ID_HERE', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Surprise Me - Tech Gadget', NULL, 'https://picsum.photos/seed/surprise/400/400', NULL, 3, 'surprise_me', 'active');
 
 -- Mystery Box items (CANNOT be claimed - no claim button should appear)
--- Note: Special items must have amazon_url = NULL per database constraint
-INSERT INTO public.wishlist_items (user_id, group_id, title, amazon_url, image_url, price, priority, item_type, mystery_box_tier, status)
+-- Note: Special items must have source_url = NULL per database constraint
+INSERT INTO public.wishlist_items (user_id, group_id, title, source_url, image_url, price, priority, item_type, mystery_box_tier, status)
 VALUES
   ('CARLOS_ID_HERE', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Mystery Box - $50 Tier', NULL, 'https://picsum.photos/seed/mystery50/400/400', 50.00, 4, 'mystery_box', 50, 'active'),
   ('CARLOS_ID_HERE', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Mystery Box - $100 Tier', NULL, 'https://picsum.photos/seed/mystery100/400/400', 100.00, 5, 'mystery_box', 100, 'active');

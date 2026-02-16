@@ -96,7 +96,7 @@ BEGIN
   -- DELETE FROM public.wishlist_items WHERE group_id = v_group_id AND user_id = v_celebrant_id;
 
   -- Standard wishlist items (can be claimed)
-  INSERT INTO public.wishlist_items (user_id, group_id, title, amazon_url, image_url, price, priority, item_type, status)
+  INSERT INTO public.wishlist_items (user_id, group_id, title, source_url, image_url, price, priority, item_type, status)
   VALUES
     -- Standard items - claimable
     (v_celebrant_id, v_group_id, 'Sony WH-1000XM5 Headphones', 'https://amazon.com/dp/B09XS7JWHH', 'https://picsum.photos/seed/headphones/400/400', 348.00, 5, 'standard', 'active'),
@@ -108,15 +108,15 @@ BEGIN
   ON CONFLICT DO NOTHING;
 
   -- Surprise Me item (should NOT have claim button)
-  -- Note: Special items must have amazon_url = NULL per constraint
-  INSERT INTO public.wishlist_items (user_id, group_id, title, amazon_url, image_url, price, priority, item_type, status)
+  -- Note: Special items must have source_url = NULL per constraint
+  INSERT INTO public.wishlist_items (user_id, group_id, title, source_url, image_url, price, priority, item_type, status)
   VALUES
     (v_celebrant_id, v_group_id, 'Surprise Me - Tech Gadget', NULL, 'https://picsum.photos/seed/surprise/400/400', NULL, 3, 'surprise_me', 'active')
   ON CONFLICT DO NOTHING;
 
   -- Mystery Box items (should NOT have claim button)
-  -- Note: Special items must have amazon_url = NULL per constraint
-  INSERT INTO public.wishlist_items (user_id, group_id, title, amazon_url, image_url, price, priority, item_type, mystery_box_tier, status)
+  -- Note: Special items must have source_url = NULL per constraint
+  INSERT INTO public.wishlist_items (user_id, group_id, title, source_url, image_url, price, priority, item_type, mystery_box_tier, status)
   VALUES
     (v_celebrant_id, v_group_id, 'Mystery Box - $50 Tier', NULL, 'https://picsum.photos/seed/mystery50/400/400', 50.00, 4, 'mystery_box', 50, 'active'),
     (v_celebrant_id, v_group_id, 'Mystery Box - $100 Tier', NULL, 'https://picsum.photos/seed/mystery100/400/400', 100.00, 5, 'mystery_box', 100, 'active')
