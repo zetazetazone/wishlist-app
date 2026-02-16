@@ -2,19 +2,19 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-02-12)
+See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** Planning next milestone
+**Current focus:** v1.7 Global Wishlist
 
 ## Current Position
 
-Phase: N/A (milestone complete)
-Plan: N/A
-Status: Ready to plan next milestone
-Last activity: 2026-02-12 — v1.6 milestone complete
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-02-16 — Milestone v1.7 started
 
-Progress: Milestone v1.6 shipped
+Progress: Milestone v1.7 in planning
 
 ## Milestone History
 
@@ -63,7 +63,7 @@ From v1.4:
 
 ## Session Continuity
 
-Last session: 2026-02-12
-Stopped at: v1.6 milestone complete and archived
+Last session: 2026-02-16
+Stopped at: v1.7 milestone started, defining requirements
 Resume file: N/A
-Next: `/gsd:new-milestone` to start next version (questioning -> research -> requirements -> roadmap)
+Next: Complete requirements definition → roadmap creation

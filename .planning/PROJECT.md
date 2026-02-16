@@ -8,6 +8,17 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 
 **Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.**
 
+## Current Milestone: v1.7 Global Wishlist
+
+**Goal:** Transform wishlist management from group-scoped to user-owned with multiple wishlists, URL-based item creation, and share intent integration.
+
+**Target features:**
+- Multiple named wishlists per user (public/private, for-self/for-others)
+- URL scraping to auto-populate wishlist items from any store
+- Share intent integration (share from browser → create item)
+- Flexible visibility: public wishlists visible to all groups, "for others" wishlists linked to specific groups
+- Data migration from group-scoped items to user-owned wishlists
+
 ## Requirements
 
 ### Validated
@@ -99,7 +110,22 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 
 ### Active
 
-**v1.7+ — Future Enhancements**
+**v1.7 — Global Wishlist**
+
+- [ ] User can create multiple named wishlists
+- [ ] User can set wishlist visibility (public/private)
+- [ ] User can designate wishlist as "for self" or "for others"
+- [ ] "For others" wishlists are linked to a specific group
+- [ ] Public wishlists are visible to all groups user belongs to
+- [ ] User can add items by pasting a URL (auto-scrapes product data)
+- [ ] URL scraping extracts image, title, price, description, store/brand
+- [ ] User can review and edit scraped data before saving
+- [ ] User can choose which wishlist to add item to
+- [ ] User can share from browser/store app to create wishlist item (share intent)
+- [ ] Existing group wishlist items migrate to user's default wishlist
+- [ ] Group members can collaborate on "for others" wishlists
+
+**v1.8+ — Future Enhancements**
 
 - [ ] Instagram integration for friend discovery
 - [ ] User can configure notification preferences
@@ -203,4 +229,4 @@ A mobile app (iOS & Android) that helps friend groups coordinate gift-giving for
 | Parallel fetch item + celebration | Meet <200ms detail page load time target | ✓ Good - fast navigation |
 
 ---
-*Last updated: 2026-02-12 after v1.6 milestone*
+*Last updated: 2026-02-16 after v1.7 milestone start*
