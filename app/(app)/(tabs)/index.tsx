@@ -11,7 +11,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { MotiView } from 'moti';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../../lib/supabase';
 import { WishlistItem } from '../../../types/database.types';
@@ -41,6 +41,10 @@ type ItemType = 'standard' | 'surprise_me' | 'mystery_box';
 export default function LuxuryWishlistScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  const { aggregate, wishlistId } = useLocalSearchParams<{ aggregate?: string; wishlistId?: string }>();
+  const isAggregateMode = aggregate === 'true';
+  const selectedWishlistId = wishlistId;
+
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -65,7 +69,7 @@ export default function LuxuryWishlistScreen() {
     if (userId) {
       fetchWishlistItems();
     }
-  }, [userId]);
+  }, [userId, isAggregateMode, selectedWishlistId]);
 
   const getCurrentUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -109,11 +113,20 @@ export default function LuxuryWishlistScreen() {
   const fetchWishlistItems = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+
+      let query = supabase
         .from('wishlist_items')
-        .select('*')
+        .select('*, wishlists!inner(name, emoji)')
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
+
+      // If NOT in aggregate mode and a specific wishlist is selected, filter by it
+      // In aggregate mode, fetch ALL items across ALL wishlists
+      if (!isAggregateMode && selectedWishlistId) {
+        query = query.eq('wishlist_id', selectedWishlistId);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setItems(data || []);
@@ -545,7 +558,7 @@ export default function LuxuryWishlistScreen() {
                       marginBottom: spacing.xs,
                     }}
                   >
-                    {t('wishlist.title')}
+                    {isAggregateMode ? t('wishlists.allWishlists') : t('wishlist.title')}
                   </Text>
                   <Text
                     style={{
@@ -555,6 +568,7 @@ export default function LuxuryWishlistScreen() {
                     }}
                   >
                     {items.length} {t('wishlist.itemType.gift', { count: items.length })}
+                    {isAggregateMode && ` • ${t('wishlists.fromAllWishlists')}`}
                   </Text>
                 </View>
               </View>

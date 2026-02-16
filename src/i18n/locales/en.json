@@ -1067,5 +1067,14 @@
     "dangerZone": "Danger Zone",
     "deliveryVisibility": "Delivery Address Visibility",
     "bankVisibility": "Bank Details Visibility"
+  },
+  "wishlists": {
+    "myWishlists": "My Wishlists",
+    "manageWishlists": "Manage Wishlists",
+    "allWishlists": "All Wishlists",
+    "fromAllWishlists": "from all wishlists",
+    "aggregateView": "View All Items",
+    "longPressToReorder": "Long press to drag and reorder",
+    "noWishlists": "No wishlists yet"
   }
 }
