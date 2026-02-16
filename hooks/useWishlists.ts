@@ -7,6 +7,7 @@ import {
   updateWishlist,
   deleteWishlist,
   reorderWishlists,
+  moveItemToWishlist,
   type Wishlist,
   type WishlistInsert,
   type WishlistUpdate,
@@ -126,6 +127,23 @@ export function useReorderWishlists() {
     onSuccess: () => {
       // Invalidate to ensure server state is reflected
       queryClient.invalidateQueries({ queryKey: ['wishlists', user?.id] });
+    },
+  });
+}
+
+/**
+ * Hook to move an item to a different wishlist
+ */
+export function useMoveItemToWishlist() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ itemId, targetWishlistId }: { itemId: string; targetWishlistId: string }) =>
+      moveItemToWishlist(itemId, targetWishlistId),
+    onSuccess: () => {
+      // Invalidate relevant queries
+      queryClient.invalidateQueries({ queryKey: ['wishlists'] });
+      queryClient.invalidateQueries({ queryKey: ['wishlist-items'] });
     },
   });
 }

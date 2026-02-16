@@ -110,3 +110,23 @@ export async function getWishlistItemCount(wishlistId: string) {
   if (error) throw error;
   return count || 0;
 }
+
+/**
+ * Move a wishlist item to a different wishlist
+ * @param itemId - The item to move
+ * @param targetWishlistId - The destination wishlist
+ */
+export async function moveItemToWishlist(
+  itemId: string,
+  targetWishlistId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('wishlist_items')
+    .update({ wishlist_id: targetWishlistId })
+    .eq('id', itemId);
+
+  if (error) {
+    console.error('Failed to move item:', error);
+    throw new Error(`Failed to move item: ${error.message}`);
+  }
+}
