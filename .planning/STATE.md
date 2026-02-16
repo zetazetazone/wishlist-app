@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 ## Current Position
 
 Phase: 37 of 43 (Database Foundation)
-Plan: 0 of ? in current phase
-Status: Ready to plan
-Last activity: 2026-02-16 — Roadmap created for v1.7 Global Wishlist
+Plan: 1 of 1 in current phase (complete)
+Status: Phase 37 complete
+Last activity: 2026-02-16 — Completed 37-01-PLAN.md (multi-wishlist database foundation)
 
-Progress: [==============================] 84% (36/43 phases)
+Progress: [================================] 86% (37/43 phases)
 
 ## Milestone History
 
@@ -35,6 +35,12 @@ Key decisions from all milestones archived in PROJECT.md Key Decisions table.
 
 v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 
+**From Phase 37-01:**
+- wishlist_id nullable during v1.7 transition, NOT NULL deferred to Phase 43
+- ON DELETE SET NULL for wishlist_id (items orphan rather than delete)
+- dual-access RLS preserves legacy group_id access while adding wishlist_id
+- gift_claims RLS unchanged - celebrant exclusion uses wi.group_id only
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -50,12 +56,12 @@ From v1.4:
 ### Blockers/Concerns
 
 **From research (2026-02-16):**
-- RLS policy conflicts with existing claim_item() when adding wishlist_id
+- ~~RLS policy conflicts with existing claim_item() when adding wishlist_id~~ RESOLVED: dual-access RLS pattern preserves group_id access
 - Share intent cold start data loss if getInitialURL() not implemented
 - URL scraper brittleness for JavaScript-rendered sites
 
 **Mitigations documented in research/SUMMARY.md:**
-- can_view_wishlist_item() helper before schema migration
+- ~~can_view_wishlist_item() helper before schema migration~~ RESOLVED: dual-access pattern in RLS
 - Both getInitialURL() and addEventListener patterns
 - Graceful fallback with manual entry option
 
@@ -76,6 +82,6 @@ From v1.4:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Roadmap created for v1.7 milestone (7 phases, 33 requirements)
-Resume file: None — ready to plan Phase 37
-Next: `/gsd:plan-phase 37`
+Stopped at: Phase 37 complete (database foundation for multi-wishlist)
+Resume file: .planning/phases/37-database-foundation/37-01-SUMMARY.md
+Next: `/gsd:plan-phase 38` (Core API for wishlist management)
