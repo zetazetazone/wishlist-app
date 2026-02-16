@@ -185,7 +185,7 @@ export function CreateWishlistModal({
                 {/* Error Message */}
                 {error && (
                   <View style={styles.errorContainer}>
-                    <MaterialCommunityIcons name="alert-circle" size={16} color={colors.red[600]} />
+                    <MaterialCommunityIcons name="alert-circle" size={16} color={colors.error} />
                     <Text style={styles.errorText}>{error}</Text>
                   </View>
                 )}
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     color: colors.burgundy[900],
   },
   inputError: {
-    borderColor: colors.red[500],
+    borderColor: colors.error,
   },
   characterCount: {
     fontSize: 12,
@@ -316,21 +316,21 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   characterCountError: {
-    color: colors.red[600],
+    color: colors.error,
   },
   errorContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
     padding: spacing.sm,
-    backgroundColor: colors.red[50],
+    backgroundColor: '#FEE2E2',
     borderRadius: borderRadius.sm,
     borderWidth: 1,
-    borderColor: colors.red[200],
+    borderColor: '#FCA5A5',
   },
   errorText: {
     fontSize: 14,
-    color: colors.red[700],
+    color: colors.error,
     flex: 1,
   },
   footer: {
@@ -370,6 +370,5 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     backgroundColor: colors.cream[400],
-    ...shadows.none,
   },
 });
