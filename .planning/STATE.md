@@ -139,4 +139,4 @@ From Phase 38-01:
 Last session: 2026-02-16
 Stopped at: Phase 40 complete - Multi-Wishlist UI (Wishlist picker and item movement)
 Resume file: .planning/phases/40-multi-wishlist-ui/40-04-SUMMARY.md
-Next: Phase 41 (Share Wishlist) - Planning required
+Next: `/gsd:plan-phase 41` (Column Rename - amazon_url to source_url)

@@ -26,7 +26,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 37: Database Foundation** - Multi-wishlist schema with RLS and migration backfill ✓
 - [x] **Phase 38: URL Scraping** - Edge Function for metadata extraction ✓
 - [x] **Phase 39: Share Intent** - Receive shared URLs from browser/apps ✓
-- [ ] **Phase 40: Multi-Wishlist UI** - Wishlist management screens and picker
+- [x] **Phase 40: Multi-Wishlist UI** - Wishlist management screens and picker ✓
 - [ ] **Phase 41: Column Rename** - amazon_url to source_url migration
 - [ ] **Phase 42: Wishlist Visibility** - Public/private and for-others sharing
 - [ ] **Phase 43: Enforcement** - NOT NULL constraints and cleanup
@@ -95,10 +95,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 40-01-PLAN.md — Data layer foundation (lib/wishlists.ts, hooks/useWishlists.ts, types)
-- [ ] 40-02-PLAN.md — Wishlist manager screen with drag-to-reorder (WISH-05, WISH-07)
-- [ ] 40-03-PLAN.md — CRUD modals for create/edit/delete wishlists (WISH-01, WISH-02, WISH-03)
-- [ ] 40-04-PLAN.md — Item movement and wishlist picker (WISH-06, SCRAPE-10)
+- [x] 40-01-PLAN.md — Data layer foundation (lib/wishlists.ts, hooks/useWishlists.ts, types) ✓
+- [x] 40-02-PLAN.md — Wishlist manager screen with drag-to-reorder (WISH-05, WISH-07) ✓
+- [x] 40-03-PLAN.md — CRUD modals for create/edit/delete wishlists (WISH-01, WISH-02, WISH-03) ✓
+- [x] 40-04-PLAN.md — Item movement and wishlist picker (WISH-06, SCRAPE-10) ✓
 
 ### Phase 41: Column Rename
 **Goal**: Rename amazon_url to source_url reflecting broader URL support
@@ -154,7 +154,7 @@ Phases execute in numeric order: 37 -> 38 -> 39 -> 40 -> 41 -> 42 -> 43
 | 37. Database Foundation | v1.7 | 1/1 | ✓ Complete | 2026-02-16 |
 | 38. URL Scraping | v1.7 | 3/3 | ✓ Complete | 2026-02-16 |
 | 39. Share Intent | v1.7 | 3/3 | ✓ Complete | 2026-02-16 |
-| 40. Multi-Wishlist UI | v1.7 | 0/4 | In progress | - |
+| 40. Multi-Wishlist UI | v1.7 | 4/4 | ✓ Complete | 2026-02-16 |
 | 41. Column Rename | v1.7 | 0/? | Not started | - |
 | 42. Wishlist Visibility | v1.7 | 0/? | Not started | - |
 | 43. Enforcement | v1.7 | 0/? | Not started | - |
