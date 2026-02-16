@@ -1075,6 +1075,22 @@
     "fromAllWishlists": "from all wishlists",
     "aggregateView": "View All Items",
     "longPressToReorder": "Long press to drag and reorder",
-    "noWishlists": "No wishlists yet"
+    "noWishlists": "No wishlists yet",
+    "createWishlist": "Create Wishlist",
+    "editWishlist": "Edit Wishlist",
+    "deleteWishlist": "Delete Wishlist",
+    "wishlistName": "Wishlist Name",
+    "wishlistNamePlaceholder": "My Wishlist",
+    "chooseEmoji": "Choose Emoji",
+    "deleteConfirmTitle": "Delete Wishlist?",
+    "deleteConfirmMessage": "Are you sure you want to delete \"{{name}}\"?",
+    "deleteItemWarning": "This wishlist contains {{count}} items.",
+    "itemsWillMove": "Items will be moved to your default wishlist.",
+    "cannotDeleteDefault": "The default wishlist cannot be deleted.",
+    "creating": "Creating...",
+    "updating": "Updating...",
+    "deleting": "Deleting...",
+    "nameTooLong": "Name must be 50 characters or less",
+    "nameRequired": "Wishlist name is required"
   }
 }

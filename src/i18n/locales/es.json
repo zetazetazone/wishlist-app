@@ -1067,5 +1067,30 @@
     "dangerZone": "Zona de peligro",
     "deliveryVisibility": "Visibilidad de la direccion de entrega",
     "bankVisibility": "Visibilidad de los datos bancarios"
+  },
+  "wishlists": {
+    "myWishlists": "Mis Listas de Deseos",
+    "manageWishlists": "Administrar Listas",
+    "allWishlists": "Todas las Listas",
+    "fromAllWishlists": "de todas las listas",
+    "aggregateView": "Ver Todos los Artículos",
+    "longPressToReorder": "Mantén presionado para arrastrar y reordenar",
+    "noWishlists": "Aún no hay listas",
+    "createWishlist": "Crear Lista de Deseos",
+    "editWishlist": "Editar Lista de Deseos",
+    "deleteWishlist": "Eliminar Lista de Deseos",
+    "wishlistName": "Nombre de la Lista",
+    "wishlistNamePlaceholder": "Mi Lista de Deseos",
+    "chooseEmoji": "Elegir Emoji",
+    "deleteConfirmTitle": "¿Eliminar Lista de Deseos?",
+    "deleteConfirmMessage": "¿Estás seguro de que quieres eliminar \"{{name}}\"?",
+    "deleteItemWarning": "Esta lista contiene {{count}} artículos.",
+    "itemsWillMove": "Los artículos se moverán a tu lista predeterminada.",
+    "cannotDeleteDefault": "La lista predeterminada no se puede eliminar.",
+    "creating": "Creando...",
+    "updating": "Actualizando...",
+    "deleting": "Eliminando...",
+    "nameTooLong": "El nombre debe tener 50 caracteres o menos",
+    "nameRequired": "Se requiere el nombre de la lista"
   }
 }
