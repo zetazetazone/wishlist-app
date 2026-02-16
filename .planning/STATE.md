@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** Phase 39 complete - Share Intent (v1.7 Global Wishlist)
+**Current focus:** Phase 41 in progress - Column Rename (v1.7 Global Wishlist)
 
 ## Current Position
 
-Phase: 40 of 43 (Multi-Wishlist UI)
-Plan: 4 of 4 in current phase
-Status: Phase complete
-Last activity: 2026-02-16 — Completed 40-04-PLAN.md (Wishlist picker and item movement)
+Phase: 41 of 43 (Column Rename)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-02-16 — Completed 41-01-PLAN.md (Database migration for column rename)
 
-Progress: [====================================] 93% (40/43 phases)
+Progress: [=====================================] 95% (41/43 phases)
 
 ## Milestone History
 
@@ -93,6 +93,11 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 - Move action in OptionsSheet between Share and Edit (logical order by destructiveness)
 - MoveItemSheet wraps WishlistPickerSheet with loading overlay and success handling
 
+**From Phase 41-01:**
+- Used PostgreSQL RENAME COLUMN (metadata-only, atomic operation)
+- Added COMMENT ON COLUMN for documentation of historical context
+- Migration filename 20260216000002 (after multi-wishlist foundation migration)
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -137,6 +142,6 @@ From Phase 38-01:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Phase 40 complete - Multi-Wishlist UI (Wishlist picker and item movement)
-Resume file: .planning/phases/40-multi-wishlist-ui/40-04-SUMMARY.md
-Next: `/gsd:plan-phase 41` (Column Rename - amazon_url to source_url)
+Stopped at: Phase 41 Plan 01 complete - Database migration for column rename
+Resume file: .planning/phases/41-column-rename/41-01-SUMMARY.md
+Next: `/gsd:execute-phase 41-02` (Source code updates for amazon_url to source_url)
