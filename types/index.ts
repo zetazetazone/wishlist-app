@@ -1,4 +1,5 @@
 export * from './database.types';
+export * from './scraping.types';
 
 export interface AuthUser {
   id: string;
