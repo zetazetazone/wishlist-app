@@ -109,10 +109,11 @@ Plans:
   2. All TypeScript types use source_url
   3. All UI components reference source_url
   4. No references to amazon_url remain in codebase
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 41-01: TBD
+- [ ] 41-01-PLAN.md — Database migration and type regeneration
+- [ ] 41-02-PLAN.md — Source file updates (12 files)
 
 ### Phase 42: Wishlist Visibility
 **Goal**: Public/private visibility and for-others wishlist sharing
@@ -155,7 +156,7 @@ Phases execute in numeric order: 37 -> 38 -> 39 -> 40 -> 41 -> 42 -> 43
 | 38. URL Scraping | v1.7 | 3/3 | ✓ Complete | 2026-02-16 |
 | 39. Share Intent | v1.7 | 3/3 | ✓ Complete | 2026-02-16 |
 | 40. Multi-Wishlist UI | v1.7 | 4/4 | ✓ Complete | 2026-02-16 |
-| 41. Column Rename | v1.7 | 0/? | Not started | - |
+| 41. Column Rename | v1.7 | 0/2 | Not started | - |
 | 42. Wishlist Visibility | v1.7 | 0/? | Not started | - |
 | 43. Enforcement | v1.7 | 0/? | Not started | - |
 
