@@ -19,7 +19,7 @@ interface AddItemBottomSheetProps {
   visible: boolean;
   onClose: () => void;
   onAdd: (item: {
-    amazon_url: string;
+    source_url: string;
     title: string;
     price?: number;
     priority: number;
@@ -133,7 +133,7 @@ export default function AddItemBottomSheet({
     setLoading(true);
     try {
       await onAdd({
-        amazon_url: amazonUrl.trim(),
+        source_url: amazonUrl.trim(),
         title: title.trim(),
         price: price ? parseFloat(price) : undefined,
         priority,

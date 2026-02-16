@@ -151,12 +151,12 @@ export default function LuxuryWishlistCard({
 
   const handleOpenLink = async () => {
     // Guard against opening for special items or empty URLs
-    if (isSpecialItem || !item.amazon_url) return;
+    if (isSpecialItem || !item.source_url) return;
 
     try {
-      const canOpen = await Linking.canOpenURL(item.amazon_url);
+      const canOpen = await Linking.canOpenURL(item.source_url);
       if (canOpen) {
-        await Linking.openURL(item.amazon_url);
+        await Linking.openURL(item.source_url);
       } else {
         Alert.alert(t('alerts.titles.error'), t('wishlist.card.unableToOpenLink'));
       }

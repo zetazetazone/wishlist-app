@@ -17,14 +17,14 @@ export default function WishlistItemCardSimple({
   const [showMenu, setShowMenu] = useState(false);
 
   const handleOpenLink = async () => {
-    if (!item.amazon_url) {
+    if (!item.source_url) {
       Alert.alert(t('alerts.titles.error'), t('wishlist.card.noLinkAvailable'));
       return;
     }
     try {
-      const canOpen = await Linking.canOpenURL(item.amazon_url);
+      const canOpen = await Linking.canOpenURL(item.source_url);
       if (canOpen) {
-        await Linking.openURL(item.amazon_url);
+        await Linking.openURL(item.source_url);
       } else {
         Alert.alert(t('alerts.titles.error'), t('wishlist.card.unableToOpenLink'));
       }
