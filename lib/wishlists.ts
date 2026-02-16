@@ -24,6 +24,7 @@ export async function getWishlists(userId: string) {
  * Creates one automatically if it doesn't exist (fallback for missing trigger)
  */
 export async function getDefaultWishlist(userId: string) {
+  // First, try to find a default wishlist
   const { data, error } = await supabase
     .from('wishlists')
     .select('*')
@@ -31,29 +32,51 @@ export async function getDefaultWishlist(userId: string) {
     .eq('is_default', true)
     .single();
 
-  // If no default wishlist exists, create one
-  if (error?.code === 'PGRST116' || !data) {
-    // PGRST116 = "no rows returned"
-    console.log('[getDefaultWishlist] No default found, creating one...');
-    const { data: newWishlist, error: createError } = await supabase
-      .from('wishlists')
-      .insert({
-        user_id: userId,
-        name: 'My Wishlist',
-        emoji: '📋',
-        is_default: true,
-        sort_order: 0,
-      })
-      .select()
-      .single();
-
-    if (createError) {
-      console.error('[getDefaultWishlist] Failed to create default:', createError);
-      throw createError;
-    }
-    console.log('[getDefaultWishlist] Created default wishlist:', newWishlist?.id);
-    return newWishlist;
+  // If found, return it
+  if (data && !error) {
+    console.log('[getDefaultWishlist] Found default:', data.id);
+    return data;
   }
+
+  // If no default found, check if ANY wishlists exist (maybe is_default column issue)
+  const { data: anyWishlist, error: anyError } = await supabase
+    .from('wishlists')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: true })
+    .limit(1)
+    .single();
+
+  if (anyWishlist && !anyError) {
+    console.log('[getDefaultWishlist] No default flag, using first wishlist:', anyWishlist.id);
+    // Mark this one as default
+    await supabase
+      .from('wishlists')
+      .update({ is_default: true })
+      .eq('id', anyWishlist.id);
+    return anyWishlist;
+  }
+
+  // No wishlists at all, create one
+  console.log('[getDefaultWishlist] No wishlists found, creating one...');
+  const { data: newWishlist, error: createError } = await supabase
+    .from('wishlists')
+    .insert({
+      user_id: userId,
+      name: 'My Wishlist',
+      emoji: '📋',
+      is_default: true,
+      sort_order: 0,
+    })
+    .select()
+    .single();
+
+  if (createError) {
+    console.error('[getDefaultWishlist] Failed to create default:', createError);
+    throw createError;
+  }
+  console.log('[getDefaultWishlist] Created default wishlist:', newWishlist?.id);
+  return newWishlist;
 
   if (error) throw error;
   return data;
