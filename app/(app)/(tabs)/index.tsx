@@ -18,6 +18,7 @@ import { WishlistItem } from '../../../types/database.types';
 import AddItemModal from '../../../components/wishlist/AddItemModal';
 import LuxuryWishlistCard from '../../../components/wishlist/LuxuryWishlistCard';
 import { WishlistGrid, OptionsSheet, OptionsSheetRef } from '../../../components/wishlist';
+import { MoveItemSheet } from '../../../components/wishlist/MoveItemSheet';
 import { colors, spacing, borderRadius, shadows } from '../../../constants/theme';
 import { getAvatarUrl } from '../../../lib/storage';
 import {
@@ -59,6 +60,8 @@ export default function LuxuryWishlistScreen() {
     avatar_url: null,
   });
   const [missingSpecialItems, setMissingSpecialItems] = useState<Array<'surprise_me' | 'mystery_box'>>([]);
+  const [moveSheetVisible, setMoveSheetVisible] = useState(false);
+  const [itemToMove, setItemToMove] = useState<WishlistItem | null>(null);
   const optionsSheetRef = useRef<OptionsSheetRef>(null);
 
   useEffect(() => {
@@ -448,6 +451,18 @@ export default function LuxuryWishlistScreen() {
   const handleFavoriteToggle = useCallback((item: WishlistItem) => {
     handleHeartPress(item);
   }, [handleHeartPress]);
+
+  const handleMoveToWishlist = useCallback((item: WishlistItem) => {
+    setItemToMove(item);
+    setMoveSheetVisible(true);
+  }, []);
+
+  const handleMoveSuccess = useCallback(() => {
+    // Refresh wishlist items after successful move
+    if (userId) {
+      fetchWishlistItems();
+    }
+  }, [userId]);
 
   const selectedItemType = (selectedItemForPicker?.item_type || 'standard') as ItemType;
   const selectedItemGroupIds = selectedItemForPicker
@@ -842,6 +857,14 @@ export default function LuxuryWishlistScreen() {
         onPriorityChange={handlePriorityChange}
         onDelete={handleOptionsDelete}
         isFavorite={isFavorite}
+        onMoveToWishlist={handleMoveToWishlist}
+      />
+
+      <MoveItemSheet
+        visible={moveSheetVisible}
+        onClose={() => setMoveSheetVisible(false)}
+        item={itemToMove}
+        onSuccess={handleMoveSuccess}
       />
     </>
   );

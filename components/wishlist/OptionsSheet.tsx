@@ -29,6 +29,7 @@ interface OptionsSheetProps {
   onPriorityChange: (itemId: string, priority: number) => void;
   onDelete: (itemId: string) => Promise<void>;
   isFavorite: (itemId: string) => boolean;
+  onMoveToWishlist?: (item: WishlistItem) => void;
 }
 
 export interface OptionsSheetRef {
@@ -37,7 +38,7 @@ export interface OptionsSheetRef {
 }
 
 export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
-  function OptionsSheet({ onFavoriteToggle, onPriorityChange, onDelete, isFavorite }, ref) {
+  function OptionsSheet({ onFavoriteToggle, onPriorityChange, onDelete, isFavorite, onMoveToWishlist }, ref) {
     const { t } = useTranslation();
     const insets = useSafeAreaInsets();
     const [visible, setVisible] = useState(false);
@@ -319,6 +320,28 @@ export const OptionsSheet = forwardRef<OptionsSheetRef, OptionsSheetProps>(
                 />
                 <Text style={styles.actionText}>{t('common.share')}</Text>
               </Pressable>
+
+              {onMoveToWishlist && (
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.actionButton,
+                    pressed && styles.actionButtonPressed,
+                  ]}
+                  onPress={() => {
+                    if (item) {
+                      onMoveToWishlist(item);
+                      handleClose();
+                    }
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="folder-move"
+                    size={24}
+                    color={colors.burgundy[400]}
+                  />
+                  <Text style={styles.actionText}>{t('wishlists.moveToWishlist')}</Text>
+                </Pressable>
+              )}
 
               <Pressable
                 style={({ pressed }) => [
