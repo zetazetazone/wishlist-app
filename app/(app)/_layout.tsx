@@ -61,6 +61,21 @@ export default function AppLayout() {
           headerBackTitle: 'Back',
         }}
       />
+      <Stack.Screen
+        name="add-from-url"
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: '#ffffff',
+          },
+          headerTintColor: '#8B1538',
+          headerTitleStyle: {
+            fontWeight: '600',
+          },
+          headerBackTitle: 'Back',
+          title: 'Add from URL',
+        }}
+      />
     </Stack>
   );
 }

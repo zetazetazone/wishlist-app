@@ -11,6 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 import StarRating from '../ui/StarRating';
@@ -29,6 +30,7 @@ interface AddItemModalProps {
 
 export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalProps) {
   const { t } = useTranslation();
+  const router = useRouter();
   const [amazonUrl, setAmazonUrl] = useState('');
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
@@ -94,6 +96,11 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
   const handleCancel = () => {
     resetForm();
     onClose();
+  };
+
+  const handleAddFromUrl = () => {
+    onClose();
+    router.push('/add-from-url');
   };
 
   return (
@@ -164,6 +171,74 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
+              {/* Quick Add from URL button */}
+              <TouchableOpacity
+                onPress={handleAddFromUrl}
+                activeOpacity={0.7}
+                style={{
+                  backgroundColor: colors.gold[100],
+                  borderRadius: borderRadius.lg,
+                  padding: spacing.md,
+                  marginBottom: spacing.lg,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderWidth: 2,
+                  borderColor: colors.gold[300],
+                  ...shadows.sm,
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="link-variant"
+                  size={24}
+                  color={colors.gold[700]}
+                  style={{ marginRight: spacing.sm }}
+                />
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: '700',
+                    color: colors.gold[800],
+                  }}
+                >
+                  {t('addFromUrl.quickAddButton', { defaultValue: 'Add from URL (Auto-fill)' })}
+                </Text>
+              </TouchableOpacity>
+
+              {/* Divider */}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginBottom: spacing.lg,
+                }}
+              >
+                <View
+                  style={{
+                    flex: 1,
+                    height: 1,
+                    backgroundColor: colors.burgundy[200],
+                  }}
+                />
+                <Text
+                  style={{
+                    marginHorizontal: spacing.md,
+                    fontSize: 14,
+                    color: colors.burgundy[400],
+                    fontWeight: '600',
+                  }}
+                >
+                  {t('common.or', { defaultValue: 'or' })}
+                </Text>
+                <View
+                  style={{
+                    flex: 1,
+                    height: 1,
+                    backgroundColor: colors.burgundy[200],
+                  }}
+                />
+              </View>
+
               {/* Product URL Input */}
                   <View style={{ marginBottom: spacing.md }}>
                     <Text
