@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 ## Current Position
 
 Phase: 40 of 43 (Multi-Wishlist UI)
-Plan: 1 of 4 in current phase
+Plan: 2 of 4 in current phase
 Status: In progress
-Last activity: 2026-02-16 — Completed 40-01-PLAN.md (Wishlists data layer)
+Last activity: 2026-02-16 — Completed 40-02-PLAN.md (Wishlist manager UI with drag-reorder and aggregate view)
 
 Progress: [====================================] 93% (40/43 phases)
 
@@ -74,6 +74,13 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 - Added getDefaultWishlist() and getWishlistItemCount() helper functions
 - Query hooks use user?.id in queryKey for proper cache isolation
 
+**From Phase 40-02:**
+- react-native-draggable-flatlist for drag-to-reorder (mature library with good gesture support)
+- AsyncStorage for aggregate view preference (simple user setting, no server sync needed)
+- URL params for aggregate/wishlist selection (enables deep linking, preserves navigation state)
+- GestureHandlerRootView wrapper required for drag gesture detection
+- ScaleDecorator for visual feedback during drag (scale + shadow on active state)
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -118,6 +125,6 @@ From Phase 38-01:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Phase 40, Plan 1 complete (Wishlists data layer)
-Resume file: .planning/phases/40-multi-wishlist-ui/40-01-SUMMARY.md
-Next: `/gsd:execute-plan 40-02` (WishlistCard component)
+Stopped at: Phase 40, Plan 2 complete (Wishlist manager UI with drag-reorder and aggregate view)
+Resume file: .planning/phases/40-multi-wishlist-ui/40-02-SUMMARY.md
+Next: `/gsd:execute-plan 40-03` (Wishlist CRUD operations)
