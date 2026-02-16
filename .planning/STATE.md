@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** Phase 38 complete - URL Scraping (v1.7 Global Wishlist)
+**Current focus:** Phase 39 in progress - Share Intent (v1.7 Global Wishlist)
 
 ## Current Position
 
-Phase: 38 of 43 (URL Scraping)
-Plan: 3 of 3 in current phase (complete)
-Status: Phase 38 complete
-Last activity: 2026-02-16 — Completed 38-03-PLAN.md (Add from URL screen)
+Phase: 39 of 43 (Share Intent)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-02-16 — Completed 39-01-PLAN.md (Plugin configuration)
 
-Progress: [==================================] 88% (38/43 phases)
+Progress: [===================================] 90% (39/43 phases)
 
 ## Milestone History
 
@@ -56,6 +56,12 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 - Show form immediately on scrape failure (no extra tap required)
 - Display source URL in preview section for user reference
 - Save to default wishlist (group_id null until Phase 42)
+
+**From Phase 39-01:**
+- xcode patch uses null-safe check pattern for correctForPath function
+- iOS activation rules support both direct URLs and web pages (max 1 each)
+- Android uses text/* intent filter for broad text-based share compatibility
+- singleTask launch mode ensures single app instance handles shares
 
 ### Pending Todos (Manual Setup)
 
@@ -101,6 +107,6 @@ From Phase 38-01:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Phase 38 complete (URL Scraping)
-Resume file: .planning/phases/38-url-scraping/38-03-SUMMARY.md
-Next: `/gsd:plan-phase 39` (Share Intent)
+Stopped at: Phase 39-01 complete (Plugin configuration)
+Resume file: .planning/phases/39-share-intent/39-01-SUMMARY.md
+Next: Execute 39-02-PLAN.md (ShareIntentProvider)
