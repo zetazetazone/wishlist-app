@@ -43,10 +43,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Existing gift claims continue to work without data loss
   4. Celebrant exclusion still prevents claim visibility to birthday person
   5. Database supports nullable wishlist_id during transition period
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 37-01: TBD
+- [ ] 37-01-PLAN.md — Multi-wishlist migration (wishlists table, backfill, RLS, trigger)
 
 ### Phase 38: URL Scraping
 **Goal**: Server-side metadata extraction from any product URL
@@ -144,7 +144,7 @@ Phases execute in numeric order: 37 -> 38 -> 39 -> 40 -> 41 -> 42 -> 43
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 37. Database Foundation | v1.7 | 0/? | Not started | - |
+| 37. Database Foundation | v1.7 | 0/1 | Planned | - |
 | 38. URL Scraping | v1.7 | 0/? | Not started | - |
 | 39. Share Intent | v1.7 | 0/? | Not started | - |
 | 40. Multi-Wishlist UI | v1.7 | 0/? | Not started | - |
