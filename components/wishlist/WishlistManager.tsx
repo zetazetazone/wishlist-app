@@ -21,6 +21,8 @@ import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 import { useWishlists, useReorderWishlists } from '../../hooks/useWishlists';
 import { Wishlist } from '../../lib/wishlists';
 import WishlistCard from './WishlistCard';
+import { CreateWishlistModal } from './CreateWishlistModal';
+import { DeleteWishlistModal } from './DeleteWishlistModal';
 
 const AGGREGATE_VIEW_KEY = 'wishlist_aggregate_view';
 
@@ -164,7 +166,37 @@ export function WishlistManager() {
         }
       />
 
-      {/* TODO: Add modals for edit, delete, and create in Plan 03 */}
+      {/* Create Modal */}
+      <CreateWishlistModal
+        visible={showCreateModal && !editingWishlist}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={() => {
+          setShowCreateModal(false);
+          refetch();
+        }}
+      />
+
+      {/* Edit Modal */}
+      <CreateWishlistModal
+        visible={!!editingWishlist}
+        onClose={() => setEditingWishlist(null)}
+        onSuccess={() => {
+          setEditingWishlist(null);
+          refetch();
+        }}
+        editingWishlist={editingWishlist}
+      />
+
+      {/* Delete Modal */}
+      <DeleteWishlistModal
+        visible={!!deletingWishlist}
+        onClose={() => setDeletingWishlist(null)}
+        onSuccess={() => {
+          setDeletingWishlist(null);
+          refetch();
+        }}
+        wishlist={deletingWishlist}
+      />
     </GestureHandlerRootView>
   );
 }
