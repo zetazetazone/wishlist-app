@@ -1116,7 +1116,6 @@ export type Database = {
       wishlist_items: {
         Row: {
           additional_costs: number | null
-          amazon_url: string | null
           created_at: string | null
           group_id: string | null
           id: string
@@ -1125,6 +1124,7 @@ export type Database = {
           mystery_box_tier: number | null
           price: number | null
           priority: number | null
+          source_url: string | null
           status: string | null
           surprise_me_budget: number | null
           title: string
@@ -1134,7 +1134,6 @@ export type Database = {
         }
         Insert: {
           additional_costs?: number | null
-          amazon_url?: string | null
           created_at?: string | null
           group_id?: string | null
           id?: string
@@ -1143,6 +1142,7 @@ export type Database = {
           mystery_box_tier?: number | null
           price?: number | null
           priority?: number | null
+          source_url?: string | null
           status?: string | null
           surprise_me_budget?: number | null
           title: string
@@ -1152,7 +1152,6 @@ export type Database = {
         }
         Update: {
           additional_costs?: number | null
-          amazon_url?: string | null
           created_at?: string | null
           group_id?: string | null
           id?: string
@@ -1161,6 +1160,7 @@ export type Database = {
           mystery_box_tier?: number | null
           price?: number | null
           priority?: number | null
+          source_url?: string | null
           status?: string | null
           surprise_me_budget?: number | null
           title?: string
