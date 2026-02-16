@@ -23,7 +23,7 @@ v1.7 transforms wishlist management from group-centric to user-owned architectur
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 37: Database Foundation** - Multi-wishlist schema with RLS and migration backfill
+- [x] **Phase 37: Database Foundation** - Multi-wishlist schema with RLS and migration backfill ✓
 - [ ] **Phase 38: URL Scraping** - Edge Function for metadata extraction
 - [ ] **Phase 39: Share Intent** - Receive shared URLs from browser/apps
 - [ ] **Phase 40: Multi-Wishlist UI** - Wishlist management screens and picker
@@ -46,7 +46,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 1 plan
 
 Plans:
-- [ ] 37-01-PLAN.md — Multi-wishlist migration (wishlists table, backfill, RLS, trigger)
+- [x] 37-01-PLAN.md — Multi-wishlist migration (wishlists table, backfill, RLS, trigger) ✓
 
 ### Phase 38: URL Scraping
 **Goal**: Server-side metadata extraction from any product URL
@@ -144,7 +144,7 @@ Phases execute in numeric order: 37 -> 38 -> 39 -> 40 -> 41 -> 42 -> 43
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 37. Database Foundation | v1.7 | 0/1 | Planned | - |
+| 37. Database Foundation | v1.7 | 1/1 | ✓ Complete | 2026-02-16 |
 | 38. URL Scraping | v1.7 | 0/? | Not started | - |
 | 39. Share Intent | v1.7 | 0/? | Not started | - |
 | 40. Multi-Wishlist UI | v1.7 | 0/? | Not started | - |
