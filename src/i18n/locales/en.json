@@ -913,6 +913,7 @@
     "itemPrice": "Price",
     "itemPricePlaceholder": "0.00",
     "store": "Store",
+    "sourceUrl": "Source URL",
     "saveButton": "Add to Wishlist",
     "cancelButton": "Cancel",
     "enterManually": "Enter Manually",

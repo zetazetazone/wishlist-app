@@ -457,6 +457,37 @@ export default function AddFromUrlScreen() {
                 />
               </View>
 
+              {/* Source URL (non-editable display) */}
+              {sourceUrl && (
+                <View style={{ marginBottom: spacing.md }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontWeight: '600',
+                      color: colors.burgundy[700],
+                      marginBottom: spacing.xs,
+                    }}
+                  >
+                    {t('addFromUrl.sourceUrl')}
+                  </Text>
+                  <View
+                    style={{
+                      backgroundColor: colors.cream[100],
+                      borderRadius: borderRadius.md,
+                      padding: spacing.md,
+                    }}
+                  >
+                    <Text
+                      style={{ fontSize: 14, color: colors.burgundy[600] }}
+                      numberOfLines={2}
+                      ellipsizeMode="middle"
+                    >
+                      {sourceUrl}
+                    </Text>
+                  </View>
+                </View>
+              )}
+
               {/* Store/Site Name (non-editable display) */}
               {siteName && (
                 <View style={{ marginBottom: spacing.md }}>
