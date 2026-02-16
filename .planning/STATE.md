@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 ## Current Position
 
 Phase: 40 of 43 (Multi-Wishlist UI)
-Plan: 3 of 4 in current phase
-Status: In progress
-Last activity: 2026-02-16 — Completed 40-03-PLAN.md (Wishlist CRUD modals with emoji picker)
+Plan: 4 of 4 in current phase
+Status: Phase complete
+Last activity: 2026-02-16 — Completed 40-04-PLAN.md (Wishlist picker and item movement)
 
 Progress: [====================================] 93% (40/43 phases)
 
@@ -87,6 +87,12 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 - Show item count warning in delete modal for user awareness before destructive action
 - Created AuthProvider to resolve missing import (Rule 3 - blocking issue fix)
 
+**From Phase 40-04:**
+- WishlistPickerSheet as reusable component for both add screens and move action
+- Auto-select default wishlist in add screens (reduces friction for common case)
+- Move action in OptionsSheet between Share and Edit (logical order by destructiveness)
+- MoveItemSheet wraps WishlistPickerSheet with loading overlay and success handling
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -131,6 +137,6 @@ From Phase 38-01:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Phase 40, Plan 3 complete (Wishlist CRUD modals with emoji picker)
-Resume file: .planning/phases/40-multi-wishlist-ui/40-03-SUMMARY.md
-Next: `/gsd:execute-plan 40-04` (Wishlist item operations)
+Stopped at: Phase 40 complete - Multi-Wishlist UI (Wishlist picker and item movement)
+Resume file: .planning/phases/40-multi-wishlist-ui/40-04-SUMMARY.md
+Next: Phase 41 (Share Wishlist) - Planning required
