@@ -6,6 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { GluestackUIProvider } from '@gluestack-ui/themed';
+import { ShareIntentProvider } from 'expo-share-intent';
 import { config } from '../gluestack-ui.config';
 import './global.css';
 import { supabase } from '../lib/supabase';
@@ -111,17 +112,19 @@ export default function RootLayout() {
   if (!i18nReady) return null;
 
   return (
-    <GluestackUIProvider config={config}>
-      <KeyboardProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <BottomSheetModalProvider>
-            <SafeAreaProvider>
-              <StatusBar style="light" />
-              <Slot />
-            </SafeAreaProvider>
-          </BottomSheetModalProvider>
-        </GestureHandlerRootView>
-      </KeyboardProvider>
-    </GluestackUIProvider>
+    <ShareIntentProvider>
+      <GluestackUIProvider config={config}>
+        <KeyboardProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <BottomSheetModalProvider>
+              <SafeAreaProvider>
+                <StatusBar style="light" />
+                <Slot />
+              </SafeAreaProvider>
+            </BottomSheetModalProvider>
+          </GestureHandlerRootView>
+        </KeyboardProvider>
+      </GluestackUIProvider>
+    </ShareIntentProvider>
   );
 }
