@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 ## Current Position
 
 Phase: 38 of 43 (URL Scraping)
-Plan: 1 of 3 in current phase (complete)
+Plan: 2 of 3 in current phase (complete)
 Status: In progress
-Last activity: 2026-02-16 — Completed 38-01-PLAN.md (URL scraping Edge Function)
+Last activity: 2026-02-16 — Completed 38-02-PLAN.md (URL scraper client service)
 
 Progress: [==================================] 88% (38/43 phases)
 
@@ -46,6 +46,11 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 - Scrape failures return 200 (not 500) for graceful degradation
 - 10-second timeout balances slow sites vs user experience
 - Fallback chain: OG tags → JSON-LD → HTML selectors for maximum compatibility
+
+**From Phase 38-02:**
+- Client-side URL validation before Edge Function call (saves round trip)
+- Normalize URL on client before sending to server (consistent format, better caching)
+- Re-export types from lib/urlScraper.ts (component convenience)
 
 ### Pending Todos (Manual Setup)
 
@@ -91,6 +96,6 @@ From Phase 38-01:
 ## Session Continuity
 
 Last session: 2026-02-16
-Stopped at: Phase 38-01 complete (URL scraping Edge Function)
-Resume file: .planning/phases/38-url-scraping/38-01-SUMMARY.md
-Next: Execute 38-02-PLAN.md (Share intent handling) or 38-03-PLAN.md (URL scraper UI)
+Stopped at: Phase 38-02 complete (URL scraper client service)
+Resume file: .planning/phases/38-url-scraping/38-02-SUMMARY.md
+Next: Execute 38-03-PLAN.md (URL scraper UI integration)
