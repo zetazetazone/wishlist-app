@@ -1091,6 +1091,13 @@
     "updating": "Updating...",
     "deleting": "Deleting...",
     "nameTooLong": "Name must be 50 characters or less",
-    "nameRequired": "Wishlist name is required"
+    "nameRequired": "Wishlist name is required",
+    "chooseWishlist": "Choose Wishlist",
+    "default": "Default",
+    "moveToWishlist": "Move to Wishlist",
+    "currentlyIn": "Currently in: {{name}}",
+    "selectTargetWishlist": "Select target wishlist",
+    "itemMoved": "Item moved successfully",
+    "moveFailed": "Failed to move item"
   }
 }

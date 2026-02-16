@@ -1091,6 +1091,13 @@
     "updating": "Actualizando...",
     "deleting": "Eliminando...",
     "nameTooLong": "El nombre debe tener 50 caracteres o menos",
-    "nameRequired": "Se requiere el nombre de la lista"
+    "nameRequired": "Se requiere el nombre de la lista",
+    "chooseWishlist": "Elegir Lista",
+    "default": "Predeterminada",
+    "moveToWishlist": "Mover a Lista",
+    "currentlyIn": "Actualmente en: {{name}}",
+    "selectTargetWishlist": "Seleccionar lista de destino",
+    "itemMoved": "Artículo movido exitosamente",
+    "moveFailed": "Error al mover el artículo"
   }
 }
