@@ -21,6 +21,7 @@ export async function getWishlists(userId: string) {
 
 /**
  * Get the default wishlist for a user
+ * Creates one automatically if it doesn't exist (fallback for missing trigger)
  */
 export async function getDefaultWishlist(userId: string) {
   const { data, error } = await supabase
@@ -29,6 +30,25 @@ export async function getDefaultWishlist(userId: string) {
     .eq('user_id', userId)
     .eq('is_default', true)
     .single();
+
+  // If no default wishlist exists, create one
+  if (error?.code === 'PGRST116' || !data) {
+    // PGRST116 = "no rows returned"
+    const { data: newWishlist, error: createError } = await supabase
+      .from('wishlists')
+      .insert({
+        user_id: userId,
+        name: 'My Wishlist',
+        emoji: '📋',
+        is_default: true,
+        sort_order: 0,
+      })
+      .select()
+      .single();
+
+    if (createError) throw createError;
+    return newWishlist;
+  }
 
   if (error) throw error;
   return data;

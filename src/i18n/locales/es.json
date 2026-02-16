@@ -1071,6 +1071,7 @@
     "bankVisibility": "Visibilidad de los datos bancarios"
   },
   "wishlists": {
+    "defaultWishlist": "Mi Lista de Deseos",
     "myWishlists": "Mis Listas de Deseos",
     "manageWishlists": "Administrar Listas",
     "allWishlists": "Todas las Listas",

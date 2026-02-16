@@ -1071,6 +1071,7 @@
     "bankVisibility": "Bank Details Visibility"
   },
   "wishlists": {
+    "defaultWishlist": "My Wishlist",
     "myWishlists": "My Wishlists",
     "manageWishlists": "Manage Wishlists",
     "allWishlists": "All Wishlists",
