@@ -9,9 +9,14 @@ import {
   deleteWishlist,
   reorderWishlists,
   moveItemToWishlist,
+  getCelebrantPublicWishlists,
+  getGroupForOthersWishlists,
+  updateWishlistVisibility,
+  linkWishlistToGroup,
   type Wishlist,
   type WishlistInsert,
   type WishlistUpdate,
+  type WishlistVisibility,
 } from '../lib/wishlists';
 
 /**
@@ -159,6 +164,58 @@ export function useMoveItemToWishlist() {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: ['wishlists'] });
       queryClient.invalidateQueries({ queryKey: ['wishlist-items'] });
+    },
+  });
+}
+
+/**
+ * Hook to fetch public wishlists for a celebrant (for celebration pages)
+ */
+export function useCelebrantPublicWishlists(celebrantId: string | undefined) {
+  return useQuery({
+    queryKey: ['wishlists', 'public', celebrantId],
+    queryFn: () => getCelebrantPublicWishlists(celebrantId!),
+    enabled: !!celebrantId,
+  });
+}
+
+/**
+ * Hook to fetch for-others wishlists linked to a group
+ */
+export function useGroupForOthersWishlists(groupId: string | undefined) {
+  return useQuery({
+    queryKey: ['wishlists', 'for-others', groupId],
+    queryFn: () => getGroupForOthersWishlists(groupId!),
+    enabled: !!groupId,
+  });
+}
+
+/**
+ * Hook to update wishlist visibility
+ */
+export function useUpdateVisibility() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ wishlistId, visibility }: { wishlistId: string; visibility: WishlistVisibility }) =>
+      updateWishlistVisibility(wishlistId, visibility),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wishlists'] });
+    },
+  });
+}
+
+/**
+ * Hook to link/unlink wishlist to group
+ */
+export function useLinkWishlistToGroup() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ wishlistId, groupId }: { wishlistId: string; groupId: string | null }) =>
+      linkWishlistToGroup(wishlistId, groupId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wishlists'] });
     },
   });
 }
