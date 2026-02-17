@@ -125,10 +125,13 @@ Plans:
   3. Group members can view and add items to collaborative for-others wishlists
   4. Public wishlists appear on user's celebration pages in all groups
   5. Private wishlists do not appear to anyone except owner
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 42-01: TBD
+- [ ] 42-01-PLAN.md — Database migration (linked_group_id, visibility RLS policies)
+- [ ] 42-02-PLAN.md — Service layer (visibility lib functions and React Query hooks)
+- [ ] 42-03-PLAN.md — Group picker UI (GroupPickerSheet, CreateWishlistModal integration)
+- [ ] 42-04-PLAN.md — Celebration page integration (public wishlists, translations)
 
 ### Phase 43: Enforcement
 **Goal**: Make wishlist_id NOT NULL and add performance indexes
@@ -157,7 +160,7 @@ Phases execute in numeric order: 37 -> 38 -> 39 -> 40 -> 41 -> 42 -> 43
 | 39. Share Intent | v1.7 | 3/3 | ✓ Complete | 2026-02-16 |
 | 40. Multi-Wishlist UI | v1.7 | 4/4 | ✓ Complete | 2026-02-16 |
 | 41. Column Rename | v1.7 | 2/2 | ✓ Complete | 2026-02-16 |
-| 42. Wishlist Visibility | v1.7 | 0/? | Not started | - |
+| 42. Wishlist Visibility | v1.7 | 0/4 | In progress | - |
 | 43. Enforcement | v1.7 | 0/? | Not started | - |
 
 ---
