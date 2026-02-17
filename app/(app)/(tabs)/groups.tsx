@@ -1,3 +1,6 @@
+// DEPRECATED: Use social.tsx - unified People screen with segmented control
+// This file is kept for potential deep link compatibility during transition
+
 import { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';

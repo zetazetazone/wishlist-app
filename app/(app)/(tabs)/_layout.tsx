@@ -21,22 +21,12 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="groups"
+        name="social"
         options={{
-          title: 'Groups',
-          headerShown: false, // Groups has its own custom header
+          title: 'People',
+          headerShown: false, // Social has its own custom header with segmented control
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account-group" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="friends"
-        options={{
-          title: 'Friends',
-          headerShown: false, // Friends has its own custom gradient header
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account-heart" size={size} color={color} />
+            <MaterialCommunityIcons name="account-multiple" size={size} color={color} />
           ),
         }}
       />
@@ -58,6 +48,19 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="calendar" size={size} color={color} />
           ),
+        }}
+      />
+      {/* DEPRECATED: Use social.tsx - unified People screen */}
+      <Tabs.Screen
+        name="friends"
+        options={{
+          href: null, // Hidden - replaced by social.tsx People tab
+        }}
+      />
+      <Tabs.Screen
+        name="groups"
+        options={{
+          href: null, // Hidden - replaced by social.tsx People tab
         }}
       />
       {/* Notifications is accessed via header icon, not as a tab */}
