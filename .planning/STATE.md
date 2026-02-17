@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** Phase 42 complete with gap closure plan - Ready for Phase 43 (v1.7 Global Wishlist final phase)
+**Current focus:** Phase 43 Plan 01 complete - v1.7 Global Wishlist milestone data model finalized
 
 ## Current Position
 
-Phase: 42 of 43 (Wishlist Visibility) - COMPLETE
-Plan: 5 of 5 in current phase (Phase complete with gap closure)
-Status: Phase complete - ready for Phase 43
-Last activity: 2026-02-17 — Completed 42-05: Gap Closure for Group For-Others Wishlists UI
+Phase: 43 of 43 (Enforcement)
+Plan: 1 of 1 in current phase
+Status: Phase complete - v1.7 milestone ready for closure
+Last activity: 2026-02-17 — Completed 43-01: NOT NULL enforcement for wishlist_id
 
-Progress: [======================================] 98% (42/43 phases)
+Progress: [========================================] 100% (43/43 phases)
 
 ## Milestone History
 
@@ -25,7 +25,7 @@ Progress: [======================================] 98% (42/43 phases)
 - **v1.4 Friends System** - Shipped 2026-02-10 (6 phases, 12 plans)
 - **v1.5 Localization** - Shipped 2026-02-12 (4 phases, 13 plans)
 - **v1.6 Wishlist UI Redesign** - Shipped 2026-02-12 (4 phases, 11 plans)
-- **v1.7 Global Wishlist** - In progress (7 phases, Phases 37-43)
+- **v1.7 Global Wishlist** - COMPLETE 2026-02-17 (7 phases, Phases 37-43)
 
 ## Accumulated Context
 
@@ -45,7 +45,7 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 - npm:cheerio@1.0.0 specifier avoids import map configuration in Deno
 - Scrape failures return 200 (not 500) for graceful degradation
 - 10-second timeout balances slow sites vs user experience
-- Fallback chain: OG tags → JSON-LD → HTML selectors for maximum compatibility
+- Fallback chain: OG tags -> JSON-LD -> HTML selectors for maximum compatibility
 
 **From Phase 38-02:**
 - Client-side URL validation before Edge Function call (saves round trip)
@@ -83,7 +83,7 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 
 **From Phase 40-03:**
 - Single CreateWishlistModal for both create and edit modes (reduces duplication)
-- Default emoji is clipboard (📋) for neutral, recognizable list icon
+- Default emoji is clipboard (clipboard icon) for neutral, recognizable list icon
 - Show item count warning in delete modal for user awareness before destructive action
 - Created AuthProvider to resolve missing import (Rule 3 - blocking issue fix)
 
@@ -99,8 +99,8 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 - Migration filename 20260216000002 (after multi-wishlist foundation migration)
 
 **From Phase 42-01:**
-- Public wishlist visibility scoped to group co-members only (not all app users) — prevents exposure to strangers
-- linked_group_id constrained to owner_type IN ('other_manual', 'other_user') — self-wishlists never link to groups
+- Public wishlist visibility scoped to group co-members only (not all app users) - prevents exposure to strangers
+- linked_group_id constrained to owner_type IN ('other_manual', 'other_user') - self-wishlists never link to groups
 - INSERT policy double-checks owner_type at RLS level for defense-in-depth
 - Visibility RLS pattern: owner OR public-group OR friends OR linked-group (four-branch USING clause)
 
@@ -111,19 +111,24 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 - enabled: !!id guard pattern with id! assertion in queryFn for optional celebrantId/groupId params
 
 **From Phase 42-03:**
-- Supabase nested join group:groups(...) returns array type in TypeScript — requires runtime Array.isArray() check rather than direct cast
+- Supabase nested join group:groups(...) returns array type in TypeScript - requires runtime Array.isArray() check rather than direct cast
 - Used wishlists.noGroupsToLink i18n key (not groups.noGroupsYet which doesn't exist) for type-safe translation in GroupPickerSheet
 - linked_group_id cleared to null when ownerType switches to 'self' to prevent orphaned group links on self-wishlists
 
 **From Phase 42-04:**
-- i18n key prefix for celebration page is `celebrations` (plural) matching existing file structure — t('celebrations.publicWishlists') not t('celebration.publicWishlists')
-- Public wishlists section placed in gifts mode only (not greetings mode) — greetings mode has no gift coordination context
-- Items capped at 5 per wishlist with "+N more" overflow text — balances information density with scroll fatigue
+- i18n key prefix for celebration page is `celebrations` (plural) matching existing file structure - t('celebrations.publicWishlists') not t('celebration.publicWishlists')
+- Public wishlists section placed in gifts mode only (not greetings mode) - greetings mode has no gift coordination context
+- Items capped at 5 per wishlist with "+N more" overflow text - balances information density with scroll fatigue
 
 **From Phase 42-05:**
 - Query param pattern for wishlist pre-selection: `?wishlistId=xxx` enables FAB flow from for-others wishlist screen
 - For-others wishlists section only visible in gifts mode (greetings has no gift coordination context)
 - Item count extraction from Supabase nested array: `wishlist.items[0]?.count` pattern for `select(items:wishlist_items(count))`
+
+**From Phase 43-01:**
+- ON DELETE CASCADE chosen over SET NULL for cleaner data model (items should not exist without wishlist)
+- Full index replaces partial index since NOT NULL makes WHERE clause redundant
+- Pre/post migration validation blocks ensure safe schema changes
 
 ### Pending Todos (Manual Setup)
 
@@ -174,6 +179,6 @@ From Phase 38-01:
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Phase 42 complete — all 5 plans executed (including gap closure)
-Resume file: .planning/phases/42-wishlist-visibility/42-05-SUMMARY.md
-Next: Execute Phase 43 (final phase of v1.7 Global Wishlist milestone)
+Stopped at: Phase 43 complete - v1.7 Global Wishlist milestone finished
+Resume file: .planning/phases/43-enforcement/43-01-SUMMARY.md
+Next: v1.7 milestone closure and v1.8 planning
