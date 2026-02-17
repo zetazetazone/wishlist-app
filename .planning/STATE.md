@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 Phase: 41 of 43 (Column Rename)
 Plan: 2 of 2 in current phase
 Status: Phase complete
-Last activity: 2026-02-17 — Completed quick task 008: Merge Friends and Groups into unified People screen
+Last activity: 2026-02-17 — Completed quick task 009: Fix wishlist create error and emoji picker visibility
 
 Progress: [=====================================] 95% (41/43 phases)
 
@@ -141,10 +141,11 @@ From Phase 38-01:
 | 006 | Fix celebration card avatar and dynamic status | 2026-02-17 | 640cef2 | [006-fix-celebration-card-avatar-and-status](./quick/006-fix-celebration-card-avatar-and-status/) |
 | 007 | Enhance CreateWishlistModal with visibility and owner controls | 2026-02-17 | cff0ed7 | [007-enhance-create-wishlist-modal-with-emoji](./quick/007-enhance-create-wishlist-modal-with-emoji/) |
 | 008 | Merge Friends and Groups into unified People screen | 2026-02-17 | 2da8531 | [008-merge-friends-and-groups-screens-into-un](./quick/008-merge-friends-and-groups-screens-into-un/) |
+| 009 | Fix wishlist create error and emoji picker visibility | 2026-02-17 | 8d58881 | [009-fix-wishlist-create-error-and-visual-emo](./quick/009-fix-wishlist-create-error-and-visual-emo/) |
 
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Quick task 008 complete - Unified People screen
-Resume file: .planning/quick/008-merge-friends-and-groups-screens-into-un/008-SUMMARY.md
+Stopped at: Quick task 009 complete - Fix wishlist create error and emoji picker
+Resume file: .planning/quick/009-fix-wishlist-create-error-and-visual-emo/009-SUMMARY.md
 Next: `/gsd:execute-phase 42` (Default Wishlist Assignment)
