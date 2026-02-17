@@ -34,18 +34,39 @@ export function CelebrationCard({
   const eventDate = format(new Date(celebration.event_date), 'MMMM d');
   const groupName = celebration.group?.name || t('common.unknown');
 
-  const getStatusInfo = (status: string): { label: string; color: string } => {
-    switch (status) {
-      case 'active':
-        return { label: t('celebrations.status.active'), color: '#22c55e' };
-      case 'completed':
-        return { label: t('celebrations.status.completed'), color: '#6b7280' };
-      case 'upcoming':
-      default:
-        return { label: t('celebrations.status.upcoming'), color: '#3b82f6' };
+  /**
+   * Compute display status dynamically based on event_date
+   * - Completed (manual) -> gray
+   * - Past date (not completed) -> Overdue (red)
+   * - Within 7 days -> Active (green)
+   * - More than 7 days -> Upcoming (blue)
+   */
+  const getDisplayStatus = (cel: Celebration): { label: string; color: string } => {
+    // If manually completed, show completed
+    if (cel.status === 'completed') {
+      return { label: t('celebrations.status.completed'), color: '#6b7280' };
+    }
+
+    const eventDate = new Date(cel.event_date);
+    const today = new Date();
+    // Set both to midnight for day comparison
+    eventDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    const diffDays = Math.floor((eventDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) {
+      // Past date - overdue
+      return { label: t('celebrations.status.overdue'), color: '#ef4444' };
+    } else if (diffDays <= 7) {
+      // Within 7 days - active
+      return { label: t('celebrations.status.active'), color: '#22c55e' };
+    } else {
+      // More than 7 days away - upcoming
+      return { label: t('celebrations.status.upcoming'), color: '#3b82f6' };
     }
   };
-  const statusInfo = getStatusInfo(celebration.status);
+  const statusInfo = getDisplayStatus(celebration);
 
   return (
     <Pressable
@@ -58,7 +79,7 @@ export function CelebrationCard({
       <View style={styles.content}>
         {/* Avatar */}
         <View style={styles.avatarContainer}>
-          {celebrantAvatar ? (
+          {celebrantAvatar && celebrantAvatar.length > 0 ? (
             <Image source={{ uri: celebrantAvatar }} style={styles.avatar} />
           ) : (
             <View style={[styles.avatar, styles.avatarPlaceholder]}>
