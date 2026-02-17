@@ -143,10 +143,10 @@ Plans:
   2. Performance indexes exist for wishlist queries
   3. All RLS policies use wishlist-based access patterns
   4. Migration validation confirms zero data corruption
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 43-01: TBD
+- [ ] 43-01-PLAN.md — NOT NULL enforcement and index optimization
 
 ## Progress
 
@@ -162,7 +162,7 @@ Phases execute in numeric order: 37 -> 38 -> 39 -> 40 -> 41 -> 42 -> 43
 | 40. Multi-Wishlist UI | v1.7 | 4/4 | ✓ Complete | 2026-02-16 |
 | 41. Column Rename | v1.7 | 2/2 | ✓ Complete | 2026-02-16 |
 | 42. Wishlist Visibility | v1.7 | 5/5 | ✓ Complete | 2026-02-17 |
-| 43. Enforcement | v1.7 | 0/? | Not started | - |
+| 43. Enforcement | v1.7 | 0/1 | Not started | - |
 
 ---
 *Roadmap created: 2026-02-16*
