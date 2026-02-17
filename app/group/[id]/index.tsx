@@ -22,6 +22,7 @@ import { getDaysUntilBirthday } from '../../../utils/countdown';
 import { findCelebrationForMember } from '../../../lib/celebrations';
 import { getGroupBudgetStatus, BudgetStatus } from '../../../lib/budget';
 import { BudgetProgressBar } from '../../../components/groups/BudgetProgressBar';
+import { useGroupForOthersWishlists } from '../../../hooks/useWishlists';
 
 interface GroupWithMembers extends Group {
   members: Array<{
@@ -43,6 +44,9 @@ export default function GroupDetailScreen() {
     daysUntil: number;
   }>>([]);
   const [budgetStatus, setBudgetStatus] = useState<BudgetStatus | null>(null);
+
+  // Fetch for-others wishlists linked to this group
+  const { data: forOthersWishlists, isLoading: forOthersLoading } = useGroupForOthersWishlists(id);
 
   useEffect(() => {
     loadGroupDetails();
@@ -139,6 +143,103 @@ export default function GroupDetailScreen() {
         { text: t('common.share'), onPress: handleShare },
         { text: t('common.close') },
       ]
+    );
+  };
+
+  const renderForOthersSection = () => {
+    // Only show in gifts mode (greetings mode has no gift coordination context)
+    if ((group?.mode || 'gifts') !== 'gifts') return null;
+
+    if (forOthersLoading) {
+      return (
+        <View style={{ marginBottom: spacing.lg }}>
+          <Text style={{ fontSize: 20, fontWeight: '700', color: colors.burgundy[800], marginBottom: spacing.md }}>
+            {t('groups.forOthersWishlists')}
+          </Text>
+          <View style={{ padding: spacing.lg, alignItems: 'center' }}>
+            <ActivityIndicator size="small" color={colors.burgundy[600]} />
+          </View>
+        </View>
+      );
+    }
+
+    if (!forOthersWishlists || forOthersWishlists.length === 0) {
+      return (
+        <View style={{ marginBottom: spacing.lg }}>
+          <Text style={{ fontSize: 20, fontWeight: '700', color: colors.burgundy[800], marginBottom: spacing.md }}>
+            {t('groups.forOthersWishlists')}
+          </Text>
+          <View style={{
+            backgroundColor: colors.white,
+            borderRadius: borderRadius.lg,
+            padding: spacing.lg,
+            alignItems: 'center',
+            ...shadows.sm,
+          }}>
+            <MaterialCommunityIcons name="gift-outline" size={32} color={colors.burgundy[300]} />
+            <Text style={{ color: colors.burgundy[400], marginTop: spacing.sm, textAlign: 'center' }}>
+              {t('groups.forOthersWishlistsEmpty')}
+            </Text>
+            <Text style={{ color: colors.burgundy[300], fontSize: 12, marginTop: spacing.xs, textAlign: 'center' }}>
+              {t('groups.forOthersWishlistsEmptyHint')}
+            </Text>
+          </View>
+        </View>
+      );
+    }
+
+    return (
+      <View style={{ marginBottom: spacing.lg }}>
+        <Text style={{ fontSize: 20, fontWeight: '700', color: colors.burgundy[800], marginBottom: spacing.md }}>
+          {t('groups.forOthersWishlists')}
+        </Text>
+        <View style={{ gap: spacing.sm }}>
+          {forOthersWishlists.map((wishlist) => {
+            // Extract item count from the nested items array (Supabase returns [{count: N}])
+            const itemCount = Array.isArray(wishlist.items) && wishlist.items[0]?.count
+              ? wishlist.items[0].count
+              : 0;
+
+            return (
+              <TouchableOpacity
+                key={wishlist.id}
+                style={{
+                  backgroundColor: colors.white,
+                  borderRadius: borderRadius.lg,
+                  padding: spacing.md,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  ...shadows.sm,
+                }}
+                onPress={() => router.push(`/(app)/for-others-wishlist/${wishlist.id}`)}
+                activeOpacity={0.7}
+              >
+                <Text style={{ fontSize: 28, marginRight: spacing.sm }}>
+                  {wishlist.emoji || '🎁'}
+                </Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: colors.burgundy[800] }}>
+                    {wishlist.name}
+                  </Text>
+                  {wishlist.for_name && (
+                    <Text style={{ fontSize: 13, color: colors.burgundy[500], marginTop: 2 }}>
+                      {t('groups.forOthersFor', { name: wishlist.for_name })}
+                    </Text>
+                  )}
+                  <Text style={{ fontSize: 12, color: colors.burgundy[400], marginTop: 2 }}>
+                    {t('groups.forOthersItemCount', { count: itemCount })}
+                  </Text>
+                </View>
+                <MaterialCommunityIcons
+                  name="chevron-right"
+                  size={24}
+                  color={colors.burgundy[400]}
+                />
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
     );
   };
 
@@ -263,6 +364,9 @@ export default function GroupDetailScreen() {
               <BudgetProgressBar status={budgetStatus} />
             </View>
           )}
+
+          {/* For-Others Wishlists Section - visible in gifts mode */}
+          {renderForOthersSection()}
 
           {/* Members Section - Sorted by Birthday */}
           <View style={{ marginBottom: spacing.lg }}>
