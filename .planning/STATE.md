@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 Phase: 41 of 43 (Column Rename)
 Plan: 2 of 2 in current phase
 Status: Phase complete
-Last activity: 2026-02-17 — Completed quick task 007: Enhance CreateWishlistModal with visibility and owner controls
+Last activity: 2026-02-17 — Completed quick task 008: Merge Friends and Groups into unified People screen
 
 Progress: [=====================================] 95% (41/43 phases)
 
@@ -140,10 +140,11 @@ From Phase 38-01:
 | 005 | Fix i18n translation keys returning [object Object] | 2026-02-12 | 2cde090 | [005-fix-i18n-translation-keys-returning-obje](./quick/005-fix-i18n-translation-keys-returning-obje/) |
 | 006 | Fix celebration card avatar and dynamic status | 2026-02-17 | 640cef2 | [006-fix-celebration-card-avatar-and-status](./quick/006-fix-celebration-card-avatar-and-status/) |
 | 007 | Enhance CreateWishlistModal with visibility and owner controls | 2026-02-17 | cff0ed7 | [007-enhance-create-wishlist-modal-with-emoji](./quick/007-enhance-create-wishlist-modal-with-emoji/) |
+| 008 | Merge Friends and Groups into unified People screen | 2026-02-17 | 2da8531 | [008-merge-friends-and-groups-screens-into-un](./quick/008-merge-friends-and-groups-screens-into-un/) |
 
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Quick task 007 complete - Wishlist modal visibility and owner controls
-Resume file: .planning/quick/007-enhance-create-wishlist-modal-with-emoji/007-SUMMARY.md
+Stopped at: Quick task 008 complete - Unified People screen
+Resume file: .planning/quick/008-merge-friends-and-groups-screens-into-un/008-SUMMARY.md
 Next: `/gsd:execute-phase 42` (Default Wishlist Assignment)
