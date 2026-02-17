@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** Phase 41 in progress - Column Rename (v1.7 Global Wishlist)
+**Current focus:** Phase 42 in progress - Wishlist Visibility (v1.7 Global Wishlist)
 
 ## Current Position
 
-Phase: 41 of 43 (Column Rename)
-Plan: 2 of 2 in current phase
+Phase: 42 of 43 (Wishlist Visibility)
+Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-02-17 — Completed quick task 010: Merge Celebrations and Calendar into unified Events screen
+Last activity: 2026-02-17 — Completed 42-01: Wishlist Visibility RLS migration
 
-Progress: [=====================================] 95% (41/43 phases)
+Progress: [======================================] 98% (42/43 phases)
 
 ## Milestone History
 
@@ -98,6 +98,12 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 - Added COMMENT ON COLUMN for documentation of historical context
 - Migration filename 20260216000002 (after multi-wishlist foundation migration)
 
+**From Phase 42-01:**
+- Public wishlist visibility scoped to group co-members only (not all app users) — prevents exposure to strangers
+- linked_group_id constrained to owner_type IN ('other_manual', 'other_user') — self-wishlists never link to groups
+- INSERT policy double-checks owner_type at RLS level for defense-in-depth
+- Visibility RLS pattern: owner OR public-group OR friends OR linked-group (four-branch USING clause)
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -147,6 +153,6 @@ From Phase 38-01:
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Quick task 010 complete - Unified Events screen
-Resume file: .planning/quick/010-merge-celebrations-and-calendar-into-uni/010-SUMMARY.md
-Next: `/gsd:execute-phase 42` (Default Wishlist Assignment)
+Stopped at: Phase 42 complete - Wishlist Visibility RLS
+Resume file: .planning/phases/42-wishlist-visibility/42-01-SUMMARY.md
+Next: `/gsd:execute-phase 43` (Wishlist Assignment — make wishlist_id NOT NULL)
