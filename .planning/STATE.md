@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** Phase 42 complete - Ready for Phase 43 (v1.7 Global Wishlist final phase)
+**Current focus:** Phase 42 complete with gap closure plan - Ready for Phase 43 (v1.7 Global Wishlist final phase)
 
 ## Current Position
 
 Phase: 42 of 43 (Wishlist Visibility) - COMPLETE
-Plan: 4 of 4 in current phase (Phase complete)
+Plan: 5 of 5 in current phase (Phase complete with gap closure)
 Status: Phase complete - ready for Phase 43
-Last activity: 2026-02-17 — Completed 42-04: Celebration Page Public Wishlists
+Last activity: 2026-02-17 — Completed 42-05: Gap Closure for Group For-Others Wishlists UI
 
 Progress: [======================================] 98% (42/43 phases)
 
@@ -120,6 +120,11 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 - Public wishlists section placed in gifts mode only (not greetings mode) — greetings mode has no gift coordination context
 - Items capped at 5 per wishlist with "+N more" overflow text — balances information density with scroll fatigue
 
+**From Phase 42-05:**
+- Query param pattern for wishlist pre-selection: `?wishlistId=xxx` enables FAB flow from for-others wishlist screen
+- For-others wishlists section only visible in gifts mode (greetings has no gift coordination context)
+- Item count extraction from Supabase nested array: `wishlist.items[0]?.count` pattern for `select(items:wishlist_items(count))`
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -169,6 +174,6 @@ From Phase 38-01:
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Phase 42 complete — all 4 plans executed
-Resume file: .planning/phases/42-wishlist-visibility/42-04-SUMMARY.md
+Stopped at: Phase 42 complete — all 5 plans executed (including gap closure)
+Resume file: .planning/phases/42-wishlist-visibility/42-05-SUMMARY.md
 Next: Execute Phase 43 (final phase of v1.7 Global Wishlist milestone)
