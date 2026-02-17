@@ -21,6 +21,7 @@ import { useCreateWishlist, useUpdateWishlist } from '../../hooks/useWishlists';
 import { Wishlist, WishlistOwnerType, WishlistVisibility } from '../../lib/wishlists';
 import { getFriends, FriendWithProfile } from '../../lib/friends';
 import { EmojiPickerModal } from './EmojiPickerModal';
+import { GroupPickerSheet } from '../groups/GroupPickerSheet';
 
 interface CreateWishlistModalProps {
   visible: boolean;
@@ -55,6 +56,8 @@ export function CreateWishlistModal({
   const [forUserId, setForUserId] = useState<string | null>(null);
   const [friends, setFriends] = useState<FriendWithProfile[]>([]);
   const [loadingFriends, setLoadingFriends] = useState(false);
+  const [linkedGroupId, setLinkedGroupId] = useState<string | null>(null);
+  const [showGroupPicker, setShowGroupPicker] = useState(false);
 
   const isEditMode = !!editingWishlist;
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
@@ -69,6 +72,7 @@ export function CreateWishlistModal({
         setOwnerType((editingWishlist.owner_type as WishlistOwnerType) || 'self');
         setForName(editingWishlist.for_name || '');
         setForUserId(editingWishlist.for_user_id || null);
+        setLinkedGroupId(editingWishlist.linked_group_id || null);
       } else {
         setName('');
         setEmoji(DEFAULT_EMOJI);
@@ -76,6 +80,7 @@ export function CreateWishlistModal({
         setOwnerType('self');
         setForName('');
         setForUserId(null);
+        setLinkedGroupId(null);
       }
       setError(null);
     }
@@ -136,6 +141,7 @@ export function CreateWishlistModal({
             owner_type: ownerType,
             for_name: ownerType === 'other_manual' ? forName.trim() : null,
             for_user_id: ownerType === 'other_user' ? forUserId : null,
+            linked_group_id: ownerType !== 'self' ? linkedGroupId : null,
           },
         });
       } else {
@@ -148,6 +154,7 @@ export function CreateWishlistModal({
           owner_type: ownerType,
           for_name: ownerType === 'other_manual' ? forName.trim() : null,
           for_user_id: ownerType === 'other_user' ? forUserId : null,
+          linked_group_id: ownerType !== 'self' ? linkedGroupId : null,
           is_default: false,
         });
       }
@@ -211,7 +218,12 @@ export function CreateWishlistModal({
           styles.ownerTypeOption,
           isSelected && styles.ownerTypeOptionSelected,
         ]}
-        onPress={() => setOwnerType(option)}
+        onPress={() => {
+          setOwnerType(option);
+          if (option === 'self') {
+            setLinkedGroupId(null);
+          }
+        }}
         disabled={isSubmitting}
       >
         <View style={styles.radioOuter}>
@@ -413,6 +425,32 @@ export function CreateWishlistModal({
                   </View>
                 )}
 
+                {/* Group linking for collaborative access */}
+                {ownerType !== 'self' && (
+                  <View style={styles.formGroup}>
+                    <Text style={styles.label}>{t('wishlists.linkToGroup')}</Text>
+                    <TouchableOpacity
+                      style={styles.groupPickerButton}
+                      onPress={() => setShowGroupPicker(true)}
+                      disabled={isSubmitting}
+                    >
+                      {linkedGroupId ? (
+                        <MaterialCommunityIcons name="account-group" size={20} color={colors.burgundy[600]} />
+                      ) : (
+                        <MaterialCommunityIcons name="link-variant" size={20} color={colors.cream[500]} />
+                      )}
+                      <Text style={[
+                        styles.groupPickerText,
+                        !linkedGroupId && styles.groupPickerPlaceholder,
+                      ]}>
+                        {linkedGroupId ? t('wishlists.groupLinked') : t('wishlists.selectGroupOptional')}
+                      </Text>
+                      <MaterialCommunityIcons name="chevron-right" size={20} color={colors.cream[500]} />
+                    </TouchableOpacity>
+                    <Text style={styles.helperText}>{t('wishlists.groupLinkHelp')}</Text>
+                  </View>
+                )}
+
                 {/* Error Message */}
                 {error && (
                   <View style={styles.errorContainer}>
@@ -461,6 +499,15 @@ export function CreateWishlistModal({
         onClose={() => setShowEmojiPicker(false)}
         onSelect={handleEmojiSelect}
         selectedEmoji={emoji}
+      />
+
+      {/* Group Picker Sheet */}
+      <GroupPickerSheet
+        visible={showGroupPicker}
+        onClose={() => setShowGroupPicker(false)}
+        onSelect={setLinkedGroupId}
+        selectedGroupId={linkedGroupId}
+        allowNone={true}
       />
     </>
   );
@@ -738,5 +785,29 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     backgroundColor: colors.cream[400],
+  },
+  // Group picker styles
+  groupPickerButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    backgroundColor: colors.cream[50],
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: colors.cream[300],
+    gap: spacing.sm,
+  },
+  groupPickerText: {
+    flex: 1,
+    fontSize: 16,
+    color: colors.burgundy[800],
+  },
+  groupPickerPlaceholder: {
+    color: colors.cream[500],
+  },
+  helperText: {
+    fontSize: 12,
+    color: colors.cream[600],
+    marginTop: spacing.xs,
   },
 });
