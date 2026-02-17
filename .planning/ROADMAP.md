@@ -9,7 +9,7 @@
 - v1.4 Friends System (Phases 23-28) - shipped 2026-02-10
 - v1.5 Localization (Phases 29-32) - shipped 2026-02-12
 - v1.6 Wishlist UI Redesign (Phases 33-36) - shipped 2026-02-12
-- **v1.7 Global Wishlist** (Phases 37-43) - in progress
+- **v1.7 Global Wishlist** (Phases 37-43) - complete 2026-02-17
 
 ## Overview
 
@@ -29,7 +29,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 40: Multi-Wishlist UI** - Wishlist management screens and picker ✓
 - [x] **Phase 41: Column Rename** - amazon_url to source_url migration ✓
 - [x] **Phase 42: Wishlist Visibility** - Public/private and for-others sharing ✓
-- [ ] **Phase 43: Enforcement** - NOT NULL constraints and cleanup
+- [x] **Phase 43: Enforcement** - NOT NULL constraints and cleanup ✓
 
 ## Phase Details
 
@@ -146,7 +146,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 43-01-PLAN.md — NOT NULL enforcement and index optimization
+- [x] 43-01-PLAN.md — NOT NULL enforcement and index optimization ✓
 
 ## Progress
 
@@ -162,7 +162,7 @@ Phases execute in numeric order: 37 -> 38 -> 39 -> 40 -> 41 -> 42 -> 43
 | 40. Multi-Wishlist UI | v1.7 | 4/4 | ✓ Complete | 2026-02-16 |
 | 41. Column Rename | v1.7 | 2/2 | ✓ Complete | 2026-02-16 |
 | 42. Wishlist Visibility | v1.7 | 5/5 | ✓ Complete | 2026-02-17 |
-| 43. Enforcement | v1.7 | 0/1 | Not started | - |
+| 43. Enforcement | v1.7 | 1/1 | ✓ Complete | 2026-02-17 |
 
 ---
 *Roadmap created: 2026-02-16*
