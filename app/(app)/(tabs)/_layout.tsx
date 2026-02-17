@@ -31,23 +31,26 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="events"
+        options={{
+          title: 'Events',
+          headerShown: false, // Events has its own custom header with segmented control
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="calendar-star" size={size} color={color} />
+          ),
+        }}
+      />
+      {/* DEPRECATED: Use events.tsx - unified Events screen */}
+      <Tabs.Screen
         name="celebrations"
         options={{
-          title: 'Celebrations',
-          headerShown: false, // Celebrations has its own custom header
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="party-popper" size={size} color={color} />
-          ),
+          href: null, // Hidden - replaced by events.tsx
         }}
       />
       <Tabs.Screen
         name="calendar"
         options={{
-          title: 'Calendar',
-          headerShown: false, // Calendar has its own custom header
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="calendar" size={size} color={color} />
-          ),
+          href: null, // Hidden - replaced by events.tsx
         }}
       />
       {/* DEPRECATED: Use social.tsx - unified People screen */}

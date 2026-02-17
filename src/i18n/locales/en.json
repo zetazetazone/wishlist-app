@@ -1080,6 +1080,17 @@
       "groups": "Groups"
     }
   },
+  "events": {
+    "title": "Events",
+    "segments": {
+      "upcoming": "Upcoming",
+      "calendar": "Calendar"
+    },
+    "celebrationsCount": "{{count}} celebration",
+    "celebrationsCount_plural": "{{count}} celebrations",
+    "upcomingCount": "{{count}} upcoming",
+    "upcomingCount_plural": "{{count}} upcoming"
+  },
   "wishlists": {
     "defaultWishlist": "My Wishlist",
     "myWishlists": "My Wishlists",

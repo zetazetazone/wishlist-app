@@ -1080,6 +1080,17 @@
       "groups": "Grupos"
     }
   },
+  "events": {
+    "title": "Eventos",
+    "segments": {
+      "upcoming": "Proximos",
+      "calendar": "Calendario"
+    },
+    "celebrationsCount": "{{count}} celebracion",
+    "celebrationsCount_plural": "{{count}} celebraciones",
+    "upcomingCount": "{{count}} proximo",
+    "upcomingCount_plural": "{{count}} proximos"
+  },
   "wishlists": {
     "defaultWishlist": "Mi Lista de Deseos",
     "myWishlists": "Mis Listas de Deseos",
