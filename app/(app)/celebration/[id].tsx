@@ -17,12 +17,14 @@ import {
   ScrollView,
   Image,
   Pressable,
+  TouchableOpacity,
   ActivityIndicator,
   Alert,
   Modal,
   KeyboardAvoidingView,
   Platform,
   Dimensions,
+  Linking,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -59,6 +61,7 @@ import { ChatList } from '../../../components/chat/ChatList';
 import { ChatInput } from '../../../components/chat/ChatInput';
 import { getFavoriteForGroup } from '../../../lib/favorites';
 import { getWishlistItemsByUserId, WishlistItem } from '../../../lib/wishlistItems';
+import { useCelebrantPublicWishlists } from '../../../hooks/useWishlists';
 import LuxuryWishlistCard from '../../../components/wishlist/LuxuryWishlistCard';
 import { WishlistGrid } from '../../../components/wishlist';
 import { GroupModeBadge } from '../../../components/groups/GroupModeBadge';
@@ -145,6 +148,12 @@ export default function CelebrationDetailScreen() {
 
   // View mode: 'info' shows header/contributions, 'chat' shows full chat
   const [viewMode, setViewMode] = useState<'info' | 'chat'>('info');
+
+  // Public wishlists for the celebrant
+  const {
+    data: publicWishlists,
+    isLoading: wishlistsLoading,
+  } = useCelebrantPublicWishlists(celebration?.celebrant_id);
 
   // Load celebration details
   const loadCelebration = useCallback(async () => {
@@ -533,6 +542,97 @@ export default function CelebrationDetailScreen() {
     const rows = Math.ceil(sortedCelebrantItems.length / 2);
     return rows * cardHeight + (rows - 1) * rowGap + 32; // Extra padding
   }, [sortedCelebrantItems.length]);
+
+  // Render the public wishlists section for the celebrant
+  const renderPublicWishlistSection = () => {
+    if (wishlistsLoading) {
+      return (
+        <View style={styles.publicWishlistSection}>
+          <ActivityIndicator size="small" color={colors.burgundy[600]} />
+        </View>
+      );
+    }
+
+    if (!publicWishlists || publicWishlists.length === 0) {
+      return (
+        <View style={styles.publicWishlistSection}>
+          <View style={styles.sectionHeader}>
+            <MaterialCommunityIcons name="gift-outline" size={22} color="#8B1538" />
+            <Text style={styles.sectionTitle}>
+              {t('celebrations.publicWishlists', { name: celebrantName })}
+            </Text>
+          </View>
+          <View style={styles.emptyWishlists}>
+            <MaterialCommunityIcons name="gift-outline" size={32} color="#d1d5db" />
+            <Text style={styles.emptyWishlistsText}>
+              {t('celebrations.noPublicWishlists', { name: celebrantName })}
+            </Text>
+          </View>
+        </View>
+      );
+    }
+
+    return (
+      <View style={styles.publicWishlistSection}>
+        <View style={styles.sectionHeader}>
+          <MaterialCommunityIcons name="gift-outline" size={22} color="#8B1538" />
+          <Text style={styles.sectionTitle}>
+            {t('celebrations.publicWishlists', { name: celebrantName })}
+          </Text>
+        </View>
+
+        {publicWishlists.map((wishlist) => (
+          <View key={wishlist.id} style={styles.publicWishlistCard}>
+            <View style={styles.publicWishlistHeader}>
+              <Text style={styles.publicWishlistEmoji}>{wishlist.emoji || '📋'}</Text>
+              <Text style={styles.publicWishlistName}>{wishlist.name}</Text>
+              <Text style={styles.publicWishlistCount}>
+                {t('celebrations.wishlistItems', { count: wishlist.items?.length || 0 })}
+              </Text>
+            </View>
+
+            {wishlist.items && wishlist.items.length > 0 && (
+              <View style={styles.publicItemsList}>
+                {wishlist.items.slice(0, 5).map((item) => (
+                  <TouchableOpacity
+                    key={item.id}
+                    style={styles.publicWishlistItem}
+                    onPress={() => item.source_url ? Linking.openURL(item.source_url) : undefined}
+                    disabled={!item.source_url}
+                  >
+                    {item.image_url && (
+                      <Image source={{ uri: item.image_url }} style={styles.publicItemImage} />
+                    )}
+                    <View style={styles.publicItemInfo}>
+                      <Text style={styles.publicItemTitle} numberOfLines={2}>{item.title}</Text>
+                      {item.price && (
+                        <Text style={styles.publicItemPrice}>
+                          {t('celebrations.itemPrice', { price: `$${item.price}` })}
+                        </Text>
+                      )}
+                    </View>
+                    {item.source_url && (
+                      <MaterialCommunityIcons
+                        name="open-in-new"
+                        size={18}
+                        color="#8B1538"
+                      />
+                    )}
+                  </TouchableOpacity>
+                ))}
+
+                {wishlist.items.length > 5 && (
+                  <Text style={styles.publicMoreItems}>
+                    +{wishlist.items.length - 5} more items
+                  </Text>
+                )}
+              </View>
+            )}
+          </View>
+        ))}
+      </View>
+    );
+  };
 
   // Loading state
   if (loading) {
@@ -955,6 +1055,9 @@ export default function CelebrationDetailScreen() {
                     </View>
                   )}
                 </View>
+
+                {/* Public Wishlists Section */}
+                {renderPublicWishlistSection()}
 
                 {/* Gift Leader History (Collapsible) */}
                 {celebration.gift_leader_history && celebration.gift_leader_history.length > 0 && (
@@ -1591,6 +1694,88 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#6b7280',
     marginTop: 2,
+  },
+
+  // === Public Wishlists Section Styles ===
+  publicWishlistSection: {
+    marginTop: 24,
+  },
+  publicWishlistCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  publicWishlistHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  publicWishlistEmoji: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  publicWishlistName: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1f2937',
+  },
+  publicWishlistCount: {
+    fontSize: 12,
+    color: '#9ca3af',
+  },
+  publicItemsList: {
+    gap: 8,
+  },
+  publicWishlistItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    backgroundColor: '#fafafa',
+    borderRadius: 8,
+  },
+  publicItemImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 6,
+    marginRight: 10,
+  },
+  publicItemInfo: {
+    flex: 1,
+  },
+  publicItemTitle: {
+    fontSize: 14,
+    color: '#1f2937',
+    fontWeight: '500',
+  },
+  publicItemPrice: {
+    fontSize: 12,
+    color: '#8B1538',
+    marginTop: 2,
+  },
+  emptyWishlists: {
+    alignItems: 'center',
+    paddingVertical: 24,
+    backgroundColor: '#fafafa',
+    borderRadius: 12,
+  },
+  emptyWishlistsText: {
+    marginTop: 8,
+    fontSize: 14,
+    color: '#9ca3af',
+    textAlign: 'center',
+  },
+  publicMoreItems: {
+    fontSize: 12,
+    color: '#8B1538',
+    textAlign: 'center',
+    paddingVertical: 4,
   },
 
   // === Greetings Mode Styles ===
