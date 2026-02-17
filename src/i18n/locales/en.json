@@ -1104,6 +1104,17 @@
     "currentlyIn": "Currently in: {{name}}",
     "selectTargetWishlist": "Select target wishlist",
     "itemMoved": "Item moved successfully",
-    "moveFailed": "Failed to move item"
+    "moveFailed": "Failed to move item",
+    "visibility": "Visibility",
+    "public": "Public",
+    "private": "Private",
+    "friendsOnly": "Friends Only",
+    "ownerType": "This wishlist is for",
+    "forMyself": "For myself",
+    "forOther": "For someone else",
+    "forFriend": "For a friend",
+    "enterName": "Enter their name",
+    "selectFriend": "Select a friend",
+    "noFriendsYet": "You don't have any friends yet"
   }
 }

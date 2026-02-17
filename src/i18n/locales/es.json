@@ -1104,6 +1104,17 @@
     "currentlyIn": "Actualmente en: {{name}}",
     "selectTargetWishlist": "Seleccionar lista de destino",
     "itemMoved": "Artículo movido exitosamente",
-    "moveFailed": "Error al mover el artículo"
+    "moveFailed": "Error al mover el artículo",
+    "visibility": "Visibilidad",
+    "public": "Público",
+    "private": "Privado",
+    "friendsOnly": "Solo amigos",
+    "ownerType": "Esta lista es para",
+    "forMyself": "Para mí",
+    "forOther": "Para otra persona",
+    "forFriend": "Para un amigo",
+    "enterName": "Ingresa su nombre",
+    "selectFriend": "Selecciona un amigo",
+    "noFriendsYet": "Aún no tienes amigos"
   }
 }
