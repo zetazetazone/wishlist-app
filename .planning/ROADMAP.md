@@ -28,7 +28,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 39: Share Intent** - Receive shared URLs from browser/apps ✓
 - [x] **Phase 40: Multi-Wishlist UI** - Wishlist management screens and picker ✓
 - [x] **Phase 41: Column Rename** - amazon_url to source_url migration ✓
-- [ ] **Phase 42: Wishlist Visibility** - Public/private and for-others sharing
+- [x] **Phase 42: Wishlist Visibility** - Public/private and for-others sharing ✓
 - [ ] **Phase 43: Enforcement** - NOT NULL constraints and cleanup
 
 ## Phase Details
@@ -132,7 +132,7 @@ Plans:
 - [x] 42-02-PLAN.md — Service layer (visibility lib functions and React Query hooks) ✓
 - [x] 42-03-PLAN.md — Group picker UI (GroupPickerSheet, CreateWishlistModal integration) ✓
 - [x] 42-04-PLAN.md — Celebration page integration (public wishlists, translations) ✓
-- [ ] 42-05-PLAN.md — Group detail for-others wishlists section (gap closure for VIS-05, VIS-06)
+- [x] 42-05-PLAN.md — Group detail for-others wishlists section (gap closure for VIS-05, VIS-06) ✓
 
 ### Phase 43: Enforcement
 **Goal**: Make wishlist_id NOT NULL and add performance indexes
@@ -161,7 +161,7 @@ Phases execute in numeric order: 37 -> 38 -> 39 -> 40 -> 41 -> 42 -> 43
 | 39. Share Intent | v1.7 | 3/3 | ✓ Complete | 2026-02-16 |
 | 40. Multi-Wishlist UI | v1.7 | 4/4 | ✓ Complete | 2026-02-16 |
 | 41. Column Rename | v1.7 | 2/2 | ✓ Complete | 2026-02-16 |
-| 42. Wishlist Visibility | v1.7 | 4/5 | In progress | - |
+| 42. Wishlist Visibility | v1.7 | 5/5 | ✓ Complete | 2026-02-17 |
 | 43. Enforcement | v1.7 | 0/? | Not started | - |
 
 ---
