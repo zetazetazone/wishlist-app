@@ -239,6 +239,41 @@ export async function getGroupForOthersWishlists(groupId: string) {
 }
 
 /**
+ * Fetch items for a for-others wishlist
+ * Returns full item details (not just count) for display in dedicated screen
+ * RLS ensures requester is group member via linked_group_id
+ */
+export async function getForOthersWishlistItems(wishlistId: string) {
+  const { data, error } = await supabase
+    .from('wishlists')
+    .select(`
+      id,
+      name,
+      emoji,
+      for_name,
+      for_user_id,
+      owner_type,
+      linked_group_id,
+      items:wishlist_items(
+        id,
+        title,
+        source_url,
+        image_url,
+        price,
+        priority,
+        is_favorite,
+        is_most_wanted
+      )
+    `)
+    .eq('id', wishlistId)
+    .in('owner_type', ['other_manual', 'other_user'])
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+/**
  * Update wishlist visibility setting
  */
 export async function updateWishlistVisibility(

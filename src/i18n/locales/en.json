@@ -275,7 +275,15 @@
       "copy": "Copy",
       "newCode": "New Code",
       "shareHint": "Share this code with friends to invite them to the group"
-    }
+    },
+    "forOthersWishlists": "Gift Ideas for Others",
+    "forOthersWishlistsEmpty": "No shared gift idea lists yet",
+    "forOthersWishlistsEmptyHint": "Members can create wishlists for others and link them to this group",
+    "forOthersFor": "for {{name}}",
+    "forOthersItemCount": "{{count}} item",
+    "forOthersItemCount_plural": "{{count}} items",
+    "viewWishlistItems": "View Items",
+    "addItemToList": "Add Item"
   },
   "wishlist": {
     "title": "My Wishlist",
@@ -1145,6 +1153,9 @@
     "groupLinked": "Group linked",
     "selectGroupOptional": "Select a group (optional)",
     "groupLinkHelp": "Group members can view and coordinate gifts for this wishlist",
-    "noGroupsToLink": "You don't belong to any groups yet"
+    "noGroupsToLink": "You don't belong to any groups yet",
+    "noItems": "No items yet",
+    "addFirstItem": "Add your first item to this wishlist",
+    "notFound": "Wishlist not found"
   }
 }

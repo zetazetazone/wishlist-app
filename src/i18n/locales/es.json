@@ -275,7 +275,15 @@
     "dangerZoneActions": {
       "leaveGroup": "Salir del grupo",
       "deleteGroup": "Eliminar grupo"
-    }
+    },
+    "forOthersWishlists": "Ideas de regalo para otros",
+    "forOthersWishlistsEmpty": "No hay listas de ideas compartidas",
+    "forOthersWishlistsEmptyHint": "Los miembros pueden crear listas para otros y vincularlas a este grupo",
+    "forOthersFor": "para {{name}}",
+    "forOthersItemCount": "{{count}} articulo",
+    "forOthersItemCount_plural": "{{count}} articulos",
+    "viewWishlistItems": "Ver articulos",
+    "addItemToList": "Agregar articulo"
   },
   "wishlist": {
     "title": "Mi lista de deseos",
@@ -1145,6 +1153,9 @@
     "groupLinked": "Grupo vinculado",
     "selectGroupOptional": "Selecciona un grupo (opcional)",
     "groupLinkHelp": "Los miembros del grupo pueden ver y coordinar regalos para esta lista",
-    "noGroupsToLink": "Aún no perteneces a ningún grupo"
+    "noGroupsToLink": "Aún no perteneces a ningún grupo",
+    "noItems": "Aún no hay artículos",
+    "addFirstItem": "Agrega tu primer artículo a esta lista",
+    "notFound": "Lista no encontrada"
   }
 }
