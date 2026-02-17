@@ -1133,6 +1133,13 @@
     "forFriend": "For a friend",
     "enterName": "Enter their name",
     "selectFriend": "Select a friend",
-    "noFriendsYet": "You don't have any friends yet"
+    "noFriendsYet": "You don't have any friends yet",
+    "selectGroup": "Select Group",
+    "noGroupLink": "No group link",
+    "linkToGroup": "Link to Group",
+    "groupLinked": "Group linked",
+    "selectGroupOptional": "Select a group (optional)",
+    "groupLinkHelp": "Group members can view and coordinate gifts for this wishlist",
+    "noGroupsToLink": "You don't belong to any groups yet"
   }
 }

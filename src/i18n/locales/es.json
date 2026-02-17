@@ -1133,6 +1133,13 @@
     "forFriend": "Para un amigo",
     "enterName": "Ingresa su nombre",
     "selectFriend": "Selecciona un amigo",
-    "noFriendsYet": "Aún no tienes amigos"
+    "noFriendsYet": "Aún no tienes amigos",
+    "selectGroup": "Seleccionar Grupo",
+    "noGroupLink": "Sin enlace de grupo",
+    "linkToGroup": "Vincular a Grupo",
+    "groupLinked": "Grupo vinculado",
+    "selectGroupOptional": "Selecciona un grupo (opcional)",
+    "groupLinkHelp": "Los miembros del grupo pueden ver y coordinar regalos para esta lista",
+    "noGroupsToLink": "Aún no perteneces a ningún grupo"
   }
 }
