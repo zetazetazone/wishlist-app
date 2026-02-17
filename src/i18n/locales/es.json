@@ -1,6 +1,7 @@
 {
   "common": {
     "loading": "Cargando...",
+    "or": "o",
     "error": "Error",
     "success": "Exito",
     "cancel": "Cancelar",
@@ -731,7 +732,8 @@
       "upcoming": "Próximo",
       "inProgress": "En progreso",
       "completed": "Completado",
-      "active": "Activo"
+      "active": "Activo",
+      "overdue": "Vencido"
     },
     "claimSummary": {
       "itemsClaimed": "{{claimed}} de {{total}} artículos reclamados",
@@ -919,7 +921,8 @@
     "saveFailed": "Error al guardar el articulo"
   },
   "addFromUrl": {
-    "title": "Add from URL",
+    "title": "Agregar desde URL",
+    "quickAddButton": "Agregar desde URL (Auto-completar)",
     "subtitle": "Paste a product link to quickly add it to your wishlist",
     "productUrl": "Product URL",
     "urlPlaceholder": "Paste product URL here...",

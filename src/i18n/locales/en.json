@@ -1,6 +1,7 @@
 {
   "common": {
     "loading": "Loading...",
+    "or": "or",
     "error": "Error",
     "success": "Success",
     "cancel": "Cancel",
@@ -731,7 +732,8 @@
       "upcoming": "Upcoming",
       "inProgress": "In Progress",
       "completed": "Completed",
-      "active": "Active"
+      "active": "Active",
+      "overdue": "Overdue"
     },
     "claimSummary": {
       "itemsClaimed": "{{claimed}} of {{total}} items claimed",
@@ -920,6 +922,7 @@
   },
   "addFromUrl": {
     "title": "Add from URL",
+    "quickAddButton": "Add from URL (Auto-fill)",
     "subtitle": "Paste a product link to quickly add it to your wishlist",
     "productUrl": "Product URL",
     "urlPlaceholder": "Paste product URL here...",
