@@ -201,7 +201,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                     color: colors.gold[800],
                   }}
                 >
-                  {t('addFromUrl.quickAddButton', { defaultValue: 'Add from URL (Auto-fill)' })}
+                  {t('addFromUrl.quickAddButton')}
                 </Text>
               </TouchableOpacity>
 
@@ -228,7 +228,7 @@ export default function AddItemModal({ visible, onClose, onAdd }: AddItemModalPr
                     fontWeight: '600',
                   }}
                 >
-                  {t('common.or', { defaultValue: 'or' })}
+                  {t('common.or')}
                 </Text>
                 <View
                   style={{

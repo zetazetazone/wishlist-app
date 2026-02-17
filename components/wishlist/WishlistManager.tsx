@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -17,9 +17,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import { useQuery } from '@tanstack/react-query';
 import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 import { useWishlists, useReorderWishlists } from '../../hooks/useWishlists';
 import { Wishlist } from '../../lib/wishlists';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../providers/AuthProvider';
 import WishlistCard from './WishlistCard';
 import { CreateWishlistModal } from './CreateWishlistModal';
 import { DeleteWishlistModal } from './DeleteWishlistModal';
@@ -29,6 +32,7 @@ const AGGREGATE_VIEW_KEY = 'wishlist_aggregate_view';
 export function WishlistManager() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { user } = useAuth();
   const { data: wishlists, isLoading, refetch } = useWishlists();
   const reorderMutation = useReorderWishlists();
 
@@ -39,6 +43,33 @@ export function WishlistManager() {
   const [editingWishlist, setEditingWishlist] = useState<Wishlist | null>(null);
   const [deletingWishlist, setDeletingWishlist] = useState<Wishlist | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  // Fetch item counts for all wishlists in one efficient query
+  const { data: itemCounts, refetch: refetchCounts } = useQuery({
+    queryKey: ['wishlist-item-counts', user?.id],
+    queryFn: async () => {
+      if (!user) return {};
+
+      // Get counts grouped by wishlist_id
+      const { data, error } = await supabase
+        .from('wishlist_items')
+        .select('wishlist_id')
+        .eq('user_id', user.id)
+        .not('wishlist_id', 'is', null);
+
+      if (error) throw error;
+
+      // Count items per wishlist
+      const counts: Record<string, number> = {};
+      (data || []).forEach(item => {
+        if (item.wishlist_id) {
+          counts[item.wishlist_id] = (counts[item.wishlist_id] || 0) + 1;
+        }
+      });
+      return counts;
+    },
+    enabled: !!user,
+  });
 
   // Load aggregate view preference on mount
   useEffect(() => {
@@ -73,7 +104,7 @@ export function WishlistManager() {
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    await refetch();
+    await Promise.all([refetch(), refetchCounts()]);
     setIsRefreshing(false);
   };
 
@@ -86,6 +117,7 @@ export function WishlistManager() {
         onPress={() => handleWishlistPress(item)}
         onEdit={() => setEditingWishlist(item)}
         onDelete={() => setDeletingWishlist(item)}
+        itemCount={itemCounts?.[item.id] || 0}
       />
     </ScaleDecorator>
   );

@@ -117,9 +117,11 @@ export default function LuxuryWishlistScreen() {
     try {
       setLoading(true);
 
+      // Use LEFT JOIN (wishlists) to include special items (surprise_me, mystery_box)
+      // which have wishlist_id = NULL as they are universal per-user items
       let query = supabase
         .from('wishlist_items')
-        .select('*, wishlists!inner(name, emoji)')
+        .select('*, wishlists(name, emoji)')
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
 

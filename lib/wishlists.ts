@@ -24,21 +24,37 @@ export async function getWishlists(userId: string) {
  * Creates one automatically if it doesn't exist (fallback for missing trigger)
  */
 export async function getDefaultWishlist(userId: string) {
-  // First, try to find a default wishlist
-  const { data, error } = await supabase
+  // First, try to find the default wishlist
+  const { data: defaults, error } = await supabase
     .from('wishlists')
     .select('*')
     .eq('user_id', userId)
     .eq('is_default', true)
-    .single();
+    .order('created_at', { ascending: true });
 
-  // If found, return it
-  if (data && !error) {
-    console.log('[getDefaultWishlist] Found default:', data.id);
-    return data;
+  // If we have exactly one default, return it
+  if (defaults && defaults.length === 1) {
+    console.log('[getDefaultWishlist] Found default:', defaults[0].id);
+    return defaults[0];
   }
 
-  // If no default found, check if ANY wishlists exist (maybe is_default column issue)
+  // If we have multiple defaults (data issue), fix it by keeping only the oldest
+  if (defaults && defaults.length > 1) {
+    console.log('[getDefaultWishlist] Found multiple defaults, fixing...');
+    const oldestDefault = defaults[0];
+    const duplicateIds = defaults.slice(1).map(w => w.id);
+
+    // Clear is_default on duplicates
+    await supabase
+      .from('wishlists')
+      .update({ is_default: false })
+      .in('id', duplicateIds);
+
+    console.log('[getDefaultWishlist] Fixed duplicate defaults, kept:', oldestDefault.id);
+    return oldestDefault;
+  }
+
+  // No default found, check if ANY wishlists exist
   const { data: anyWishlist, error: anyError } = await supabase
     .from('wishlists')
     .select('*')
@@ -49,7 +65,7 @@ export async function getDefaultWishlist(userId: string) {
 
   if (anyWishlist && !anyError) {
     console.log('[getDefaultWishlist] No default flag, using first wishlist:', anyWishlist.id);
-    // Mark this one as default
+    // Mark this one as default (no other defaults exist at this point)
     await supabase
       .from('wishlists')
       .update({ is_default: true })
@@ -77,9 +93,6 @@ export async function getDefaultWishlist(userId: string) {
   }
   console.log('[getDefaultWishlist] Created default wishlist:', newWishlist?.id);
   return newWishlist;
-
-  if (error) throw error;
-  return data;
 }
 
 /**
