@@ -11,7 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -23,6 +23,7 @@ import { colors, spacing, borderRadius, shadows } from '../../constants/theme';
 
 export default function AddFromUrlScreen() {
   const router = useRouter();
+  const { wishlistId: paramWishlistId } = useLocalSearchParams<{ wishlistId?: string }>();
   const { t } = useTranslation();
 
   // URL and loading state
@@ -48,12 +49,16 @@ export default function AddFromUrlScreen() {
   const { data: defaultWishlist } = useDefaultWishlist();
   const { data: wishlists = [] } = useWishlists();
 
-  // Set default wishlist on load
+  // Set initial wishlist from param or default
   useEffect(() => {
-    if (defaultWishlist?.id && !selectedWishlistId) {
+    // If param provided, use it (for adding to for-others wishlists)
+    if (paramWishlistId && !selectedWishlistId) {
+      setSelectedWishlistId(paramWishlistId);
+    } else if (defaultWishlist?.id && !selectedWishlistId) {
+      // Fall back to default wishlist
       setSelectedWishlistId(defaultWishlist.id);
     }
-  }, [defaultWishlist?.id, selectedWishlistId]);
+  }, [paramWishlistId, defaultWishlist?.id, selectedWishlistId]);
 
   const handleScrape = async () => {
     if (!url.trim()) {
