@@ -179,6 +179,100 @@ export async function getWishlistItemCount(wishlistId: string) {
 }
 
 /**
+ * Fetch public wishlists for a celebrant to display on celebration page
+ * Only returns 'public' visibility, 'self' owner_type wishlists
+ * RLS ensures requester shares a group with celebrant
+ */
+export async function getCelebrantPublicWishlists(celebrantId: string) {
+  const { data, error } = await supabase
+    .from('wishlists')
+    .select(`
+      id,
+      name,
+      emoji,
+      visibility,
+      items:wishlist_items(
+        id,
+        title,
+        source_url,
+        image_url,
+        price,
+        priority,
+        is_favorite,
+        is_most_wanted
+      )
+    `)
+    .eq('user_id', celebrantId)
+    .eq('visibility', 'public')
+    .eq('owner_type', 'self')
+    .order('sort_order', { ascending: true });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Fetch for-others wishlists linked to a specific group
+ * Returns wishlists where linked_group_id matches and owner_type is other_*
+ * RLS ensures requester is group member
+ */
+export async function getGroupForOthersWishlists(groupId: string) {
+  const { data, error } = await supabase
+    .from('wishlists')
+    .select(`
+      id,
+      name,
+      emoji,
+      for_name,
+      for_user_id,
+      owner_type,
+      user_id,
+      linked_group_id,
+      items:wishlist_items(count)
+    `)
+    .eq('linked_group_id', groupId)
+    .in('owner_type', ['other_manual', 'other_user'])
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Update wishlist visibility setting
+ */
+export async function updateWishlistVisibility(
+  wishlistId: string,
+  visibility: WishlistVisibility
+) {
+  const { data, error } = await supabase
+    .from('wishlists')
+    .update({ visibility })
+    .eq('id', wishlistId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Link or unlink a for-others wishlist to a group for collaborative access
+ * Pass null to unlink
+ */
+export async function linkWishlistToGroup(wishlistId: string, groupId: string | null) {
+  const { data, error } = await supabase
+    .from('wishlists')
+    .update({ linked_group_id: groupId })
+    .eq('id', wishlistId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+/**
  * Move a wishlist item to a different wishlist
  * @param itemId - The item to move
  * @param targetWishlistId - The destination wishlist
