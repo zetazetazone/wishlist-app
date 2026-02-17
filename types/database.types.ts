@@ -1130,7 +1130,7 @@ export type Database = {
           title: string
           updated_at: string | null
           user_id: string | null
-          wishlist_id: string | null
+          wishlist_id: string
         }
         Insert: {
           additional_costs?: number | null
@@ -1148,7 +1148,7 @@ export type Database = {
           title: string
           updated_at?: string | null
           user_id?: string | null
-          wishlist_id?: string | null
+          wishlist_id: string
         }
         Update: {
           additional_costs?: number | null
@@ -1166,7 +1166,7 @@ export type Database = {
           title?: string
           updated_at?: string | null
           user_id?: string | null
-          wishlist_id?: string | null
+          wishlist_id?: string
         }
         Relationships: [
           {
