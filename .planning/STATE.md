@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 Phase: 41 of 43 (Column Rename)
 Plan: 2 of 2 in current phase
 Status: Phase complete
-Last activity: 2026-02-17 — Completed quick task 009: Fix wishlist create error and emoji picker visibility
+Last activity: 2026-02-17 — Completed quick task 010: Merge Celebrations and Calendar into unified Events screen
 
 Progress: [=====================================] 95% (41/43 phases)
 
@@ -142,10 +142,11 @@ From Phase 38-01:
 | 007 | Enhance CreateWishlistModal with visibility and owner controls | 2026-02-17 | cff0ed7 | [007-enhance-create-wishlist-modal-with-emoji](./quick/007-enhance-create-wishlist-modal-with-emoji/) |
 | 008 | Merge Friends and Groups into unified People screen | 2026-02-17 | 2da8531 | [008-merge-friends-and-groups-screens-into-un](./quick/008-merge-friends-and-groups-screens-into-un/) |
 | 009 | Fix wishlist create error and emoji picker visibility | 2026-02-17 | 8d58881 | [009-fix-wishlist-create-error-and-visual-emo](./quick/009-fix-wishlist-create-error-and-visual-emo/) |
+| 010 | Merge Celebrations and Calendar into unified Events screen | 2026-02-17 | 00c0357 | [010-merge-celebrations-and-calendar-into-uni](./quick/010-merge-celebrations-and-calendar-into-uni/) |
 
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Quick task 009 complete - Fix wishlist create error and emoji picker
-Resume file: .planning/quick/009-fix-wishlist-create-error-and-visual-emo/009-SUMMARY.md
+Stopped at: Quick task 010 complete - Unified Events screen
+Resume file: .planning/quick/010-merge-celebrations-and-calendar-into-uni/010-SUMMARY.md
 Next: `/gsd:execute-phase 42` (Default Wishlist Assignment)
