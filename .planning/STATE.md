@@ -138,10 +138,11 @@ From Phase 38-01:
 | 003 | Fix budget display stale after settings save | 2026-02-05 | 6809669 | [003-fix-budget-display-stale-on-nav](./quick/003-fix-budget-display-stale-on-nav/) |
 | 004 | Add delivery address and bank details to personal details | 2026-02-09 | 2bfe625 | [004-add-delivery-address-and-bank-details-to](./quick/004-add-delivery-address-and-bank-details-to/) |
 | 005 | Fix i18n translation keys returning [object Object] | 2026-02-12 | 2cde090 | [005-fix-i18n-translation-keys-returning-obje](./quick/005-fix-i18n-translation-keys-returning-obje/) |
+| 006 | Fix celebration card avatar and dynamic status | 2026-02-17 | 640cef2 | [006-fix-celebration-card-avatar-and-status](./quick/006-fix-celebration-card-avatar-and-status/) |
 
 ## Session Continuity
 
-Last session: 2026-02-16
-Stopped at: Phase 41 complete - Column rename finished
-Resume file: .planning/phases/41-column-rename/41-02-SUMMARY.md
+Last session: 2026-02-17
+Stopped at: Quick task 006 complete - Celebration card fixes
+Resume file: .planning/quick/006-fix-celebration-card-avatar-and-status/006-SUMMARY.md
 Next: `/gsd:execute-phase 42` (Default Wishlist Assignment)
