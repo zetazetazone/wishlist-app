@@ -775,7 +775,12 @@
     "memberLeftGroup": "Member left group",
     "cannotViewChat": "You cannot view this celebration's chat",
     "chatClosedCompleted": "Chat is closed for completed celebrations",
-    "typeMessage": "Type a message..."
+    "typeMessage": "Type a message...",
+    "publicWishlists": "{{name}}'s Wishlists",
+    "noPublicWishlists": "{{name}} hasn't shared any wishlists yet",
+    "viewItem": "View Item",
+    "itemPrice": "{{price}}",
+    "wishlistItems": "{{count}} items"
   },
   "settings": {
     "title": "Settings",

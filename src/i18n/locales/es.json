@@ -775,7 +775,12 @@
     "memberLeftGroup": "El miembro dejó el grupo",
     "cannotViewChat": "No puedes ver el chat de esta celebración",
     "chatClosedCompleted": "El chat está cerrado para celebraciones completadas",
-    "typeMessage": "Escribe un mensaje..."
+    "typeMessage": "Escribe un mensaje...",
+    "publicWishlists": "Listas de deseos de {{name}}",
+    "noPublicWishlists": "{{name}} aún no ha compartido ninguna lista",
+    "viewItem": "Ver artículo",
+    "itemPrice": "{{price}}",
+    "wishlistItems": "{{count}} artículos"
   },
   "settings": {
     "title": "Configuracion",
