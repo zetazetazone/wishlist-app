@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 ## Current Position
 
 Phase: 42 of 43 (Wishlist Visibility)
-Plan: 1 of 1 in current phase
+Plan: 2 of 2 in current phase
 Status: Phase complete
-Last activity: 2026-02-17 — Completed 42-01: Wishlist Visibility RLS migration
+Last activity: 2026-02-17 — Completed 42-02: Visibility service layer (lib functions + React Query hooks)
 
 Progress: [======================================] 98% (42/43 phases)
 
@@ -104,6 +104,12 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 - INSERT policy double-checks owner_type at RLS level for defense-in-depth
 - Visibility RLS pattern: owner OR public-group OR friends OR linked-group (four-branch USING clause)
 
+**From Phase 42-02:**
+- Mutation hooks use broad ['wishlists'] queryKey invalidation (not user-scoped) since visibility queries use different key shapes
+- linkWishlistToGroup accepts string | null groupId to support both link and unlink in one function
+- getCelebrantPublicWishlists selects full item fields; getGroupForOthersWishlists selects count only (group view needs less detail)
+- enabled: !!id guard pattern with id! assertion in queryFn for optional celebrantId/groupId params
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -153,6 +159,6 @@ From Phase 38-01:
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Phase 42 complete - Wishlist Visibility RLS
-Resume file: .planning/phases/42-wishlist-visibility/42-01-SUMMARY.md
+Stopped at: Phase 42 complete - Visibility service layer (lib functions + React Query hooks)
+Resume file: .planning/phases/42-wishlist-visibility/42-02-SUMMARY.md
 Next: `/gsd:execute-phase 43` (Wishlist Assignment — make wishlist_id NOT NULL)
