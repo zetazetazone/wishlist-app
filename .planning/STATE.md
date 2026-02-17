@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-02-16)
 ## Current Position
 
 Phase: 42 of 43 (Wishlist Visibility)
-Plan: 2 of 2 in current phase
-Status: Phase complete
-Last activity: 2026-02-17 — Completed 42-02: Visibility service layer (lib functions + React Query hooks)
+Plan: 3 of 4 in current phase
+Status: In progress
+Last activity: 2026-02-17 — Completed 42-03: Group Picker UI for For-Others Wishlists
 
 Progress: [======================================] 98% (42/43 phases)
 
@@ -110,6 +110,11 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 - getCelebrantPublicWishlists selects full item fields; getGroupForOthersWishlists selects count only (group view needs less detail)
 - enabled: !!id guard pattern with id! assertion in queryFn for optional celebrantId/groupId params
 
+**From Phase 42-03:**
+- Supabase nested join group:groups(...) returns array type in TypeScript — requires runtime Array.isArray() check rather than direct cast
+- Used wishlists.noGroupsToLink i18n key (not groups.noGroupsYet which doesn't exist) for type-safe translation in GroupPickerSheet
+- linked_group_id cleared to null when ownerType switches to 'self' to prevent orphaned group links on self-wishlists
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -159,6 +164,6 @@ From Phase 38-01:
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Phase 42 complete - Visibility service layer (lib functions + React Query hooks)
-Resume file: .planning/phases/42-wishlist-visibility/42-02-SUMMARY.md
-Next: `/gsd:execute-phase 43` (Wishlist Assignment — make wishlist_id NOT NULL)
+Stopped at: Phase 42 plan 03 - Group Picker UI for For-Others Wishlists
+Resume file: .planning/phases/42-wishlist-visibility/42-03-SUMMARY.md
+Next: Execute 42-04-PLAN.md (remaining Phase 42 plan)
