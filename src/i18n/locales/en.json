@@ -1073,6 +1073,13 @@
     "deliveryVisibility": "Delivery Address Visibility",
     "bankVisibility": "Bank Details Visibility"
   },
+  "people": {
+    "title": "People",
+    "segments": {
+      "friends": "Friends",
+      "groups": "Groups"
+    }
+  },
   "wishlists": {
     "defaultWishlist": "My Wishlist",
     "myWishlists": "My Wishlists",
