@@ -123,11 +123,11 @@ export async function updateWishlist(id: string, updates: WishlistUpdate) {
     .from('wishlists')
     .update(updates)
     .eq('id', id)
-    .select()
-    .single();
+    .select();
 
   if (error) throw error;
-  return data;
+  // Return first row (update should affect exactly one row)
+  return data?.[0] ?? null;
 }
 
 /**
