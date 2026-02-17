@@ -139,6 +139,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: borderRadius.xl,
     borderTopRightRadius: borderRadius.xl,
+    minHeight: 400,
     maxHeight: '80%',
     ...shadows.lg,
   },
@@ -185,13 +186,13 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   emojiScrollView: {
-    flex: 1,
+    height: 280,
   },
   emojiGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     padding: spacing.md,
-    paddingBottom: spacing.xl,
+    paddingBottom: spacing.xl + 20,
   },
   emojiButton: {
     width: '25%',
