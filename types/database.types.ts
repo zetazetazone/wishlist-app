@@ -1207,6 +1207,7 @@ export type Database = {
           for_user_id: string | null
           id: string
           is_default: boolean
+          linked_group_id: string | null
           name: string
           owner_type: string | null
           sort_order: number | null
@@ -1221,6 +1222,7 @@ export type Database = {
           for_user_id?: string | null
           id?: string
           is_default?: boolean
+          linked_group_id?: string | null
           name: string
           owner_type?: string | null
           sort_order?: number | null
@@ -1235,6 +1237,7 @@ export type Database = {
           for_user_id?: string | null
           id?: string
           is_default?: boolean
+          linked_group_id?: string | null
           name?: string
           owner_type?: string | null
           sort_order?: number | null
@@ -1243,6 +1246,27 @@ export type Database = {
           visibility?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "wishlists_for_user_id_fkey"
+            columns: ["for_user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wishlists_for_user_id_fkey"
+            columns: ["for_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wishlists_linked_group_id_fkey"
+            columns: ["linked_group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "wishlists_user_id_fkey"
             columns: ["user_id"]
