@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-02-16)
 
 **Core value:** Every group member's birthday is celebrated with a coordinated gift, and no one has to remember or organize it manually.
-**Current focus:** Phase 42 in progress - Wishlist Visibility (v1.7 Global Wishlist)
+**Current focus:** Phase 42 complete - Ready for Phase 43 (v1.7 Global Wishlist final phase)
 
 ## Current Position
 
-Phase: 42 of 43 (Wishlist Visibility)
-Plan: 3 of 4 in current phase
-Status: In progress
-Last activity: 2026-02-17 — Completed 42-03: Group Picker UI for For-Others Wishlists
+Phase: 42 of 43 (Wishlist Visibility) - COMPLETE
+Plan: 4 of 4 in current phase (Phase complete)
+Status: Phase complete - ready for Phase 43
+Last activity: 2026-02-17 — Completed 42-04: Celebration Page Public Wishlists
 
 Progress: [======================================] 98% (42/43 phases)
 
@@ -115,6 +115,11 @@ v1.6 decisions archived in `.planning/milestones/v1.6-ROADMAP.md`.
 - Used wishlists.noGroupsToLink i18n key (not groups.noGroupsYet which doesn't exist) for type-safe translation in GroupPickerSheet
 - linked_group_id cleared to null when ownerType switches to 'self' to prevent orphaned group links on self-wishlists
 
+**From Phase 42-04:**
+- i18n key prefix for celebration page is `celebrations` (plural) matching existing file structure — t('celebrations.publicWishlists') not t('celebration.publicWishlists')
+- Public wishlists section placed in gifts mode only (not greetings mode) — greetings mode has no gift coordination context
+- Items capped at 5 per wishlist with "+N more" overflow text — balances information density with scroll fatigue
+
 ### Pending Todos (Manual Setup)
 
 From v1.0/v1.1:
@@ -164,6 +169,6 @@ From Phase 38-01:
 ## Session Continuity
 
 Last session: 2026-02-17
-Stopped at: Phase 42 plan 03 - Group Picker UI for For-Others Wishlists
-Resume file: .planning/phases/42-wishlist-visibility/42-03-SUMMARY.md
-Next: Execute 42-04-PLAN.md (remaining Phase 42 plan)
+Stopped at: Phase 42 complete — all 4 plans executed
+Resume file: .planning/phases/42-wishlist-visibility/42-04-SUMMARY.md
+Next: Execute Phase 43 (final phase of v1.7 Global Wishlist milestone)
