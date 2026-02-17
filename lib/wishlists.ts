@@ -5,6 +5,12 @@ export type Wishlist = Database['public']['Tables']['wishlists']['Row'];
 export type WishlistInsert = Database['public']['Tables']['wishlists']['Insert'];
 export type WishlistUpdate = Database['public']['Tables']['wishlists']['Update'];
 
+/** Owner type for wishlists */
+export type WishlistOwnerType = 'self' | 'other_manual' | 'other_user';
+
+/** Visibility settings for wishlists */
+export type WishlistVisibility = 'public' | 'private' | 'friends';
+
 /**
  * Fetch all wishlists for the current user
  */

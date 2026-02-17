@@ -1203,9 +1203,12 @@ export type Database = {
         Row: {
           created_at: string | null
           emoji: string | null
+          for_name: string | null
+          for_user_id: string | null
           id: string
           is_default: boolean
           name: string
+          owner_type: string | null
           sort_order: number | null
           updated_at: string | null
           user_id: string
@@ -1214,9 +1217,12 @@ export type Database = {
         Insert: {
           created_at?: string | null
           emoji?: string | null
+          for_name?: string | null
+          for_user_id?: string | null
           id?: string
           is_default?: boolean
           name: string
+          owner_type?: string | null
           sort_order?: number | null
           updated_at?: string | null
           user_id: string
@@ -1225,9 +1231,12 @@ export type Database = {
         Update: {
           created_at?: string | null
           emoji?: string | null
+          for_name?: string | null
+          for_user_id?: string | null
           id?: string
           is_default?: boolean
           name?: string
+          owner_type?: string | null
           sort_order?: number | null
           updated_at?: string | null
           user_id?: string
